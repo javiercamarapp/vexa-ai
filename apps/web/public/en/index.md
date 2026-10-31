@@ -6,7 +6,7 @@ canonical_url: https://rovaq.ai/en
 alternate_language_url: https://rovaq.ai
 language: en
 type: landing
-last_modified: 2026-10-28
+last_modified: 2026-10-30
 robots: noindex
 ---
 
@@ -194,3 +194,10 @@ Request access: https://rovaq.ai/en/request-access
 - [Service status](https://rovaq.ai/en/status)
 - [Rovaq AI blog](https://rovaq.ai/en/blog)
 - [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate)
+- [Where every number comes from: provenance as a requirement, not decoration](https://rovaq.ai/en/blog/where-every-number-comes-from)
+- [AI classifies and drafts; people decide](https://rovaq.ai/en/blog/ai-classifies-people-decide)
+- [One role, one view: why each role sees only what belongs to it](https://rovaq.ai/en/blog/one-role-one-view)
+- [Your marketplace exports are already data: how to load them with provenance](https://rovaq.ai/en/blog/marketplace-exports-are-data)
+- [Pain points: from free text in conversations to a priority backed by evidence](https://rovaq.ai/en/blog/pain-points-from-text-to-priority)
+- [What we claim and what we do not claim about security](https://rovaq.ai/en/blog/what-we-claim-about-security)
+- [A recommendation must be debatable: evidence, approval and outcome](https://rovaq.ai/en/blog/a-recommendation-must-be-debatable)

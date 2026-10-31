@@ -2231,6 +2231,55 @@
    "sha256": "03e81355a780fc2f60603fe2f30ffb63f26d59dfb782c06a6d8a0ad7b6093333",
    "url": "/s/md/en/a1.03e81355.md"
   },
+  "en/a2": {
+   "brotli": 2203,
+   "bytes": 6682,
+   "hash": "378b659c",
+   "sha256": "378b659cf3a14605e7fbded6fe57c177a5497d53ebc97f5c29b44b4aef37529d",
+   "url": "/s/md/en/a2.378b659c.md"
+  },
+  "en/a3": {
+   "brotli": 2079,
+   "bytes": 6335,
+   "hash": "59e387df",
+   "sha256": "59e387df57bcc91ac0c1fcff4748c29c3d38af2d7d1fefd224ac5016f13856da",
+   "url": "/s/md/en/a3.59e387df.md"
+  },
+  "en/a4": {
+   "brotli": 2127,
+   "bytes": 6365,
+   "hash": "759392f5",
+   "sha256": "759392f529b4cf7812a82414a46546622300de3de3f19fb7ca754d6abc0adc08",
+   "url": "/s/md/en/a4.759392f5.md"
+  },
+  "en/a5": {
+   "brotli": 2104,
+   "bytes": 6305,
+   "hash": "11df9684",
+   "sha256": "11df96841e64aca2082dd72b8de53dcf1b965caf239046ce395246059426a5ba",
+   "url": "/s/md/en/a5.11df9684.md"
+  },
+  "en/a6": {
+   "brotli": 2206,
+   "bytes": 6684,
+   "hash": "dd6d76d3",
+   "sha256": "dd6d76d3ff6ac72b82d90e5698552b4c8a62832baeb7e65a334ec8a5a79bc409",
+   "url": "/s/md/en/a6.dd6d76d3.md"
+  },
+  "en/a7": {
+   "brotli": 1995,
+   "bytes": 6193,
+   "hash": "7262e3b4",
+   "sha256": "7262e3b4616591b74b46d6f133f7fcd93f29dccb318e291c8f118c1ea16147e3",
+   "url": "/s/md/en/a7.7262e3b4.md"
+  },
+  "en/a8": {
+   "brotli": 1992,
+   "bytes": 6391,
+   "hash": "1e80b0ea",
+   "sha256": "1e80b0ea35fbcacd0e5d70a2123f4b7d574e2cdad578c825ce86b8c7084ebce3",
+   "url": "/s/md/en/a8.1e80b0ea.md"
+  },
   "en/analista": {
    "brotli": 467,
    "bytes": 1158,
@@ -2239,11 +2288,11 @@
    "url": "/s/md/en/analista.45c3f66f.md"
   },
   "en/blog": {
-   "brotli": 507,
-   "bytes": 1340,
-   "hash": "7cb1b065",
-   "sha256": "7cb1b065e9d99f5a258dbb495e8f789cff6cdac1fc1d62dcf3b6269d788d87e5",
-   "url": "/s/md/en/blog.7cb1b065.md"
+   "brotli": 1375,
+   "bytes": 4456,
+   "hash": "915f4a30",
+   "sha256": "915f4a30af73f19366250ec329f36e88b2728b7942d1075587b4a01b395f8d5c",
+   "url": "/s/md/en/blog.915f4a30.md"
   },
   "en/confianza-de-los-datos": {
    "brotli": 506,
@@ -2329,6 +2378,55 @@
    "sha256": "692232c1554fd63d05f054b10dcd46fd36e2448f9e72a2ecfbe0afc8574090a8",
    "url": "/s/md/es/a1.692232c1.md"
   },
+  "es/a2": {
+   "brotli": 2616,
+   "bytes": 6973,
+   "hash": "e7d49fff",
+   "sha256": "e7d49fff0e68164da4c204f4c2d855b406ad9a8dd60bdfa48f3e0ae3917dc506",
+   "url": "/s/md/es/a2.e7d49fff.md"
+  },
+  "es/a3": {
+   "brotli": 2449,
+   "bytes": 6433,
+   "hash": "cc874be7",
+   "sha256": "cc874be7ae905869dc9a2f8f8fa768d08ba250a4955ecdb2dae51e1882691239",
+   "url": "/s/md/es/a3.cc874be7.md"
+  },
+  "es/a4": {
+   "brotli": 2406,
+   "bytes": 6436,
+   "hash": "ebb7d041",
+   "sha256": "ebb7d0416169fc1ff2fedd9b6d778590d01b62eca38fc799c84e0e9649df6923",
+   "url": "/s/md/es/a4.ebb7d041.md"
+  },
+  "es/a5": {
+   "brotli": 2448,
+   "bytes": 6482,
+   "hash": "4ca605f0",
+   "sha256": "4ca605f0cd8b86f50cb7d4a8c7d3527cb9291bfc03e990c680631c6edc373b56",
+   "url": "/s/md/es/a5.4ca605f0.md"
+  },
+  "es/a6": {
+   "brotli": 2561,
+   "bytes": 6923,
+   "hash": "a7c016b0",
+   "sha256": "a7c016b0907600c355423a2bdf84c423ea9d1c3b6f198e25f82f52b1a35a7dd9",
+   "url": "/s/md/es/a6.a7c016b0.md"
+  },
+  "es/a7": {
+   "brotli": 2417,
+   "bytes": 6632,
+   "hash": "faa32e9e",
+   "sha256": "faa32e9e6d495d5133b6901918d13bd63bfc6d692e90b20e51b5f329ac0d93e6",
+   "url": "/s/md/es/a7.faa32e9e.md"
+  },
+  "es/a8": {
+   "brotli": 2355,
+   "bytes": 6448,
+   "hash": "03b374ff",
+   "sha256": "03b374ffc40167ce17165279d6021610be3b572a0441f4cf6e1df4462b803ba3",
+   "url": "/s/md/es/a8.03b374ff.md"
+  },
   "es/analista": {
    "brotli": 530,
    "bytes": 1145,
@@ -2337,11 +2435,11 @@
    "url": "/s/md/es/analista.d945dc72.md"
   },
   "es/blog": {
-   "brotli": 611,
-   "bytes": 1440,
-   "hash": "f53c1001",
-   "sha256": "f53c10013f8e851e853b91ff7dea849eaff8c91f74dc7a9512236b90ce11df41",
-   "url": "/s/md/es/blog.f53c1001.md"
+   "brotli": 1621,
+   "bytes": 4761,
+   "hash": "2865276d",
+   "sha256": "2865276d3e0b42759d32d0e3b225df1568a3c122caaa4779d5afe103a9179a93",
+   "url": "/s/md/es/blog.2865276d.md"
   },
   "es/confianza-de-los-datos": {
    "brotli": 586,

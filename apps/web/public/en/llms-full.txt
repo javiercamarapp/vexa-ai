@@ -190,6 +190,13 @@ Request access: https://rovaq.ai/en/request-access
 - [Service status](https://rovaq.ai/en/status)
 - [Rovaq AI blog](https://rovaq.ai/en/blog)
 - [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate)
+- [Where every number comes from: provenance as a requirement, not decoration](https://rovaq.ai/en/blog/where-every-number-comes-from)
+- [AI classifies and drafts; people decide](https://rovaq.ai/en/blog/ai-classifies-people-decide)
+- [One role, one view: why each role sees only what belongs to it](https://rovaq.ai/en/blog/one-role-one-view)
+- [Your marketplace exports are already data: how to load them with provenance](https://rovaq.ai/en/blog/marketplace-exports-are-data)
+- [Pain points: from free text in conversations to a priority backed by evidence](https://rovaq.ai/en/blog/pain-points-from-text-to-priority)
+- [What we claim and what we do not claim about security](https://rovaq.ai/en/blog/what-we-claim-about-security)
+- [A recommendation must be debatable: evidence, approval and outcome](https://rovaq.ai/en/blog/a-recommendation-must-be-debatable)
 
 ---
 
@@ -518,6 +525,13 @@ Notes on refunds, the provenance of figures, pain points and decisions backed by
 ### Recent articles
 
 - [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate). Published 2026-11-03. 6 min read. A refund total mixes things that are not alike. This article explains how to split returned money by channel, product and month, how to read a Pareto without asking more of it than it gives, and what an evidence package should hold so a claim can be reviewed.
+- [Where every number comes from: provenance as a requirement, not decoration](https://rovaq.ai/en/blog/where-every-number-comes-from). Published 2026-11-03. 6 min read. A dashboard that does not explain where each figure comes from forces you to believe it. This article describes what should accompany a number so it can be debated: its class, its source, its cut-off date and what is still unknown, and why that is not the same as a certification.
+- [AI classifies and drafts; people decide](https://rovaq.ai/en/blog/ai-classifies-people-decide). Published 2026-11-03. 5 min read. A tool that invents amounts loses trust at the first report. This article explains the principle we used to design Rovaq AI: AI helps classify and draft, figures come from verifiable records and a person decides every action.
+- [One role, one view: why each role sees only what belongs to it](https://rovaq.ai/en/blog/one-role-one-view). Published 2026-11-03. 5 min read. A tool that shows everything to everyone is harder to use and harder to protect. This article explains how views are split among owner, analyst, operator and viewer in Rovaq AI, why minimal permissions help clarity and what it means for authorization to be decided on the server.
+- [Your marketplace exports are already data: how to load them with provenance](https://rovaq.ai/en/blog/marketplace-exports-are-data). Published 2026-11-03. 5 min read. Many teams wait for a direct connector before they start analyzing their sales and refunds, without noticing that the history is already in their Excel and CSV exports. This article explains what can be loaded today in Rovaq AI, how the preview and per-row provenance work, and what remains on the roadmap.
+- [Pain points: from free text in conversations to a priority backed by evidence](https://rovaq.ai/en/blog/pain-points-from-text-to-priority). Published 2026-11-03. 6 min read. A theme that repeats in support conversations is a clue, not a priority. This article explains why counting mentions misleads, how to measure a reason in volume and in money without mixing the two units, why missing data is not zero and how to share the evidence without personal data.
+- [What we claim and what we do not claim about security](https://rovaq.ai/en/blog/what-we-claim-about-security). Published 2026-11-03. 5 min read. A useful security page separates facts from adjectives and states what is missing. This article explains which security practices we describe and anyone can point to in the product, which gaps we declare, why publishing them serves a buyer better than a promise of total security and which questions to ask any vendor.
+- [A recommendation must be debatable: evidence, approval and outcome](https://rovaq.ai/en/blog/a-recommendation-must-be-debatable). Published 2026-11-03. 5 min read. A recommendation without evidence is either ignored or obeyed blindly. This article explains what a proposal must carry in order to be debated, why a small decision vocabulary and a person who approves are worth having, and how to record the outcome by measuring before and after using observed data only.
 
 ### Topics
 
@@ -591,3 +605,468 @@ Then decide who owns each finding. A leak without an owner turns back into a fix
 - We do not calculate the refund rate per product, margin, net loss or root cause from an export, because the data needed to do it is missing.
 - We do not treat unknown data as if it were zero: if information is missing, the screen says so.
 - Nothing is sent on its own: a person files the claim.
+
+---
+
+Fuente: https://rovaq.ai/en/blog/where-every-number-comes-from
+
+## Where every number comes from: provenance as a requirement, not decoration
+
+A figure without an origin can only be accepted or rejected. With its source, its cut-off date and its gaps in plain view, it can be debated.
+
+Almost every team has lived the same scene. Someone opens a dashboard, sees a figure they did not expect and asks where it comes from. Nobody knows for sure. The formulas get checked, the author of the report is tracked down, the number is compared against a spreadsheet and, in the end, the meeting is spent finding out whether the figure is true instead of deciding what to do about it.
+
+This article defends a simple idea: provenance is not a decoration added at the end to make a good impression, but a requirement met before a figure is shown. A number that cannot explain its origin is not data, it is an opinion with formatting.
+
+### A dashboard that demands belief
+
+A traditional dashboard presents clean results: a large figure, a chart, a change against the previous period. That cleanliness is useful for a quick look, but it hides everything needed to doubt with judgment. It does not say whether the number comes from a record, an estimate or a calculation made with assumptions. It does not say which day the data reaches. It does not say which part of the business was left out.
+
+When those answers are missing, the reader has two options, and both are bad. They can accept the figure out of courtesy toward whoever presents it, or reject it out of general distrust. In neither case are they evaluating the number: they are evaluating the person or the tool that shows it.
+
+> A figure that does not explain its origin demands belief. A figure with provenance can be debated.
+
+### Cut-off date, source and gaps
+
+For a figure to be debatable, four things need to travel with it. In Rovaq AI we call them the figure seal, and it appears under every important number.
+
+- The class. A figure can be observed, meaning a recorded fact; estimated, calculated with a model or with assumptions you define; inferred, derived from other relationships; or it can be No data. Mixing those classes in one column is the most common way to fool yourself without meaning to.
+- The source. Which file, which system or which load the record comes from, so that anyone in doubt can go and look.
+- The cut-off date. Which day the data reaches. A figure correct up to the fifteenth and one correct up to the thirtieth are not the same figure, even if they share a name.
+- The age. How much time has passed since the last update, so nobody mistakes an old snapshot for today.
+
+The rule that holds everything else up is this: if the cut-off date is not known, the seal says so. The same goes for any missing data. What is unknown is shown as No data, never as zero. A zero asserts that something was measured and nothing was found; a No data admits that it is not known. The difference seems small until someone makes a decision believing a category has no activity when, in fact, nobody loaded its records.
+
+#### The ledger that deletes nothing
+
+Provenance also depends on how the data is stored. In Rovaq AI each organization has an insert-only ledger: when something is corrected, a revision is added and the earlier version is not erased. That way, a correction leaves a trail instead of quietly rewriting history, and whoever reviews can see that a change happened and when it was made.
+
+### Data trust versus outside endorsement
+
+Two things that are often confused are worth separating. Data trust answers a practical question: how much can I rely on this figure today. A certification answers another: whether an organization meets a certain standard, verified by a third party. They are different matters and neither replaces the other.
+
+The [data trust](https://rovaq.ai/en/product/data-trust) screen exists for the first. It shows a traffic light per source, the freshness of each figure, its coverage and a list of what is still unknown. It is a tool for everyday work: before moving money or writing to a supplier, whoever decides can see which sources are up to date, which fell behind and which gaps remain open.
+
+The second, certification, is a different conversation, and we have it plainly: Rovaq AI does not hold security or compliance certifications today, and we say otherwise nowhere. A trust screen does not try to take that place. What it does is leave the real state of each source in plain view, which is what a team needs to work with figures without going blind.
+
+### A simple test for your own dashboard
+
+You do not need to adopt any tool to start demanding provenance. Take the three figures that weigh most in your decisions and put these questions to them, out loud and in front of whoever prepares them:
+
+1. Which file or system it comes from, and who can open it to check.
+2. Which day the data reaches and when it was last updated.
+3. Whether it is a recorded fact, an estimate or an inference, and who wrote the assumptions when there are any.
+4. Which part of the business was left out and how that absence is being shown.
+
+If the answers arrive quickly and agree with one another, the dashboard earns its place. If they take effort, you already have a list of what is worth fixing before the next meeting. In either case the conversation improves: it stops being about whether the number is true and starts being about what to do with it. A good example is refunds, which we covered in [this article on leaks in returned money](https://rovaq.ai/en/blog/refund-leak-you-can-locate), where every total is worth only as much as its origin.
+
+### What we do not claim
+
+- We do not claim that a figure with provenance is correct. Provenance makes it possible to review it; it does not make it true by itself.
+- We do not claim that the data trust screen is a certification or that it replaces an audit.
+- We hold no security or compliance certifications, and we do not suggest otherwise.
+- We do not treat unknown data as zero: if it is missing, the seal says No data.
+- We do not promise that data is current at every moment: every figure shows its cut-off date and its age.
+
+---
+
+Fuente: https://rovaq.ai/en/blog/ai-classifies-people-decide
+
+## AI classifies and drafts; people decide
+
+Where a language model belongs in a financial product, where it does not, and why the figures should never come from it.
+
+There is a promise repeated in almost every product that adds artificial intelligence: it will do the work for you. It is said of summaries, of recommendations, of answers to business questions. The promise is attractive and, in text tasks, it is often kept. The problem appears when it is extended, without further thought, to money.
+
+This article explains the principle we used to design Rovaq AI and why we consider it a condition of trust and not a limitation: AI helps to organize and to draft; figures come from records that can be verified; and a person decides every action.
+
+### The risk of AI that invents amounts
+
+A language model produces plausible text. That is its strength and also its risk: a sentence can sound exact without being so. If you ask it to summarize a conversation, a minor error hardly matters. If you ask it for an amount, the same kind of error changes a decision.
+
+Besides, the harm is not evenly spread. A tool that is right almost always, but now and then invents an amount, has a worse cost than one that fails often: with the second you know you must verify everything; with the first you stop verifying and the error gets through. Trust is lost at the first report where someone discovers that a figure had nowhere to come from, and earning it back is slow.
+
+> AI can help to read and to write. Amounts are not asked of it.
+
+### Figures come from the verifiable ledger
+
+The alternative is to separate two jobs that tend to get mixed. One is understanding text: grouping similar conversations, proposing a category, drafting a message. The other is calculating money: adding up refunds, comparing periods, measuring how much revenue is exposed to a problem. The first tolerates some ambiguity and is reviewed by reading. The second does not tolerate it and must be repeatable.
+
+In Rovaq AI, the second job is done by rules and calculations over the organization ledger, which is insert-only and keeps the origin of each record. Every important figure carries its class, its source and its cut-off date, as we explain in [the article on provenance](https://rovaq.ai/en/blog/where-every-number-comes-from). When something is not known, the system says No data; it does not fill the gap with an assumption written with confidence.
+
+The [Ask your data](https://rovaq.ai/en/product/ask-your-data) screen is the clearest example. Today it answers with rules and with read-only tools, without a language model, and it shows the steps it took to calculate each answer. If it does not have the data, it says so. Whoever uses it can follow the calculation and repeat it; they do not have to believe a written answer.
+
+### What AI does today and what it does not
+
+Saying that AI does not create figures does not mean it has no work to do. There are tasks where a model is useful precisely because its output can be read and corrected:
+
+- Grouping conversations into problems. Grouping with AI models is enabled per organization, and each group keeps its quotes so that someone can check they really belong there.
+- Classifying. Proposing a category for a repeated theme, for a person to review.
+- Drafting. Preparing the draft of a message to a supplier or of an internal note, which a person reviews before sending.
+
+And there are things it does not do. It does not produce amounts. It does not decide what action to take. It does not send anything on its own. It does not write to your CRM, which in the case of HubSpot connects read-only. A draft is a proposal of text, not an action taken.
+
+#### A person decides every action
+
+The last step is always human. In the [To decide](https://rovaq.ai/en/product/to-decide) screen, each proposal arrives with its evidence and its reason, and the person in charge chooses between Proceed, Adjust or Dismiss. Proceed creates the intervention and the drafts that someone reviews and sends. Nothing is sent on its own, and the outcome is recorded.
+
+Recording the outcome serves two purposes. The first is memory: six months from now, someone can know why action was or was not taken. The second is learning: a team that notes what it decided and what happened next can improve its own criteria, without attributing to a machine a judgment that is not its to make.
+
+### A rule for evaluating any tool
+
+If you are evaluating software with artificial intelligence for your business, three questions help more than any demonstration:
+
+1. Where each amount comes from: a record I can open or a text the model wrote.
+2. What happens when information is missing: whether it says so, or fills in the gap with something that sounds reasonable.
+3. Who carries out the action: whether a person approves it or it happens on its own.
+
+A tool that answers all three well can still be wrong, like any other, but its errors will be visible and correctable. That is what we aim for by separating clearly what the model does from what stays outside it. If you want to see how this applies to a concrete case, look at how conversations are grouped in the Problems screen.
+
+### What we do not claim
+
+- We do not claim that AI makes no mistakes. That is why its proposals are read and a person decides what to do with them.
+- We do not claim that Rovaq AI is an autonomous agent: it prepares packages and drafts, and a person decides and files every action.
+- We do not claim that grouping with models is on for every organization: it is enabled per organization.
+- We do not claim that data is anonymized. Redacting or masking a text is not anonymizing it.
+- We do not promise any amount or any financial result as a consequence of a recommendation.
+
+---
+
+Fuente: https://rovaq.ai/en/blog/one-role-one-view
+
+## One role, one view: why each role sees only what belongs to it
+
+A tool with everything for everyone looks generous and delivers little. Showing less protects information and helps people work.
+
+When a team adopts a new tool, the first question is usually what it can do. The second, which is almost never asked in time, is who should be able to do what. When that second question is put off, the result is an application where everyone sees everything: the person carrying out a task stumbles over screens that do not concern them, and whoever reviews the money lives alongside controls they do not need.
+
+This article defends the opposite. Showing each person less is not an uncomfortable restriction but a design decision with two benefits: information is better protected and the work is clearer.
+
+### Fewer screens, more clarity
+
+A surplus screen has a cost that does not show in demonstrations. Every additional option is something to understand, ignore or avoid touching by mistake. An operator who has to resolve assigned actions gains nothing from seeing the company financial reports; instead, they lose time searching among items that are not theirs.
+
+That is why it helps to design views from the work and not from the menu. The question is not which screens exist, but what the person in each role needs to see to do their own job well. Everything else does not appear.
+
+> A well-designed view is one that removes from each person everything they do not need for their work.
+
+### Four roles with minimal permissions
+
+Rovaq AI works with four roles. Each one receives what its function requires, and nothing more.
+
+- [Owner](https://rovaq.ai/en/use-cases/owner). Configures, decides and approves. Sees all screens and manages the team, the notices and data retention. It is the one who gives the go-ahead to the actions that are proposed.
+- [Analyst](https://rovaq.ai/en/use-cases/analyst). Investigates, prepares and proposes. Sees the money, the problems, the pain points and the imports, and imports files. Proposes, but does not approve.
+- [Operator](https://rovaq.ai/en/use-cases/operator). Carries out the actions assigned to them. Sees the problems, the assigned actions and their evidence, without money figures.
+- [Viewer](https://rovaq.ai/en/use-cases/viewer). Reads with read-only access. Sees the screens that apply to them, unable to modify data, connections or decisions.
+
+The separation between whoever proposes and whoever approves deserves its own mention. That the analyst prepares a finding and the owner approves it is not bureaucracy: it is the way to make sure a different person looks at the evidence before anything is set in motion. And that the operator carries out work without seeing money figures means that whoever does the daily work does not need access to what they do not use.
+
+This split follows a principle known as least privilege: each person receives only the access their function requires. An account with less reach exposes less if something goes wrong, whether a mistake, an oversight or a credential that falls into the wrong hands.
+
+#### A walk-through example
+
+Imagine any finding: a product accounts for a good share of the returned money. The analyst investigates it, gathers the evidence and proposes an action. The owner sees the proposal with its evidence and decides whether to proceed, adjust or dismiss. If it proceeds, the operator receives the assigned action and carries it out, with the problems and the evidence in view but without the money figures they do not need. And the viewer, if the team has one, can follow the progress with no risk of changing anything.
+
+Each person sees a different part of the same fact and yet nobody needs a complete view to fulfill their role. That is the simplest proof that the split is well made: nobody misses what they do not see, because they did not need it to work.
+
+### Server-side authorization
+
+There is an important difference between hiding and protecting. Many applications hide from the interface the options a user should not use, and consider the matter settled. But an element that does not appear in the menu still exists if someone knows the address of the screen or the way to ask for the data.
+
+In Rovaq AI authorization is decided on the server. Hiding a menu item is a reading convenience; it is not what protects a screen. The decision of whether a person can see a piece of data or carry out an action is taken on the side the user does not control, every time it is requested.
+
+#### What to ask when evaluating a tool
+
+If you are comparing software for your team, three questions reveal a lot about how it handles permissions:
+
+1. What each role sees, in writing. A clear table of capabilities is worth more than a general sentence about security.
+2. Who approves. If whoever proposes can also approve, review depends on goodwill and not on design.
+3. Where access is decided. If it is only hidden in the interface, protection is weak; if it is decided on the server, it holds up better.
+
+To see how it applies to each function, you can review the use cases page, which describes what each role sees and does. And to know how far to trust what each role reads, it is worth recalling what we explained about [the provenance of every number](https://rovaq.ai/en/blog/where-every-number-comes-from): seeing less should not mean knowing less about the origin of what you do see.
+
+### What we do not claim
+
+- We do not claim that minimal permissions eliminate all risk. They reduce what each account can expose, but they do not replace other security practices.
+- We do not state which personal data of third parties the viewer sees, because that part is still under review.
+- We hold no security or compliance certifications, and two-step verification for owners is on our roadmap; today it is not required.
+
+---
+
+Fuente: https://rovaq.ai/en/blog/marketplace-exports-are-data
+
+## Your marketplace exports are already data: how to load them with provenance
+
+The files you download from your sales channels are not a pending chore. They are the history you already have, and it can be loaded with its origin in plain view.
+
+Among teams that sell through marketplaces, a very common wait circulates: when a direct connection to my channel exists, I will start putting my numbers in order. Meanwhile, sales are downloaded into one sheet, refunds into another, orders into a third, and every month someone pastes them into a workbook that nobody else fully understands.
+
+The wait has a cost that goes unnoticed: those files already hold the history. They are not a step before the data; they are the data. What is almost always missing is not the source, but a place to load them without losing where each line came from.
+
+### What can be loaded today
+
+Today Rovaq AI receives Excel and CSV files. That is the way the data from your sales channels comes in: the exports you already download from each platform, in the format each one produces. Marketplace exports are loaded with help from our team, who go over with you how each column corresponds.
+
+Having support during the load has a practical advantage. Each channel exports its columns in its own way, and the same idea can show up as order, purchase or transaction depending on where it comes from. Settling that correspondence once, with someone who already knows it, keeps a reading error from contaminating months of history.
+
+There is also a reading of conversations from HubSpot, and it is read-only: Rovaq AI does not write to your CRM. The connection is set up with our team and syncing is scheduled, not immediate; each screen shows its cut-off date.
+
+### Preview and per-row provenance
+
+Loading a file is easy; loading it well is another matter. For an export to be reliable, the load must meet two conditions.
+
+#### First you look, then you load
+
+The load includes a preview and a validation before anything is ingested. Before a single line enters your organization ledger, you can see how the file was read and what would end up loaded, to check that what was read matches what you downloaded. It is the cheap moment to catch that a date came in another format or that a column changed place. Finding out later, with three months of data on top, is expensive.
+
+#### Each row remembers where it comes from
+
+The second condition is keeping the origin. Each loaded row stores which file it came from and which load it entered with, so that any figure can be traced back to the line that produced it. It is the same logic we explained in [the article on provenance](https://rovaq.ai/en/blog/where-every-number-comes-from): a figure is worth as much as its origin, and an origin lost in pasting from one sheet to another cannot be rebuilt later.
+
+This changes the conversation when someone questions a number. Instead of reconstructing from memory which sheet was used, you open the row, see the file and settle it.
+
+### Direct connectors: roadmap
+
+It is worth being clear about what does not exist yet. Direct connectors for Amazon, Walmart and Shopify are on our roadmap. Today there is no connection that brings that data in automatically; that is why the route is the export, and why we set no dates or commitments for when it will change. You can see the status of what is coming on the roadmap page and what connects today on integrations.
+
+There are good reasons not to wait. A connector, when it arrives, will bring new data; but your history exists now, and it is exactly what lets you look back: seeing by channel, by product and by month where returned money concentrates, as we describe in [the article on refunds](https://rovaq.ai/en/blog/refund-leak-you-can-locate). Loading the history you already have today does not get in the way of a future connector. What does get in the way is continuing to paste sheets by hand in the meantime.
+
+### How to prepare your exports
+
+Before asking for a load, it helps to review your files with these ideas in mind:
+
+1. Download the original export from each channel and keep it unedited. The file as it left the platform is the most direct evidence of its origin.
+2. Note the period each file covers and, if you know it, the date you downloaded it. That will be the cut-off date for what you load.
+3. Separate what you download by type: orders, refunds, conversations. Mixing them in one sheet complicates reading.
+4. Go through the preview calmly and confirm that columns and dates were read as you expected before approving the load.
+
+A good way to start is with a single channel and a single complete period. If the preview shows what you expected, you repeat the process with the next channel. If something does not add up, you already know where to look, because the scope of the test was small. Going from less to more saves corrections and builds, load after load, a history you can rely on.
+
+None of this requires a long project. With a couple of recent exports you can already answer where returned money concentrates and where each figure that says so comes from. To see in more detail what is accepted, review the sources and imports screen.
+
+### What we do not claim
+
+- We do not claim that direct connectors with Amazon, Walmart or Shopify exist: they are on the roadmap and we give no dates.
+- We do not claim that loading marketplace exports is self-service: today it is done with help from our team.
+- We do not claim that a channel export contains everything needed. If columns are missing, certain figures cannot be calculated, and the screen says so instead of showing a zero.
+- We do not claim that HubSpot updates instantly or that Rovaq AI writes to it: the connection is read-only.
+
+---
+
+Fuente: https://rovaq.ai/en/blog/pain-points-from-text-to-priority
+
+## Pain points: from free text in conversations to a priority backed by evidence
+
+Counting mentions is a start. A priority also needs a size, evidence that can be opened and a list of what is not known.
+
+In almost any customer support operation there comes a moment when someone reads a hundred conversations and concludes that the problem is shipping. They conclude it because the word shows up a lot. It is a reasonable reading and also the most common way to get a priority wrong.
+
+This article defends a simple idea: a theme that repeats in the free text of conversations is a clue, not a priority. To turn it into a priority you need a size, a body of evidence and an honest list of what is not yet known.
+
+### Repeated is not important
+
+Counting mentions is the first thing people try, and it has an obvious appeal: it is quick and it produces an order. The problem is that it measures noise as much as importance. A reason may repeat because it is frequent and cheap, like a question about order status that one line resolves. Another may appear rarely and carry considerable refunds.
+
+There are at least three reasons why the count misleads:
+
+- The customer language is not the language of your catalog. Two people describe the same defect with different words, and one word can cover matters that are not alike. Without careful grouping, the count splits one problem across several rows or merges several into one.
+- Frequency is not cost. A heavily mentioned reason with low impact can rank above a rare and expensive one if all you look at is volume.
+- What gets written most is what is easiest to write. Channels and forms shape what people complain about and how, so part of the pattern comes from the tool and not from the customer.
+
+None of this invalidates free text. On the contrary, it is the richest source most teams have. What changes is the role it is given: it serves to form hypotheses, not to close them.
+
+> A repeated theme says what people talk about. A priority says how much it weighs and with what evidence.
+
+### Bubble map and size
+
+Moving from a theme to a priority requires answering two questions that the text does not answer on its own. The first is about size: how much this reason weighs and in what unit. The second is about evidence: which conversations and which orders support it, so that another person can open them and check.
+
+Size can be measured in two ways, and it is wise not to mix them. One is volume, meaning how many conversations fall under the reason. The other is the money it carries, when there is a reliable way to link the reason to orders and refunds. A good habit is to look at both and notice where they disagree. A reason that is large in volume and small in money calls for a support response; one that is small in volume and large in money calls for a review of the product or the supplier.
+
+#### Reading both at once
+
+On the [pain points](https://rovaq.ai/en/product/pain-points) screen in Rovaq AI, each bubble is a pain point and its size is returned money in gross dollars or volume, as chosen by whoever is looking. The eight largest appear in the chart and in an accessible table, with a topic filter, and each row opens its evidence down to the source row.
+
+That last part is what turns a map into a working tool. A large bubble that cannot be opened invites argument; a bubble that opens down to the originating conversation and order invites review.
+
+#### What is not known is not zero
+
+There is a silent error in almost every dashboard: when data is missing, a zero appears. A zero reads as good news, which makes it the costliest of the errors that go unnoticed. If a source did not respond, or if there is no reliable link between a reason and the money, the right thing is to say exactly that.
+
+The screen follows that rule. What is not known says No data and never zero, and if a source did not respond, those points show as Not available now. That is why it pays to check [data trust](https://rovaq.ai/en/product/data-trust) first and read each number with its source and cut-off date.
+
+### Export without personal data
+
+Prioritizing is rarely the decision of one person. Almost always the finding has to be taken to product, to a supplier or to management, and a tension appears: the most convincing evidence is usually the conversation, and the conversation usually contains data about a customer.
+
+The way out is to separate the two. The evidence export in CSV per pain point is generated without personal data, so it can be shared with whoever needs to see the pattern without information about the writer traveling along. Sharing the evidence should not require sharing the people.
+
+### How to start with what you already have
+
+You do not need a new tool to try the method. Take the conversations from a complete period and follow these steps:
+
+1. Group by reason using a written criterion, so another person would group the same way.
+2. Measure each group in volume and, where you can link it to orders, in returned money, without mixing the two units.
+3. Compare the two rankings and note where they differ; that is usually where the surprise is.
+4. For each candidate, gather two or three source conversations that anyone can open and check.
+5. Mark what is missing as missing, with the reason, and do not turn it into zero.
+6. Take the result to [the decision](https://rovaq.ai/en/product/to-decide): a person chooses what to address and the outcome gets recorded.
+
+### What we do not claim
+
+- We do not claim that a repeated theme is a theme that costs: the screen puts the money it carries beside it only when that money exists.
+- We do not promise that every pain point has a money figure: without confirmed links between reasons and orders, the figure is not available and the screen says so.
+- We do not treat unknown data as if it were zero.
+- We do not determine the cause of a problem: the map orders and shows evidence, and the cause is established by whoever reviews it.
+- When artificial intelligence is involved, it classifies and drafts; it does not create figures, and a person decides every action.
+
+---
+
+Fuente: https://rovaq.ai/en/blog/what-we-claim-about-security
+
+## What we claim and what we do not claim about security
+
+A short list of practices, another of gaps and the reasons for publishing both.
+
+A security page is usually the first thing a finance or technology person reviews before accepting a new tool. It is also where statements nobody can verify are most abundant, written with adjectives instead of facts.
+
+Rovaq AI works with support conversations and revenue data from a business, and that obliges us to a specific stance: say what exists, say what does not exist and not fill the space between them with adjectives. This article explains that stance and why we believe it serves a buyer better than a promise of total security.
+
+### Verified practices
+
+We only describe practices that we can point to in the product. Today they are these:
+
+- Each organization is kept apart from the others by rules in the database, not only by the application.
+- There are four roles with least-privilege permissions. The platform administration permission is separate and does not grant read access to the business data of other organizations.
+- Sign-in is by a link sent to your email, with email confirmation, and sessions use protected cookies.
+- Pain-point and claim exports are generated without personal data.
+- Administration operations, team changes and retention deletions are recorded.
+- Each organization can define retention policies. Before deleting, the screen shows the exact scope and deletes nothing yet.
+
+Each point is written so that it can be checked. Saying that authorization is decided on the server means, for example, that hiding a menu item does not protect a screen: what protects it is the rule applied before the data is handed over.
+
+Verified means that someone can go to the product and check it, and that the sentence was written after checking, not before. A practice that exists only in a sales presentation does not make it onto this list, however attractive it sounds.
+
+There is also a rule about artificial intelligence. When it is involved, it classifies and drafts; it does not create figures, and a person decides every action. Nothing is sent or carried out on its own.
+
+### Declared gaps
+
+The second list weighs as much as the first. What does not exist yet is this:
+
+- We do not hold SOC 2 or ISO 27001 certification, and we do not claim GDPR compliance.
+- No external penetration test has been performed.
+- Two-step verification for owners is on our roadmap. It is not required today.
+- We do not offer single sign-on or a customer-facing audit view.
+- There are daily provider backups, without point-in-time recovery, and we make no availability commitments.
+
+Other improvements are on the roadmap, such as a strict content security policy that we are still hardening and a planned audit view. We do not publish dates until we can meet them.
+
+Reading a list of gaps requires telling three things apart: what does not exist, what is planned and what we do not know. What is planned sits on the roadmap and carries no published date. What we do not know is said as such and is not counted in our favor.
+
+Deletion also has a limit worth stating: it does not remove the source data in your tool or copies you keep outside Rovaq.
+
+### Why we publish the gaps
+
+There are four reasons, and none is about image.
+
+- A buyer needs to size the risk before signing. Hiding a gap only moves the discovery to a worse moment.
+- A claim without limits cannot be checked. A limit can: anyone can verify whether it exists or not.
+- It disciplines us. Every sentence in the first list has to survive reading the second, and that discourages the easy adjective.
+- It allows an adult conversation. If a buyer requirement depends on something we do not have today, the right answer is to say so, not to argue.
+
+Nor do we claim that what exists is enough for every business. A gap that a team does not care about can be decisive for another, for example when an internal policy requires something we do not have today. In that case the decision belongs to the buyer, and our job is to give the exact information needed to make it.
+
+There is a useful side effect. When a gap is closed, the change can be read against a clear baseline: the list used to say this and now says that. A page that only adds positive sentences does not let you see what changed or when.
+
+> A promise of total security cannot be verified. A list of practices and gaps can.
+
+### How to read a security page
+
+Beyond Rovaq AI, these questions work with any vendor:
+
+- Facts or adjectives: every claim should be something you can point to in the product or in a document, not just describe with a qualifier.
+- What is missing: a page that declares no gap rarely means there is none.
+- Scope and date: a practice without a review date may describe a state that has already changed.
+- What it does not cover: copies you keep outside the tool are outside the scope of any deletion by the vendor.
+
+The full list lives on the security and privacy page. This article describes the state at the time of publication, and that page is the current reference.
+
+### What we do not claim
+
+- We do not claim total security or the absence of risk: no vendor can guarantee them.
+- We do not claim certifications, regulatory compliance or external audits, because we do not have them.
+- We do not claim that data is anonymized.
+- We do not claim that each read of the data is logged: administration operations, team changes and retention deletions are recorded.
+- We do not promise availability or product dates.
+- We do not present the practices as sufficient for every business: that assessment belongs to the buyer.
+
+---
+
+Fuente: https://rovaq.ai/en/blog/a-recommendation-must-be-debatable
+
+## A recommendation must be debatable: evidence, approval and outcome
+
+When a proposal brings its evidence, a person who decides and a record of what happened, it stops being an opinion and becomes a habit.
+
+In many teams recommendations die the same way: someone writes them in a document or says them in a meeting, nobody debates them with data and a few weeks later nobody remembers who was going to do what. The suggestion was not bad; it simply had no way of being debated.
+
+This article argues that a recommendation becomes useful only when it can be questioned: when it brings its evidence into view, has a person who decides and leaves a record of what happened afterward. With that, a suggestion stops being an opinion and becomes a team habit.
+
+### Without evidence it is ignored
+
+A recommendation without support forces the reader to choose between trusting whoever wrote it or distrusting it. Neither stance is a discussion. Trusting without seeing is delegating blindly, and distrusting without seeing is dismissing without criteria. In both cases the business pays the cost.
+
+With evidence the conversation changes. If the proposal states what it observed, where each figure comes from, why that action is suggested and what is expected, the decision maker can disagree with something specific: the source, the period, the assumption or the expectation. That disagreement is exactly what a recommendation should provoke.
+
+Imagine an analyst proposes reviewing a product description because the product leads the returned money in a channel. If the proposal brings the period, the source and the originating orders, whoever runs the catalog can object that the period is short or that the cause is the packaging and not the description. The objection improves the decision. Without that data, all that remains is one opinion against another.
+
+A debatable proposal answers four questions:
+
+- What was observed, with the source and the cut-off date of each figure.
+- Why this action is suggested and not another.
+- What is expected to be achieved, stated so that it can be measured afterward.
+- Who will be responsible if the decision is to go ahead.
+
+> A recommendation that cannot be debated can only be obeyed or ignored.
+
+### Proceed, Adjust or Dismiss
+
+The decision needs a small, clear vocabulary. On the [To decide](https://rovaq.ai/en/product/to-decide) screen in Rovaq AI, a person chooses among three answers, and each has defined consequences.
+
+- Proceed creates the intervention and the drafts that a person reviews and sends. Nothing is sent automatically.
+- Adjust asks for a reason, which is recorded.
+- Dismiss asks for a reason, which is recorded. Reopening a dismissed proposal creates a new event and deletes nothing.
+
+Asking for the reason is not red tape. A dismissed proposal with a stated reason teaches the team which criteria carry weight, and keeps the same idea from starting from zero each time someone proposes it.
+
+Who can do what also matters. The owner, the analyst and the operator can propose; only the owner can approve; the owner and the operator can carry out. Separating proposing from approving lets anyone with a good observation put it on the table without that turning it into an order.
+
+### Record the outcome
+
+Deciding does not end the cycle. Without a record of what happened, the team does not learn and the next recommendation starts again from opinion. That is why the product shows, while a proposal is in progress, who is responsible, what the commitment was, what stage it is in and which drafts exist.
+
+When there is an outcome, it is measured before and after, and only with observed data. That measurement never presents an assumed benefit: if there is no data, the outcome says there is none instead of filling the gap with an optimistic estimate. That discipline is uncomfortable, but it is what makes the record worth keeping.
+
+A useful record also protects whoever made the proposal. If the outcome was not the one expected, the question stops being who got it wrong and becomes which assumption did not hold, which is a question the team can answer and learn from.
+
+It is worth being clear about what is told here. We describe what the product allows you to do, not results obtained with it.
+
+### How to bring it to your team
+
+The method does not depend on a tool. You can start with a shared sheet and these steps:
+
+1. Write each recommendation with the four answers: what was observed, why, what is expected and who answers for it.
+2. Decide in a short meeting with one of three outcomes, proceed, adjust or dismiss, and write down the reason.
+3. Set from the start how the outcome will be measured, with what data and over what period.
+4. Measure before and after with what was observed, and write what could not be measured as not measured.
+5. Review dismissed proposals from time to time: some deserve to be reopened, and reopening does not erase what came before.
+
+A good first proposal usually comes from a concrete finding, such as the product that leads the returned money in a channel, which is explained in [the article on refunds](https://rovaq.ai/en/blog/refund-leak-you-can-locate).
+
+### What we do not claim
+
+- We do not claim that following a recommendation improves results: the product records what happened, it does not guarantee it.
+- We show no cases or customer results; this article describes what the product allows.
+- We do not promise any financial benefit: the outcome is measured with observed data and, without data, the screen says there is none.
+- We do not say that a dismissed proposal is a mistake: it may be the right decision and it should be recorded.
+- When artificial intelligence is involved, it classifies and drafts; it does not create figures, and nothing is sent or carried out without a person.

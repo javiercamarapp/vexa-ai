@@ -6,7 +6,7 @@ canonical_url: https://rovaq.ai
 alternate_language_url: https://rovaq.ai/en
 language: es-MX
 type: landing
-last_modified: 2026-10-28
+last_modified: 2026-10-30
 robots: noindex
 ---
 
@@ -194,3 +194,10 @@ Solicitar acceso: https://rovaq.ai/solicitar-acceso
 - [Estado del servicio](https://rovaq.ai/estado)
 - [Blog de Rovaq AI](https://rovaq.ai/blog)
 - [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar)
+- [De dónde sale cada número: la procedencia como requisito, no como adorno](https://rovaq.ai/blog/procedencia-de-cada-numero)
+- [La IA clasifica y redacta; las personas deciden](https://rovaq.ai/blog/la-ia-clasifica-las-personas-deciden)
+- [Un puesto, una vista: por qué cada rol ve solo lo que le toca](https://rovaq.ai/blog/un-puesto-una-vista)
+- [Tus exportes de marketplace ya son datos: cómo cargarlos con procedencia](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos)
+- [Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad)
+- [Qué afirmamos y qué no afirmamos sobre seguridad](https://rovaq.ai/blog/que-afirmamos-sobre-seguridad)
+- [Una recomendación debe poder discutirse: evidencia, aprobación y resultado](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse)

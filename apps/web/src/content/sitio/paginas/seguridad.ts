@@ -57,7 +57,7 @@ export const SEGURIDAD: Pagina = {
       tipo: 'lista',
       titulo: b('Hoja de ruta', 'Roadmap'),
       items: [
-        b('Verificación en dos pasos para propietarios, planeada.', 'Two-step verification for owners, planned.'),
+        b('Verificación en dos pasos para administradores del espacio, planeada.', 'Two-step verification for workspace administrators, planned.'),
         b('Una política de contenido estricta, en endurecimiento.', 'A strict content security policy, being hardened.'),
         b('Una vista de auditoría para el cliente, planeada.', 'A customer-facing audit view, planned.'),
         b('Una prueba de penetración externa, planeada.', 'An external penetration test, planned.'),

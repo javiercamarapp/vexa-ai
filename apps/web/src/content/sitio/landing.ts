@@ -101,10 +101,10 @@ export const LANDING = {
     casos: {
       etiqueta: { es: 'Casos de uso', en: 'Use cases' },
       items: [
-        { t: { es: 'Propietario', en: 'Owner' }, d: { es: 'Configura, decide y aprueba.', en: 'Configures, decides and approves.' }, href: { es: '/casos-de-uso/propietario', en: '/en/use-cases/owner' } },
+        { t: { es: 'Administrador del espacio', en: 'Workspace administrator' }, d: { es: 'Configura, decide y aprueba.', en: 'Configures, decides and approves.' }, href: { es: '/casos-de-uso/propietario', en: '/en/use-cases/owner' } },
         { t: { es: 'Analista', en: 'Analyst' }, d: { es: 'Investiga, prepara y propone.', en: 'Investigates, prepares and proposes.' }, href: { es: '/casos-de-uso/analista', en: '/en/use-cases/analyst' } },
         { t: { es: 'Operador', en: 'Operator' }, d: { es: 'Ejecuta las acciones que le asignan.', en: 'Carries out the actions assigned to them.' }, href: { es: '/casos-de-uso/operador', en: '/en/use-cases/operator' } },
-        { t: { es: 'Lector', en: 'Viewer' }, d: { es: 'Consulta sin riesgo de cambiar nada.', en: 'Reads with no risk of changing anything.' }, href: { es: '/casos-de-uso/lector', en: '/en/use-cases/viewer' } },
+        { t: { es: 'Lectura', en: 'Read-only' }, d: { es: 'Consulta sin riesgo de cambiar nada.', en: 'Reads with no risk of changing anything.' }, href: { es: '/casos-de-uso/lector', en: '/en/use-cases/viewer' } },
       ], // PUBLICO. capabilities.ts, menú por rol
     },
     recursos: {
@@ -137,7 +137,7 @@ export const LANDING = {
       { es: 'dinero se te va,', en: 'money slips away,' },
       { es: 'y por qué.', en: 'and why.' },
     ], // Mismo texto del titular partido en tres líneas para la revelación palabra por palabra
-    subtitulo: m(7, 'Clases y sello en Hoy; exposición en Problemas solo con vínculos confirmados por un propietario', { es: 'Rovaq AI mide los reembolsos observados y el ingreso expuesto a cada problema, con la evidencia a la vista y cada cifra rotulada como Observada, Estimada o Inferida.', en: 'Rovaq AI measures observed refunds and the revenue exposed to each problem, with the evidence in plain view and every figure labeled Observed, Estimated or Inferred.' }), // MATIZ. Clases y sello en Hoy; exposición en Problemas solo con vínculos confirmados por un propietario
+    subtitulo: m(7, 'Clases y sello en Hoy; exposición en Problemas solo con vínculos confirmados por un administrador del espacio', { es: 'Rovaq AI mide los reembolsos observados y el ingreso expuesto a cada problema, con la evidencia a la vista y cada cifra rotulada como Observada, Estimada o Inferida.', en: 'Rovaq AI measures observed refunds and the revenue exposed to each problem, with the evidence in plain view and every figure labeled Observed, Estimated or Inferred.' }), // MATIZ. Clases y sello en Hoy; exposición en Problemas solo con vínculos confirmados por un administrador del espacio
     limite: { es: 'Siempre ingreso bruto, nunca margen. La exposición es una cifra inferida, no una pérdida.', en: 'Always gross revenue, never margin. Exposure is an inferred figure, not a loss.' }, // PUBLICO. Nota de ingreso bruto en Hoy, Brechas y CFO; clase Inferido
     titularReserva: { es: 'Cada cifra, con su evidencia a la vista.', en: 'Every figure, with its evidence in plain view.' }, // PUBLICO. Para título de pestaña, tarjetas sociales y anuncios sin subtítulo
     titularBusqueda: { es: 'Ve dónde se concentra el dinero devuelto.', en: 'See where returned money concentrates.' }, // PUBLICO. Para la página de Fuga de reembolsos y búsqueda
@@ -356,8 +356,8 @@ export const LANDING = {
         etiqueta: { es: 'Módulo 03', en: 'Module 03' },
         nombre: { es: 'Exposición', en: 'Exposure' },
         titulo: { es: 'Cuantifica en ingreso bruto', en: 'Quantify in gross revenue' },
-        texto: m(7, 'Fuga de reembolsos y Problemas. Condición: exposición solo con vínculos problema a pedido confirmados por un propietario', { es: 'Cada problema muestra ingreso bruto expuesto, rotulado Inferido y nunca como pérdida. Cada cifra lleva su clase, fuente y corte.', en: 'Each problem shows exposed gross revenue, labeled Inferred and never as a loss. Every figure carries class, source and cut-off.' }), // MATIZ. Fuga de reembolsos y Problemas. Condición: exposición solo con vínculos problema a pedido confirmados por un propietario
-        limite: { es: 'La exposición se calcula solo con los vínculos entre problema y pedido que un propietario confirmó.', en: 'Exposure is calculated only with the problem-to-order links that an owner confirmed.' }, // PUBLICO. EXPOSURE.md, agent-datos CONTRACT.md
+        texto: m(7, 'Fuga de reembolsos y Problemas. Condición: exposición solo con vínculos problema a pedido confirmados por un administrador del espacio', { es: 'Cada problema muestra ingreso bruto expuesto, rotulado Inferido y nunca como pérdida. Cada cifra lleva su clase, fuente y corte.', en: 'Each problem shows exposed gross revenue, labeled Inferred and never as a loss. Every figure carries class, source and cut-off.' }), // MATIZ. Fuga de reembolsos y Problemas. Condición: exposición solo con vínculos problema a pedido confirmados por un administrador del espacio
+        limite: { es: 'La exposición se calcula solo con los vínculos entre problema y pedido que un administrador del espacio confirmó.', en: 'Exposure is calculated only with the problem-to-order links that a workspace administrator confirmed.' }, // PUBLICO. EXPOSURE.md, agent-datos CONTRACT.md
         pantallas: [
           { t: { es: 'Fuga de reembolsos', en: 'Refund leakage' }, href: { es: '/producto/fuga-de-reembolsos', en: '/en/product/refund-leakage' } },
           { t: { es: 'Finanzas', en: 'Finance' }, href: { es: '/producto/finanzas', en: '/en/product/finance' } },
@@ -407,7 +407,7 @@ export const LANDING = {
       {
         etiqueta: { es: 'Reportes', en: 'Reports' },
         t: { es: 'Un reporte que se puede auditar', en: 'A report you can audit' },
-        d: { es: 'Exporta las cifras del periodo en CSV o PDF, con las mismas cifras de la pantalla y cada una con su fuente y su corte.', en: 'Export the figures of the period as CSV or PDF, with the same figures as the screen and each one with its source and cut-off.' }, // PUBLICO. CFO, informe CSV y PDF; solo propietario y analista
+        d: { es: 'Exporta las cifras del periodo en CSV o PDF, con las mismas cifras de la pantalla y cada una con su fuente y su corte.', en: 'Export the figures of the period as CSV or PDF, with the same figures as the screen and each one with its source and cut-off.' }, // PUBLICO. CFO, informe CSV y PDF; solo administrador del espacio y analista
       },
     ],
     nota: { es: 'Son cambios de método. No publicamos cifras de ahorro, retorno ni recuperación.', en: 'These are changes of method. We do not publish figures of savings, return or recovery.' }, // PUBLICO. Regla del dueño
@@ -424,7 +424,7 @@ export const LANDING = {
     capsulaAlt: { es: 'Cápsula de vidrio negro con borde fino que lleva el nombre del puesto elegido.', en: 'Black glass capsule with a thin border that carries the name of the chosen role.' },
     items: [
       {
-        t: { es: 'Propietario', en: 'Owner' },
+        t: { es: 'Administrador del espacio', en: 'Workspace administrator' },
         d: { es: 'Configura, decide y aprueba. Administra equipo, avisos y retención.', en: 'Configures, decides and approves. Manages team, notices and retention.' },
         ve: { es: 'Todas las pantallas, el equipo, los avisos y la retención.', en: 'All screens, the team, notices and retention.' },
         href: { es: '/casos-de-uso/propietario', en: '/en/use-cases/owner' },
@@ -442,17 +442,17 @@ export const LANDING = {
         href: { es: '/casos-de-uso/operador', en: '/en/use-cases/operator' },
       },
       {
-        t: { es: 'Lector', en: 'Viewer' },
+        t: { es: 'Lectura', en: 'Read-only' },
         d: { es: 'Consulta en solo lectura, sin riesgo de cambiar nada.', en: 'Reads with read-only access, with no risk of changing anything.' },
         ve: { es: 'Las pantallas que le corresponden, sin poder modificar datos, conexiones ni decisiones.', en: 'The screens that apply to them, unable to modify data, connections or decisions.' },
         href: { es: '/casos-de-uso/lector', en: '/en/use-cases/viewer' },
       },
-    ], // PUBLICO las cuatro. Matriz de capacidades; no se afirma qué datos personales ve el lector, candidato RLS-01 abierto
+    ], // PUBLICO las cuatro. Matriz de capacidades; no se afirma qué datos personales ve el puesto de lectura, candidato RLS-01 abierto
     lideres: {
       titulo: { es: 'Finanzas y experiencia del cliente leen el mismo problema: el dinero que se devuelve y la razón por la que se devuelve.', en: 'Finance and customer experience read the same problem: the money that is returned and the reason it is returned.' }, // PUBLICO. Dos ángulos, sin cifras de correlación
       finanzas: {
         t: { es: 'Finanzas', en: 'Finance' },
-        d: m(7, 'Exposición solo con vínculos problema a pedido confirmados por un propietario; sin ellos la pantalla dice No disponible', { es: 'Quien responde por el ingreso expuesto y los reembolsos ve cuánto dinero se devuelve por canal, producto y mes, con cada cifra rotulada por su clase, su fuente y su corte.', en: 'Whoever answers for exposed revenue and refunds sees how much money is returned by channel, product and month, with every figure labeled by class, source and cut-off.' }),
+        d: m(7, 'Exposición solo con vínculos problema a pedido confirmados por un administrador del espacio; sin ellos la pantalla dice No disponible', { es: 'Quien responde por el ingreso expuesto y los reembolsos ve cuánto dinero se devuelve por canal, producto y mes, con cada cifra rotulada por su clase, su fuente y su corte.', en: 'Whoever answers for exposed revenue and refunds sees how much money is returned by channel, product and month, with every figure labeled by class, source and cut-off.' }),
         href: { es: '/producto/fuga-de-reembolsos', en: '/en/product/refund-leakage' },
       },
       cx: {
@@ -553,7 +553,7 @@ export const LANDING = {
     noHay: [
       { es: 'No tenemos certificación SOC 2 ni ISO 27001, y no afirmamos cumplimiento de GDPR.', en: 'We do not hold SOC 2 or ISO 27001 certification, and we do not claim GDPR compliance.' }, // PUBLICO. Ausencia declarada, excepción permitida
       { es: 'No se ha hecho una prueba de penetración externa.', en: 'No external penetration test has been performed.' }, // PUBLICO
-      { es: 'La verificación en dos pasos para propietarios está en nuestra hoja de ruta. Hoy no se exige.', en: 'Two-step verification for owners is on our roadmap. It is not required today.' }, // PUBLICO
+      { es: 'La verificación en dos pasos para administradores del espacio está en nuestra hoja de ruta. Hoy no se exige.', en: 'Two-step verification for workspace administrators is on our roadmap. It is not required today.' }, // PUBLICO
       { es: 'No ofrecemos inicio de sesión único ni una vista de auditoría para el cliente.', en: 'We do not offer single sign-on or a customer-facing audit view.' }, // PUBLICO
       { es: 'Hay respaldos diarios de nuestro proveedor, sin recuperación a un punto en el tiempo, y no ofrecemos compromisos de disponibilidad.', en: 'There are daily provider backups, without point-in-time recovery, and we make no availability commitments.' }, // PUBLICO. RB-03
     ],
@@ -599,7 +599,7 @@ export const LANDING = {
     ruta: [
       { es: 'Conectores directos con Amazon, Walmart y Shopify. Hoy se cargan sus exportes.', en: 'Direct connectors for Amazon, Walmart and Shopify. Today their exports are loaded.' }, // PUBLICO. Marcas solo en texto
       { es: 'Mapa de problemas completo por dirección de envío, que requiere esos conectores.', en: 'A full problem map by shipping address, which requires those connectors.' }, // PUBLICO
-      { es: 'Verificación en dos pasos para propietarios.', en: 'Two-step verification for owners.' }, // PUBLICO
+      { es: 'Verificación en dos pasos para administradores del espacio.', en: 'Two-step verification for workspace administrators.' }, // PUBLICO
     ],
     posicion: { es: 'Rovaq no reemplaza tu herramienta de soporte. Lee las conversaciones de HubSpot en solo lectura y las cruza con los pedidos y reembolsos que cargas.', en: 'Rovaq does not replace your support tool. It reads HubSpot conversations in read-only mode and connects them with the orders and refunds you load.' }, // PUBLICO. Transporte que solo emite GET
     chipsAuto: [
@@ -650,7 +650,7 @@ export const LANDING = {
       { es: 'No se conecta de forma directa con Amazon, Walmart ni Shopify. Hoy se cargan sus exportes.', en: 'It does not connect directly with Amazon, Walmart or Shopify. Today their exports are loaded.' }, // PUBLICO. providers.mjs con transporte apagado
       m(11, 'redact.mjs. Condición: IA sobre texto depende de banderas; revisión de Responsable A y abogado', { es: 'No anonimiza tus datos. Cuando se usa IA sobre texto, se enmascaran correos y teléfonos, y la redacción no equivale a anonimización.', en: 'It does not anonymize your data. When AI is used on text, emails and phone numbers are masked, and redaction is not anonymization.' }, { req: ['responsable_a','abogado'] }), // MATIZ. redact.mjs. Condición: IA sobre texto depende de banderas; revisión de Responsable A y abogado
       m(2, 'agent/server.ts, modelo de reglas. Si cambia el modo de Pregúntale, esta fila se reescribe', { es: 'No usa un modelo de lenguaje para responder en Pregúntale a tus datos y no busca en internet.', en: 'It does not use a language model to answer in Ask your data and it does not search the internet.' }), // MATIZ. agent/server.ts, modelo de reglas. Si cambia el modo de Pregúntale, esta fila se reescribe
-      { es: 'No tiene certificación SOC 2 ni ISO 27001, no afirma cumplimiento de GDPR y la verificación en dos pasos de propietarios está en hoja de ruta.', en: 'It holds no SOC 2 or ISO 27001 certification, does not claim GDPR compliance, and two-step verification for owners is on the roadmap.' }, // PUBLICO. Seguridad 03, sección 3
+      { es: 'No tiene certificación SOC 2 ni ISO 27001, no afirma cumplimiento de GDPR y la verificación en dos pasos de administradores del espacio está en hoja de ruta.', en: 'It holds no SOC 2 or ISO 27001 certification, does not claim GDPR compliance, and two-step verification for workspace administrators is on the roadmap.' }, // PUBLICO. Seguridad 03, sección 3
       { es: 'No reemplaza tu herramienta de soporte. Lee las conversaciones de HubSpot en solo lectura y no escribe en tu CRM.', en: 'It does not replace your support tool. It reads HubSpot conversations in read-only mode and does not write to your CRM.' }, // PUBLICO. Transporte solo GET
     ],
     cierre: { es: 'Si algo de esta lista cambia, se dirá aquí.', en: 'If anything on this list changes, it will be stated here.' }, // PUBLICO. Hoja de ruta
@@ -694,7 +694,7 @@ export const LANDING = {
       },
       {
         q: { es: '¿Qué tan seguro es y qué certificaciones tienen?', en: 'How secure is it and what certifications do you hold?' },
-        a: { es: 'Hay aislamiento por organización en la base de datos, cuatro roles, conexiones de lectura y registro de operaciones de administración. No tenemos SOC 2 ni ISO 27001, no hemos hecho una prueba de penetración externa y la verificación en dos pasos de propietarios está en hoja de ruta. El detalle está en la página de Seguridad.', en: 'There is isolation per organization in the database, four roles, read connections and a record of administration operations. We hold no SOC 2 or ISO 27001, we have not run an external penetration test and two-step verification for owners is on the roadmap. The detail is on the Security page.' }, // PUBLICO. 03 secciones 2 y 3
+        a: { es: 'Hay aislamiento por organización en la base de datos, cuatro roles, conexiones de lectura y registro de operaciones de administración. No tenemos SOC 2 ni ISO 27001, no hemos hecho una prueba de penetración externa y la verificación en dos pasos de administradores del espacio está en hoja de ruta. El detalle está en la página de Seguridad.', en: 'There is isolation per organization in the database, four roles, read connections and a record of administration operations. We hold no SOC 2 or ISO 27001, we have not run an external penetration test and two-step verification for workspace administrators is on the roadmap. The detail is on the Security page.' }, // PUBLICO. 03 secciones 2 y 3
       },
       {
         q: { es: '¿Rovaq reemplaza mi herramienta de soporte?', en: 'Does Rovaq replace my support tool?' },
@@ -753,10 +753,10 @@ export const LANDING = {
       {
         t: { es: 'Casos de uso', en: 'Use cases' },
         items: [
-          { t: { es: 'Propietario', en: 'Owner' }, href: { es: '/casos-de-uso/propietario', en: '/en/use-cases/owner' } },
+          { t: { es: 'Administrador del espacio', en: 'Workspace administrator' }, href: { es: '/casos-de-uso/propietario', en: '/en/use-cases/owner' } },
           { t: { es: 'Analista', en: 'Analyst' }, href: { es: '/casos-de-uso/analista', en: '/en/use-cases/analyst' } },
           { t: { es: 'Operador', en: 'Operator' }, href: { es: '/casos-de-uso/operador', en: '/en/use-cases/operator' } },
-          { t: { es: 'Lector', en: 'Viewer' }, href: { es: '/casos-de-uso/lector', en: '/en/use-cases/viewer' } },
+          { t: { es: 'Lectura', en: 'Read-only' }, href: { es: '/casos-de-uso/lector', en: '/en/use-cases/viewer' } },
         ],
       },
       {
@@ -924,8 +924,8 @@ export const LANDING = {
     hero: { es: 'Objeto de adorno: un anillo de grafito con un disco de vidrio esmerilado y una pequeña cuenta roja, que evoca una lente de evidencia.', en: 'Decorative object: a graphite ring holding a frosted glass disc with a small red bead, evoking an evidence lens.' }, // SPEC 4.2. S1, S10, nodo 05 del hilo y 404
     o1: { es: 'Objeto de adorno: tres láminas de vidrio esmerilado unidas por un hilo fino, que evoca datos importados de varias fuentes.', en: 'Decorative object: three frosted glass plates joined by a fine thread, evoking data imported from several sources.' }, // Paso 1 Importa, nodo 01 del hilo, orbe del Analista
     o2: { es: 'Objeto de adorno: tres cúmulos de pequeñas esferas de vidrio unidos por líneas finas, que evoca datos agrupados en problemas.', en: 'Decorative object: three clusters of small glass spheres joined by fine lines, evoking data grouped into problems.' }, // Paso 2 Agrupa, orbe del Operador
-    o3: { es: 'Objeto de adorno: una probeta graduada de vidrio llena de partículas hasta la mitad, con una marca de nivel roja, que evoca una cifra medida.', en: 'Decorative object: a graduated glass cylinder half filled with particles and a red level mark, evoking a measured figure.' }, // Paso 3 Cuantifica, orbe del Propietario
-    o4: { es: 'Objeto de adorno: un disco de grafito con tres muescas y una esfera de vidrio en la central, que evoca una decisión entre tres opciones.', en: 'Decorative object: a graphite disc with three notches and a glass sphere in the central one, evoking a choice among three options.' }, // Paso 4 Decide, orbe del Lector
+    o3: { es: 'Objeto de adorno: una probeta graduada de vidrio llena de partículas hasta la mitad, con una marca de nivel roja, que evoca una cifra medida.', en: 'Decorative object: a graduated glass cylinder half filled with particles and a red level mark, evoking a measured figure.' }, // Paso 3 Cuantifica, orbe del Administrador del espacio
+    o4: { es: 'Objeto de adorno: un disco de grafito con tres muescas y una esfera de vidrio en la central, que evoca una decisión entre tres opciones.', en: 'Decorative object: a graphite disc with three notches and a glass sphere in the central one, evoking a choice among three options.' }, // Paso 4 Decide, orbe del puesto de lectura
     nubeDePuntos: { es: 'Forma hecha de puntos de luz que cambia de un objeto a otro al avanzar los cuatro pasos.', en: 'Shape made of points of light that changes from one object to another as the four steps advance.' },
     lineaDeScroll: { es: 'Línea fina que se dibuja al desplazarte y que une los títulos de la página.', en: 'Fine line that draws itself as you scroll and joins the titles of the page.' },
     arcoDePuestos: { es: 'Arco delgado que sostiene cuatro esferas pequeñas, una por puesto.', en: 'Thin arc holding four small spheres, one for each role.' },
@@ -1025,11 +1025,11 @@ export const LANDING = {
       },
       puestos: {
         titulo: { es: 'Casos de uso | Cada puesto ve lo que le corresponde', en: 'Use Cases | Each Role Sees What Belongs to It | Rovaq AI' },
-        descripcion: { es: 'Propietario, analista, operador y lector ven solo lo que les toca. La autorización se decide en el servidor y ocultar un menú no protege una pantalla.', en: 'Owner, analyst, operator and viewer each see only what applies to them. Authorization is decided on the server and hiding a menu does not protect a screen.' },
+        descripcion: { es: 'Administrador del espacio, analista, operador y lectura ven solo lo que les toca. La autorización se decide en el servidor; ocultar un menú no protege.', en: 'Workspace administrator, analyst, operator and read-only each see only their part. Authorization is decided on the server, not by hiding a menu.' },
         href: { es: '/#puestos', en: '/en#roles' },
         enlaces: [
           { t: { es: 'Casos de uso', en: 'Use cases' }, href: { es: '/casos-de-uso', en: '/en/use-cases' } },
-          { t: { es: 'Propietario', en: 'Owner' }, href: { es: '/casos-de-uso/propietario', en: '/en/use-cases/owner' } },
+          { t: { es: 'Administrador del espacio', en: 'Workspace administrator' }, href: { es: '/casos-de-uso/propietario', en: '/en/use-cases/owner' } },
         ],
       },
       pantallas: {

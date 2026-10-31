@@ -19,7 +19,7 @@ import type {AgentState} from '../agente/types';
 import {CFO_TOOLS} from '../../../../../packages/cfo-copilot/src/client.mjs';
 import type {CfoReport} from '../../../../../packages/cfo-copilot/src/index.mjs';
 import {FugaPantalla} from '../refunds/fuga-pantalla';
-import {MODOS, puedeUsarModo} from '../../lib/copiloto/modos.mjs';
+import {MODOS, chipsDe, directasDe, puedeUsarModo} from '../../lib/copiloto/modos.mjs';
 import {AreaRestringida} from './area-restringida';
 import {AccionesCfo, BriefingCfoUna} from './briefing-cfo-una';
 import {Ctl} from '../agente/ctl';
@@ -86,7 +86,8 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
   }, [verInforme]);
   const hrefInforme = useCallback((ancla?: string) => { const p = new URLSearchParams(sp?.toString() ?? ''); p.set('vista', 'informe'); return (modo.ruta) + '?' + p.toString() + (ancla ? '#' + ancla : ''); }, [sp, modo.ruta]);
 
-  const sugerenciasCfo = useMemo(() => modo.chipsPorTema.flatMap(t => [...t.preguntas]).slice(0, 3), [modo]);
+  const chips = useMemo(() => chipsDe(modo, idioma), [modo, idioma]);
+  const sugerenciasCfo = useMemo(() => chips.flatMap(t => [...t.preguntas]).slice(0, 3), [chips]);
   const runner: Runner | undefined = useMemo(() => !esCfo ? undefined : async (body, signal, onEvent) => {
     const delegar = async () => { // no es una pregunta de CFO: la contesta el agente general y el modo queda en el historial de este chat
       const a = await runTurn({...body, directa: undefined}, signal, onEvent);
@@ -109,9 +110,9 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
   if (estado.kind === 'error') return <div className="cn-gate" role="alert"><h1>{t('cop.errAbrir', {modo: tituloModo})}</h1><p>{t('cop.errAbrirCuerpo')}</p><Ctl variant="soft" icon={<Refresh />} onClick={() => { setEstado({kind: 'cargando'}); setIntento(n => n + 1); }}>{t('cop.reintentar')}</Ctl></div>;
 
   const base = estado.base, siguientes = brief?.siguientes ?? [];
-  const directas = {...base.suggestions.directas, ...modo.directas, ...Object.fromEntries(siguientes.map(s => [s.pregunta, s.directa]))};
+  const directas = {...base.suggestions.directas, ...directasDe(modo, idioma), ...Object.fromEntries(siguientes.map(s => [s.pregunta, s.directa]))};
   const data: AgentState = {...base, scope: base.scope + '-' + modo.clave, toolLabels: esCfo ? {...base.toolLabels, ...ETIQUETAS_CFO} : base.toolLabels, limits: {...base.limits, maxQuestionChars: esCfo ? 600 : base.limits.maxQuestionChars, maxTurnsPerConversation: LIMITS.maxTurnsPerConversation},
-    suggestions: {...base.suggestions, directas, categorias: modo.chipsPorTema.map(t => ({titulo: t.titulo, preguntas: [...t.preguntas]})), sugerencias: []}};
+    suggestions: {...base.suggestions, directas, categorias: chips.map(t => ({titulo: t.titulo, preguntas: [...t.preguntas]})), sugerencias: []}};
   const cuerpoBriefing = () => {
     if (modo.briefing === 'refunds') return <FugaPantalla embebido organization={organization} />;
     if (!esCfo) return null;
@@ -144,7 +145,7 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
           <Ctl className="cn-colapsa" aria-expanded={verInforme} onClick={() => setVerInforme(v => !v)}>{verInforme ? t('cop.ocultarInforme', {modo: tituloModo}) : t('cop.mostrarInforme', {modo: tituloModo})}</Ctl>
           <div hidden={!verInforme}>{resumen}</div>
         </div>;
-        return <div className="cn-portada" data-hilo={false}>{resumen}<PreguntasSugeridas temas={modo.chipsPorTema} siguientes={siguientes} ask={ask} /></div>;
+        return <div className="cn-portada" data-hilo={false}>{resumen}<PreguntasSugeridas temas={chips} siguientes={siguientes} ask={ask} /></div>;
       }
       // CFO en una sola pantalla: el informe vive arriba (KPI en una fila + pestañas) y el chat queda anclado abajo; con un hilo abierto el informe se despliega a demanda.
       if (hayHilo) return <div className="cn-portada cn-una" data-hilo={true}><div hidden={!verInforme} className="cn-una-cuerpo">{resumen}</div></div>;
@@ -157,7 +158,7 @@ export function CopilotoNegocio({modo: clave, organization, roleOverride, query 
           <h1>{tituloModo}</h1>
           <p className="agente-sub">{t('cop.hero')}</p>
         </header>
-        <TemasRapidos temas={modo.chipsPorTema} ask={ask} />
+        <TemasRapidos temas={chips} ask={ask} />
         <section className="cn-tarjeta" aria-label={t('cop.informeDe', {modo: tituloModo})} data-estado={tj.estado}>
           <div className="cn-tarjeta-t" role={tj.estado === 'cargando' ? 'status' : undefined}><b>{t('cop.informeDe', {modo: tituloModo})}</b><span title={tj.texto}>{tj.texto}</span></div>
           {tj.accion === 'abrir' && <Ctl variant="soft" aria-expanded={false} onClick={() => setVerInforme(true)}>{t('cop.abrir')}</Ctl>}

@@ -40,6 +40,22 @@ export const MODOS = Object.freeze({
   }),
 });
 
+// Inglés de los temas y preguntas de los chips (el español es el identificador interno que usan `directas` y el historial).
+const TEMA_EN = Object.freeze({Resultados: 'Results', 'Canales y calidad': 'Channels and quality', Riesgos: 'Risks', CCO: 'CCO', Reembolsos: 'Refunds'});
+const PREGUNTA_EN = Object.freeze({
+  '¿Cómo cerró el último mes por moneda?': 'How did the last month close by currency?', '¿Cómo vamos contra el mes anterior?': 'How are we doing against the previous month?', '¿Cuál es la proyección de ingresos?': 'What is the revenue projection?',
+  '¿Qué canal pesa más en los pedidos?': 'Which channel weighs the most in orders?', '¿Cuántos reembolsos no traen importe?': 'How many refunds have no amount?', '¿Cuánto cuesta la mala calidad de datos?': 'How much does poor data quality cost?',
+  '¿Hay alertas activas?': 'Are there active alerts?', '¿Qué problemas exponen más ingresos?': 'Which problems expose the most revenue?', '¿Cómo rinde cada SKU en Amazon?': 'How does each SKU perform on Amazon?',
+  '¿Qué SKU llevan 3 meses sin venta?': 'Which SKUs have had no sales for 3 months?', '¿Cómo se comparan las modalidades de venta de Amazon y Walmart?': 'How do the Amazon and Walmart selling models compare?', '¿Desde qué bodega sale cada SKU en Amazon y Walmart?': 'Which warehouse does each SKU ship from on Amazon and Walmart?',
+  '¿Cuánto dinero en reembolsos tuvimos por marketplace?': 'How much money did we have in refunds by marketplace?', '¿Cómo evolucionaron los reembolsos mes a mes?': 'How did refunds evolve month by month?',
+});
+/** Pregunta de un chip en el idioma pedido. */
+export const preguntaDe = (q, idioma) => (idioma === 'en' ? PREGUNTA_EN[q] ?? q : q);
+/** Temas con sus preguntas en el idioma pedido ([{titulo, preguntas[]}]). */
+export const chipsDe = (modo, idioma) => modo.chipsPorTema.map(t => ({titulo: idioma === 'en' ? TEMA_EN[t.titulo] ?? t.titulo : t.titulo, preguntas: t.preguntas.map(q => preguntaDe(q, idioma))}));
+/** Consultas directas de los chips, con la pregunta en el idioma pedido como clave. */
+export const directasDe = (modo, idioma) => Object.fromEntries(Object.entries(modo.directas).map(([q, d]) => [preguntaDe(q, idioma), d]));
+
 /** Rutas que se pintan con el shell del copiloto (sin encabezado de página). Las demás áreas se añaden registrando su modo. */
 /** Rutas donde la pantalla ES el chat (sin encabezado del espacio): /refunds es una pantalla normal aunque tenga un modo registrado. */
 export const RUTAS_COPILOTO = Object.freeze([...new Set(Object.values(MODOS).filter(m => m.briefing !== 'refunds').map(m => m.ruta))]);

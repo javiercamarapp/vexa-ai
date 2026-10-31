@@ -9,3 +9,7 @@ export function modoPorRuta(pathname: string): Modo | null;
 export function puedeUsarModo(modo: Modo | null, role: string): boolean;
 export function textoSoloPara(modo: Modo): string;
 export function problemasDeModo(modo: unknown): string[];
+
+export function preguntaDe(q: string, idioma: string): string;
+export function chipsDe(modo: Modo, idioma: string): {titulo: string; preguntas: string[]}[];
+export function directasDe(modo: Modo, idioma: string): Record<string, {tool: string; args: Record<string, unknown>}>;

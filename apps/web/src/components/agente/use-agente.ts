@@ -4,6 +4,8 @@ import {useCallback,useEffect,useRef,useState} from 'react';
 import type {Answer,ChatMessage,Conversation,Direct,Step} from './types';
 import type {AdjuntoResumen} from './attachments';
 import {loadConversations,saveConversations,titleOf} from './store';
+import {traducir} from '../../lib/i18n';
+const idiomaDoc=():'es'|'en'=>typeof document!=='undefined'&&document.documentElement.lang==='es'?'es':'en';
 export const PHASES:ReadonlyArray<readonly [number,string]>=[[0,'Entendiendo tu pregunta…'],[2500,'Consultando tus datos…'],[8000,'Armando la respuesta…'],[20000,'Sigo trabajando en esto…']];
 const TIMEOUT_MS=75000;
 /** Tiempo mínimo que se ve «pensando» antes de mostrar una respuesta correcta. */
@@ -26,8 +28,8 @@ export const failAnswerOf=failAnswer;
 export async function runTurn(body:unknown,signal:AbortSignal,onEvent:(e:TurnEvent)=>void):Promise<Answer>{
  const res=await fetch('/api/agent/turn',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal,cache:'no-store'});
  if(!res.ok){
-  if(res.status===401||res.status===403)return failAnswer('forbidden','Tu rol no tiene acceso a estas consultas.');
-  if(res.status===400||res.status===413)return failAnswer('invalid_input','No pude leer esa pregunta; reescríbela más corta.');
+  if(res.status===401||res.status===403)return failAnswer('forbidden',traducir(idiomaDoc(),'tr.err.agRol'));
+  if(res.status===400||res.status===413)return failAnswer('invalid_input',traducir(idiomaDoc(),'tr.err.agSolicitud'));
   return failAnswer('unavailable','');
  }
  let final:Answer|null=null;

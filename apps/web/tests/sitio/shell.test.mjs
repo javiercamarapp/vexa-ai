@@ -11,7 +11,7 @@ import { PAGINAS, RUTAS, rutaDe, idDeRuta } from '../../src/content/sitio/regist
 import { FECHA_CONTENIDO } from '../../src/content/sitio/fecha-contenido.mjs';
 import { PAGINAS_INTERNAS } from '../../src/content/sitio/paginas/index.ts';
 
-const ARTICULOS = PAGINAS_INTERNAS.filter((x) => /^a\d$/.test(x.id));
+const ARTICULOS = PAGINAS_INTERNAS.filter((x) => /^a\d$/.test(x.id) && x.estado === 'publicable');
 import { LOGOS } from '../../../../packages/workspace-service/marca.mjs';
 
 const WEB = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -208,15 +208,21 @@ test('un artículo sin contenido da 404 y uno con contenido se rinde: a1 sí, y 
   }
   assert.equal(R.estados.a1, true);
   assert.equal(R.estados.blog, true);
-  assert.equal(R.estados.estado, false, 'Estado sigue pendiente de revisión');
+  assert.equal(R.estados.estado, true, 'Estado se publica');
+  assert.equal(R.estados.a7, false, 'a7 queda pendiente de revisión');
+  assert.equal(ARTICULOS.length, 7, 'siete artículos en el lanzamiento');
 });
 
-test('Estado devuelve el 404 propio y no aparece como enlace en ninguna página rendida (pie incluido)', () => {
+test('Estado se rinde (sin notFound) y el pie lo enlaza; a7 da 404 y ninguna página rendida lo enlaza', () => {
   for (const lang of ['es', 'en']) {
-    assert.ok(R.lanzados.includes(claveLanzada(lang, rutaDe('estado', lang))), `estado.${lang} lanza notFound`);
-    assert.ok(!R.casos.some((c) => c.nombre === `pagina:${lang}:estado`), `estado.${lang} no se rinde`);
+    assert.ok(!R.lanzados.includes(claveLanzada(lang, rutaDe('estado', lang))), `estado.${lang} no lanza notFound`);
+    assert.ok(R.casos.some((c) => c.nombre === `pagina:${lang}:estado`), `estado.${lang} se rinde`);
+    assert.ok(R.lanzados.includes(claveLanzada(lang, rutaDe('a7', lang))), `a7.${lang} lanza notFound`);
+    assert.ok(!R.casos.some((c) => c.nombre === `pagina:${lang}:a7`), `a7.${lang} no se rinde`);
+    const inicio = R.casos.find((c) => c.nombre === `pagina:${lang}:blog`).html;
+    assert.ok(inicio.includes(`href="${rutaDe('estado', lang)}"`), `${lang}: el pie enlaza Estado`);
   }
-  for (const c of R.casos) for (const lang of ['es', 'en']) assert.ok(!c.html.includes(`href="${rutaDe('estado', lang)}"`), `${c.nombre} enlaza Estado`);
+  for (const c of R.casos) for (const lang of ['es', 'en']) assert.ok(!c.html.includes(`href="${rutaDe('a7', lang)}"`), `${c.nombre} enlaza a7`);
 });
 
 test('a1 se rinde como artículo: un h1, fecha en time, tiempo de lectura, tabla de contenido, nota y JSON-LD BlogPosting', () => {
@@ -244,6 +250,7 @@ test('el índice del blog lista los artículos con su fecha, su subtítulo corto
     assert.match(idx, /<ol class="s-art-indice">/);
     assert.ok(idx.includes(lang === 'es' ? '/blog/rss.xml' : '/en/blog/rss.xml'));
     for (const a of ARTICULOS) assert.ok(idx.includes(`href="${rutaDe(a.id, lang)}"`), `${a.id}.${lang} en el índice`);
+    assert.ok(!idx.includes(rutaDe('a7', lang)), `a7.${lang} fuera del índice`);
     const a1 = ARTICULOS.find((a) => a.id === 'a1');
     assert.ok(idx.includes(a1.subtitulo[lang].replace(/&/g, '&amp;')), 'la tarjeta lleva el subtítulo');
     assert.ok(!idx.includes(a1.resumen[lang].replace(/&/g, '&amp;')), 'no el resumen largo');

@@ -29,17 +29,12 @@ export const BLOG_INDICE: Pagina = {
       vacio: b('Todavía no hay artículos publicados.', 'There are no published articles yet.'),
     },
     {
-      tipo: 'lista',
-      titulo: b('Temas', 'Topics'),
+      tipo: 'enlaces',
+      titulo: b('Del blog al producto', 'From the blog to the product'),
       items: [
-        b('Reembolsos: dónde se concentra el dinero devuelto y qué evidencia hace falta para presentar un reclamo.', 'Refunds: where returned money concentrates and what evidence it takes to file a claim.'),
-        b('Procedencia: la fuente, la fecha de corte y lo que todavía no se sabe de cada cifra.', 'Provenance: the source, the cut-off date and what is still unknown about each figure.'),
-        b('Puntos de dolor: cómo pasar del texto libre de las conversaciones a una prioridad con tamaño y evidencia.', 'Pain points: how to go from the free text of conversations to a priority with size and evidence.'),
-        b('Decisiones: propuestas con evidencia, una persona que decide y un resultado que queda registrado.', 'Decisions: proposals with evidence, a person who decides and an outcome that gets recorded.'),
-        b('Inteligencia artificial: qué trabajo conviene darle a un modelo, por qué los importes no salen de él y quién decide cada acción.', 'Artificial intelligence: which work belongs with a model, why amounts do not come from it and who decides every action.'),
-        b('Puestos: por qué cada persona ve solo lo que le toca y dónde se decide el acceso.', 'Roles: why each person sees only what applies to them and where access is decided.'),
-        b('Fuentes: cómo cargar tus exportes de Excel y CSV con vista previa y con el origen de cada fila.', 'Sources: how to load your Excel and CSV exports with a preview and with the origin of each row.'),
-        b('Seguridad: qué prácticas describimos, qué brechas declaramos y cómo leer una página de seguridad.', 'Security: which practices we describe, which gaps we declare and how to read a security page.'),
+        { t: b('Confianza de los datos', 'Data trust'), d: b('Hasta qué fecha llegan tus datos, qué cubren y qué no se sabe.', 'What date your data reaches, what it covers and what is not known.'), href: { es: '/producto/confianza-de-los-datos', en: '/en/product/data-trust' } },
+        { t: b('Puntos de dolor', 'Pain points'), d: b('De las conversaciones de soporte a una prioridad con evidencia.', 'From support conversations to a priority backed by evidence.'), href: { es: '/producto/puntos-de-dolor', en: '/en/product/pain-points' } },
+        { t: b('Por decidir', 'To decide'), d: b('Las propuestas con su evidencia, para que una persona apruebe, ajuste o descarte.', 'Proposals with their evidence, for a person to approve, adjust or dismiss.'), href: { es: '/producto/por-decidir', en: '/en/product/to-decide' } },
       ],
     },
   ],
@@ -74,7 +69,7 @@ export const ARTICULO_A1: Articulo = articulo({
     ),
     p(
       'Esa lectura tiene un problema. Un número único mezcla cosas que no se parecen, y lo que no se separa no se puede atender. Conviene cambiar de postura: tratar el dinero devuelto como una fuga, es decir, algo que tiene un lugar, una forma y, con trabajo, un responsable.',
-      'That reading has a problem. A single number mixes things that are not alike, and what is not separated cannot be handled. A different stance helps: treat returned money as a leak, something that has a place, a shape and, with some work, an owner.',
+      'That reading has a problem. A single number mixes things that are not alike, and what is not separated cannot be handled. A different stance helps: treat returned money as a leak, something that has a place, a shape and, with some work, someone accountable.',
     ),
     h2('Por qué un total único no sirve', 'Why a single total fails'),
     p(
@@ -91,7 +86,7 @@ export const ARTICULO_A1: Articulo = articulo({
     ),
     p(
       'Tampoco ayuda comparar cualquier mes contra cualquier mes. Un mes a medias frente a uno completo hace que todo parezca una mejora, o un desastre, según el orden en que los pongas. Una comparación honesta enfrenta meses completos y comparables. Y cuando todavía no hay dos así, lo más útil que puede hacer una herramienta es decirlo en lugar de dibujar una tendencia que no existe.',
-      'It does not help to compare any month against any month either. A half month against a full one makes everything look like an improvement, or a disaster, depending on the order you put them in. An honest comparison sets complete, comparable months side by side. And when there are not yet two of them, the most useful thing a tool can do is say so instead of drawing a trend that does not exist.',
+      'Comparing just any month with any other does not help either. A half month against a full one makes everything look like an improvement, or a disaster, depending on the order you put them in. An honest comparison sets complete, comparable months side by side. And when there are not yet two of them, the most useful thing a tool can do is say so instead of drawing a trend that does not exist.',
     ),
     h2('Cómo se lee un Pareto de reembolsos', 'How to read a refund Pareto'),
     p(
@@ -113,7 +108,7 @@ export const ARTICULO_A1: Articulo = articulo({
     ),
     h3('Qué no te dice un Pareto', 'What a Pareto does not tell you'),
     p(
-      'Ordena el dinero, pero no explica la causa. Con un exporte de pedidos y reembolsos normalmente no se puede calcular la tasa de reembolso por producto, el margen ni la pérdida neta, porque faltan columnas para hacerlo con rigor. Un Pareto te dice dónde mirar. La razón la pones tú, con conversaciones, inspección y criterio.',
+      'Ordena el dinero, pero no explica la causa. Con una exportación de pedidos y reembolsos normalmente no se puede calcular la tasa de reembolso por producto, el margen ni la pérdida neta, porque faltan columnas para hacerlo con rigor. Un Pareto te dice dónde mirar. La razón la pones tú, con conversaciones, inspección y criterio.',
       'It orders the money, but it does not explain the cause. With an export of orders and refunds you usually cannot calculate the refund rate per product, margin or net loss, because the columns needed to do it rigorously are missing. A Pareto tells you where to look. The reason is yours to supply, through conversations, inspection and judgment.',
     ),
     h2('Qué lleva un paquete de evidencia', 'What an evidence package contains'),
@@ -138,17 +133,17 @@ export const ARTICULO_A1: Articulo = articulo({
     ),
     h2('Cómo empezar con lo que ya tienes', 'How to start with what you already have'),
     p(
-      'No necesitas un proyecto grande. Toma un exporte de pedidos y reembolsos de los últimos meses completos y hazle tres preguntas, en orden. ¿Qué canal concentra más dinero devuelto? ¿Qué productos encabezan ese canal? ¿Eso es nuevo, o ya estaba ahí el mes anterior? Con esas tres respuestas tienes un lugar donde mirar, que es más de lo que da un total.',
+      'No necesitas un proyecto grande. Toma una exportación de pedidos y reembolsos de los últimos meses completos y hazle tres preguntas, en orden. ¿Qué canal concentra más dinero devuelto? ¿Qué productos encabezan ese canal? ¿Eso es nuevo, o ya estaba ahí el mes anterior? Con esas tres respuestas tienes un lugar donde mirar, que es más de lo que da un total.',
       'You do not need a big project. Take an export of orders and refunds from the last complete months and put three questions to it, in order. Which channel concentrates the most returned money? Which products lead that channel? Is that new, or was it already there the month before? With those three answers you have a place to look, which is more than a total gives you.',
     ),
     p(
       'Después decide quién se queda con cada hallazgo. Una fuga sin responsable vuelve a convertirse en un costo fijo, y el ciclo empieza de nuevo. Y antes de mover dinero o de escribirle a un proveedor, revisa de dónde sale cada cifra y hasta qué fecha llega: la {{confianza-de-los-datos|confianza de los datos}} se revisa antes de decidir, no después.',
-      'Then decide who owns each finding. A leak without an owner turns back into a fixed cost, and the cycle starts over. And before moving money or writing to a supplier, check where each figure comes from and what date it reaches: {{confianza-de-los-datos|data trust}} is checked before deciding, not after.',
+      'Then decide who is responsible for each finding. A leak with no one responsible turns back into a fixed cost, and the cycle starts over. And before moving money or writing to a supplier, check where each figure comes from and what date it reaches: {{confianza-de-los-datos|data trust}} is checked before deciding, not after.',
     ),
     noAfirmamos(
       ['No afirmamos que todo reembolso sea una fuga. Muchos son devoluciones legítimas y deben seguir siéndolo.', 'We do not claim that every refund is a leak. Many are legitimate returns and should stay that way.'],
       ['No prometemos ningún monto. Cualquier estimación del alcance de un reclamo depende de los supuestos que escribas tú.', 'We do not promise any amount. Any estimate of how large a claim could be depends on the assumptions you write.'],
-      ['No calculamos la tasa de reembolso por producto, el margen, la pérdida neta ni la causa raíz con los datos de un exporte, porque faltan datos para hacerlo.', 'We do not calculate the refund rate per product, margin, net loss or root cause from an export, because the data needed to do it is missing.'],
+      ['No calculamos la tasa de reembolso por producto, el margen, la pérdida neta ni la causa raíz con los datos de una exportación, porque faltan datos para hacerlo.', 'We do not calculate the refund rate per product, margin, net loss or root cause from an export, because the data needed to do it is missing.'],
       ['Nada se envía solo: el reclamo lo presenta una persona.', 'Nothing is sent on its own: a person files the claim.'],
     ),
   ],

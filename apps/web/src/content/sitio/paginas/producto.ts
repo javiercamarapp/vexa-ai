@@ -32,7 +32,7 @@ export const PRODUCTO_INDICE: Pagina = {
     {
       tipo: 'matriz',
       titulo: b('Qué puesto puede hacer qué', 'What each role can do'),
-      columnas: [b('Propietario', 'Owner'), b('Analista', 'Analyst'), b('Operador', 'Operator'), b('Lector', 'Viewer')],
+      columnas: [b('Administrador del espacio', 'Workspace administrator'), b('Analista', 'Analyst'), b('Operador', 'Operator'), b('Lectura', 'Read-only')],
       filas: [
         { t: b('Leer las pantallas que le corresponden', 'Read the screens that apply'), celdas: [si, si, si, si] },
         { t: b('Exportar descargas', 'Export downloads'), celdas: [si, si, si, si] },
@@ -117,8 +117,8 @@ export const PRODUCTO_HOY: Pagina = pantalla({
       tipo: 'texto',
       titulo: b('Quién la ve', 'Who sees it'),
       texto: b(
-        'Los cuatro puestos, con vistas distintas. Propietario y analista ven las cuatro cifras. Operador y lector ven una vista propia, sin cifras de dinero.',
-        'All four roles, with different views. Owner and analyst see the four figures. Operator and viewer see a view of their own, without money figures.',
+        'Los cuatro puestos, con vistas distintas. Administrador del espacio y analista ven las cuatro cifras. Operador y lectura ven una vista propia, sin cifras de dinero.',
+        'All four roles, with different views. Workspace administrator and analyst see the four figures. The operator and read-only roles see a view of their own, without money figures.',
       ),
     },
   ],
@@ -171,7 +171,7 @@ export const PRODUCTO_FUGA: Pagina = pantalla({
     {
       tipo: 'texto',
       titulo: b('Quién la ve', 'Who sees it'),
-      texto: b('Propietario y analista. Operador y lector no ven cifras de dinero.', 'Owner and analyst. Operator and viewer do not see money figures.'),
+      texto: b('Administrador del espacio y analista. Operador y lectura no ven cifras de dinero.', 'Workspace administrator and analyst. The operator and read-only roles do not see money figures.'),
     },
   ],
 });
@@ -215,17 +215,17 @@ export const PRODUCTO_PROBLEMAS: Pagina = pantalla({
       titulo: b('Exposición inferida, no pérdida', 'Inferred exposure, not loss'),
       texto: m(
         7,
-        'La exposición solo existe con vínculos de problema a pedido confirmados por un propietario; sin ellos la pantalla dice No disponible.',
+        'La exposición solo existe con vínculos de problema a pedido confirmados por un administrador del espacio; sin ellos la pantalla dice No disponible.',
         b(
-          'La exposición económica es una cifra Inferida: el ingreso de los pedidos ligados al problema. No equivale a una pérdida y no se suma entre problemas. Sin vínculos confirmados por un propietario, la pantalla dice que no está disponible y no la muestra como cero.',
-          'Economic exposure is an Inferred figure: the revenue of the orders linked to the problem. It is not a loss and is not added across problems. Without links confirmed by an owner, the screen says it is not available and does not show it as zero.',
+          'La exposición económica es una cifra Inferida: el ingreso de los pedidos ligados al problema. No equivale a una pérdida y no se suma entre problemas. Sin vínculos confirmados por un administrador del espacio, la pantalla dice que no está disponible y no la muestra como cero.',
+          'Economic exposure is an Inferred figure: the revenue of the orders linked to the problem. It is not a loss and is not added across problems. Without links confirmed by a workspace administrator, the screen says it is not available and does not show it as zero.',
         ),
       ),
     },
     {
       tipo: 'texto',
       titulo: b('Quién la ve', 'Who sees it'),
-      texto: b('Los cuatro puestos. El dinero y la exposición, solo propietario y analista.', 'All four roles. Money and exposure, owner and analyst only.'),
+      texto: b('Los cuatro puestos. El dinero y la exposición, solo administrador del espacio y analista.', 'All four roles. Money and exposure, workspace administrator and analyst only.'),
     },
   ],
 });
@@ -330,7 +330,7 @@ export const PRODUCTO_POR_DECIDIR: Pagina = pantalla({
     titulo: b('Por decidir | Propuesta, decisión de una persona y resultado', 'To Decide | Proposal, a Person Decides, Outcome Recorded'),
     descripcion: b(
       'Cada propuesta llega con su evidencia, un responsable y el registro del resultado. Una persona decide con Proceder, Ajustar o Descartar; nada corre solo.',
-      'Every proposal arrives with its evidence, an owner and a record of the outcome. A person decides with Proceed, Adjust or Dismiss; nothing runs on its own.',
+      'Each proposal comes with evidence, a responsible person and a recorded outcome. A person decides with Proceed, Adjust or Dismiss; nothing runs on its own.',
     ),
   },
   h1: b('Por decidir: propuesta, decisión de una persona y resultado', 'To decide: proposal, a person decides, outcome recorded'),
@@ -354,7 +354,7 @@ export const PRODUCTO_POR_DECIDIR: Pagina = pantalla({
       items: [
         b('Proceder crea la intervención y los borradores que una persona revisa y envía. Nada se envía solo.', 'Proceed creates the intervention and the drafts that a person reviews and sends. Nothing is sent automatically.'),
         b('Ajustar y Descartar piden una razón, que queda registrada. Reabrir una propuesta descartada crea un evento nuevo y no borra nada.', 'Adjust and Dismiss ask for a reason, which is recorded. Reopening a dismissed proposal creates a new event and deletes nothing.'),
-        b('Proponer: propietario, analista y operador. Aprobar: solo el propietario. Ejecutar: propietario y operador.', 'Propose: owner, analyst and operator. Approve: owner only. Carry out: owner and operator.'),
+        b('Proponer: administrador del espacio, analista y operador. Aprobar: solo el administrador del espacio. Ejecutar: administrador del espacio y operador.', 'Propose: workspace administrator, analyst and operator. Approve: workspace administrator only. Carry out: workspace administrator and operator.'),
       ],
     },
     {
@@ -362,7 +362,7 @@ export const PRODUCTO_POR_DECIDIR: Pagina = pantalla({
       titulo: b('Registro del resultado', 'Outcome record'),
       texto: b(
         'En curso muestra el responsable, el compromiso, las etapas y los borradores. Resultados mide antes y después y nunca presenta un ahorro supuesto.',
-        'In progress shows the owner, the commitment, the stages and the drafts. Outcomes measures before and after and never presents an assumed saving.',
+        'In progress shows the workspace administrator, the commitment, the stages and the drafts. Outcomes measures before and after and never presents an assumed saving.',
       ),
     },
   ],
@@ -413,7 +413,7 @@ export const PRODUCTO_CARGA: Pagina = pantalla({
     {
       tipo: 'texto',
       titulo: b('Quién la ve', 'Who sees it'),
-      texto: b('Propietario y analista.', 'Owner and analyst.'),
+      texto: b('Administrador del espacio y analista.', 'Workspace administrator and analyst.'),
     },
   ],
 });
@@ -481,8 +481,8 @@ export const PRODUCTO_FUENTES: Pagina = pantalla({
         9,
         'Conexión de solo lectura que alta el equipo de Rovaq con la credencial del cliente; cobertura limitada a lo que la API de HubSpot expone.',
         b(
-          'Fuentes conectadas muestra las cuentas autorizadas, con qué permisos y cuándo se sincronizó por última vez. La conexión se hace entre el propietario y nuestro equipo; el acceso nunca se escribe en pantalla.',
-          'Connected sources shows the authorized accounts, with which permissions and when they last synced. The connection is made between the owner and our team; the access key is never typed on screen.',
+          'Fuentes conectadas muestra las cuentas autorizadas, con qué permisos y cuándo se sincronizó por última vez. La conexión se hace entre el administrador del espacio y nuestro equipo; el acceso nunca se escribe en pantalla.',
+          'Connected sources shows the authorized accounts, with which permissions and when they last synced. The connection is made between the workspace administrator and our team; the access key is never typed on screen.',
         ),
       ),
     },
@@ -511,7 +511,7 @@ export const PRODUCTO_FUENTES: Pagina = pantalla({
     {
       tipo: 'texto',
       titulo: b('Quién carga', 'Who loads'),
-      texto: b('Ven los cuatro puestos. Cargan propietario y analista. Configura la conexión solo el propietario.', 'All four roles can see. Owner and analyst load. Only the owner configures the connection.'),
+      texto: b('Ven los cuatro puestos. Cargan administrador del espacio y analista. Configura la conexión solo el administrador del espacio.', 'All four roles can see. Workspace administrator and analyst load. Only the workspace administrator configures the connection.'),
     },
   ],
 });
@@ -558,7 +558,7 @@ export const PRODUCTO_FINANZAS: Pagina = pantalla({
     {
       tipo: 'texto',
       titulo: b('Quién la ve', 'Who sees it'),
-      texto: b('Propietario y analista. Operador y lector reciben un aviso de que su puesto no tiene acceso a este panel.', 'Owner and analyst. Operator and viewer get a notice that their role has no access to this panel.'),
+      texto: b('Administrador del espacio y analista. Operador y lectura reciben un aviso de que su puesto no tiene acceso a este panel.', 'Workspace administrator and analyst. The operator and read-only roles get a notice that their role has no access to this panel.'),
     },
   ],
 });

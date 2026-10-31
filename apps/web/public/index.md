@@ -6,7 +6,7 @@ canonical_url: https://rovaq.ai
 alternate_language_url: https://rovaq.ai/en
 language: es-MX
 type: landing
-last_modified: 2026-10-30
+last_modified: 2026-10-31
 robots: noindex
 ---
 
@@ -53,7 +53,7 @@ Cada módulo hace una parte del trabajo con tus datos. No son agentes autónomos
 
 - Importa con procedencia. Trae conversaciones de HubSpot y pedidos o reembolsos en Excel y CSV. Cada registro conserva su fuente y su corte. Los marketplaces entran por exporte, con ayuda de nuestro equipo.
 - Agrupa en problemas. Cada problema presenta su volumen y evidencia cuando hay vínculos confirmados. Correos y teléfonos salen enmascarados. Ves qué se repite. La agrupación con modelos de IA se habilita por organización.
-- Cuantifica en ingreso bruto. Cada problema muestra ingreso bruto expuesto, rotulado Inferido y nunca como pérdida. Cada cifra lleva su clase, fuente y corte. La exposición se calcula solo con los vínculos entre problema y pedido que un propietario confirmó.
+- Cuantifica en ingreso bruto. Cada problema muestra ingreso bruto expuesto, rotulado Inferido y nunca como pérdida. Cada cifra lleva su clase, fuente y corte. La exposición se calcula solo con los vínculos entre problema y pedido que un administrador del espacio confirmó.
 - Decide y mide. Cada recomendación trae su evidencia. Una persona decide: Proceder, Ajustar o Descartar. Nada se envía solo; el resultado se registra. Proceder crea la intervención y borradores que una persona revisa y envía.
 
 ## Seis pantallas, cada una con una pregunta que responde.
@@ -69,10 +69,10 @@ Recorre el producto con datos de ejemplo. Ningún dato es de un cliente.
 
 ## Cada puesto ve lo que le corresponde.
 
-- Propietario. Configura, decide y aprueba. Administra equipo, avisos y retención. Todas las pantallas, el equipo, los avisos y la retención.
+- Administrador del espacio. Configura, decide y aprueba. Administra equipo, avisos y retención. Todas las pantallas, el equipo, los avisos y la retención.
 - Analista. Investiga, prepara y propone. Ve dinero e importa archivos. Dinero, problemas, puntos de dolor e importaciones. Propone y no aprueba.
 - Operador. Ejecuta las acciones que le asignan. Ve problemas y acciones, sin cifras de dinero. Problemas, acciones asignadas y evidencia. Sin cifras de dinero.
-- Lector. Consulta en solo lectura, sin riesgo de cambiar nada. Las pantallas que le corresponden, sin poder modificar datos, conexiones ni decisiones.
+- Lectura. Consulta en solo lectura, sin riesgo de cambiar nada. Las pantallas que le corresponden, sin poder modificar datos, conexiones ni decisiones.
 
 Finanzas y experiencia del cliente leen el mismo problema: el dinero que se devuelve y la razón por la que se devuelve.
 
@@ -94,7 +94,7 @@ Lo que todavía no existe.
 
 - No tenemos certificación SOC 2 ni ISO 27001, y no afirmamos cumplimiento de GDPR.
 - No se ha hecho una prueba de penetración externa.
-- La verificación en dos pasos para propietarios está en nuestra hoja de ruta. Hoy no se exige.
+- La verificación en dos pasos para administradores del espacio está en nuestra hoja de ruta. Hoy no se exige.
 - No ofrecemos inicio de sesión único ni una vista de auditoría para el cliente.
 - Hay respaldos diarios de nuestro proveedor, sin recuperación a un punto en el tiempo, y no ofrecemos compromisos de disponibilidad.
 
@@ -110,7 +110,7 @@ Los límites también son parte del producto.
 - No trabaja en tiempo real. La sincronización es programada y cada pantalla muestra su fecha de corte.
 - No se conecta de forma directa con Amazon, Walmart ni Shopify. Hoy se cargan sus exportes.
 - No usa un modelo de lenguaje para responder en Pregúntale a tus datos y no busca en internet.
-- No tiene certificación SOC 2 ni ISO 27001, no afirma cumplimiento de GDPR y la verificación en dos pasos de propietarios está en hoja de ruta.
+- No tiene certificación SOC 2 ni ISO 27001, no afirma cumplimiento de GDPR y la verificación en dos pasos de administradores del espacio está en hoja de ruta.
 - No reemplaza tu herramienta de soporte. Lee las conversaciones de HubSpot en solo lectura y no escribe en tu CRM.
 
 Si algo de esta lista cambia, se dirá aquí.
@@ -128,7 +128,7 @@ En hoja de ruta.
 
 - Conectores directos con Amazon, Walmart y Shopify. Hoy se cargan sus exportes.
 - Mapa de problemas completo por dirección de envío, que requiere esos conectores.
-- Verificación en dos pasos para propietarios.
+- Verificación en dos pasos para administradores del espacio.
 
 Rovaq no reemplaza tu herramienta de soporte. Lee las conversaciones de HubSpot en solo lectura y las cruza con los pedidos y reembolsos que cargas.
 
@@ -160,7 +160,7 @@ No. Arma un paquete de evidencia agregada y un borrador de mensaje. Tú los revi
 
 ### ¿Qué tan seguro es y qué certificaciones tienen?
 
-Hay aislamiento por organización en la base de datos, cuatro roles, conexiones de lectura y registro de operaciones de administración. No tenemos SOC 2 ni ISO 27001, no hemos hecho una prueba de penetración externa y la verificación en dos pasos de propietarios está en hoja de ruta. El detalle está en la página de Seguridad.
+Hay aislamiento por organización en la base de datos, cuatro roles, conexiones de lectura y registro de operaciones de administración. No tenemos SOC 2 ni ISO 27001, no hemos hecho una prueba de penetración externa y la verificación en dos pasos de administradores del espacio está en hoja de ruta. El detalle está en la página de Seguridad.
 
 ### ¿Rovaq reemplaza mi herramienta de soporte?
 
@@ -186,17 +186,17 @@ Solicitar acceso: https://rovaq.ai/solicitar-acceso
 - [Por decidir: propuesta, decisión de una persona y resultado](https://rovaq.ai/producto/por-decidir)
 - [Confianza de los datos: frescura, cobertura y lo que no se sabe](https://rovaq.ai/producto/confianza-de-los-datos)
 - [Finanzas: informe por moneda, sin mezclar bases](https://rovaq.ai/producto/finanzas)
-- [Propietario: configura, decide y aprueba](https://rovaq.ai/casos-de-uso/propietario)
+- [Administrador del espacio: configura, decide y aprueba](https://rovaq.ai/casos-de-uso/propietario)
 - [Analista: investiga, prepara y propone](https://rovaq.ai/casos-de-uso/analista)
 - [Operador: ejecuta las acciones que le asignan](https://rovaq.ai/casos-de-uso/operador)
-- [Lector: consulta sin riesgo de cambiar nada](https://rovaq.ai/casos-de-uso/lector)
+- [Lectura: consulta sin riesgo de cambiar nada](https://rovaq.ai/casos-de-uso/lector)
 - [Solicita acceso y revisa tus cifras con su evidencia.](https://rovaq.ai/solicitar-acceso)
+- [Versión desplegada y reporte de problemas](https://rovaq.ai/estado)
 - [Blog de Rovaq AI](https://rovaq.ai/blog)
 - [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar)
 - [De dónde sale cada número: la procedencia como requisito, no como adorno](https://rovaq.ai/blog/procedencia-de-cada-numero)
 - [La IA clasifica y redacta; las personas deciden](https://rovaq.ai/blog/la-ia-clasifica-las-personas-deciden)
 - [Un puesto, una vista: por qué cada persona ve solo lo que le toca](https://rovaq.ai/blog/un-puesto-una-vista)
-- [Tus exportes de marketplace ya son datos: cómo cargarlos con procedencia](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos)
+- [Tus exportaciones de marketplace ya son datos: cómo cargarlas con procedencia](https://rovaq.ai/blog/exportes-de-marketplace-ya-son-datos)
 - [Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia](https://rovaq.ai/blog/puntos-de-dolor-del-texto-a-la-prioridad)
-- [Qué afirmamos y qué no afirmamos sobre seguridad](https://rovaq.ai/blog/que-afirmamos-sobre-seguridad)
 - [Una recomendación debe poder discutirse: evidencia, aprobación y resultado](https://rovaq.ai/blog/una-recomendacion-debe-poder-discutirse)

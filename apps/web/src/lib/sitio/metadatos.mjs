@@ -4,6 +4,7 @@
 // El contenido (landing y páginas) se entrega por parámetro porque lo cargan quienes pueden: Next (TypeScript) o las herramientas de Node (importación directa de .ts).
 import { landingUrl } from '../site.mjs';
 import { PAGINAS, porId } from '../../content/sitio/registro.mjs';
+import { FECHA_CONTENIDO } from '../../content/sitio/fecha-contenido.mjs';
 import { contextoPorDefecto, estadoPagina, publicar } from './marcadores.mjs';
 import { minutosDeLectura, palabrasDeArticulo } from './articulos.mjs';
 
@@ -76,7 +77,7 @@ const bi = (h) => ({ es: h?.es ?? '', en: h?.en ?? '' });
 export function construirFichas({ landing, paginas, aprobaciones, fechas = {}, ctx = contextoPorDefecto() }) {
   const porRegistro = new Map(paginas.map((p) => [idRegistroDe(p.id), p]));
   const portada = publicar(landing, { aprobaciones, ctx }).arbol;
-  return PAGINAS.map((reg) => {
+  const fichas = PAGINAS.map((reg) => {
     const base = { id: reg.id, tipo: reg.tipo, padre: padreDe(reg), ruta: { es: reg.es.ruta, en: reg.en.ruta }, mod: fechas[reg.id] ?? fechas.inicio ?? null };
     if (reg.id === 'inicio') {
       const seo = portada.seo.pagina;
@@ -113,6 +114,11 @@ export function construirFichas({ landing, paginas, aprobaciones, fechas = {}, c
       arbol,
     };
   });
+  // Una sola fuente de fecha (T32-Y): la modificación del índice del blog es la mayor fecha de publicación de los artículos que lista.
+  const pubs = fichas.filter((x) => x.tipo === 'articulo' && x.indexable && x.pub && String(x.pub) <= FECHA_CONTENIDO).map((x) => String(x.pub)).sort();
+  const indice = fichas.find((x) => x.id === 'blog');
+  if (indice && pubs.length > 0) indice.mod = pubs[pubs.length - 1];
+  return fichas;
 }
 
 /** Fichas indexables (publicables). Son las únicas que entran al sitemap, a llms y a los espejos. */

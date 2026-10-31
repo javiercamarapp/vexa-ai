@@ -170,8 +170,13 @@
   gap: var(--s-e8);
   margin: 0;
   padding-left: var(--s-e24);
+  list-style: decimal;
   font-size: var(--s-t-pequeno);
   line-height: var(--s-i-pequeno);
+  color: var(--s-apagado);
+}
+
+.s-art__toc li::marker {
   color: var(--s-apagado);
 }
 
@@ -205,8 +210,16 @@
   color: var(--s-tinta);
 }
 
+.s-art__lista:not(.s-art__lista--num) {
+  list-style: disc;
+}
+
 .s-art__lista--num {
   list-style: decimal;
+}
+
+.s-art__lista li::marker {
+  color: var(--s-apagado);
 }
 
 .s-art__h2,

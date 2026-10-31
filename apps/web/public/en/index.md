@@ -6,7 +6,7 @@ canonical_url: https://rovaq.ai/en
 alternate_language_url: https://rovaq.ai
 language: en
 type: landing
-last_modified: 2026-10-30
+last_modified: 2026-10-31
 robots: noindex
 ---
 
@@ -53,7 +53,7 @@ Each module does one part of the work with your data. They are not autonomous ag
 
 - Import with provenance. Bring in HubSpot conversations and orders or refunds from Excel and CSV. Every record keeps its source and cut-off date. Marketplaces come in by export, with help from our team.
 - Group into problems. Each problem shows its volume and evidence when links are confirmed. Emails and phone numbers are masked. See what repeats. Grouping with AI models is enabled per organization.
-- Quantify in gross revenue. Each problem shows exposed gross revenue, labeled Inferred and never as a loss. Every figure carries class, source and cut-off. Exposure is calculated only with the problem-to-order links that an owner confirmed.
+- Quantify in gross revenue. Each problem shows exposed gross revenue, labeled Inferred and never as a loss. Every figure carries class, source and cut-off. Exposure is calculated only with the problem-to-order links that a workspace administrator confirmed.
 - Decide and measure. Each recommendation brings its evidence. A person decides: Proceed, Adjust or Dismiss. Nothing is sent automatically; the outcome is recorded. Proceed creates the intervention and drafts that a person reviews and sends.
 
 ## Six screens, each built to answer one question.
@@ -69,10 +69,10 @@ Walk through the product with example data. No data is from a customer.
 
 ## Each role sees what belongs to it.
 
-- Owner. Configures, decides and approves. Manages team, notices and retention. All screens, the team, notices and retention.
+- Workspace administrator. Configures, decides and approves. Manages team, notices and retention. All screens, the team, notices and retention.
 - Analyst. Investigates, prepares and proposes. Sees money and imports files. Money, problems, pain points and imports. Proposes and does not approve.
 - Operator. Carries out the actions assigned to them. Sees problems and actions, without money figures. Problems, assigned actions and evidence. No money figures.
-- Viewer. Reads with read-only access, with no risk of changing anything. The screens that apply to them, unable to modify data, connections or decisions.
+- Read-only. Reads with read-only access, with no risk of changing anything. The screens that apply to them, unable to modify data, connections or decisions.
 
 Finance and customer experience read the same problem: the money that is returned and the reason it is returned.
 
@@ -94,7 +94,7 @@ What does not exist yet.
 
 - We do not hold SOC 2 or ISO 27001 certification, and we do not claim GDPR compliance.
 - No external penetration test has been performed.
-- Two-step verification for owners is on our roadmap. It is not required today.
+- Two-step verification for workspace administrators is on our roadmap. It is not required today.
 - We do not offer single sign-on or a customer-facing audit view.
 - There are daily provider backups, without point-in-time recovery, and we make no availability commitments.
 
@@ -110,7 +110,7 @@ The limits are part of the product too.
 - It does not work in real time. Sync is scheduled and every screen shows its cut-off date.
 - It does not connect directly with Amazon, Walmart or Shopify. Today their exports are loaded.
 - It does not use a language model to answer in Ask your data and it does not search the internet.
-- It holds no SOC 2 or ISO 27001 certification, does not claim GDPR compliance, and two-step verification for owners is on the roadmap.
+- It holds no SOC 2 or ISO 27001 certification, does not claim GDPR compliance, and two-step verification for workspace administrators is on the roadmap.
 - It does not replace your support tool. It reads HubSpot conversations in read-only mode and does not write to your CRM.
 
 If anything on this list changes, it will be stated here.
@@ -128,7 +128,7 @@ On the roadmap.
 
 - Direct connectors for Amazon, Walmart and Shopify. Today their exports are loaded.
 - A full problem map by shipping address, which requires those connectors.
-- Two-step verification for owners.
+- Two-step verification for workspace administrators.
 
 Rovaq does not replace your support tool. It reads HubSpot conversations in read-only mode and connects them with the orders and refunds you load.
 
@@ -160,7 +160,7 @@ No. It assembles a package of aggregated evidence and a draft message. You revie
 
 ### How secure is it and what certifications do you hold?
 
-There is isolation per organization in the database, four roles, read connections and a record of administration operations. We hold no SOC 2 or ISO 27001, we have not run an external penetration test and two-step verification for owners is on the roadmap. The detail is on the Security page.
+There is isolation per organization in the database, four roles, read connections and a record of administration operations. We hold no SOC 2 or ISO 27001, we have not run an external penetration test and two-step verification for workspace administrators is on the roadmap. The detail is on the Security page.
 
 ### Does Rovaq replace my support tool?
 
@@ -186,11 +186,12 @@ Request access: https://rovaq.ai/en/request-access
 - [To decide: proposal, a person decides, outcome recorded](https://rovaq.ai/en/product/to-decide)
 - [Data trust: freshness, coverage and what is unknown](https://rovaq.ai/en/product/data-trust)
 - [Finance: a report by currency, bases never mixed](https://rovaq.ai/en/product/finance)
-- [Owner: configure, decide and approve](https://rovaq.ai/en/use-cases/owner)
+- [Workspace administrator: configure, decide and approve](https://rovaq.ai/en/use-cases/owner)
 - [Analyst: investigate, prepare and propose](https://rovaq.ai/en/use-cases/analyst)
 - [Operator: carries out the actions assigned to you](https://rovaq.ai/en/use-cases/operator)
-- [Viewer: read without any risk of changing anything](https://rovaq.ai/en/use-cases/viewer)
+- [Read-only: read without any risk of changing anything](https://rovaq.ai/en/use-cases/viewer)
 - [Request access and review your figures with their evidence.](https://rovaq.ai/en/request-access)
+- [Deployed version and problem reports](https://rovaq.ai/en/status)
 - [Rovaq AI blog](https://rovaq.ai/en/blog)
 - [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate)
 - [Where every number comes from: provenance as a requirement, not decoration](https://rovaq.ai/en/blog/where-every-number-comes-from)
@@ -198,5 +199,4 @@ Request access: https://rovaq.ai/en/request-access
 - [One role, one view: why each role sees only what belongs to it](https://rovaq.ai/en/blog/one-role-one-view)
 - [Your marketplace exports are already data: how to load them with provenance](https://rovaq.ai/en/blog/marketplace-exports-are-data)
 - [Pain points: from free text in conversations to a priority backed by evidence](https://rovaq.ai/en/blog/pain-points-from-text-to-priority)
-- [What we claim and what we do not claim about security](https://rovaq.ai/en/blog/what-we-claim-about-security)
 - [A recommendation must be debatable: evidence, approval and outcome](https://rovaq.ai/en/blog/a-recommendation-must-be-debatable)

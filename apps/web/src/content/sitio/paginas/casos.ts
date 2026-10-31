@@ -1,6 +1,6 @@
 // Casos de uso: el índice por puesto y por situación, y una página por puesto (T11).
 // Fuente: landing/posicionamiento/01 sección 6.3, producto/01 (matriz de capacidades) y seo/02-PLAN-POR-URL-DETALLE.md.
-// Nada sobre qué datos personales ve el lector: el candidato RLS-01 sigue abierto.
+// Nada sobre qué datos personales ve el puesto de lectura: el candidato RLS-01 sigue abierto.
 import type { Pagina } from '../tipos.ts';
 import { b, m } from '../ayudas.ts';
 import { LANDING } from '../landing.ts';
@@ -14,8 +14,8 @@ export const CASOS_INDICE: Pagina = {
   seo: {
     titulo: b('Casos de uso por puesto y por situación | Rovaq AI', 'Use Cases for Every Role and Every Situation | Rovaq AI'),
     descripcion: b(
-      'Rovaq AI muestra a cada puesto solo lo que necesita: el propietario decide, el analista investiga, el operador ejecuta y el lector solo consulta.',
-      'Rovaq AI shows each role only what it needs: the owner decides, the analyst investigates, the operator executes and the viewer only reads, never edits.',
+      'Cada puesto ve solo lo que necesita: el administrador del espacio decide, el analista investiga, el operador ejecuta y la lectura solo consulta.',
+      'Each role sees only what it needs: the workspace administrator decides, the analyst investigates, the operator executes and read-only roles only look.',
     ),
   },
   h1: b('Casos de uso por puesto y por situación', 'Use cases by role and by situation'),
@@ -72,7 +72,7 @@ export const CASOS_INDICE: Pagina = {
     {
       tipo: 'texto',
       titulo: b('Los cuatro puestos', 'The four roles'),
-      texto: b('Los cuatro puestos existen en el producto. El propietario da de alta a cada persona y le asigna su puesto.', 'The four roles exist in the product. The owner adds each person and assigns their role.'),
+      texto: b('Los cuatro puestos existen en el producto. El administrador del espacio da de alta a cada persona y le asigna su puesto.', 'The four roles exist in the product. The workspace administrator adds each person and assigns their role.'),
     },
     {
       tipo: 'texto',
@@ -92,13 +92,13 @@ export const CASO_PROPIETARIO: Pagina = rol({
   id: 'casos-de-uso/propietario',
   estado: 'publicable',
   seo: {
-    titulo: b('Propietario | Configura, decide y aprueba | Rovaq AI', 'Owner | Configures, Decides and Approves | Rovaq AI'),
+    titulo: b('Administrador del espacio | Configura y aprueba | Rovaq AI', 'Workspace Administrator | Configures and Approves | Rovaq AI'),
     descripcion: b(
-      'El propietario configura la organización, conecta las fuentes y aprueba las acciones. Conoce sus pantallas, sus decisiones y lo que queda registrado.',
-      'The owner sets up the organization, connects sources and approves actions. See the screens they use, the decisions they make and what gets recorded.',
+      'El administrador del espacio configura la organización, conecta las fuentes y aprueba las acciones. Sus pantallas, decisiones y lo que queda registrado.',
+      'The workspace administrator sets up the organization, connects sources and approves actions. Their screens, their decisions and what gets recorded.',
     ),
   },
-  h1: b('Propietario: configura, decide y aprueba', 'Owner: configure, decide and approve'),
+  h1: b('Administrador del espacio: configura, decide y aprueba', 'Workspace administrator: configure, decide and approve'),
   subtitulo: b('Administra equipo, avisos y retención, y aprueba las acciones. Aprobar corresponde solo a este puesto.', 'Manages team, notices and retention, and approves actions. Approving belongs to this role alone.'),
   bloques: [
     {
@@ -163,8 +163,8 @@ export const CASO_ANALISTA: Pagina = rol({
       tipo: 'texto',
       titulo: b('Dónde termina su rol', 'Where the role ends'),
       texto: b(
-        'El analista propone recomendaciones, pero no las aprueba ni ejecuta intervenciones, y tampoco configura conexiones, retención ni equipo. Esas decisiones son del propietario.',
-        'The analyst proposes recommendations but does not approve them or carry out interventions, and does not configure connections, retention or team. Those decisions belong to the owner.',
+        'El analista propone recomendaciones, pero no las aprueba ni ejecuta intervenciones, y tampoco configura conexiones, retención ni equipo. Esas decisiones son del administrador del espacio.',
+        'The analyst proposes recommendations but does not approve them or carry out interventions, and does not configure connections, retention or team. Those decisions belong to the workspace administrator.',
       ),
     },
   ],
@@ -214,13 +214,13 @@ export const CASO_LECTOR: Pagina = rol({
   id: 'casos-de-uso/lector',
   estado: 'publicable',
   seo: {
-    titulo: b('Lector | Consulta sin riesgo de cambiar nada | Rovaq AI', 'Viewer | Reads Without Any Risk of Changing Anything'),
+    titulo: b('Lectura | Consulta sin riesgo de cambiar nada | Rovaq AI', 'Read-only | Reads Without Any Risk of Changing Anything'),
     descripcion: b(
-      'El lector consulta las pantallas que le corresponden sin poder modificar datos, conexiones ni decisiones. Útil para dirección, finanzas y equipos lectores.',
-      'The viewer reads the screens that apply to them and cannot modify data, connections or decisions. Useful for leadership, finance and teams that only read.',
+      'El puesto de lectura consulta las pantallas que le corresponden sin poder modificar datos, conexiones ni decisiones. Útil para dirección y finanzas.',
+      'The read-only role reads the screens that apply to it and cannot modify data, connections or decisions. Useful for leadership and finance teams.',
     ),
   },
-  h1: b('Lector: consulta sin riesgo de cambiar nada', 'Viewer: read without any risk of changing anything'),
+  h1: b('Lectura: consulta sin riesgo de cambiar nada', 'Read-only: read without any risk of changing anything'),
   subtitulo: b('Consulta en solo lectura.', 'Reads with read-only access.'),
   bloques: [
     {

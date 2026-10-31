@@ -67,7 +67,7 @@ export const HOJA_DE_RUTA: Pagina = {
       tipo: 'lista',
       titulo: b('Seguridad', 'Security'),
       items: [
-        b('Verificación en dos pasos para propietarios, planeada.', 'Two-step verification for owners, planned.'),
+        b('Verificación en dos pasos para administradores del espacio, planeada.', 'Two-step verification for workspace administrators, planned.'),
         b('Política de contenido estricta, en endurecimiento.', 'Strict content security policy, being hardened.'),
         b('Vista de auditoría para el cliente, planeada.', 'Customer-facing audit view, planned.'),
         b('Prueba de penetración externa, planeada.', 'External penetration test, planned.'),

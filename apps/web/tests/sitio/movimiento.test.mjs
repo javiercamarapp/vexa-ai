@@ -112,7 +112,8 @@ test('hilo serpenteante con bandas de cruce: núcleo 3.5 px (7.5 en bandas) a 14
   assert.match(INICIO, /const COLA = 72/, 'carril libre al final de cada banda en escritorio (nada cruza bajo la cabecera fija con la sección anclada)');
   assert.match(INICIO, /v % 3 === 1[\s\S]*v % 3 === 2/, 'las S simples varían de forma por banda');
   assert.match(INICIO, /const RAMPA = 3, PASO_RAMPA = 26/, 'el trazo se engruesa en tres escalones');
-  assert.match(INICIO, /new ResizeObserver\(medir\)/);
+  // T49: el observador solo vuelve a medir si cambió el tamaño de la zona (dispara al empezar a observar y con cada imagen perezosa); ver hilo-tabla.test.mjs
+  assert.match(INICIO, /new ResizeObserver\(\(\) => \{ if \(zona\.clientWidth !== medidoW \|\| zona\.clientHeight !== medidoH\) medir\(\); \}\)/);
   assert.match(INICIO, /let AIRE = 24;/);
   assert.match(INICIO, /AIRE = movil \? 18\.5 : 24;/, "el móvil usa 18.5 px de aire (16 de margen más medio núcleo de 2.1)");
   assert.match(INICIO, /movil0 \? 10 :/, 'el riel móvil queda a 10 px del borde, no pegado a él');

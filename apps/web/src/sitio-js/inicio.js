@@ -133,6 +133,33 @@ function puntosBanda(xa, y0, xb, y1, rizo, ancho, triple, v) {
   return [[xa, y0], [X(0.16), inf], ...rz, [X(0.8), inf - 0.04 * h], [xb, y1]];
 }
 
+/** Tabla de arco a posición de un trazo hecho de tramos cúbicos [c1x, c1y, c2x, c2y, x, y] que parte de `inicio`: n puntos a la misma distancia sobre un largo `total`
+ * (el que mide el navegador con getTotalLength; el largo propio se reescala a él para que los desplazamientos de trazo coincidan con el dibujo). `m` es el máximo corrido de y. */
+export function tablaDeArco(inicio, segs, total, n, pasos = 48) {
+  const px = [inicio[0]], py = [inicio[1]], pl = [0];
+  let x0 = inicio[0], y0 = inicio[1], L = 0;
+  for (const [ax, ay, bx, by, x, y] of segs) {
+    for (let i = 1; i <= pasos; i++) {
+      const t = i / pasos, u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, e = t * t * t;
+      const qx = a * x0 + b * ax + c * bx + e * x, qy = a * y0 + b * ay + c * by + e * y;
+      L += Math.hypot(qx - px[px.length - 1], qy - py[py.length - 1]);
+      px.push(qx); py.push(qy); pl.push(L);
+    }
+    x0 = x; y0 = y;
+  }
+  const k = L ? total / L : 1;
+  const tabla = {s: new Float32Array(n), x: new Float32Array(n), y: new Float32Array(n), m: new Float32Array(n)};
+  let j = 0, mx = -1;
+  for (let i = 0; i < n; i++) {
+    const objetivo = Math.min(total, (i * total) / (n - 1)) / k;
+    while (j < pl.length - 2 && pl[j + 1] < objetivo) j++;
+    const dl = pl[j + 1] - pl[j], f = dl > 0 ? Math.min(1, Math.max(0, (objetivo - pl[j]) / dl)) : 0;
+    const qx = px[j] + (px[j + 1] - px[j]) * f, qy = py[j] + (py[j + 1] - py[j]) * f;
+    tabla.s[i] = Math.min(total, (i * total) / (n - 1)); tabla.x[i] = qx; tabla.y[i] = qy; mx = Math.max(mx, qy); tabla.m[i] = mx;
+  }
+  return tabla;
+}
+
 function construirHilo(RM, notas) {
   const zona = $('.s-hilo-zona'), cont = zona && $('[data-hilo]', zona);
   if (!zona || !cont || typeof ResizeObserver === 'undefined') return null;
@@ -146,11 +173,12 @@ function construirHilo(RM, notas) {
   const capas = PULSO.map(([, o], i) => { const c = usar('s-hilo__pulso'); c.style.setProperty('opacity', String(o)); if (i === 0) c.classList.add('s-hilo__brillo'); return c; });
   const cabeza = div('s-hilo__cabeza', cont);
   cabeza.setAttribute('aria-hidden', 'true');
-  let H = 0, total = 0, tabla = null, nodos = [], piezas = [], bandas = [], ultimo = -1, vivo = false, w0 = 3, wb = 7;
+  let medidoW = -1, medidoH = -1, H = 0, total = 0, tabla = null, nodos = [], piezas = [], bandas = [], ultimo = -1, vivo = false, w0 = 3, wb = 7;
 
   function medir() {
     H = zona.clientHeight;
     const W = zona.clientWidth, c0 = $('.s-contenedor', zona);
+    medidoW = W; medidoH = H;
     if (!H || !c0) return;
     const cs = getComputedStyle(zona);
     w0 = parseFloat(cs.getPropertyValue('--s-hilo-w')) || 3;
@@ -177,7 +205,10 @@ function construirHilo(RM, notas) {
     // Recorrido como lista de órdenes de dibujo
     let d = '', cur = [lado(0, 0), 0], k = 0, s = 0, ult = 0;
     d = `M${f1(cur[0])} 0`;
-    const sCurva = (x, y) => { const [x0, y0] = cur, m = (y - y0) / 2; d += `C${f1(x0)} ${f1(y0 + m)} ${f1(x)} ${f1(y - m)} ${f1(x)} ${f1(y)}`; cur = [x, y]; };
+    // T49: cada tramo cúbico se guarda con las mismas cifras redondeadas que van a `d` para muestrear el trazo sin getPointAtLength (ver tablaDeArco)
+    const inicio = [+f1(cur[0]), 0], segs = [];
+    const cubica = (a, b, c, e, x, y) => { d += `C${f1(a)} ${f1(b)} ${f1(c)} ${f1(e)} ${f1(x)} ${f1(y)}`; segs.push([+f1(a), +f1(b), +f1(c), +f1(e), +f1(x), +f1(y)]); };
+    const sCurva = (x, y) => { const [x0, y0] = cur, m = (y - y0) / 2; cubica(x0, y0 + m, x, y - m, x, y); cur = [x, y]; };
     const catmull = (P) => {
       const Q = [[P[0][0], P[0][1] - 80], ...P, [P.at(-1)[0], P.at(-1)[1] + 80]];
       for (let i = 1; i < Q.length - 2; i++) {
@@ -185,7 +216,7 @@ function construirHilo(RM, notas) {
         let c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
         if (i === 1) c1 = [p1[0], p1[1] + 50];
         if (i === Q.length - 3) c2 = [p2[0], p2[1] - 50];
-        d += `C${f1(c1[0])} ${f1(c1[1])} ${f1(c2[0])} ${f1(c2[1])} ${f1(p2[0])} ${f1(p2[1])}`;
+        cubica(c1[0], c1[1], c2[0], c2[1], p2[0], p2[1]);
       }
       cur = P.at(-1);
     };
@@ -225,10 +256,10 @@ function construirHilo(RM, notas) {
     for (const u of [guia, trazo, ...capas]) { u.style.setProperty('stroke-dasharray', `${total} ${total}`); }
     guia.style.setProperty('stroke-width', gr(w0));
     // Tabla de arco a posición (el máximo corrido de Y permite buscar por altura aunque el trazo suba en los rizos)
+    // T49: antes eran ~4,000 llamadas a getPointAtLength (cada una vuelve a medir todo el trazo): 1.7 s de tarea larga a 4x de CPU y 4.2 s en escritorio cargado en Lighthouse.
+    // Ahora se aplana cada tramo cúbico una vez y se reparte el largo de getTotalLength entre los puntos (error de largo menor a 0.01 px por tramo).
     const n = Math.ceil(total / 5) + 1;
-    tabla = {s: new Float32Array(n), x: new Float32Array(n), y: new Float32Array(n), m: new Float32Array(n)};
-    let mx = -1;
-    for (let i = 0; i < n; i++) { const L = Math.min(total, (i * total) / (n - 1)), q = base.getPointAtLength(L); tabla.s[i] = L; tabla.x[i] = q.x; tabla.y[i] = q.y; mx = Math.max(mx, q.y); tabla.m[i] = mx; }
+    tabla = tablaDeArco(inicio, segs, total, n);
     // Arco de entrada y salida de cada banda y capas de grosor con rampas de tres escalones
     grosor.replaceChildren();
     piezas = [];
@@ -324,7 +355,8 @@ function construirHilo(RM, notas) {
     return q;
   }
 
-  new ResizeObserver(medir).observe(zona);
+  // T49: el observador dispara una vez al empezar a observar y cada imagen perezosa que carga cambia el alto: solo se vuelve a medir si el tamaño de la zona cambió
+  new ResizeObserver(() => { if (zona.clientWidth !== medidoW || zona.clientHeight !== medidoH) medir(); }).observe(zona);
   if (D.fonts && D.fonts.ready) D.fonts.ready.then(medir);
   medir();
 

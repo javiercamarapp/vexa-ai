@@ -21,11 +21,13 @@
   margin-bottom: var(--s-e32);
 }
 
-/* La cifra cabalga el borde superior de la ventana, centrada en el hueco libre de la barra de título (entre la ruta y la organización) */
+/* La cifra se apoya sobre el borde superior de la ventana (centrada, solo 6 px dentro del relleno de la barra, que no tiene contenido ahí): ya no cubre
+   la ruta ni la organización de la barra ni la captura. Su alto se reserva en el margen superior del marco y se recupera del titular y del aire del héroe. */
 @container (min-width: 701px) {
   .s-ov-cifra {
     left: 50%;
-    top: -12px;
+    top: auto;
+    bottom: calc(100% - 6px);
     width: max-content;
     max-width: 460px;
     grid-template-columns: auto auto;
@@ -38,6 +40,10 @@
   .s-ov-cifra__linea { grid-column: 1; }
   .s-ov-cifra__sub { grid-column: 1; grid-row: 2; }
   .s-ov-cifra__sello { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
+}
+
+@media (min-width: 765px) {
+  .s-hero__marco { margin-top: 56px; }
 }
 
 /* ---------- S8 Seguridad: tarjetas plegables ----------
@@ -268,4 +274,15 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
 @media (max-width: 768px) {
   .s-pag-cabeza { padding-top: calc(var(--s-cab-h) + var(--s-e48)); padding-bottom: var(--s-e40); }
   .s-pag-visual { margin-top: var(--s-e12); }
+}
+
+/* ---------- Héroe a 765 px o más: el titular y el aire se ajustan a la altura de la ventana del navegador para compensar los 56 px que reserva la cifra sobre la ventana ---------- */
+@media (min-width: 765px) {
+  .s-hero__titulo { font-size: min(var(--s-t-hero), 10.2svh); }
+
+  .s-hero__contenido {
+    gap: var(--s-e8);
+    padding-top: clamp(70px, 7.8svh, 84px);
+    padding-bottom: var(--s-e8);
+  }
 }

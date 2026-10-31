@@ -176,3 +176,20 @@ test('Chrome: la altura de la página con movimiento reducido es la misma que co
   const sinJs = await alto(1440, {js: false});
   assert.ok((sinJs - normal) / normal <= 0.09, `sin JS ${sinJs} contra ${normal}: solo los paneles de puestos y las respuestas de preguntas frecuentes pueden quedar abiertos`);
 });
+
+test('Chrome: héroe: la ventana asoma 380 px a 1440 por 900 y 300 px a 390 por 844, y la tarjeta de la cifra no cubre la ruta, la organización ni la captura', {skip: vivo ? false : motivo}, async () => {
+  for (const [vp, minimo] of [[1440, 380], [390, 300]]) {
+    await sesion({vp, etiqueta: 'mov-heroe'}, async (s) => {
+      await s.page.goto(URL_VIVA, {waitUntil: 'load'});
+      await dormir(6000);
+      const r = await s.page.evaluate(() => {
+        const g = (q) => { const e = document.querySelector(q); const b = e.getBoundingClientRect(); return {x0: b.left, x1: b.right, y0: b.top, y1: b.bottom}; };
+        const v = g('.s-hero .s-ventana--producto');
+        return {peek: Math.min(innerHeight, v.y1) - Math.max(0, v.y0), card: g('.s-hero .s-ov-cifra'), ruta: g('.s-hero .s-mock-ruta'), org: g('.s-hero .s-mock-org'), cuerpo: g('.s-hero .s-ventana__cuerpo')};
+      });
+      assert.ok(r.peek >= minimo, `${vp}: la ventana asoma ${r.peek} px (mínimo ${minimo})`);
+      const toca = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+      for (const k of ['ruta', 'org', 'cuerpo']) assert.ok(!toca(r.card, r[k]), `${vp}: la tarjeta toca ${k}`);
+    });
+  }
+});

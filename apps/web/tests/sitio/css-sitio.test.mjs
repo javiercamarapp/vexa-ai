@@ -45,3 +45,37 @@ test('prefijo s- en todas las clases del CSS del sitio', { skip: motivo }, () =>
   const sin = archivos.flatMap((f) => clasesDeSelectores(leer(f)).filter((c) => !c.startsWith('s-')).map((c) => `${rel(WEB, f)} .${c}`));
   assert.deepEqual(sin, []);
 });
+
+// T22: correcciones de móvil del juez T21 (hero a 4-5 px, ítem 02 desalineado, pasos 2 y 4 con 70 px vacíos).
+{
+  const {readFileSync} = await import('node:fs');
+  const {join, dirname} = await import('node:path');
+  const {fileURLToPath} = await import('node:url');
+  const {test} = await import('node:test');
+  const assert = (await import('node:assert/strict')).default;
+  const WEB22 = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+  const css22 = (f) => readFileSync(join(WEB22, 'src/styles/sitio', f), 'utf8');
+
+  test('T22 móvil: el héroe a 390 conserva la tarjeta de la cifra y no muestra la captura de 4-5 px', () => {
+    const c = css22('inicio.css');
+    const bloque = c.match(/@container \(max-width: 700px\) \{[\s\S]*?\n\}\n/)[0];
+    assert.match(bloque, /\[data-ventana="fuga"\] \.s-ventana__cuerpo \{\s*display: none;/);
+  });
+
+  test('T22 móvil: el título de cada regla ocupa el resto de la fila (el ítem 02 ya no salta bajo el número)', () => {
+    const c = css22('inicio.css');
+    assert.match(c, /@media \(max-width: 480px\) \{[\s\S]*?\.s-regla__titulo \{\s*flex: 1 1 0;\s*min-width: 0;/);
+  });
+
+  test('T22 móvil: los pasos 2 y 4 sueltan la proporción de escritorio del lienzo', () => {
+    const p = css22('pulido.css');
+    assert.match(p, /\.s-pv\[data-n\] \.s-pv__lienzo \{ aspect-ratio: auto; \}/);
+  });
+
+  test('T22 captura EN: el reemplazo de «tramo final» no deja doble punto', () => {
+    const f = readFileSync(join(WEB22, '..', '..', 'tools/sitio/capturar-producto.mjs'), 'utf8');
+    assert.ok(f.includes("[/Empaque insuficiente en el tramo final/g, 'Insufficient packaging on the final leg']"));
+    const m = JSON.parse(readFileSync(join(WEB22, 'public/s/manifest.json'), 'utf8')).img;
+    assert.ok(m['producto/en/caso'] && m['producto/en/caso-oscuro']);
+  });
+}

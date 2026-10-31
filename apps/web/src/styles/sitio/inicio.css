@@ -256,6 +256,13 @@
     margin-top: -30.2%;
   }
 
+  /* T22: a 390 el texto de la captura (subtítulos de las tarjetas y de cada fila) medía 4 a 5 px efectivos y la ventana quedaba cortada a la derecha. Un recorte
+     legible (8 px o más) ya no cabe en 330 px sin perder el ranking, así que en móvil el héroe conserva la tarjeta de la cifra (texto de 14 px, sello y rótulo
+     de datos de ejemplo) y la captura completa vive en la sección de pantallas, donde se desplaza a los lados. */
+  [data-ventana="fuga"] .s-ventana__cuerpo {
+    display: none;
+  }
+
   .s-ov-cifra {
     position: static;
     max-width: none;
@@ -1842,6 +1849,12 @@ html[data-ambiente="claro"] .s-hilo__capa { stroke: var(--s-tinta); }
     flex-wrap: wrap;
     align-items: baseline;
     column-gap: var(--s-e16);
+  }
+
+  /* T22: el título ocupa el resto de la fila y se parte dentro de su columna; antes un título largo (02) saltaba debajo del número y quedaba a la izquierda */
+  .s-regla__titulo {
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .s-pie__cols {

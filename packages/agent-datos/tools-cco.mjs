@@ -10,9 +10,72 @@ const LAT_ES = { menos_de_1_dia: 'Menos de 1 día', '1_dia': '1 día', '2_dias':
 const TIPO_GRUPOS = { garantia: ['Garantía de herramientas', 'Garantía de piezas'], reembolso: ['Reembolsos', 'Solicitudes de reembolso'], etiqueta_devolucion: ['Etiquetas de devolución'] };
 const mes = (iso) => String(iso ?? '').slice(0, 7);
 
+const VALOR_ES = { empresa: 'La empresa', marketplace: 'El marketplace', amazon: 'Amazon', walmart: 'Walmart', sin_dato: 'Sin dato' };
+const GRUPO_ES = { vende: { empresa: 'Vende la empresa', marketplace: 'Vende el marketplace', sin_dato: 'Sin dato de quién vende' }, bodega: { empresa: 'Sale de la bodega de la empresa', marketplace: 'Sale de la bodega del marketplace', sin_dato: 'Sin dato de la bodega' } };
+const MENOS = 'Menos de 5';
+const subcanalEs = (c) => SUBCANAL_ES[c] ?? String(c).replace(/_/g, ' ');
+
 export function crearToolsCco(h) {
   const { fig, col, noData, unavailable, money, tag, fmtInt, monthLabel, coverageOf, SRC } = h;
   const falla = (card, tool, missing) => (card?.indisponible ? unavailable(tool, card.indisponible === 'not_installed' ? 'Los agregados del CCO todavía no están instalados; no se muestra ninguna cifra y eso no significa cero.' : undefined) : null) ?? noData('No tengo datos suficientes para esta consulta.', missing);
+
+
+  // E (quién vende) y F (de qué bodega sale): MISMA evidencia, distinto eje. Son casos del Tracker, no ventas: jamás devuelven «conviene X».
+  const modalidadTool = (id) => {
+    const eje = id === 'E' ? 'vende' : 'bodega', name = id === 'E' ? 'casos_por_subcanal' : 'envio_propio_vs_amazon', puerto = id === 'E' ? 'ccoSubcanal' : 'ccoEnvio';
+    return {
+      name, label: id === 'E' ? 'Contando casos por modalidad de venta' : 'Contando casos por bodega de origen', roles: ['analyst', 'owner'], restricted: true,
+      parameters: { properties: {
+        retailer: { type: 'string', enum: ['todos', 'amazon', 'walmart'], default: 'todos', description: 'Marketplace.' },
+        vista: { type: 'string', enum: ['modalidad', 'sku'], default: 'modalidad', description: 'Por subcanal y modalidad, o por SKU.' },
+        top: { type: 'integer', minimum: 1, maximum: 10, default: 7 } } },
+      description: id === 'E'
+        ? 'Modalidad de venta en Amazon y Walmart según el campo Retailer: quién vende, la empresa o el marketplace. Casos, reembolsos, defectos y despacho por subcanal y por SKU. Son casos con sesgo, no ventas: no decide qué SKU vender en cada modalidad.'
+        : 'Modalidad de envío en Amazon y Walmart según el campo Retailer: de qué bodega sale, la de la empresa o la del marketplace. Casos, reembolsos, defectos y despacho por subcanal y por SKU. Son casos con sesgo, no ventas ni costos: no decide desde dónde enviar.',
+      reads: ['tracker_row_heads (Retailer, SKU, hoja, defecto, WH, SLA Status; k>=5)'],
+      method: 'Cuenta filas del Tracker por el subcanal que declara su columna Retailer y lo traduce a quién vende, de qué bodega sale y qué marketplace con una tabla cerrada; lo que la tabla no conoce queda como Sin dato. Los pedidos cumplidos por el marketplace casi no llegan al Tracker, así que la comparación está sesgada.', source: SRC.ccoTracker,
+      async run({ port }, { retailer, vista, top }) {
+        const r = await port[puerto](); const card = r?.card;
+        if (!card || card.indisponible) return falla(card, name, faltanTexto(id));
+        if (card.estado === 'falta') return noData('No hay casos de Amazon o Walmart con subcanal visible en el Tracker, así que no tengo nada que comparar por modalidad.', faltanTexto(id));
+        const subs = card.subcanales.filter((x) => retailer === 'todos' || x.marketplace === retailer).slice(0, vista === 'modalidad' ? top : card.subcanales.length);
+        if (!subs.length) return noData(`Ningún subcanal de ${VALOR_ES[retailer] ?? retailer} llega al mínimo de 5 casos.`, faltanTexto(id));
+        const total = card.totalCasos, mostrados = subs.reduce((a, x) => a + x.casos, 0), cov = coverageOf(vista === 'modalidad' ? mostrados : total, total);
+        const f0 = fig(name, 'Casos de Amazon y Walmart con subcanal visible', fmtInt(total), total, 'observed', coverageOf(card.cobertura[0].conocido, card.cobertura[0].elegible));
+        const figEjes = card.ejes.map((e) => fig(name, GRUPO_ES[eje][e.valor], fmtInt(e.casos), e.casos, 'observed', coverageOf(e.casos, total)));
+        const det = card.detalleIndisponible, cnt = (n) => (det ? 'Sin dato' : n === null ? MENOS : n);
+        let block;
+        if (vista === 'modalidad') {
+          const des = (x) => (x.despacho === null ? 'Sin dato' : x.despacho.legibles === null ? MENOS : `${x.despacho.tresODias ?? MENOS} de ${x.despacho.legibles}`);
+          block = { tool: name, title: id === 'E' ? 'Casos del Tracker por subcanal y modalidad de venta' : 'Casos del Tracker por subcanal y bodega de origen',
+            columns: [col('subcanal', 'Subcanal'), col('quien', id === 'E' ? 'Quién vende' : 'Bodega de origen'), col('marketplace', 'Marketplace'), col('casos', 'Casos', 'integer'), col('reembolsos', 'Reembolsos'), col('garantias', 'Garantías'), col('defectos', 'Casos de defecto'), col('despacho3', 'Despacho de 3 días o más')],
+            rows: subs.map((x) => ({ subcanal: subcanalEs(x.subcanal), quien: VALOR_ES[eje === 'vende' ? x.vende : x.bodega], marketplace: VALOR_ES[x.marketplace], casos: x.casos, reembolsos: cnt(x.reembolsos), garantias: cnt(x.garantias), defectos: cnt(x.defectos), despacho3: des(x) })),
+            class: 'observed', coverage: cov, truncated: subs.length < card.subcanales.filter((x) => retailer === 'todos' || x.marketplace === retailer).length, note: 'Sesgo: solo hay casos atendidos y los pedidos cumplidos por el marketplace casi no llegan al Tracker. No son ventas ni hay costos.' };
+        } else {
+          if (det) return noData('El detalle por SKU y modalidad todavía no está instalado; solo tengo los conteos por subcanal.', faltanTexto(id));
+          const valores = card.ejes.map((e) => e.valor).filter((v) => v !== 'sin_dato' || card.skus.some((x) => x.grupos.sin_dato));
+          const celda = (g) => (g ? `${g.casos} (reembolsos ${g.reembolsos ?? MENOS}, defectos ${g.defectos ?? MENOS})` : MENOS);
+          const filas = card.skus.slice(0, top);
+          if (!filas.length) return noData('Ningún SKU llega al mínimo de 5 casos en estas modalidades.', faltanTexto(id));
+          block = { tool: name, title: id === 'E' ? 'Casos por SKU según quién vende' : 'Casos por SKU según la bodega de origen',
+            columns: [col('sku', 'SKU'), ...valores.map((v) => col('g_' + v, GRUPO_ES[eje][v]))], rows: filas.map((x) => ({ sku: x.sku, ...Object.fromEntries(valores.map((v) => ['g_' + v, celda(x.grupos[v])])) })),
+            class: 'observed', coverage: coverageOf(filas.reduce((a, x) => a + Object.values(x.grupos).reduce((b, g) => b + (g?.casos ?? 0), 0), 0), total), truncated: card.skus.length > filas.length,
+            note: 'Sesgo: casos atendidos, no ventas. Cada cifra cuenta solo las celdas visibles de al menos 5 casos, así que es un mínimo. El detalle por SKU suma Amazon y Walmart.' };
+        }
+        const faltan = id === 'E' ? 'la venta por SKU y por modalidad, el costo de cumplimiento, las tarifas del marketplace y el margen' : 'la venta por SKU y por origen, el costo de envío propio, el costo de cumplimiento del marketplace y el margen';
+        const ejesTxt = card.ejes.map((e) => `${GRUPO_ES[eje][e.valor]} ${fmtInt(e.casos)}`).join(', ');
+        const cierre = id === 'E' ? 'no puedo decir qué SKU conviene vender como vendedor de Amazon o a través del marketplace' : 'no puedo decir desde dónde conviene enviar cada SKU, con medios propios o con el cumplimiento del marketplace';
+        return {
+          status: 'ok', figures: [f0, ...figEjes], blocks: [block],
+          summary: `Hay ${f0.display} casos de Amazon y Walmart con subcanal visible en el Tracker ${tag(f0)}: ${ejesTxt}. Son casos atendidos con sesgo, no ventas: ${cierre}, porque faltan ${faltan}.`,
+          missing: faltanTexto(id),
+          notes: [...card.salvedades.includes('walmartSoloBodega') ? ['Walmart no compra producto de la empresa: solo se vende a través de Walmart, así que para Walmart solo importa de qué bodega sale el pedido.'] : [],
+            'Un Retailer cuyo subcanal no se conoce queda como Sin dato; no se asigna a ninguna modalidad.', 'El único tiempo medible es el de despacho de reposiciones y etiquetas, no el tiempo de resolución del caso.',
+            ...(det ? ['El detalle por modalidad todavía no está instalado: reembolsos, garantías, defectos y despacho figuran como Sin dato.'] : [])],
+        };
+      },
+    };
+  };
 
   return [
     {
@@ -123,36 +186,7 @@ export function crearToolsCco(h) {
         };
       },
     },
-    {
-      name: 'casos_por_subcanal', label: 'Contando casos por subcanal de cumplimiento', roles: ['analyst', 'owner'], restricted: true,
-      parameters: { properties: { retailer: { type: 'string', enum: ['todos', 'amazon', 'walmart'], default: 'todos' }, top: { type: 'integer', minimum: 1, maximum: 10, default: 7 } } },
-      description: 'Casos del Tracker por subcanal de cumplimiento de Amazon y Walmart. Con sesgo y sin ventas de denominador: no decide qué SKU vender como vendedor de Amazon o directo.',
-      reads: ['tracker_row_heads (Retailer; k>=5)'],
-      method: 'Cuenta filas del Tracker por el subcanal que declara su columna Retailer; los pedidos cumplidos por Amazon casi no llegan al Tracker, así que la comparación está sesgada.', source: SRC.ccoTracker,
-      async run({ port }, { retailer, top }) {
-        const r = await port.ccoSubcanal(); const card = r?.card;
-        if (!card || card.indisponible) return falla(card, 'casos_por_subcanal', faltanTexto('E'));
-        const filas = card.subcanales.filter((x) => retailer === 'todos' || x.subcanal.startsWith(retailer)).slice(0, top);
-        if (!filas.length) return noData('Ningún subcanal llega al mínimo de 5 casos.', faltanTexto('E'));
-        const total = card.subcanales.reduce((a, x) => a + x.n, 0), cov = coverageOf(filas.reduce((a, x) => a + x.n, 0), total);
-        const f = fig('casos_por_subcanal', SUBCANAL_ES[filas[0].subcanal], fmtInt(filas[0].n), filas[0].n, 'observed', cov);
-        return {
-          status: 'ok', figures: [f],
-          blocks: [{ tool: 'casos_por_subcanal', title: 'Casos del Tracker por subcanal de cumplimiento', columns: [col('subcanal', 'Subcanal'), col('casos', 'Casos', 'integer')], rows: filas.map((x) => ({ subcanal: SUBCANAL_ES[x.subcanal], casos: x.n })), class: 'observed', coverage: cov, truncated: false,
-            note: 'Sesgo: solo hay casos atendidos y los pedidos cumplidos por Amazon casi no llegan al Tracker. No hay ventas por subcanal para usar de denominador.' }],
-          summary: `El subcanal con más casos del Tracker es ${SUBCANAL_ES[filas[0].subcanal]}, con ${f.display} ${tag(f)}. Con esto no puedo decir qué SKU conviene vender como vendedor de Amazon o directo: son casos con sesgo, no ventas.`,
-          missing: faltanTexto('E'), notes: ['Los casos no son ventas ni son todos los pedidos.'],
-        };
-      },
-    },
-    {
-      name: 'envio_propio_vs_amazon', label: 'Revisando si hay datos para decidir desde dónde enviar', roles: ['analyst', 'owner'], restricted: true, parameters: { properties: {} },
-      description: 'Qué SKU enviar con medios propios por FedEx o UPS y cuáles con el cumplimiento de Amazon. Siempre responde que no hay dato y lista exactamente qué falta y a quién pedirlo.',
-      reads: ['ninguna tabla: no existen costos de envío, costo de cumplimiento ni cumplimiento por pedido'],
-      method: 'No calcula nada: devuelve sin dato con la lista de lo que hay que pedir, para no inventar una recomendación.', source: SRC.ccoTracker,
-      async run() {
-        return noData('No tengo costo de envío propio, costo de cumplimiento de Amazon ni el tipo de cumplimiento de cada pedido, así que no hay nada que sostenga una decisión de desde dónde enviar.', faltanTexto('F'));
-      },
-    },
+    modalidadTool('E'),
+    modalidadTool('F'),
   ];
 }

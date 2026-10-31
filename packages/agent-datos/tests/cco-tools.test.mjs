@@ -1,18 +1,19 @@
-// Las seis herramientas del CCO: catálogo cerrado, argumentos enumerados, solo analista y propietario, cifras con clase y cobertura, F siempre no_data, sin SQL ni texto libre.
+// Las seis herramientas del CCO: catálogo cerrado, argumentos enumerados, solo analista y propietario, cifras con clase y cobertura, E y F por modalidad sin recomendar jamás, sin SQL ni texto libre.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TOOLS, TOOL_INDEX, executeTool, catalogForModel, toolsForRole, validateArgs, toJsonSchema, contractViolations, planByRules, SYNTHETIC_TENANTS, assertPort, PORT_METHODS, buildSuggestions, DEMO_QUESTIONS } from '../index.mjs';
-import { faltanTexto, FALTAN } from '../../workspace-service/cco.mjs';
+import { faltanTexto, FALTAN, tarjetaE, tarjetaF } from '../../workspace-service/cco.mjs';
+import { CCO_EJEMPLOS } from '../index.mjs';
 import { ctxFor, portFor, ask, ALL_TEXT } from './helpers.mjs';
 
 const CCO = ['rendimiento_sku', 'candidatos_sin_venta', 'eficiencia_bodegas', 'casos_por_estado', 'casos_por_subcanal', 'envio_propio_vs_amazon'];
 const run = (name, args = {}, role = 'owner', tenant = SYNTHETIC_TENANTS.A) => executeTool({ name, args, port: portFor(tenant), ctx: ctxFor(role, tenant) });
 
-test('seis herramientas nuevas, solo analista y propietario, y el puerto declara sus cinco métodos', () => {
+test('seis herramientas nuevas, solo analista y propietario, y el puerto declara sus seis métodos', () => {
   assert.deepEqual(TOOLS.filter((t) => CCO.includes(t.name)).map((t) => t.name), CCO);
   for (const r of ['viewer', 'operator']) assert.ok(!catalogForModel(r).some((t) => CCO.includes(t.name)), r);
   for (const r of ['analyst', 'owner']) assert.ok(CCO.every((n) => toolsForRole(r).some((t) => t.name === n)), r);
-  for (const m of ['ccoSku', 'ccoSinVenta', 'ccoBodegas', 'ccoEstados', 'ccoSubcanal']) assert.ok(PORT_METHODS.includes(m), m);
+  for (const m of ['ccoSku', 'ccoSinVenta', 'ccoBodegas', 'ccoEstados', 'ccoSubcanal', 'ccoEnvio']) assert.ok(PORT_METHODS.includes(m), m);
   assertPort(portFor());
 });
 test('ningún argumento es texto libre: todo texto es enumerado y todo número está acotado; ninguno acepta tenant, rol ni SQL', () => {
@@ -67,24 +68,59 @@ test('D: casos por estado con cobertura de direcciones, mínimo de 5 y sin volum
   const mx = await run('casos_por_estado', { pais: 'MX' }); assert.equal(mx.status, 'no_data');
   const g = await run('casos_por_estado', { tipo_caso: 'garantia' }); assert.equal(g.blocks[0].rows[0].estado, 'Texas'); assert.equal(g.blocks[0].rows[0].casos, 150);
 });
-test('E: casos por subcanal con aviso de sesgo; no decide qué vender', async () => {
+test('E: modalidad de venta (quién vende) con aviso de sesgo; no decide qué vender', async () => {
   const r = await run('casos_por_subcanal', { retailer: 'amazon' }); assert.equal(r.status, 'ok');
   assert.ok(r.blocks[0].rows.every((x) => /Amazon/.test(x.subcanal))); assert.match(r.blocks[0].note, /Sesgo/); assert.match(r.summary, /no puedo decir qué SKU conviene vender/);
   assert.ok(r.missing.some((m) => /Retailer/.test(m)) && r.missing.some((m) => /Pedir a Responsable A/.test(m)));
+  assert.deepEqual(r.blocks[0].columns.map((c) => c.key), ['subcanal', 'quien', 'marketplace', 'casos', 'reembolsos', 'garantias', 'defectos', 'despacho3']);
+  const piloto = r.blocks[0].rows.find((x) => /cliente piloto/.test(x.subcanal)); assert.equal(piloto.quien, 'La empresa'); assert.equal(piloto.marketplace, 'Amazon'); assert.equal(piloto.casos, 485);
+  const com = r.blocks[0].rows.find((x) => x.subcanal === 'Amazon.com'); assert.equal(com.quien, 'El marketplace');
+  assert.ok(r.figures.every((f) => f.class === 'observed' && f.coverage.known_n >= 0)); assert.ok(r.figures.some((f) => f.label === 'Vende la empresa') && r.figures.some((f) => f.label === 'Vende el marketplace'));
+  assert.match(r.summary, /faltan la venta por SKU y por modalidad, el costo de cumplimiento, las tarifas del marketplace y el margen/);
+  assert.ok(r.notes.some((n) => /Sin dato; no se asigna/.test(n)) && r.notes.some((n) => /no el tiempo de resolución/.test(n)));
 });
-test('F: siempre no_data, con la lista exacta de lo que falta y a quién pedirlo; jamás una cifra', async () => {
+test('E por SKU: columnas por quién vende, celdas ocultas como «Menos de 5» y nunca una recomendación', async () => {
+  const r = await run('casos_por_subcanal', { vista: 'sku', top: 3 }); assert.equal(r.status, 'ok');
+  assert.deepEqual(r.blocks[0].columns.map((c) => c.key), ['sku', 'g_empresa', 'g_marketplace']); assert.equal(r.blocks[0].rows[0].sku, 'SYN-AX1');
+  assert.match(r.blocks[0].rows[0].g_empresa, /^98 \(reembolsos 25, defectos 20\)$/); assert.match(r.blocks[0].rows[0].g_marketplace, /^30 \(reembolsos 9, defectos Menos de 5\)$/);
+  assert.match(r.blocks[0].note, /mínimo/); assert.doesNotMatch(ALL_TEXT(r), /\bconviene (vender|enviar) [A-Z]|te recomiendo|la mejor (opción|modalidad)/i);
+});
+test('F: modalidad de envío (de qué bodega sale) con la misma evidencia; ya no es no_data pero tampoco recomienda', async () => {
   for (const args of [{}, undefined]) {
     const r = await run('envio_propio_vs_amazon', args);
-    assert.equal(r.status, 'no_data'); assert.equal(r.figures.length, 0); assert.equal(r.blocks.length, 0); assert.deepEqual(r.missing, faltanTexto('F'));
+    assert.equal(r.status, 'ok'); assert.ok(r.figures.length >= 3 && r.figures.every((f) => f.class === 'observed')); assert.equal(r.blocks.length, 1); assert.deepEqual(r.missing, faltanTexto('F'));
+    assert.match(r.summary, /no puedo decir desde dónde conviene enviar cada SKU/); assert.match(r.summary, /el costo de envío propio, el costo de cumplimiento del marketplace y el margen/);
+    assert.ok(r.blocks[0].columns.some((c) => c.label === 'Bodega de origen')); assert.ok(r.blocks[0].rows.some((x) => x.quien === 'La empresa') && r.blocks[0].rows.some((x) => x.quien === 'El marketplace'));
+    assert.ok(r.notes.some((n) => /Walmart no compra producto/.test(n))); assert.doesNotMatch(ALL_TEXT(r), /te recomiendo|la mejor (opción|modalidad)/i);
   }
+  const sku = await run('envio_propio_vs_amazon', { vista: 'sku' }); assert.deepEqual(sku.blocks[0].columns.map((c) => c.key), ['sku', 'g_empresa', 'g_marketplace']); assert.match(sku.blocks[0].columns[1].label, /bodega de la empresa/);
   assert.ok(FALTAN.F.every((x) => ['responsable_a', 'responsable_b'].includes(x.quien)));
-  const a = await ask('¿Qué SKU conviene enviar desde medios propios y cuáles con el cumplimiento de Amazon?'); assert.equal(a.status, 'no_data'); assert.match(a.text, /^No tengo ese dato/); assert.ok(a.missing.length >= 4);
-  assert.deepEqual(contractViolations(a), []);
+  const a = await ask('¿Qué SKU conviene enviar desde medios propios y cuáles con el cumplimiento de Amazon?'); assert.equal(a.status, 'ok'); assert.match(a.text, /no puedo decir desde dónde conviene enviar/); assert.ok(a.missing.length >= 4);
+  assert.deepEqual(contractViolations(a), []); assert.equal(a.usage.mode, 'deterministic'); assert.equal(a.usage.costMinor, '0');
+});
+test('un subcanal de Amazon que la tabla no conoce se muestra como «Sin dato» y no se asigna a ninguna modalidad; sin celdas visibles, no_data', async () => {
+  const ok = (rows) => ({ rows }), cell = (d1, n, es_otros = false) => ({ d1, d2: null, n, es_otros });
+  const raw = { subcanal: ok([cell('amazon_cumplido_por_piloto', 30), cell('amazon_subcanal_nuevo', 12), cell(null, 6, true)]), cob: ok([{ cutoff: '2026-10-05T00:00:00Z' }]), modalidad: ok([]) };
+  const portE = { ...portFor(), ccoSubcanal: async () => ({ status: 'ok', card: tarjetaE(raw) }), ccoEnvio: async () => ({ status: 'ok', card: tarjetaF(raw) }) };
+  for (const name of ['casos_por_subcanal', 'envio_propio_vs_amazon']) {
+    const r = await executeTool({ name, args: {}, port: portE, ctx: ctxFor('owner') }); assert.equal(r.status, 'ok', name);
+    const fila = r.blocks[0].rows.find((x) => x.subcanal === 'amazon subcanal nuevo'); assert.equal(fila.quien, 'Sin dato'); assert.equal(fila.marketplace, 'Sin dato'); assert.equal(fila.reembolsos, 'Menos de 5', 'detalle vacío visible: oculto, no cero');
+    assert.deepEqual(contractViolations({ status: 'ok', text: r.summary, figures: r.figures, blocks: r.blocks, citations: [], sources: [1], calc: [1] }), [], name);
+  }
+  const solo = { subcanal: ok([cell('lowes', 40)]), cob: ok([]), modalidad: ok([]) };
+  const portF = { ...portFor(), ccoSubcanal: async () => ({ status: 'ok', card: tarjetaE(solo) }), ccoEnvio: async () => ({ status: 'ok', card: tarjetaF(solo) }) };
+  for (const name of ['casos_por_subcanal', 'envio_propio_vs_amazon']) { const r = await executeTool({ name, args: {}, port: portF, ctx: ctxFor('owner') }); assert.equal(r.status, 'no_data', name); assert.equal(r.figures.length, 0); assert.ok(r.missing.length >= 4); }
+  const caido = { ...portFor(), ccoEnvio: async () => ({ status: 'ok', card: tarjetaF({ subcanal: { error: 'not_installed' } }) }) };
+  const r = await executeTool({ name: 'envio_propio_vs_amazon', args: {}, port: caido, ctx: ctxFor('owner') }); assert.equal(r.status, 'unavailable'); assert.match(r.summary, /no significa cero/);
+  const sinDetalle = { ...portFor(), ccoSubcanal: async () => ({ status: 'ok', card: tarjetaE({ ...raw, modalidad: { error: 'not_installed' } }) }) };
+  const d = await executeTool({ name: 'casos_por_subcanal', args: {}, port: sinDetalle, ctx: ctxFor('owner') }); assert.equal(d.status, 'ok'); assert.ok(d.blocks[0].rows.every((x) => x.reembolsos === 'Sin dato' && x.defectos === 'Sin dato'));
+  assert.ok(d.notes.some((n) => /todavía no está instalado/.test(n)));
+  assert.equal((await executeTool({ name: 'casos_por_subcanal', args: { vista: 'sku' }, port: sinDetalle, ctx: ctxFor('owner') })).status, 'no_data');
 });
 test('aislamiento: la organización B no ve el SKU de A y A no ve el de B', async () => {
-  const a = JSON.stringify([await run('rendimiento_sku'), await run('candidatos_sin_venta'), await run('casos_por_subcanal')]);
-  const b = JSON.stringify([await run('rendimiento_sku', {}, 'owner', SYNTHETIC_TENANTS.B), await run('candidatos_sin_venta', {}, 'owner', SYNTHETIC_TENANTS.B)]);
-  assert.ok(!a.includes('ZZ-OTRA-ORG') && !a.includes('ZZ-VIEJO')); assert.ok(b.includes('ZZ-OTRA-ORG') && !b.includes('SYN-AX1') && !b.includes('SYN-OLD1'));
+  const a = JSON.stringify([await run('rendimiento_sku'), await run('candidatos_sin_venta'), await run('casos_por_subcanal'), await run('casos_por_subcanal', { vista: 'sku' }), await run('envio_propio_vs_amazon', { vista: 'sku' })]);
+  const b = JSON.stringify([await run('rendimiento_sku', {}, 'owner', SYNTHETIC_TENANTS.B), await run('candidatos_sin_venta', {}, 'owner', SYNTHETIC_TENANTS.B), await run('casos_por_subcanal', { vista: 'sku' }, 'owner', SYNTHETIC_TENANTS.B), await run('envio_propio_vs_amazon', { vista: 'sku' }, 'owner', SYNTHETIC_TENANTS.B)]);
+  assert.ok(!a.includes('ZZ-OTRA-ORG') && !a.includes('ZZ-VIEJO')); assert.ok(b.includes('ZZ-OTRA-ORG') && b.includes('ZZ-OTRA-2') && !b.includes('SYN-AX2') && !b.includes('SYN-AX1') && !b.includes('SYN-OLD1'));
 });
 test('el planificador por reglas (sin modelo) enruta las seis preguntas del CCO', async () => {
   const ctx = { month: '2026-10', role: 'owner' };
@@ -110,4 +146,28 @@ test('las sugerencias del CCO solo se ofrecen a analista y propietario y respeta
   assert.ok(own.categorias.some((c) => c.titulo === 'CCO')); assert.ok(!view.categorias.some((c) => c.titulo === 'CCO'));
   assert.ok(DEMO_QUESTIONS.filter((d) => CCO.includes(d.tool)).length === 6);
   assert.equal(buildSuggestions({ sources: [{ key: 'ledger', loaded: false }, { key: 'excel', loaded: false }] }, 'owner').categorias.some((c) => c.titulo === 'CCO'), false);
+});
+
+test('las frases de ejemplo en español e inglés llevan a la herramienta correcta, sin modelo ni costo, y cumplen el contrato', async () => {
+  const ctx = { month: '2026-10', role: 'owner' };
+  assert.deepEqual(Object.keys(CCO_EJEMPLOS).sort(), [...CCO].sort());
+  for (const [tool, { es, en }] of Object.entries(CCO_EJEMPLOS)) {
+    assert.ok(es.length >= 2 && en.length >= 2, tool);
+    for (const q of [...es, ...en]) {
+      assert.equal(planByRules({ question: q, ctx, vocabulary: { problems: [] } }).calls?.[0]?.tool, tool, q);
+      const a = await ask(q); assert.deepEqual(contractViolations(a), [], q); assert.equal(a.usage.mode, 'deterministic'); assert.equal(a.usage.costMinor, '0'); assert.ok(!ALL_TEXT(a).includes('ZZ-OTRA-ORG'), q);
+      assert.ok(a.status === 'ok' || a.status === 'no_data', q + ' ' + a.status);
+      const v = await ask(q, { role: 'viewer' }); assert.notEqual(v.status, 'ok', 'un viewer no recibe datos del CCO: ' + q);
+      assert.notEqual((await ask(q, { role: 'operator' })).status, 'ok', 'un operador tampoco: ' + q);
+    }
+  }
+  // no se roban preguntas de otras herramientas
+  assert.equal(planByRules({ question: 'How many refunds per marketplace?', ctx, vocabulary: { problems: [] } }).calls?.[0]?.tool === 'casos_por_subcanal', false);
+  assert.equal(planByRules({ question: '¿Cuánto dinero en reembolsos tuvimos por marketplace?', ctx, vocabulary: { problems: [] } }).calls?.[0]?.tool, 'ledger_por_fuente');
+  assert.equal(planByRules({ question: '¿Cuáles son los 5 problemas con más incidencias este mes?', ctx, vocabulary: { problems: [] } }).calls?.[0]?.tool, 'problemas_top');
+});
+test('sin PII: ninguna respuesta de E o F trae correos, teléfonos, direcciones ni identificadores de pedido', async () => {
+  for (const q of CCO_EJEMPLOS.casos_por_subcanal.es.concat(CCO_EJEMPLOS.envio_propio_vs_amazon.es, CCO_EJEMPLOS.envio_propio_vs_amazon.en)) {
+    const t = ALL_TEXT(await ask(q)); assert.doesNotMatch(t, /@|\b\d{3}-\d{7}-\d{7}\b|\b\d{3}[-. ]\d{3}[-. ]\d{4}\b|Main St|calle \d/i, q);
+  }
 });

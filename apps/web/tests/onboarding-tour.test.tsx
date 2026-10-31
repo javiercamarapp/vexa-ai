@@ -258,6 +258,10 @@ test('plataforma: los títulos de las tarjetas son los rótulos del menú de la 
   const menu=renderToStaticMarkup(<MenuGuia t={T.es} contexto="Rovaq · Plataforma" tienePaso={false} mostrarChecklistOpcion={false} descartado={false} iniciar={noop} retomar={noop} mostrarChecklist={noop} noVolver={noop} cerrar={noop}/>);
   assert.doesNotMatch(menu,/Ver configuración completa/);
 });
+test('invitación: no promete una duración («en un minuto») frente a recorridos de decenas de pasos',()=>{
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const)for(const k of ['onb.ui.invitacionTitulo','onb.ui.invitacionCuerpo','onb.ui.invitacionElige'])assert.doesNotMatch(dic[k],/minuto|minute|segundos|seconds|\bmin\b/i,clave+':'+k);
+  assert.equal(ESP['onb.ui.invitacionTitulo'],'Conoce Rovaq');assert.equal(ING['onb.ui.invitacionTitulo'],'Get to know Rovaq');
+});
 test('ventana de la ruta: pocas pantallas alrededor de la actual con «…» a los lados',()=>{
   const nombres=['A','B','C','D','E','F','G','H'];
   assert.deepEqual(ventanaRuta(nombres,0),{items:['A','B','C','D','E'].map((nombre,i)=>({nombre,actual:i===0})),antes:false,despues:true});

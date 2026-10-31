@@ -7,7 +7,7 @@ export const onbEs = {
   'onb.ui.superadminSinOrg': 'Tu cuenta es de administración de plataforma y no pertenece a ninguna organización. Entra a la consola de plataforma para trabajar.',
   // Interfaz del recorrido (F2)
   'onb.ui.cerrar': 'Cerrar', 'onb.ui.empezar': 'Empezar recorrido', 'onb.ui.saltar': 'Saltar', 'onb.ui.retomar': 'Retomar donde lo dejé', 'onb.ui.noVolver': 'No volver a mostrar',
-  'onb.ui.invitacionTitulo': 'Conoce Rovaq en un minuto', 'onb.ui.invitacionCuerpo': 'Un recorrido corto por lo que tu rol puede hacer aquí. Puedes saltarlo y abrirlo luego desde Guía.',
+  'onb.ui.invitacionTitulo': 'Conoce Rovaq', 'onb.ui.invitacionCuerpo': 'Un recorrido por lo que puedes hacer aquí. Puedes saltarlo y abrirlo luego desde Guía.',
   'onb.ui.recorrido': 'Recorrido guiado', 'onb.ui.menuGuia': 'Opciones de la guía', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Mostrar la lista de primeros pasos',
   'onb.ui.avisoPasos': 'Paso {n} de {total}: {titulo}',
   'onb.ui.invitacionElige': 'Elige un recorrido por lo que tu rol puede hacer aquí: el corto solo muestra lo esencial. Puedes saltarlo y abrirlo luego desde Guía.',
@@ -73,7 +73,7 @@ export const onbEn = {
   'onb.ui.superadminSinOrg': 'Your account is a platform administrator and does not belong to any organization. Open the platform console to get to work.',
   // Tour interface (F2)
   'onb.ui.cerrar': 'Close', 'onb.ui.empezar': 'Start tour', 'onb.ui.saltar': 'Skip', 'onb.ui.retomar': 'Resume where I left off', 'onb.ui.noVolver': "Don't show again",
-  'onb.ui.invitacionTitulo': 'Get to know Rovaq in a minute', 'onb.ui.invitacionCuerpo': 'A short tour of what your role can do here. You can skip it and open it later from Guide.',
+  'onb.ui.invitacionTitulo': 'Get to know Rovaq', 'onb.ui.invitacionCuerpo': 'A tour of what you can do here. You can skip it and open it later from Guide.',
   'onb.ui.recorrido': 'Guided tour', 'onb.ui.menuGuia': 'Guide options', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Show the getting started list',
   'onb.ui.avisoPasos': 'Step {n} of {total}: {titulo}',
   'onb.ui.invitacionElige': 'Choose a tour of what your role can do here: the short one only shows the essentials. You can skip it and open it later from Guide.',

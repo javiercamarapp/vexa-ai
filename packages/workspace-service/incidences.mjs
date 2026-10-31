@@ -46,7 +46,7 @@ export function createIncidencesRepository({database,now=()=>new Date(),timeoutM
    return database.transaction('read',async s=>{
     const raw=await guarded(s,async()=>(await s.query(CATEGORIES_SQL,[s.tenantId])).rows,timeoutMs);
     const base={generatedAt:now().toISOString(),class:'inferred',unit:'incidencias',source:SOURCE,
-     note:'Cuenta incidencias (filas de issues), no problemas agrupados. Las categorías las asigna la IA: son Inferido, no un hecho observado.'};
+     noteKey:'tr.nt.incCategorias',note:'Cuenta incidencias (filas de issues), no problemas agrupados. Las categorías las asigna la IA: son Inferido, no un hecho observado.'};
     if(raw===null)return {...base,status:'timeout',rows:[],totals:null,truncated:false};
     const shaped=shapeCategories(raw);
     return {...base,status:shaped.totals.incidences===0?'empty':'ok',...shaped};
@@ -60,7 +60,7 @@ export function createIncidencesRepository({database,now=()=>new Date(),timeoutM
     const raw=await guarded(s,async()=>(await s.query(MONTHLY_SQL,[s.tenantId,win.start.toISOString(),win.end.toISOString(),problemId])).rows,timeoutMs);
     const base={generatedAt:now().toISOString(),scope:problemId?'problem':'total',problemId,class:'inferred',unit:'incidencias',definition:'started_at_or_first_message',source:SOURCE,
      window:{start:win.start.toISOString().slice(0,10),end:win.end.toISOString().slice(0,10),months},
-     note:problemId?'Incidencias de las corridas de extracción vinculadas a este problema, por mes de su conversación (inicio o primer mensaje). Una corrida puede aportar incidencias de otras categorías; no es el volumen de clientes afectados ni una pérdida.'
+     noteKey:problemId?'tr.nt.incProblema':'tr.nt.incTotal',note:problemId?'Incidencias de las corridas de extracción vinculadas a este problema, por mes de su conversación (inicio o primer mensaje). Una corrida puede aportar incidencias de otras categorías; no es el volumen de clientes afectados ni una pérdida.'
       :'Incidencias por mes de su conversación (inicio o primer mensaje). No son problemas agrupados.'};
     if(raw===null)return {...base,status:'timeout',series:[],outsideWindow:null,undated:null,total:null,linkedRuns:null};
     const shaped=shapeMonthly(raw,win),linkedRuns=problemId?num(raw[0]?.linked_runs):null;

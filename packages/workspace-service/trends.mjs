@@ -83,7 +83,7 @@ export function createTrendsRepository({database,now=()=>new Date(),timeoutMs=LO
      const ledThrough=useLedSum?(ledLast??ledSum.cutoff??null):maxDate(led.map(r=>r.last_at));
      ledger.completeness=completitud(ledger.series,{dataThrough:ledThrough,ahora:now(),conDatos:p=>p.orders.count+p.orders.unknownAmounts+p.refunds.count+p.refunds.unknownAmounts>0});}
     return {generatedAt:now().toISOString(),window:{start:win.start.toISOString().slice(0,10),end:win.end.toISOString().slice(0,10),months},
-     note:'Conteos de registros cargados (conversaciones por fecha de inicio o, si falta, por la fecha de su primer mensaje; pedidos registrados y reembolsos liquidados por fecha efectiva, de todas las bases del libro económico —incluye Shopify bruto y filas «a revisar»; /cfo muestra una sola base—; conversaciones de todas las fuentes, no solo las filas de HubSpot del Explorador). No aplican las reglas de publicación del snapshot ni suman monedas distintas.',conversations,ledger};
+     noteKey:'tr.nt.tendencias',note:'Conteos de registros cargados (conversaciones por fecha de inicio o, si falta, por la fecha de su primer mensaje; pedidos registrados y reembolsos liquidados por fecha efectiva, de todas las bases del libro económico —incluye Shopify bruto y filas «a revisar»; /cfo muestra una sola base—; conversaciones de todas las fuentes, no solo las filas de HubSpot del Explorador). No aplican las reglas de publicación del snapshot ni suman monedas distintas.',conversations,ledger};
    });
   }
  };

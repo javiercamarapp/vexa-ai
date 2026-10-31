@@ -20,7 +20,7 @@ test('categorías: forma con total, nº de categorías y corridas; incidencias �
  assert.equal(v.status,'ok');assert.equal(v.class,'inferred');assert.equal(v.unit,'incidencias');
  assert.deepEqual(v.totals,{incidences:9614,categories:2,runs:4100});
  assert.deepEqual(v.rows.map(r=>r.count),[300,9314]); // el repositorio no reordena: SQL ordena; la UI reordena de todos modos
- assert.match(v.note,/no problemas agrupados/);assert.match(v.note,/Inferido/);
+ assert.match(v.note,/no problemas agrupados/);assert.match(v.note,/Inferido/);assert.equal(v.noteKey,'tr.nt.incCategorias');
  assert.equal(seen.filter(s=>/FROM public\.issues/.test(s.text)).length,1,'una sola sentencia agregada');
  assert.deepEqual(seen.find(s=>/FROM public\.issues/.test(s.text)).values,[TENANT]);
  assert.doesNotMatch(CATEGORIES_SQL,/economic_ledger|evidence_spans|message_revisions/,'no recorre el libro ni verifica evidencia');
@@ -46,8 +46,8 @@ test('mensual: problema => un parámetro uuid; total => NULL; id inválido => 40
  const seen=[];const repo=createIncidencesRepository({database:fakeDb(plain([{month:'2026-10',n:'2',undated:null,linked_runs:'5'}]),seen),now:()=>NOW});
  const p=await repo.monthly({problemId:PROBLEM});
  const q=seen.find(s=>/problem_embedding_members/.test(s.text));assert.equal(q.values[3],PROBLEM);assert.equal(q.values[0],TENANT);
- assert.equal(p.scope,'problem');assert.equal(p.linkedRuns,5);assert.equal(p.status,'ok');assert.equal(p.class,'inferred');assert.match(p.note,/no es el volumen de clientes afectados/);
- const t=await repo.monthly();assert.equal(t.scope,'total');assert.equal(t.linkedRuns,null);assert.equal(seen.filter(x=>/problem_embedding_members/.test(x.text)).at(-1).values[3],null);
+ assert.equal(p.scope,'problem');assert.equal(p.linkedRuns,5);assert.equal(p.status,'ok');assert.equal(p.class,'inferred');assert.match(p.note,/no es el volumen de clientes afectados/);assert.equal(p.noteKey,'tr.nt.incProblema');
+ const t=await repo.monthly();assert.equal(t.scope,'total');assert.equal(t.noteKey,'tr.nt.incTotal');assert.equal(t.linkedRuns,null);assert.equal(seen.filter(x=>/problem_embedding_members/.test(x.text)).at(-1).values[3],null);
  const before=seen.length;
  await assert.rejects(repo.monthly({problemId:'no-es-uuid'}),e=>e.status===400&&e.code==='incidences_input_invalid');
  await assert.rejects(repo.monthly({months:99}),e=>e.status===400);

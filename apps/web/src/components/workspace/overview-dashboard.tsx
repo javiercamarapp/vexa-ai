@@ -28,6 +28,7 @@ import {CategoryVolume} from '../ui/category-volume';
 import type {CategoriesView} from '../../../../../packages/workspace-service/incidences.mjs';
 import {insightsResumen} from '../../lib/legibilidad/insights.mjs';
 import {separarRuido} from '../../lib/legibilidad/ruido.mjs';
+import {notaDe} from '../../lib/legibilidad/trad.mjs';
 import {comparacionMensual,ledgerConDatos} from '../../lib/legibilidad/meses.mjs';
 import {precalentarPantallas,PANTALLAS_PRINCIPALES} from '../../lib/workspace/precalentar.mjs';
 import {consultaAlcance} from '../../lib/workspace/alcance.mjs';
@@ -127,7 +128,7 @@ export function OverviewDashboard({bundle,pinned,avisos=[],cache}:{bundle:Bundle
   <CategoryVolume limit={6} title={t('res.topCategorias')} kind="inferred" rows={cats.data?.status==='ok'?cats.data.rows.map(r=>({category:r.category,count:r.count})):null} totalIncidencias={cats.data?.totals?.incidences}
    unavailable={cats.data?.status==='timeout'} reason={cats.data?.status==='timeout'?t('res.consultaSuperoTiempo'):t('res.aunNoIncidencias')}
    load={{busy:cats.busy,error:cats.error,status:cats.status,onRetry:cats.reload}}
-   foot={cats.data?.status==='ok'?<p className="card-lead">{cats.data.note}</p>:undefined}/>
+   foot={cats.data?.status==='ok'?<p className="card-lead">{notaDe(t,cats.data)}</p>:undefined}/>
   <section className="card" aria-label={t('prob.loMasImportante')}>
    <div className="card-title"><div><h2>{t('prob.loMasImportante')}</h2><p>{t('res.hastaTresLecturas')}</p></div></div>
    {(trends.busy&&!trends.data)||(cats.busy&&!cats.data)?<RovaqCargando compacto mensaje={t('res.cargandoLecturas')}/>:<InsightList insights={insights}/>}

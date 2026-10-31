@@ -4,6 +4,7 @@ import {useCallback,useEffect,useMemo,useState} from 'react';
 import {useIdioma,useLocaleIntl,useT} from '../i18n/proveedor';
 import type {Clave} from '../../lib/i18n';
 import type {TrendsView,LedgerMonth} from '../../../../../packages/workspace-service/trends.mjs';
+import {notaDe} from '../../lib/legibilidad/trad.mjs';
 import {formatMinorUnits} from '../../lib/formato/dinero-pantalla.mjs';
 import {ratioBps} from '../workspace/cfo-model.mjs';
 import {axisLabel} from '../../../../../packages/cfo-copilot/src/format.mjs';
@@ -50,6 +51,6 @@ export function TrendCharts({endpoint='/api/trends'}:{endpoint?:string}){
    <div>{convState&&convState.status==='ok'?<Bars title={t('tr.ui.trConvMes')} unit={t('tr.ui.convMin')} points={convPoints} kind={convState.class} note={[convState.sampled?t('tr.ui.trMuestra',{p:convState.samplePercent??''}):null,t('tr.ui.trFecha'),convState.outsideWindow?(convState.undated?t('tr.ui.trFueraSinFecha',{n:nfCount.format(convState.outsideWindow),u:nfCount.format(convState.undated)}):t('tr.ui.trFuera',{n:nfCount.format(convState.outsideWindow)})):null,convState.summary?.source==='summary'?convState.summary.label:null].filter(Boolean).join(' ')}/>:<div className="trend-empty"><p className="chip">{t('tr.ui.trChipConv')}</p><p className="state">{message(convState?.status??'empty',t('tr.ui.trVacioConv',{meses:12}))}</p></div>}</div>
    <div>{ledState&&ledState.status==='ok'?<><div className="seg" role="group" aria-label={t('tr.ui.trMedida')}><Button size="sm" aria-pressed={measure==='orders'} onClick={()=>setMeasure('orders')}>{t('res.pedidos')}</Button><Button size="sm" aria-pressed={measure==='refunds'} onClick={()=>setMeasure('refunds')}>{t('res.reembolsos')}</Button></div><Bars title={measure==='orders'?t('tr.ui.trPedMes'):t('tr.ui.trReembMes')} unit={ledState.currency??''} points={ledgerPoints} tickLabel={ledgerAxis(ledgerMax,ledState.exponent??0)} kind={ledState.class as 'observed'} note={[ledState.otherCurrencies?.length?t('tr.ui.trOtrasMonedas',{lista:ledState.otherCurrencies.join(', ')}):null,ledState.summary?.source==='summary'?ledState.summary.label:null].filter(Boolean).join(' ')||undefined}/></>:<div className="trend-empty"><p className="chip">{t('tr.ui.trChipLibro')}</p><p className="state">{message(ledState?.status??'empty',t('tr.ui.trVacioLibro',{meses:12}))}</p></div>}</div>
   </div>}
-  {view&&<p className="card-lead trend-note">{view.note}{view.conversations.sampleNote?' '+view.conversations.sampleNote:''}</p>}
+  {view&&<p className="card-lead trend-note">{notaDe(t,view)}{view.conversations.sampleNote?' '+(view.conversations.sampled&&view.conversations.samplePercent?t('tr.nt.tendenciasMuestra',{p:view.conversations.samplePercent}):view.conversations.sampleNote):''}</p>}
  </section>;
 }

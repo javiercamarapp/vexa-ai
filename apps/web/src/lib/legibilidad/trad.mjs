@@ -6,3 +6,5 @@ export const X = (t, clave, es, vars) => (t ? t(clave, vars) : es);
 export const idiomaDe = (t) => (t && t('tr.lg.idioma') === 'en' ? 'en' : 'es');
 /** Singular/plural con claves distintas (el inglés y el español no pluralizan igual). */
 export const P = (t, n, claveUno, claveVarios, esUno, esVarios, vars) => (n === 1 ? X(t, claveUno, esUno, vars) : X(t, claveVarios, esVarios, vars));
+/** Nota que viene de un paquete con su clave estable: con traductor y clave sale el texto del idioma activo; sin ellos, el español que mandó el paquete (contrato de otros consumidores intacto). */
+export const notaDe = (t, vista, vars) => (t && vista && vista.noteKey ? t(vista.noteKey, vars) : vista?.note ?? '');

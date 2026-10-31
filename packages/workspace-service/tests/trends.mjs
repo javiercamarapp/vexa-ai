@@ -74,7 +74,7 @@ analyze;`);
  check('ledger: latest revision only (O-3 = 9000), cancelled and pending excluded, null amount counted as unknown',oct.orders.count===2&&oct.orders.amountMinor==='9000'&&oct.orders.unknownAmounts===1&&oct.refunds.count===1&&oct.refunds.amountMinor==='1200',JSON.stringify(oct));
  check('ledger: September orders 12,500 USD (2 rows); MXN row not mixed in',sep.orders.count===2&&sep.orders.amountMinor==='12500');
  check('ledger: rows outside the window are not counted',led.series.every(r=>r.month>='2025-11')&&!JSON.stringify(led).includes('99900'));
- check('classes and note are honest: sampled conversations estimated, ledger observed, first-message definition stated',conv.class==='estimated'&&led.class==='observed'&&/primer mensaje/.test(v.note)&&/No aplican las reglas de publicación/.test(v.note));
+ check('classes and note are honest: sampled conversations estimated, ledger observed, first-message definition stated',conv.class==='estimated'&&led.class==='observed'&&/primer mensaje/.test(v.note)&&/No aplican las reglas de publicación/.test(v.note)&&v.noteKey==='tr.nt.tendencias');
  const failSample=q=>(t,v2)=>/BERNOULLI/.test(t)?Promise.reject(Object.assign(new Error('canceling statement due to statement timeout'),{code:'57014'})):q(t,v2);
  const tv=await createTrendsRepository({database:dbFor(UA,TA,failSample),now:()=>NOW}).monthly();
  check('if the sampled pass times out: status "timeout" (no 503, no invented figure) and the ledger still answers',tv.conversations.status==='timeout'&&tv.conversations.series.length===0&&tv.ledger.status==='ok');

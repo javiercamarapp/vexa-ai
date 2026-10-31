@@ -3,6 +3,7 @@ import {useMemo} from 'react';
 import {useIdioma,useLocaleIntl,useT} from '../i18n/proveedor';
 import type {MonthlyIncidencesView} from '../../../../../packages/workspace-service/incidences.mjs';
 import {insightsProblemaSerie} from '../../lib/legibilidad/insights.mjs';
+import {notaDe} from '../../lib/legibilidad/trad.mjs';
 import {mesAbrev} from '../../lib/charts/escala.mjs';
 import {Button,Refresh} from './button';
 import {ChartState} from './chart-state';
@@ -28,7 +29,7 @@ export function IncidenceEvolution({problemId}:{problemId:string}){
    <ChartState busy={r.busy} hasData={ok} error={r.error} status={r.status} que={t('tr.ui.queEvol')} retryLabel={t('tr.ui.evolReintentar')} onRetry={r.reload} height={140}
     empty={timeout?<EmptyState compact art="chart" tone="warn" title={t('hoy.noDisponible')} body={reason} action={<Button size="sm" icon={<Refresh/>} loading={r.busy} onClick={r.reload}>{t('tr.ui.evolReintentar')}</Button>}/>:<EmptyState compact art="chart" title={t('prob.aunSinDatos')} body={reason}/>}>
     {ok&&<><ColumnChart title={t('tr.ui.evolGrafica')} kind="inferred" height={140} data={data} unit={t('tr.ui.incidencias')}/>
-     <p className="card-lead">{v!.note}</p></>}
+     <p className="card-lead">{notaDe(t,v)}</p></>}
    </ChartState>
    {ok&&<InsightList insights={insights} label={t('tr.ui.evolLecturas')}/>}
   </div>

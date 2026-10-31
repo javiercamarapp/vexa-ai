@@ -381,10 +381,37 @@ describe('S9 Integraciones y preguntas', () => {
       const t = salida[lang].textos;
       const h = seccion(portada(lang), 'integraciones');
       assert.match(h, /data-diagrama="integraciones"/);
-      const chips = [...h.matchAll(/class="s-chip s-chip--integracion">([^<]+)</g)].map((m) => DECODIFICA(m[1]));
-      assert.deepEqual(chips, [...t.integraciones.chipsFila1, ...t.integraciones.chipsFila2]);
+      const chips = [...h.matchAll(/class="s-chip s-chip--integracion s-chip--(?:auto|archivo|ruta)">([^<]+)</g)].map((m) => DECODIFICA(m[1]));
+      assert.deepEqual(chips, [...t.integraciones.chipsAuto, ...t.integraciones.chipsArchivo, ...t.integraciones.chipsFila2]);
       for (const x of t.integraciones.hoy) assert.ok(textoPlano(h).includes(x.d));
       for (const x of t.integraciones.ruta) assert.ok(textoPlano(h).includes(x));
+    });
+
+    test(`${lang}: las integraciones van en tres grupos rotulados y cada píldora de hoja de ruta lleva su rótulo textual`, () => {
+      const g = salida[lang].textos.integraciones;
+      const h = seccion(portada(lang), 'integraciones');
+      const grupo = (clase) => new RegExp(`<div class="s-integ-grupo s-integ-grupo--${clase}">([\\s\\S]*?)</ul></div>`).exec(h)?.[1] ?? '';
+      const nombres = (html) => [...html.matchAll(/<li class="s-chip s-chip--integracion[^"]*">([^<]+)/g)].map((m) => DECODIFICA(m[1]));
+      const auto = grupo('auto');
+      const archivo = grupo('archivo');
+      const ruta = grupo('ruta');
+      assert.ok(textoPlano(auto).includes(g.gruposRotulos.auto), 'rótulo de conexión automática');
+      assert.ok(textoPlano(archivo).includes(g.gruposRotulos.archivo), 'rótulo de carga de archivos');
+      assert.ok(textoPlano(ruta).includes(g.gruposRotulos.ruta), 'rótulo de hoja de ruta');
+      assert.deepEqual(nombres(auto), ['HubSpot'], 'HubSpot es la única conexión automática');
+      assert.deepEqual(nombres(archivo), ['Excel', 'CSV']);
+      assert.deepEqual(nombres(ruta), ['Amazon', 'Walmart', 'Shopify']);
+      const marcas = [...ruta.matchAll(/<li class="s-chip s-chip--integracion s-chip--ruta">[^<]+<span class="s-chip__marca">([^<]+)<\/span><\/li>/g)].map((m) => m[1]);
+      assert.deepEqual(marcas, ['Amazon', 'Walmart', 'Shopify'].map(() => g.chipRutaMarca), 'cada píldora de hoja de ruta lleva su rótulo');
+      assert.match(g.chipRutaMarca, lang === 'es' ? /hoja de ruta/i : /roadmap/i);
+      // Ninguna de las tres de hoja de ruta aparece como píldora fuera de su grupo.
+      const fuera = h.replace(ruta, '');
+      for (const n of ['Amazon', 'Walmart', 'Shopify']) {
+        assert.doesNotMatch(fuera, new RegExp(`<li class="s-chip[^"]*">${n}`), `${n} fuera del grupo de hoja de ruta`);
+        assert.doesNotMatch(auto + archivo, new RegExp(n));
+      }
+      // Sin logos de marketplaces: ni imagen ni SVG de marca dentro de los grupos.
+      assert.doesNotMatch(auto + archivo + ruta, /<(img|svg|picture)\b/);
     });
 
     test(`${lang}: acordeón con al menos nueve preguntas, botones dentro de encabezados con aria-expanded y aria-controls, paneles que apuntan a su botón y una sola abierta`, () => {

@@ -75,14 +75,25 @@ export function Integraciones({lang, t}: {lang: Lang; t: TextosPortada}) {
           <p className="s-lead s-apagado">{g.subtitulo}</p>
         </div>
         <div className="s-integraciones" data-reveal=""><Diagrama id="integraciones" lang={lang} /></div>
-        <ul className="s-integraciones-lista s-lista">
-          {g.chipsFila1.map((c) => <li key={c}>{c}. {e.hoy}</li>)}
-          {g.chipsFila2.map((c) => <li key={c}>{c}. {e.ruta}</li>)}
-        </ul>
-        <div className="s-chips">
-          {g.chipsFila1.map((c) => <span className="s-chip s-chip--integracion" key={c}>{c}</span>)}
-          {g.chipsFila2.map((c) => <span className="s-chip s-chip--integracion" key={c}>{c}</span>)}
-          <span className="s-chip">{g.chipEtiquetaRuta}</span>
+        <div className="s-integ-grupos">
+          <div className="s-integ-grupo s-integ-grupo--auto">
+            <p className="s-integ-rotulo" id="integ-auto">{g.gruposRotulos.auto}</p>
+            <ul className="s-integ-lista" aria-labelledby="integ-auto">
+              {g.chipsAuto.map((c) => <li className="s-chip s-chip--integracion s-chip--auto" key={c}>{c}</li>)}
+            </ul>
+          </div>
+          <div className="s-integ-grupo s-integ-grupo--archivo">
+            <p className="s-integ-rotulo" id="integ-archivo">{g.gruposRotulos.archivo}</p>
+            <ul className="s-integ-lista" aria-labelledby="integ-archivo">
+              {g.chipsArchivo.map((c) => <li className="s-chip s-chip--integracion s-chip--archivo" key={c}>{c}</li>)}
+            </ul>
+          </div>
+          <div className="s-integ-grupo s-integ-grupo--ruta">
+            <p className="s-integ-rotulo" id="integ-ruta">{g.gruposRotulos.ruta}</p>
+            <ul className="s-integ-lista" aria-labelledby="integ-ruta">
+              {g.chipsFila2.map((c) => <li className="s-chip s-chip--integracion s-chip--ruta" key={c}>{c}<span className="s-chip__marca">{g.chipRutaMarca}</span></li>)}
+            </ul>
+          </div>
         </div>
         <div className="s-tarjetas-ficha">
           <div>

@@ -237,7 +237,8 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
   .s-hechos > * { padding: var(--s-e12) var(--s-e12); }
   .s-lista > li { padding-block: var(--s-e8); font-size: 14px; }
   .s-mt-96 { margin-top: var(--s-e40); }
-  .s-chips { display: none; }
+  .s-integ-grupos { gap: var(--s-e16) var(--s-e32); margin-bottom: var(--s-e32); }
+  .s-chip--integracion { min-height: 36px; padding-inline: var(--s-e12); }
   .s-faq__cabeza.s-mt-96 { margin-top: var(--s-e24); }
   .s-acordeon__boton { min-height: 56px; font-size: 17px; }
   .s-puestos__cierre { margin-top: var(--s-e16); }

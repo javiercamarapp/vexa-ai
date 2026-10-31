@@ -1221,12 +1221,70 @@ html:not([data-js]) .s-pestanas { display: none; }
   margin: 0 auto var(--s-e48);
 }
 
-.s-chips {
+/* Integraciones: tres grupos rotulados con peso visual decreciente (activa sólida, archivo contorno, hoja de ruta punteada y atenuada) */
+.s-integ-grupos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-e24) var(--s-e48);
+  margin-bottom: var(--s-e96);
+}
+
+.s-integ-grupo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-e12);
+}
+
+.s-integ-rotulo {
+  margin: 0;
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  line-height: 1.3;
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
+  color: var(--s-apagado);
+}
+
+.s-integ-lista {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--s-e12);
-  margin-bottom: var(--s-e144);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.s-chip--auto {
+  background: var(--s-tinta);
+  border-color: var(--s-tinta);
+  color: var(--s-fondo);
+}
+
+.s-chip--archivo {
+  background: transparent;
+  border-style: solid;
+  color: var(--s-tinta);
+}
+
+.s-chip--ruta {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--s-linea-fuerte);
+  color: var(--s-apagado);
+}
+
+.s-chip__marca {
+  font-family: var(--s-f-mono);
+  font-size: var(--s-t-minimo);
+  line-height: 1.2;
+  letter-spacing: var(--s-k-sello);
+  text-transform: uppercase;
 }
 
 .s-faq__cabeza {
@@ -1773,12 +1831,6 @@ html:not([data-js]) .s-hilo-zona::before {
   }
 
   .s-integraciones {
-    display: none;
-  }
-}
-
-@media (min-width: 481px) {
-  .s-integraciones-lista {
     display: none;
   }
 }

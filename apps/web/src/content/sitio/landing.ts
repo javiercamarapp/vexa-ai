@@ -602,8 +602,10 @@ export const LANDING = {
       { es: 'Verificación en dos pasos para propietarios.', en: 'Two-step verification for owners.' }, // PUBLICO
     ],
     posicion: { es: 'Rovaq no reemplaza tu herramienta de soporte. Lee las conversaciones de HubSpot en solo lectura y las cruza con los pedidos y reembolsos que cargas.', en: 'Rovaq does not replace your support tool. It reads HubSpot conversations in read-only mode and connects them with the orders and refunds you load.' }, // PUBLICO. Transporte que solo emite GET
-    chipsFila1: [
+    chipsAuto: [
       { es: 'HubSpot', en: 'HubSpot' },
+    ],
+    chipsArchivo: [
       { es: 'Excel', en: 'Excel' },
       { es: 'CSV', en: 'CSV' },
     ],
@@ -613,6 +615,12 @@ export const LANDING = {
       { es: 'Shopify', en: 'Shopify' },
     ],
     chipEtiquetaRuta: { es: 'Hoja de ruta', en: 'Roadmap' },
+    gruposRotulos: {
+      auto: { es: 'Conexión automática hoy', en: 'Automatic connection today' },
+      archivo: { es: 'Carga de archivos hoy', en: 'File upload today' },
+      ruta: { es: 'Hoja de ruta', en: 'Roadmap' },
+    },
+    chipRutaMarca: { es: 'hoja de ruta', en: 'roadmap' },
     diagrama: {
       central: { es: 'Rovaq', en: 'Rovaq' },
       rutaEtiqueta: { es: 'Hoja de ruta', en: 'Roadmap' },

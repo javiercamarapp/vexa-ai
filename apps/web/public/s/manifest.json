@@ -82,37 +82,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 22881,
-     "sha256": "18d282544c2673afd0f51b08d9670294c7c1444013905be42481dd6335893496",
-     "url": "/s/img/producto/caso-960.18d28254.avif"
+     "bytes": 22029,
+     "sha256": "d31bb6cae60cd4d5d78fe42959fcdea6c3fffc3b72b0ce0a475cc397bd83fb95",
+     "url": "/s/img/producto/caso-960.d31bb6ca.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 36388,
-     "sha256": "821b90db877ed5a18125d730526087f2facb681595dfb45dc5c5339cab04f819",
-     "url": "/s/img/producto/caso-1440.821b90db.avif"
+     "bytes": 35221,
+     "sha256": "9586bf22a5b80a78db0d75fd48a1dd5aaf9adbcf9872af1dc3fc11e3c073183c",
+     "url": "/s/img/producto/caso-1440.9586bf22.avif"
     }
    ],
-   "bytes": 55318,
-   "sha256": "5ba89f22b465d8a40d5addde3ae03360a6ace0e1bb6d75fd23ffb07054989f7a",
+   "bytes": 53542,
+   "sha256": "db18502d3153c13cb4713756fd387c4cb0d6370e588babac1366bd6a56b3b010",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/caso-1440.5ba89f22.webp",
+   "url": "/s/img/producto/caso-1440.db18502d.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 31308,
-     "sha256": "ffa505abdc1bdb5e01ae2fc538a35651f693be5e4f18c1f4c03bcab79ff0fc57",
-     "url": "/s/img/producto/caso-960.ffa505ab.webp"
+     "bytes": 30272,
+     "sha256": "450dcaef6e86f370cab3c33786a98f63ae1b45a0a9c92bb18854027e83b770d4",
+     "url": "/s/img/producto/caso-960.450dcaef.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 55318,
-     "sha256": "5ba89f22b465d8a40d5addde3ae03360a6ace0e1bb6d75fd23ffb07054989f7a",
-     "url": "/s/img/producto/caso-1440.5ba89f22.webp"
+     "bytes": 53542,
+     "sha256": "db18502d3153c13cb4713756fd387c4cb0d6370e588babac1366bd6a56b3b010",
+     "url": "/s/img/producto/caso-1440.db18502d.webp"
     }
    ]
   },
@@ -125,32 +125,39 @@
    "ancho": 1440,
    "avif": [
     {
-     "alto": 900,
-     "ancho": 1440,
-     "bytes": 36705,
-     "sha256": "abb75fa67c5aa9da50866d6704f3bc9d939f98a1c2c8dc8d398016ef7636324f",
-     "url": "/s/img/producto/caso-oscuro-1440.abb75fa6.avif"
-    }
-   ],
-   "bytes": 53984,
-   "sha256": "d8d2057b24f43ee31f192fc4d4a2a9d41b1885f620a11d4066f013006f7eaab0",
-   "tema": "oscuro",
-   "tipo": "captura",
-   "url": "/s/img/producto/caso-oscuro-1440.d8d2057b.webp",
-   "variantes": [
-    {
      "alto": 600,
      "ancho": 960,
-     "bytes": 30572,
-     "sha256": "f38c2a84e0101125d6d65aa01e16f005d80211c98923b01b7cf7cd92bec6a6c2",
-     "url": "/s/img/producto/caso-oscuro-960.f38c2a84.webp"
+     "bytes": 21785,
+     "sha256": "1ad0dd52986db7c9fa9882387684a65c0bdf5880d485e8e145fc5e050fad58db",
+     "url": "/s/img/producto/caso-oscuro-960.1ad0dd52.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 53984,
-     "sha256": "d8d2057b24f43ee31f192fc4d4a2a9d41b1885f620a11d4066f013006f7eaab0",
-     "url": "/s/img/producto/caso-oscuro-1440.d8d2057b.webp"
+     "bytes": 35489,
+     "sha256": "dc915410176b3e14b9fb4199413378c62eb904c6ecdbd13d32c78bbad6ea24c3",
+     "url": "/s/img/producto/caso-oscuro-1440.dc915410.avif"
+    }
+   ],
+   "bytes": 52204,
+   "sha256": "56516c62166ce7f952a6144c12412218bfe19988eb4b50123326be55673405cc",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/caso-oscuro-1440.56516c62.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 29740,
+     "sha256": "267128d18377222c6fd964b603e05f1a4d8c129525e2469de3eefb157187b181",
+     "url": "/s/img/producto/caso-oscuro-960.267128d1.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 52204,
+     "sha256": "56516c62166ce7f952a6144c12412218bfe19988eb4b50123326be55673405cc",
+     "url": "/s/img/producto/caso-oscuro-1440.56516c62.webp"
     }
    ]
   },
@@ -165,37 +172,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 22447,
-     "sha256": "8ada8bdcd43bcafc7d83b4183eef6b60c089b48313a29c9bf34f26311e3e03bd",
-     "url": "/s/img/producto/cco-960.8ada8bdc.avif"
+     "bytes": 22345,
+     "sha256": "e2a970fb08f8650a7bdb4a86867a9d32b8f836eae6b0e2afb84bcb2b45c3a29a",
+     "url": "/s/img/producto/cco-960.e2a970fb.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 36589,
-     "sha256": "7b1875eeba406f320b93ec7bd28dac5d3c057d9162f7f8043b4bd36b56b61144",
-     "url": "/s/img/producto/cco-1440.7b1875ee.avif"
+     "bytes": 36336,
+     "sha256": "e0d47fb321edd1da04127100da90d2358f7bfa66ee19a16f3d31ce7237520b8b",
+     "url": "/s/img/producto/cco-1440.e0d47fb3.avif"
     }
    ],
-   "bytes": 56246,
-   "sha256": "eb23a261ae5ba1a3fc3c2acf2a3c7f53a74c5ead977236fd2323d765340369b9",
+   "bytes": 56012,
+   "sha256": "abde7845782c4494a2288978c1f3d4e2aa8bb8137b0988a6e14fdaf7754d93a7",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/cco-1440.eb23a261.webp",
+   "url": "/s/img/producto/cco-1440.abde7845.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 31870,
-     "sha256": "3b98c9987faaf8cb7275f6825d7effd42e5de51c8163c07e707e76102ef97dda",
-     "url": "/s/img/producto/cco-960.3b98c998.webp"
+     "bytes": 31650,
+     "sha256": "d89ed66dd8f528230e0bd310a6cad8a30bdfb191ae0b207deebeaec42386864e",
+     "url": "/s/img/producto/cco-960.d89ed66d.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 56246,
-     "sha256": "eb23a261ae5ba1a3fc3c2acf2a3c7f53a74c5ead977236fd2323d765340369b9",
-     "url": "/s/img/producto/cco-1440.eb23a261.webp"
+     "bytes": 56012,
+     "sha256": "abde7845782c4494a2288978c1f3d4e2aa8bb8137b0988a6e14fdaf7754d93a7",
+     "url": "/s/img/producto/cco-1440.abde7845.webp"
     }
    ]
   },
@@ -210,37 +217,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 23546,
-     "sha256": "0542c3b6c4851985562b5fc641d6881e73a7e8c876a6a4d6beba968259c592e4",
-     "url": "/s/img/producto/cco-oscuro-960.0542c3b6.avif"
+     "bytes": 23364,
+     "sha256": "ee9a02027850abe400da419b44c439398cefcdcfbdca2ec23486a93d0288dd7f",
+     "url": "/s/img/producto/cco-oscuro-960.ee9a0202.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 38659,
-     "sha256": "624f466f50807d3e10dc112c9eb90c3fdbac50b0843f17b08dd7522a627bbb33",
-     "url": "/s/img/producto/cco-oscuro-1440.624f466f.avif"
+     "bytes": 38413,
+     "sha256": "03a3ad9d69dc9a9fdb58968cf20b9d9bd8116b84a5d02995582619e4baa26cdf",
+     "url": "/s/img/producto/cco-oscuro-1440.03a3ad9d.avif"
     }
    ],
-   "bytes": 56174,
-   "sha256": "ae1dcf131f5e39882643fd87c43533d91cabebc2015da24a3ce998685890bd2f",
+   "bytes": 55848,
+   "sha256": "52e50ac6a2f53e2d7cea4b4dc17418c02bde32c4233a2f0ee6a614b7d7b82257",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/cco-oscuro-1440.ae1dcf13.webp",
+   "url": "/s/img/producto/cco-oscuro-1440.52e50ac6.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 31568,
-     "sha256": "12301d89bab1b4dd1756b88f90daea36d10d0b65720d42baf090da07edd49b3c",
-     "url": "/s/img/producto/cco-oscuro-960.12301d89.webp"
+     "bytes": 31340,
+     "sha256": "6ca4c16415a5784ca871dcfe5545cdd0016172f8ba069d05e2e27bf0e1f3b1d0",
+     "url": "/s/img/producto/cco-oscuro-960.6ca4c164.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 56174,
-     "sha256": "ae1dcf131f5e39882643fd87c43533d91cabebc2015da24a3ce998685890bd2f",
-     "url": "/s/img/producto/cco-oscuro-1440.ae1dcf13.webp"
+     "bytes": 55848,
+     "sha256": "52e50ac6a2f53e2d7cea4b4dc17418c02bde32c4233a2f0ee6a614b7d7b82257",
+     "url": "/s/img/producto/cco-oscuro-1440.52e50ac6.webp"
     }
    ]
   },
@@ -255,37 +262,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 21165,
-     "sha256": "e33d084175e3128579f717d10e1ab84544cd719b4b6fe1127b9c53e38133b43b",
-     "url": "/s/img/producto/conexiones-960.e33d0841.avif"
+     "bytes": 21097,
+     "sha256": "45ccef7eb03557a100e6ac03a300505f58aa30f0cacf9ca87daf7cc72b05fc88",
+     "url": "/s/img/producto/conexiones-960.45ccef7e.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 34283,
-     "sha256": "e9044b03e21bbc7d7e22f7f7208ee4e5d3e31498494977f3ba4a537cc2919796",
-     "url": "/s/img/producto/conexiones-1440.e9044b03.avif"
+     "bytes": 34439,
+     "sha256": "3e6203a6139b04e7131b12e6b24eef450491a77b29e417e6a4a1a24b7c2674ef",
+     "url": "/s/img/producto/conexiones-1440.3e6203a6.avif"
     }
    ],
-   "bytes": 52518,
-   "sha256": "f6465a4272fbc365d9bd34372ccc03c6f5dfff43726af05ba680034ea17e5fc4",
+   "bytes": 52774,
+   "sha256": "210804484d25df09b58482af226d548dd6b30719493d71c49057ccd422208dc3",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/conexiones-1440.f6465a42.webp",
+   "url": "/s/img/producto/conexiones-1440.21080448.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 29478,
-     "sha256": "31eb9a627937b347bffa8c7da8a3a5bef8939b367a217e6a266ef8a594797ab8",
-     "url": "/s/img/producto/conexiones-960.31eb9a62.webp"
+     "bytes": 29620,
+     "sha256": "c9f20133f5a669591ccb3b469df35fff3194ac282cab86f50b02fc9dc49728c6",
+     "url": "/s/img/producto/conexiones-960.c9f20133.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 52518,
-     "sha256": "f6465a4272fbc365d9bd34372ccc03c6f5dfff43726af05ba680034ea17e5fc4",
-     "url": "/s/img/producto/conexiones-1440.f6465a42.webp"
+     "bytes": 52774,
+     "sha256": "210804484d25df09b58482af226d548dd6b30719493d71c49057ccd422208dc3",
+     "url": "/s/img/producto/conexiones-1440.21080448.webp"
     }
    ]
   },
@@ -300,37 +307,1092 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 21396,
-     "sha256": "9b2de4138ec78896a15af0cd257c5ee24ec31afb12baffe8103045a4b7721a4a",
-     "url": "/s/img/producto/conexiones-oscuro-960.9b2de413.avif"
+     "bytes": 21390,
+     "sha256": "8f495d1529f0edf8c73f162c8af4608fb964554bc045f33d6f147b3e44668d57",
+     "url": "/s/img/producto/conexiones-oscuro-960.8f495d15.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 34792,
-     "sha256": "77ca4cea34f095ffb31886a6292c5bae2e3f3c18057068a2806ec4e085890493",
-     "url": "/s/img/producto/conexiones-oscuro-1440.77ca4cea.avif"
+     "bytes": 34833,
+     "sha256": "50e0118cabc13aa64e2b2d1fd27bd11301e18f52be2074eb02a2b6515908b4a2",
+     "url": "/s/img/producto/conexiones-oscuro-1440.50e0118c.avif"
     }
    ],
-   "bytes": 51722,
-   "sha256": "000a559d57318174e43ea80cb73e94905a7d42ec9be8537f2234ebf1a97071e6",
+   "bytes": 51872,
+   "sha256": "ae2be5d83d9144c9c917fa32142a64db84f67392bb5397ab39b3a1d39dd9a178",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/conexiones-oscuro-1440.000a559d.webp",
+   "url": "/s/img/producto/conexiones-oscuro-1440.ae2be5d8.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 29306,
-     "sha256": "c9b0efd74c022e2f521e14e57dc9074fef6c6aecf0412a5b8ccb5a26f1ae769e",
-     "url": "/s/img/producto/conexiones-oscuro-960.c9b0efd7.webp"
+     "bytes": 29522,
+     "sha256": "6c46b3a87bddfb66bfdaf534ebdef5edbe68f38c119464a6cae20783b526f0c0",
+     "url": "/s/img/producto/conexiones-oscuro-960.6c46b3a8.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 51722,
-     "sha256": "000a559d57318174e43ea80cb73e94905a7d42ec9be8537f2234ebf1a97071e6",
-     "url": "/s/img/producto/conexiones-oscuro-1440.000a559d.webp"
+     "bytes": 51872,
+     "sha256": "ae2be5d83d9144c9c917fa32142a64db84f67392bb5397ab39b3a1d39dd9a178",
+     "url": "/s/img/producto/conexiones-oscuro-1440.ae2be5d8.webp"
+    }
+   ]
+  },
+  "producto/en/caso": {
+   "alt": {
+    "en": "Rovaq problem record: delivery marked complete but not received, with 124 conversations, high severity, a monthly trend and an Inferred seal. Example data.",
+    "es": "Ficha de un problema de Rovaq: entrega marcada como completa sin recibirse, con 124 conversaciones, severidad alta, tendencia mensual y sello Inferido. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 21084,
+     "sha256": "6a9e16cb567943b1f4b91ba83c0aba4c9a01ffd542ab3e96e2a150d0d878909f",
+     "url": "/s/img/producto/en-caso-960.6a9e16cb.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 34231,
+     "sha256": "11c8307f9cef5a61cce17e8c416bba2f2bc7c8ea160901f61f1bdbed2119fa5a",
+     "url": "/s/img/producto/en-caso-1440.11c8307f.avif"
+    }
+   ],
+   "bytes": 52192,
+   "sha256": "c59404ba1c45cd17a7aba65b048136b956389779393c568aa2cd49dd2623ed80",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-caso-1440.c59404ba.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 29336,
+     "sha256": "937ec6d02bbb078312b0abe84520948ad7a59d30725b256f654d6b5019a174fa",
+     "url": "/s/img/producto/en-caso-960.937ec6d0.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 52192,
+     "sha256": "c59404ba1c45cd17a7aba65b048136b956389779393c568aa2cd49dd2623ed80",
+     "url": "/s/img/producto/en-caso-1440.c59404ba.webp"
+    }
+   ]
+  },
+  "producto/en/caso-oscuro": {
+   "alt": {
+    "en": "Rovaq problem record: delivery marked complete but not received, with 124 conversations, high severity, a monthly trend and an Inferred seal. Example data.",
+    "es": "Ficha de un problema de Rovaq: entrega marcada como completa sin recibirse, con 124 conversaciones, severidad alta, tendencia mensual y sello Inferido. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 34333,
+     "sha256": "c1c5c00724a635a8a4c3c861e8ae9e18d2ee1f0e91097ac8dfdb8bd1818263d5",
+     "url": "/s/img/producto/en-caso-oscuro-1440.c1c5c007.avif"
+    }
+   ],
+   "bytes": 51002,
+   "sha256": "09e731a63591a81ff2ad937cf62735e10ce5e3cf0828ff4a56d97fb79bba0968",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-caso-oscuro-1440.09e731a6.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 28736,
+     "sha256": "fd98c3d3b1dfec385fcbd83d0a042ed7665cff192b486ea2228a5dc6e90ac062",
+     "url": "/s/img/producto/en-caso-oscuro-960.fd98c3d3.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 51002,
+     "sha256": "09e731a63591a81ff2ad937cf62735e10ce5e3cf0828ff4a56d97fb79bba0968",
+     "url": "/s/img/producto/en-caso-oscuro-1440.09e731a6.webp"
+    }
+   ]
+  },
+  "producto/en/cco": {
+   "alt": {
+    "en": "Rovaq CCO tab: performance by SKU and marketplace with lines, gross revenue, refunds and refunds per 100 lines, with what is missing stated explicitly. Example data.",
+    "es": "Pestaña CCO de Rovaq: rendimiento por SKU y marketplace con líneas, ingreso bruto, reembolsos y reembolsos por cada 100 líneas, con lo que falta dicho de forma explícita. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 21294,
+     "sha256": "e3e2fdd968708dfd9c3c99fc67624d3dc37675345bc80573a53b04f2943b7c9b",
+     "url": "/s/img/producto/en-cco-960.e3e2fdd9.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 34228,
+     "sha256": "6dbb458ebe27ddce2987c7e22fbaebedf8c3be4c586fe2877c70782d2e76a24a",
+     "url": "/s/img/producto/en-cco-1440.6dbb458e.avif"
+    }
+   ],
+   "bytes": 52738,
+   "sha256": "542dd5513ef25a8605bec439b75d5dc3bd4fba03caad5e4901f8ece316584c7c",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-cco-1440.542dd551.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 29596,
+     "sha256": "d5ea952408f519dd24bf87e814925c702de0b4cd8d15604ef637897b079245d2",
+     "url": "/s/img/producto/en-cco-960.d5ea9524.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 52738,
+     "sha256": "542dd5513ef25a8605bec439b75d5dc3bd4fba03caad5e4901f8ece316584c7c",
+     "url": "/s/img/producto/en-cco-1440.542dd551.webp"
+    }
+   ]
+  },
+  "producto/en/cco-oscuro": {
+   "alt": {
+    "en": "Rovaq CCO tab: performance by SKU and marketplace with lines, gross revenue, refunds and refunds per 100 lines, with what is missing stated explicitly. Example data.",
+    "es": "Pestaña CCO de Rovaq: rendimiento por SKU y marketplace con líneas, ingreso bruto, reembolsos y reembolsos por cada 100 líneas, con lo que falta dicho de forma explícita. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 21789,
+     "sha256": "69b74a6b86d1a9a9e2d1fe6b18b51054d4a5730108462f826c6baeadb4ce77ce",
+     "url": "/s/img/producto/en-cco-oscuro-960.69b74a6b.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 35160,
+     "sha256": "527514aeb06244c935f82275ee3ca8095ee1ed8861949e9377da38ddb01ff8a3",
+     "url": "/s/img/producto/en-cco-oscuro-1440.527514ae.avif"
+    }
+   ],
+   "bytes": 52624,
+   "sha256": "0dd47b096376c2c12c6b6c8a3cc839cb33bc0418d47c75bcece61eae9a8edd63",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-cco-oscuro-1440.0dd47b09.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 29840,
+     "sha256": "45d3809dac312dce7b379ca4cf7837c120a1a1c223fabed27af03b8a7afaccd5",
+     "url": "/s/img/producto/en-cco-oscuro-960.45d3809d.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 52624,
+     "sha256": "0dd47b096376c2c12c6b6c8a3cc839cb33bc0418d47c75bcece61eae9a8edd63",
+     "url": "/s/img/producto/en-cco-oscuro-1440.0dd47b09.webp"
+    }
+   ]
+  },
+  "producto/en/conexiones": {
+   "alt": {
+    "en": "Rovaq Connected sources screen: HubSpot as the only automatic connection and three marketplace exports uploaded by hand, with their status and last upload. Example data.",
+    "es": "Pantalla Fuentes conectadas de Rovaq: HubSpot como única conexión automática y tres exportes de marketplace cargados a mano, con su estado y su última carga. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 19496,
+     "sha256": "effa6c4c68458b03444acfd47bc0fa92c27f00b6781f81ba32b3309c266decd6",
+     "url": "/s/img/producto/en-conexiones-960.effa6c4c.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 31743,
+     "sha256": "d6754a293d684eacb9133cee82167b55d4ebf09d78e5dbcebf7642e53879b69d",
+     "url": "/s/img/producto/en-conexiones-1440.d6754a29.avif"
+    }
+   ],
+   "bytes": 48432,
+   "sha256": "41308ecbc4164e4b3291c9ba719de2c538fb297ca841028b21193b8b15288cd9",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-conexiones-1440.41308ecb.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 27098,
+     "sha256": "2460e0b6f964f08e775dd6fada63fa2000e98c1d41d152d7ea6384798435556c",
+     "url": "/s/img/producto/en-conexiones-960.2460e0b6.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 48432,
+     "sha256": "41308ecbc4164e4b3291c9ba719de2c538fb297ca841028b21193b8b15288cd9",
+     "url": "/s/img/producto/en-conexiones-1440.41308ecb.webp"
+    }
+   ]
+  },
+  "producto/en/conexiones-oscuro": {
+   "alt": {
+    "en": "Rovaq Connected sources screen: HubSpot as the only automatic connection and three marketplace exports uploaded by hand, with their status and last upload. Example data.",
+    "es": "Pantalla Fuentes conectadas de Rovaq: HubSpot como única conexión automática y tres exportes de marketplace cargados a mano, con su estado y su última carga. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 19824,
+     "sha256": "3032e527f634552e200d232cbef3cd9446f4a707ee9f46caa0fa6f1bc729a495",
+     "url": "/s/img/producto/en-conexiones-oscuro-960.3032e527.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 31921,
+     "sha256": "24fe287ea616b9439736f7e6fd5be36a0f4fed9596dd54c656758c80cc0e76af",
+     "url": "/s/img/producto/en-conexiones-oscuro-1440.24fe287e.avif"
+    }
+   ],
+   "bytes": 47726,
+   "sha256": "a8dde9dff0611d97331ee8f634d75ac95588ec7e875a2cce653dcc437996f4aa",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-conexiones-oscuro-1440.a8dde9df.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 27180,
+     "sha256": "96592eb382ca7132b43a076131464bbbdb899a9a505c7dc420ab65c43fd3aabf",
+     "url": "/s/img/producto/en-conexiones-oscuro-960.96592eb3.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 47726,
+     "sha256": "a8dde9dff0611d97331ee8f634d75ac95588ec7e875a2cce653dcc437996f4aa",
+     "url": "/s/img/producto/en-conexiones-oscuro-1440.a8dde9df.webp"
+    }
+   ]
+  },
+  "producto/en/evidencia": {
+   "alt": {
+    "en": "Verified customer quotes on a problem record, each with its source, an Observed seal and the See origin button to check where it came from. Example data.",
+    "es": "Citas textuales verificadas de clientes en la ficha de un problema, cada una con su fuente, sello Observado y el botón Ver origen para comprobar su procedencia. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 18421,
+     "sha256": "3a0b26268074f58f0a8e9e357471188e40ceb1be4c765b1ab2df61070255d5e5",
+     "url": "/s/img/producto/en-evidencia-960.3a0b2626.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 30708,
+     "sha256": "30edc9026c7df5f3dc2b5bed8b46f0f8178280e8320f1aba8318180b2c5e27e6",
+     "url": "/s/img/producto/en-evidencia-1440.30edc902.avif"
+    }
+   ],
+   "bytes": 47952,
+   "sha256": "5a9a2c250e1ed1c383daa6a0f297b8e9b1fe97a8646c1eec16e540b69e6d1513",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-evidencia-1440.5a9a2c25.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 26212,
+     "sha256": "2150bb1352ecaf81218677e8768a95576cd631a5d9d6a55a9c65f5a6632b1fc1",
+     "url": "/s/img/producto/en-evidencia-960.2150bb13.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 47952,
+     "sha256": "5a9a2c250e1ed1c383daa6a0f297b8e9b1fe97a8646c1eec16e540b69e6d1513",
+     "url": "/s/img/producto/en-evidencia-1440.5a9a2c25.webp"
+    }
+   ]
+  },
+  "producto/en/evidencia-oscuro": {
+   "alt": {
+    "en": "Verified customer quotes on a problem record, each with its source, an Observed seal and the See origin button to check where it came from. Example data.",
+    "es": "Citas textuales verificadas de clientes en la ficha de un problema, cada una con su fuente, sello Observado y el botón Ver origen para comprobar su procedencia. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 18441,
+     "sha256": "32c8a6d5d8eb66748fd78248d061cc74625b88e893ca5e021843a429f564eb7d",
+     "url": "/s/img/producto/en-evidencia-oscuro-960.32c8a6d5.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 31162,
+     "sha256": "b2872729220a0eacefb033aa5735eeaec2cc314f03b210c288e50520fb51434f",
+     "url": "/s/img/producto/en-evidencia-oscuro-1440.b2872729.avif"
+    }
+   ],
+   "bytes": 46284,
+   "sha256": "f57b4d941fb3d8e83be60dd3ebcd45169812292f3623e5b67a1eb7e1cd927b26",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-evidencia-oscuro-1440.f57b4d94.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 26274,
+     "sha256": "51c004c86b4b1be7f79f0cfaf9ab26835babb498a814f89455821410c372e00f",
+     "url": "/s/img/producto/en-evidencia-oscuro-960.51c004c8.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 46284,
+     "sha256": "f57b4d941fb3d8e83be60dd3ebcd45169812292f3623e5b67a1eb7e1cd927b26",
+     "url": "/s/img/producto/en-evidencia-oscuro-1440.f57b4d94.webp"
+    }
+   ]
+  },
+  "producto/en/fuga": {
+   "alt": {
+    "en": "Rovaq Refund leakage screen: 36,000 USD returned, four figure cards, a ranking of 10 SKUs from HM-210 to HM-200 with cumulative percentage and intensity by marketplace. Example data.",
+    "es": "Pantalla Fuga de reembolsos de Rovaq: 36,000 USD devueltos, cuatro tarjetas de cifras, ranking de 10 SKU de HM-210 a HM-200 con porcentaje acumulado e intensidad por marketplace. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 26631,
+     "sha256": "bc66a8527b282c476ff66e2a0ddcfc6efaac24033a95859771c157e5a43bbbff",
+     "url": "/s/img/producto/en-fuga-960.bc66a852.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 41867,
+     "sha256": "82972621f195c3142840fb624f966a314033eca9771f4d73e89fe3e9edf0f9a6",
+     "url": "/s/img/producto/en-fuga-1440.82972621.avif"
+    },
+    {
+     "alto": 1800,
+     "ancho": 2880,
+     "bytes": 87513,
+     "sha256": "5c7c0b1e53171307d651ae3e5e4d29ed3db29f3bcda6d170b3702dec8ae94a4d",
+     "url": "/s/img/producto/en-fuga-2880.5c7c0b1e.avif"
+    }
+   ],
+   "bytes": 65076,
+   "sha256": "4a9d575595909cd20bb232cca75c6f51a58fc80e96033911505ee99c9d7ecd52",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-fuga-1440.4a9d5755.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 36692,
+     "sha256": "6d2932194e03d67bf85c35e2c33e26bfd9394b854e458c23a10b6546d009b188",
+     "url": "/s/img/producto/en-fuga-960.6d293219.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 65076,
+     "sha256": "4a9d575595909cd20bb232cca75c6f51a58fc80e96033911505ee99c9d7ecd52",
+     "url": "/s/img/producto/en-fuga-1440.4a9d5755.webp"
+    },
+    {
+     "alto": 1800,
+     "ancho": 2880,
+     "bytes": 148874,
+     "sha256": "8fb684d94d6a0044df2494330b972f08453489d32be100e8145976d4506f4841",
+     "url": "/s/img/producto/en-fuga-2880.8fb684d9.webp"
+    }
+   ]
+  },
+  "producto/en/fuga-oscuro": {
+   "alt": {
+    "en": "Rovaq Refund leakage screen: 36,000 USD returned, four figure cards, a ranking of 10 SKUs from HM-210 to HM-200 with cumulative percentage and intensity by marketplace. Example data.",
+    "es": "Pantalla Fuga de reembolsos de Rovaq: 36,000 USD devueltos, cuatro tarjetas de cifras, ranking de 10 SKU de HM-210 a HM-200 con porcentaje acumulado e intensidad por marketplace. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 26556,
+     "sha256": "8e08d06f61c8d5d27d84bc56c93d10a1b6c64ae7d23a080bcbf7ef276fd10290",
+     "url": "/s/img/producto/en-fuga-oscuro-960.8e08d06f.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 42398,
+     "sha256": "ee7207b477f014f3bcc0a5cabd7368853fc2f6d1173b05a4b36c42cdb29f2f9f",
+     "url": "/s/img/producto/en-fuga-oscuro-1440.ee7207b4.avif"
+    },
+    {
+     "alto": 1800,
+     "ancho": 2880,
+     "bytes": 85672,
+     "sha256": "06c76a9a12a4d86be2ee1bec9fb3ab01f1bf3a18a61db5f53640ad19a1187332",
+     "url": "/s/img/producto/en-fuga-oscuro-2880.06c76a9a.avif"
+    }
+   ],
+   "bytes": 63794,
+   "sha256": "d6ac5f6ace111e68fe8a2b6d754f96f5b254fc090e564f750567e7f4324a277a",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-fuga-oscuro-1440.d6ac5f6a.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 36158,
+     "sha256": "29e59527f7ea622fbff5c4586b2b60e3d05195dab18d667879c4320c922ac59b",
+     "url": "/s/img/producto/en-fuga-oscuro-960.29e59527.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 63794,
+     "sha256": "d6ac5f6ace111e68fe8a2b6d754f96f5b254fc090e564f750567e7f4324a277a",
+     "url": "/s/img/producto/en-fuga-oscuro-1440.d6ac5f6a.webp"
+    },
+    {
+     "alto": 1800,
+     "ancho": 2880,
+     "bytes": 143492,
+     "sha256": "43d9c3db14694839f99cd4455fc931cf67fb451df215ab80a6039ce8a83aea0c",
+     "url": "/s/img/producto/en-fuga-oscuro-2880.43d9c3db.webp"
+    }
+   ]
+  },
+  "producto/en/hoy": {
+   "alt": {
+    "en": "Rovaq Today screen with four figures: gross revenue 480,000 USD, refunds 36,000 USD, stuck money 9,000 USD and 14 threads unanswered for over 24 hours, each with its Observed seal. Example data.",
+    "es": "Pantalla Hoy de Rovaq con cuatro cifras: ingreso bruto 480,000 USD, reembolsos 36,000 USD, dinero atorado 9,000 USD y 14 hilos sin respuesta de más de 24 horas, cada una con su sello Observado. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 31558,
+     "sha256": "5ae0f35fbff206e5b284c984b2bc2fb9f7f4a2eb067e0ab75bc83ffa90302419",
+     "url": "/s/img/producto/en-hoy-960.5ae0f35f.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 50670,
+     "sha256": "f234a1cdf6a9e9a4f3d6f3b363bb4988ca6fa464d777a5d4b587fb25dada82cd",
+     "url": "/s/img/producto/en-hoy-1440.f234a1cd.avif"
+    }
+   ],
+   "bytes": 78480,
+   "sha256": "ab75606fb8eb216a0aa96c12a67b854121418a87621cecd357bfa79b0df6c931",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-hoy-1440.ab75606f.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 44078,
+     "sha256": "6bcc39244f8946bf1b5612f356b563840fc09b84f2a343f254f23c6a85861f90",
+     "url": "/s/img/producto/en-hoy-960.6bcc3924.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 78480,
+     "sha256": "ab75606fb8eb216a0aa96c12a67b854121418a87621cecd357bfa79b0df6c931",
+     "url": "/s/img/producto/en-hoy-1440.ab75606f.webp"
+    }
+   ]
+  },
+  "producto/en/hoy-oscuro": {
+   "alt": {
+    "en": "Rovaq Today screen with four figures: gross revenue 480,000 USD, refunds 36,000 USD, stuck money 9,000 USD and 14 threads unanswered for over 24 hours, each with its Observed seal. Example data.",
+    "es": "Pantalla Hoy de Rovaq con cuatro cifras: ingreso bruto 480,000 USD, reembolsos 36,000 USD, dinero atorado 9,000 USD y 14 hilos sin respuesta de más de 24 horas, cada una con su sello Observado. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 52956,
+     "sha256": "61a67796cb43c5c6ed587ad206ce9cf4a42ad7e9db628feed899e75d0f03dfd0",
+     "url": "/s/img/producto/en-hoy-oscuro-1440.61a67796.avif"
+    }
+   ],
+   "bytes": 78340,
+   "sha256": "1edf63725da7a645a69c71e72b01e6f1b29ad242daf6bf2a29e87136ca4efccc",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-hoy-oscuro-1440.1edf6372.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 43836,
+     "sha256": "2ab1445e1792ca557289e54b6a1d1c8aded5a540f256c232f77f30f7ff026156",
+     "url": "/s/img/producto/en-hoy-oscuro-960.2ab1445e.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 78340,
+     "sha256": "1edf63725da7a645a69c71e72b01e6f1b29ad242daf6bf2a29e87136ca4efccc",
+     "url": "/s/img/producto/en-hoy-oscuro-1440.1edf6372.webp"
+    }
+   ]
+  },
+  "producto/en/pantalla5": {
+   "alt": {
+    "en": "Rovaq Today cards: observed versus recoverable, and the Next best action card, which proposes preparing the claim package for a SKU with the notice that nothing is sent. Example data.",
+    "es": "Tarjetas de Hoy en Rovaq: lo observado frente a lo recuperable y la tarjeta Siguiente mejor acción, que propone preparar el paquete de reclamo de un SKU con el aviso de que no se envía nada. Datos de ejemplo."
+   },
+   "alto": 695,
+   "ancho": 1200,
+   "avif": [
+    {
+     "alto": 695,
+     "ancho": 1200,
+     "bytes": 27443,
+     "sha256": "c6c86b996d8e08f1aaad4d4fc1e0187b74d1a3bafdf2b65f39fef8857a4e26f0",
+     "url": "/s/img/producto/en-pantalla5-1200.c6c86b99.avif"
+    }
+   ],
+   "bytes": 39584,
+   "sha256": "0274dbdca6ef15442bf835731005e27c4d35cb70853b81b27cdc2ff2dab0f8ec",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-pantalla5-1200.0274dbdc.webp",
+   "variantes": [
+    {
+     "alto": 695,
+     "ancho": 1200,
+     "bytes": 39584,
+     "sha256": "0274dbdca6ef15442bf835731005e27c4d35cb70853b81b27cdc2ff2dab0f8ec",
+     "url": "/s/img/producto/en-pantalla5-1200.0274dbdc.webp"
+    }
+   ]
+  },
+  "producto/en/pareto": {
+   "alt": {
+    "en": "Ranking of refunds by SKU from HM-210 to HM-200 with bars, amount and a cumulative percentage line. Example data.",
+    "es": "Ranking de reembolsos por SKU de HM-210 a HM-200 con barras, importe y línea de porcentaje acumulado. Datos de ejemplo."
+   },
+   "alto": 1248,
+   "ancho": 1472,
+   "avif": [
+    {
+     "alto": 624,
+     "ancho": 736,
+     "bytes": 22325,
+     "sha256": "431c09883944661241fbd7f54e0001869f02e5bc247a71d5d176e742d3936348",
+     "url": "/s/img/producto/en-pareto-736.431c0988.avif"
+    },
+    {
+     "alto": 1248,
+     "ancho": 1472,
+     "bytes": 47175,
+     "sha256": "ebc52a197da861eeb53fd2249225aedc83491ad33f35c771701b3d1126b7a5ae",
+     "url": "/s/img/producto/en-pareto-1472.ebc52a19.avif"
+    }
+   ],
+   "bytes": 75834,
+   "sha256": "a37a5e3237eb10d3e10a4dfa5f6e20259cddb74e85157a909d05e239f7398741",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-pareto-1472.a37a5e32.webp",
+   "variantes": [
+    {
+     "alto": 624,
+     "ancho": 736,
+     "bytes": 32708,
+     "sha256": "779f6e283d773038f136804f3960811cc08e61577fc089d803c7b54149570c0b",
+     "url": "/s/img/producto/en-pareto-736.779f6e28.webp"
+    },
+    {
+     "alto": 1248,
+     "ancho": 1472,
+     "bytes": 75834,
+     "sha256": "a37a5e3237eb10d3e10a4dfa5f6e20259cddb74e85157a909d05e239f7398741",
+     "url": "/s/img/producto/en-pareto-1472.a37a5e32.webp"
+    }
+   ]
+  },
+  "producto/en/pareto-vector": {
+   "alt": {
+    "en": "Ranking of refunds by SKU from HM-210 to HM-200 with bars, amount and a cumulative percentage line. Vector version. Example data.",
+    "es": "Ranking de reembolsos por SKU de HM-210 a HM-200 con barras, importe y línea de porcentaje acumulado. Versión vectorial. Datos de ejemplo."
+   },
+   "alto": 623,
+   "ancho": 736,
+   "bytes": 12695,
+   "sha256": "41c8ba657dc72572f8b8a431a3dce3deb9ecb8c4f17323fd95cdb8f7e77e475c",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-pareto.41c8ba65.svg",
+   "variantes": [
+    {
+     "alto": 623,
+     "ancho": 736,
+     "bytes": 12695,
+     "sha256": "41c8ba657dc72572f8b8a431a3dce3deb9ecb8c4f17323fd95cdb8f7e77e475c",
+     "url": "/s/img/producto/en-pareto.41c8ba65.svg"
+    }
+   ]
+  },
+  "producto/en/paso1": {
+   "alt": {
+    "en": "Rovaq connected sources: HubSpot connected and three marketplace exports uploaded by hand, each with its status. Example data.",
+    "es": "Fuentes conectadas de Rovaq: HubSpot conectada y tres exportes de marketplace cargados a mano, cada uno con su estado. Datos de ejemplo."
+   },
+   "alto": 648,
+   "ancho": 814,
+   "avif": [
+    {
+     "alto": 648,
+     "ancho": 814,
+     "bytes": 8679,
+     "sha256": "671c34504c926af134303c608e0a22f103dbd6c47fb3d40f66425ec83833a586",
+     "url": "/s/img/producto/en-paso1-814.671c3450.avif"
+    }
+   ],
+   "bytes": 13446,
+   "sha256": "77d0be3ad870af2883fb1431d5f3c85e9f88fba77a07746e8674b0a091b3ca44",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-paso1-814.77d0be3a.webp",
+   "variantes": [
+    {
+     "alto": 648,
+     "ancho": 814,
+     "bytes": 13446,
+     "sha256": "77d0be3ad870af2883fb1431d5f3c85e9f88fba77a07746e8674b0a091b3ca44",
+     "url": "/s/img/producto/en-paso1-814.77d0be3a.webp"
+    }
+   ]
+  },
+  "producto/en/paso2": {
+   "alt": {
+    "en": "Revenue exposed per problem in Rovaq: three grouped problems, two with an inferred amount and one with no amount. Example data.",
+    "es": "Ingresos expuestos por problema en Rovaq: tres problemas agrupados, dos con importe inferido y uno sin importe. Datos de ejemplo."
+   },
+   "alto": 446,
+   "ancho": 1469,
+   "avif": [
+    {
+     "alto": 446,
+     "ancho": 1469,
+     "bytes": 11103,
+     "sha256": "ae060b50d5d5fab4ffbfcbcf7274a82d234cd5f6ddcb8ca19a19e9e82a0a5257",
+     "url": "/s/img/producto/en-paso2-1469.ae060b50.avif"
+    }
+   ],
+   "bytes": 19120,
+   "sha256": "22efeb6386231e37e3418afca22e824669b79b8d5c572f91e3cd12e2e123e563",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-paso2-1469.22efeb63.webp",
+   "variantes": [
+    {
+     "alto": 446,
+     "ancho": 1469,
+     "bytes": 19120,
+     "sha256": "22efeb6386231e37e3418afca22e824669b79b8d5c572f91e3cd12e2e123e563",
+     "url": "/s/img/producto/en-paso2-1469.22efeb63.webp"
+    }
+   ]
+  },
+  "producto/en/paso3": {
+   "alt": {
+    "en": "Rovaq Today cards: gross revenue for October and refunds for the period, each with its Observed seal. Example data.",
+    "es": "Tarjetas de Hoy en Rovaq: ingreso bruto de octubre y reembolsos del periodo, cada una con su sello Observado. Datos de ejemplo."
+   },
+   "alto": 324,
+   "ancho": 1670,
+   "avif": [
+    {
+     "alto": 324,
+     "ancho": 1670,
+     "bytes": 18758,
+     "sha256": "aaac75ae7df19a35ac6d60f1400bfa0825781a853fcda4eab345f5f0ebde1bf0",
+     "url": "/s/img/producto/en-paso3-1670.aaac75ae.avif"
+    }
+   ],
+   "bytes": 28968,
+   "sha256": "e6349cda947216a1a214786a47ea536b06e541b8f9950d359814acc71f11331b",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-paso3-1670.e6349cda.webp",
+   "variantes": [
+    {
+     "alto": 324,
+     "ancho": 1670,
+     "bytes": 28968,
+     "sha256": "e6349cda947216a1a214786a47ea536b06e541b8f9950d359814acc71f11331b",
+     "url": "/s/img/producto/en-paso3-1670.e6349cda.webp"
+    }
+   ]
+  },
+  "producto/en/paso4": {
+   "alt": {
+    "en": "Rovaq Next best action card: prepare the claim package for a SKU, with the notice that nothing is sent. Example data.",
+    "es": "Tarjeta Siguiente mejor acción de Rovaq: preparar el paquete de reclamo de un SKU, con el aviso de que no se envía nada. Datos de ejemplo."
+   },
+   "alto": 454,
+   "ancho": 727,
+   "avif": [
+    {
+     "alto": 454,
+     "ancho": 727,
+     "bytes": 8205,
+     "sha256": "e701d15604a17b17adc3b1e35f6afded57220585ac26552fa1d0a910c065f0e7",
+     "url": "/s/img/producto/en-paso4-727.e701d156.avif"
+    }
+   ],
+   "bytes": 13164,
+   "sha256": "ecbb027f6059e11837ce7c89d9f9d54f40616626a5b7b7bc6d5382e30b1d822f",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-paso4-727.ecbb027f.webp",
+   "variantes": [
+    {
+     "alto": 454,
+     "ancho": 727,
+     "bytes": 13164,
+     "sha256": "ecbb027f6059e11837ce7c89d9f9d54f40616626a5b7b7bc6d5382e30b1d822f",
+     "url": "/s/img/producto/en-paso4-727.ecbb027f.webp"
+    }
+   ]
+  },
+  "producto/en/preguntale": {
+   "alt": {
+    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars, the coverage of each figure and what is still to be loaded. Example data.",
+    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras, la cobertura de cada cifra y lo que falta cargar. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 23909,
+     "sha256": "188cd0d0e3e0496814c6480fb1e457ebcf7a3848fcb4e7329ac46c1765225781",
+     "url": "/s/img/producto/en-preguntale-960.188cd0d0.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 34539,
+     "sha256": "dfc73e8f36cdc019dcc155f5fa3d175ccae48debf9ba776b036d7d8432b2a4d7",
+     "url": "/s/img/producto/en-preguntale-1440.dfc73e8f.avif"
+    }
+   ],
+   "bytes": 60158,
+   "sha256": "c0fde3d5dc6dee5d107617fd51923fa64b3b9e81dfb1ec56743138ce4d979117",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-preguntale-1440.c0fde3d5.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 35218,
+     "sha256": "6d1b9d5854cb794679497aae4d70d92f5ca05c4109d2c14fd14fdaca9b29a8ac",
+     "url": "/s/img/producto/en-preguntale-960.6d1b9d58.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 60158,
+     "sha256": "c0fde3d5dc6dee5d107617fd51923fa64b3b9e81dfb1ec56743138ce4d979117",
+     "url": "/s/img/producto/en-preguntale-1440.c0fde3d5.webp"
+    }
+   ]
+  },
+  "producto/en/preguntale-oscuro": {
+   "alt": {
+    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars, the coverage of each figure and what is still to be loaded. Example data.",
+    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras, la cobertura de cada cifra y lo que falta cargar. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 24249,
+     "sha256": "e105d0aa05ee632ac379dcd81e6dde8851a4cacfe184c8f9855d0ef57f7a529a",
+     "url": "/s/img/producto/en-preguntale-oscuro-960.e105d0aa.avif"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 35732,
+     "sha256": "47656892e1fda2f1b2d619c950c8cc5c7c8e5e6f15bd9741d2b49291017c1ddc",
+     "url": "/s/img/producto/en-preguntale-oscuro-1440.47656892.avif"
+    }
+   ],
+   "bytes": 59772,
+   "sha256": "10413b83202022d323a37258462746081ede15c939e88524b21e2412ca9e74c8",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-preguntale-oscuro-1440.10413b83.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 35788,
+     "sha256": "5b4a7a74f92d8513de3a292f7ebfbdf7ac19f641edf0fc88efba52baa7d789e5",
+     "url": "/s/img/producto/en-preguntale-oscuro-960.5b4a7a74.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 59772,
+     "sha256": "10413b83202022d323a37258462746081ede15c939e88524b21e2412ca9e74c8",
+     "url": "/s/img/producto/en-preguntale-oscuro-1440.10413b83.webp"
+    }
+   ]
+  },
+  "producto/en/problemas": {
+   "alt": {
+    "en": "Rovaq Problems screen with three grouped problems, exposed revenue as a known subtotal with an Inferred seal, with the notice that the data is partial. Example data.",
+    "es": "Pantalla Problemas de Rovaq con tres problemas agrupados, ingresos expuestos como subtotal conocido con sello Inferido, con el aviso de que son datos parciales. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 39801,
+     "sha256": "05393fc23a89a644eef761d52c3e5e99978a0fd67b77c785f483ef07ab4d5e29",
+     "url": "/s/img/producto/en-problemas-1440.05393fc2.avif"
+    }
+   ],
+   "bytes": 62576,
+   "sha256": "1515f13d1a3cb49d8aa8e4108fef4e1dae360132d0d2a40524be5b4fd819f51e",
+   "tema": "claro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-problemas-1440.1515f13d.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 34958,
+     "sha256": "2b9a6e3b6edf571a08cb01c5cb3901802603c90a8a740c43b34573bc88f10fcf",
+     "url": "/s/img/producto/en-problemas-960.2b9a6e3b.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 62576,
+     "sha256": "1515f13d1a3cb49d8aa8e4108fef4e1dae360132d0d2a40524be5b4fd819f51e",
+     "url": "/s/img/producto/en-problemas-1440.1515f13d.webp"
+    }
+   ]
+  },
+  "producto/en/problemas-oscuro": {
+   "alt": {
+    "en": "Rovaq Problems screen with three grouped problems, exposed revenue as a known subtotal with an Inferred seal, with the notice that the data is partial. Example data.",
+    "es": "Pantalla Problemas de Rovaq con tres problemas agrupados, ingresos expuestos como subtotal conocido con sello Inferido, con el aviso de que son datos parciales. Datos de ejemplo."
+   },
+   "alto": 900,
+   "ancho": 1440,
+   "avif": [
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 41152,
+     "sha256": "538ccc3c9baef4dcb5b5114d36f72693053dfa1aee94e90edff84272505b2a74",
+     "url": "/s/img/producto/en-problemas-oscuro-1440.538ccc3c.avif"
+    }
+   ],
+   "bytes": 61694,
+   "sha256": "b0dbec4c9502554c4dd937ff80019efdc79986ba8c32f9938deee5dda6078dc8",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/en-problemas-oscuro-1440.b0dbec4c.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 34950,
+     "sha256": "b6f375ac76ab83ec6fcd6b266b9d9a46b9796b37e8659c8fe6c507978549b52a",
+     "url": "/s/img/producto/en-problemas-oscuro-960.b6f375ac.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 61694,
+     "sha256": "b0dbec4c9502554c4dd937ff80019efdc79986ba8c32f9938deee5dda6078dc8",
+     "url": "/s/img/producto/en-problemas-oscuro-1440.b0dbec4c.webp"
+    }
+   ]
+  },
+  "producto/en/tarjetas-fuga": {
+   "alt": {
+    "en": "The four cards of Refund leakage: money returned, refunds, stuck money and repeat contact. Example data.",
+    "es": "Las cuatro tarjetas de Fuga de reembolsos: dinero devuelto, reembolsos, dinero atorado y repetición de contacto. Datos de ejemplo."
+   },
+   "alto": 214,
+   "ancho": 2220,
+   "avif": [
+    {
+     "alto": 107,
+     "ancho": 1110,
+     "bytes": 6419,
+     "sha256": "0d3d673341a0c2d94ad2eeca79a53c9c8f0be01c665f3f93c79a1dac0203a861",
+     "url": "/s/img/producto/en-tarjetas-fuga-1110.0d3d6733.avif"
+    },
+    {
+     "alto": 214,
+     "ancho": 2220,
+     "bytes": 13152,
+     "sha256": "7f9949a8c3c14331b07d1e6841a48634dec15252ad2e73862c72cc66fd82786f",
+     "url": "/s/img/producto/en-tarjetas-fuga-2220.7f9949a8.avif"
+    }
+   ],
+   "bytes": 19988,
+   "sha256": "d365f4e6fffa017c651988bda4a9e2a7af5512873f2e9e9032e7e2e7642bbf35",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-tarjetas-fuga-2220.d365f4e6.webp",
+   "variantes": [
+    {
+     "alto": 107,
+     "ancho": 1110,
+     "bytes": 8964,
+     "sha256": "52977354a81819f7be5a22f112b6e2b5f1eef8f73e0bae67f922ebf4719e6bd9",
+     "url": "/s/img/producto/en-tarjetas-fuga-1110.52977354.webp"
+    },
+    {
+     "alto": 214,
+     "ancho": 2220,
+     "bytes": 19988,
+     "sha256": "d365f4e6fffa017c651988bda4a9e2a7af5512873f2e9e9032e7e2e7642bbf35",
+     "url": "/s/img/producto/en-tarjetas-fuga-2220.d365f4e6.webp"
+    }
+   ]
+  },
+  "producto/en/tarjetas-hoy": {
+   "alt": {
+    "en": "The four figure cards of Today: gross revenue, refunds, stuck money and replies over 24 hours, each with its provenance seal. Example data.",
+    "es": "Las cuatro tarjetas de cifras de Hoy: ingreso bruto, reembolsos, dinero atorado y respuestas de más de 24 horas, cada una con su sello de procedencia. Datos de ejemplo."
+   },
+   "alto": 324,
+   "ancho": 2220,
+   "avif": [
+    {
+     "alto": 162,
+     "ancho": 1110,
+     "bytes": 13007,
+     "sha256": "705006fc8733d1ad8b8dc28b6c3930adfa80f85d85d5d193a3c4c40767e5ebba",
+     "url": "/s/img/producto/en-tarjetas-hoy-1110.705006fc.avif"
+    },
+    {
+     "alto": 324,
+     "ancho": 2220,
+     "bytes": 28011,
+     "sha256": "0587887779119c09629ae7fd16ea18b31d47fdaa8fcf931a159ba1ddd802e4ca",
+     "url": "/s/img/producto/en-tarjetas-hoy-2220.05878877.avif"
+    }
+   ],
+   "bytes": 42772,
+   "sha256": "08401935ee13d854880552c7553066e21ef13303b2ee98476114f1c4ce84bdd0",
+   "tema": "claro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-tarjetas-hoy-2220.08401935.webp",
+   "variantes": [
+    {
+     "alto": 162,
+     "ancho": 1110,
+     "bytes": 18816,
+     "sha256": "515bf12a64eaacd57745afd95e6570f31983f6f6ff924d9ca66fecfc31fd079d",
+     "url": "/s/img/producto/en-tarjetas-hoy-1110.515bf12a.webp"
+    },
+    {
+     "alto": 324,
+     "ancho": 2220,
+     "bytes": 42772,
+     "sha256": "08401935ee13d854880552c7553066e21ef13303b2ee98476114f1c4ce84bdd0",
+     "url": "/s/img/producto/en-tarjetas-hoy-2220.08401935.webp"
+    }
+   ]
+  },
+  "producto/en/valor": {
+   "alt": {
+    "en": "The four figure cards of Today in Rovaq: gross revenue, refunds, stuck money and replies over 24 hours, each with its Observed seal and source. Example data.",
+    "es": "Las cuatro tarjetas de cifras de Hoy en Rovaq: ingreso bruto, reembolsos, dinero atorado y respuestas de más de 24 horas, cada una con su sello Observado y su fuente. Datos de ejemplo."
+   },
+   "alto": 236,
+   "ancho": 1560,
+   "avif": [],
+   "bytes": 24882,
+   "sha256": "b316be8379946d3ee33417268e0275fd2f64228337c708ae5fd9bbac3adeb8e3",
+   "tema": "oscuro",
+   "tipo": "recorte",
+   "url": "/s/img/producto/en-valor-1560.b316be83.webp",
+   "variantes": [
+    {
+     "alto": 236,
+     "ancho": 1560,
+     "bytes": 24882,
+     "sha256": "b316be8379946d3ee33417268e0275fd2f64228337c708ae5fd9bbac3adeb8e3",
+     "url": "/s/img/producto/en-valor-1560.b316be83.webp"
     }
    ]
   },
@@ -345,37 +1407,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 19386,
-     "sha256": "de5d5217cc95ec888526b1cc18bc47b0a44f84b18676b9ac085cf321fdde0271",
-     "url": "/s/img/producto/evidencia-960.de5d5217.avif"
+     "bytes": 18811,
+     "sha256": "9d83619f6b0723644cf91787c2757f86fe33578ff85fed8788b2c700e1eb80cb",
+     "url": "/s/img/producto/evidencia-960.9d83619f.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 31243,
-     "sha256": "0f4a55ef2cb352cd02f4dd560105262f030dcd1c1df63b523113cdc5b486210f",
-     "url": "/s/img/producto/evidencia-1440.0f4a55ef.avif"
+     "bytes": 31068,
+     "sha256": "8201826e8244427f3efd4ecdd04bb211e8597c804bfee7a4ca4200dc10453532",
+     "url": "/s/img/producto/evidencia-1440.8201826e.avif"
     }
    ],
-   "bytes": 47184,
-   "sha256": "274d500da852e75c623c22661a12d6935d2266235d4e6231037b7a128c00b837",
+   "bytes": 48318,
+   "sha256": "a73b167efd44ce8253b3cacad05b72b768f486d3cbe1de958d625328be9f9031",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/evidencia-1440.274d500d.webp",
+   "url": "/s/img/producto/evidencia-1440.a73b167e.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 26236,
-     "sha256": "3ccba532e32f5cbe08d86fc6370f2e4d64393da1e614ef18897c3ff269c07a68",
-     "url": "/s/img/producto/evidencia-960.3ccba532.webp"
+     "bytes": 25920,
+     "sha256": "ffa9f5a475d3fe6d0921c7c199ffab61cf6ed28f4f2c3a016ad28c0ce9520b17",
+     "url": "/s/img/producto/evidencia-960.ffa9f5a4.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 47184,
-     "sha256": "274d500da852e75c623c22661a12d6935d2266235d4e6231037b7a128c00b837",
-     "url": "/s/img/producto/evidencia-1440.274d500d.webp"
+     "bytes": 48318,
+     "sha256": "a73b167efd44ce8253b3cacad05b72b768f486d3cbe1de958d625328be9f9031",
+     "url": "/s/img/producto/evidencia-1440.a73b167e.webp"
     }
    ]
   },
@@ -390,37 +1452,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 19289,
-     "sha256": "1af0a60604fce862f50d71d05a382e9673aa14f9afe89192ad94e2944c4e43ea",
-     "url": "/s/img/producto/evidencia-oscuro-960.1af0a606.avif"
+     "bytes": 18848,
+     "sha256": "ebeec3f56926c68f20c00a50c6cf720e54871b17ebf0a3a6899fa2ca851104dd",
+     "url": "/s/img/producto/evidencia-oscuro-960.ebeec3f5.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 31762,
-     "sha256": "e34c15856a48dd18a5d007ed22d19605daab67f92bb06aa824944e10d209ce7c",
-     "url": "/s/img/producto/evidencia-oscuro-1440.e34c1585.avif"
+     "bytes": 31648,
+     "sha256": "cc5b467381988518a117c956e2a3147050805769b8af01f8ff8e57a1a6dde7bc",
+     "url": "/s/img/producto/evidencia-oscuro-1440.cc5b4673.avif"
     }
    ],
-   "bytes": 46146,
-   "sha256": "e3aface6e4bfa31f80ae2723cd555d615081da136a4e4edaf23f10fcd9547bd0",
+   "bytes": 47076,
+   "sha256": "576c2bc805b5eb35a9bf1357dda090a287abf3b5e4d435a55adecec8b839f55c",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/evidencia-oscuro-1440.e3aface6.webp",
+   "url": "/s/img/producto/evidencia-oscuro-1440.576c2bc8.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 26000,
-     "sha256": "fa6f3ec5e136ab0b4e43fd068876dce63dd44d4700d9e46d6b93c698543180c9",
-     "url": "/s/img/producto/evidencia-oscuro-960.fa6f3ec5.webp"
+     "bytes": 25560,
+     "sha256": "adde58e9711cfb482423fb9c65ef2be6f1a4d7baa0b72c65c569089327c83c8b",
+     "url": "/s/img/producto/evidencia-oscuro-960.adde58e9.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 46146,
-     "sha256": "e3aface6e4bfa31f80ae2723cd555d615081da136a4e4edaf23f10fcd9547bd0",
-     "url": "/s/img/producto/evidencia-oscuro-1440.e3aface6.webp"
+     "bytes": 47076,
+     "sha256": "576c2bc805b5eb35a9bf1357dda090a287abf3b5e4d435a55adecec8b839f55c",
+     "url": "/s/img/producto/evidencia-oscuro-1440.576c2bc8.webp"
     }
    ]
   },
@@ -435,51 +1497,51 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 26965,
-     "sha256": "3145c721cd159e95d299b7fa787de4b16b71963209a52fea0fe350ee7cea9f6b",
-     "url": "/s/img/producto/fuga-960.3145c721.avif"
+     "bytes": 27669,
+     "sha256": "d11d30b3f689324fb13184b53d0b64a057d7ed0a4fe839387520f67fbc03fb4e",
+     "url": "/s/img/producto/fuga-960.d11d30b3.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 43544,
-     "sha256": "b51fab393201bc97525d897d08fae36469a6444ea564cd65d2b6de6f3433e44c",
-     "url": "/s/img/producto/fuga-1440.b51fab39.avif"
+     "bytes": 44149,
+     "sha256": "bf11e8d765b637af4846b460b52dadf170409dc72cc0b00fcb0e784719aaa3c3",
+     "url": "/s/img/producto/fuga-1440.bf11e8d7.avif"
     },
     {
      "alto": 1800,
      "ancho": 2880,
-     "bytes": 92149,
-     "sha256": "2e95b2525d00bb46c0f71c5e89f15c0c507fab7c998fe892ed455012e328a329",
-     "url": "/s/img/producto/fuga-2880.2e95b252.avif"
+     "bytes": 93708,
+     "sha256": "9ec136b49c39efdeec82d84bdc7157fe89d06f60d86390f9acd8c2bf87286d60",
+     "url": "/s/img/producto/fuga-2880.9ec136b4.avif"
     }
    ],
-   "bytes": 66678,
-   "sha256": "6034b4cf31b4d42779688e92fed591c9c4e5c7488c6303219d277a483b38bb4d",
+   "bytes": 68692,
+   "sha256": "88a2af0709aec60a0750e860222e915a87387df602d56e5a207c93314ca91ad7",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/fuga-1440.6034b4cf.webp",
+   "url": "/s/img/producto/fuga-1440.88a2af07.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 37448,
-     "sha256": "78285a7ace8a6293523757e5df6312b4cc3f71e1323679d032ce7f8c5c485956",
-     "url": "/s/img/producto/fuga-960.78285a7a.webp"
+     "bytes": 38432,
+     "sha256": "f8c665ebac40b93dbfe1388d97d2a29ab49c3e54472571113979acd9d611cbaa",
+     "url": "/s/img/producto/fuga-960.f8c665eb.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 66678,
-     "sha256": "6034b4cf31b4d42779688e92fed591c9c4e5c7488c6303219d277a483b38bb4d",
-     "url": "/s/img/producto/fuga-1440.6034b4cf.webp"
+     "bytes": 68692,
+     "sha256": "88a2af0709aec60a0750e860222e915a87387df602d56e5a207c93314ca91ad7",
+     "url": "/s/img/producto/fuga-1440.88a2af07.webp"
     },
     {
      "alto": 1800,
      "ancho": 2880,
-     "bytes": 153936,
-     "sha256": "449f2ca87ec5c9dd48ee50eaccca56f14a609fda88a85e2badf23420e033f07b",
-     "url": "/s/img/producto/fuga-2880.449f2ca8.webp"
+     "bytes": 156920,
+     "sha256": "d262e10e77ba33a8fdc18c255d2e84aa1e59c97c26a99c94b4ad17d496cb79d1",
+     "url": "/s/img/producto/fuga-2880.d262e10e.webp"
     }
    ]
   },
@@ -494,37 +1556,51 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 26890,
-     "sha256": "30b1fe2c94f761240215b8b7ab2b966b07bd9880e501176fcf28d8f0b82f307d",
-     "url": "/s/img/producto/fuga-oscuro-960.30b1fe2c.avif"
+     "bytes": 27846,
+     "sha256": "6c52bdfd0f0a5060068cfa44720c5998ea658ecf2bff0368395aa367b6a3c51a",
+     "url": "/s/img/producto/fuga-oscuro-960.6c52bdfd.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 44044,
-     "sha256": "b77ff662e5deff4f6a996601fcf14ee62115fb1938812698fcee3a4d818b748c",
-     "url": "/s/img/producto/fuga-oscuro-1440.b77ff662.avif"
+     "bytes": 44721,
+     "sha256": "ddea24de7b4033a24154710bf1f2bdda063eba754445eeba26eff866ddea183a",
+     "url": "/s/img/producto/fuga-oscuro-1440.ddea24de.avif"
+    },
+    {
+     "alto": 1800,
+     "ancho": 2880,
+     "bytes": 91442,
+     "sha256": "db699b45dc5cb398a8d54f2e0f7c13d125fe7c714e534149d18393a33ef09780",
+     "url": "/s/img/producto/fuga-oscuro-2880.db699b45.avif"
     }
    ],
-   "bytes": 65486,
-   "sha256": "f1078c9d7a6e77ae37b201a502e00f9cb964b41f55e25df45d7d65659c068840",
+   "bytes": 66598,
+   "sha256": "cff2ffcf1a68ef7b22746bec1bb71bebca270f2467d38113e99d026b4399a03f",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/fuga-oscuro-1440.f1078c9d.webp",
+   "url": "/s/img/producto/fuga-oscuro-1440.cff2ffcf.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 36954,
-     "sha256": "c10cab4f6029e1259436132b18b360eb91d96c678efcbdf6360805b86b7c6e10",
-     "url": "/s/img/producto/fuga-oscuro-960.c10cab4f.webp"
+     "bytes": 37924,
+     "sha256": "2ce268f95f2904ab18c1479c9ee65fb01e1ce6546516eba2b899e9dfb7ad1219",
+     "url": "/s/img/producto/fuga-oscuro-960.2ce268f9.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 65486,
-     "sha256": "f1078c9d7a6e77ae37b201a502e00f9cb964b41f55e25df45d7d65659c068840",
-     "url": "/s/img/producto/fuga-oscuro-1440.f1078c9d.webp"
+     "bytes": 66598,
+     "sha256": "cff2ffcf1a68ef7b22746bec1bb71bebca270f2467d38113e99d026b4399a03f",
+     "url": "/s/img/producto/fuga-oscuro-1440.cff2ffcf.webp"
+    },
+    {
+     "alto": 1800,
+     "ancho": 2880,
+     "bytes": 150918,
+     "sha256": "d9f0b92d765b4160afa9c95b1c486739ae16f17e5d90eee8fc2a28968c618229",
+     "url": "/s/img/producto/fuga-oscuro-2880.d9f0b92d.webp"
     }
    ]
   },
@@ -539,37 +1615,37 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 32495,
-     "sha256": "b1a5e3bf3b6e9eb1bc1cdbeb32e1bb5476bfb89d41d97fc10d105b9a6ecfd4fd",
-     "url": "/s/img/producto/hoy-960.b1a5e3bf.avif"
+     "bytes": 32554,
+     "sha256": "453e1e533ff9494430349dccc99e9217d9ffddeb00bbbd69754d4f792663bd9e",
+     "url": "/s/img/producto/hoy-960.453e1e53.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 52800,
-     "sha256": "dc2a4263377f46c099add08bbc7b6796f0f4cf310c2d988a30f7bbc83e93cc69",
-     "url": "/s/img/producto/hoy-1440.dc2a4263.avif"
+     "bytes": 52489,
+     "sha256": "f9ef9c974d2235d339b4b5bb495503eadef10c3331ea9f52ec1096177aad3512",
+     "url": "/s/img/producto/hoy-1440.f9ef9c97.avif"
     }
    ],
-   "bytes": 81978,
-   "sha256": "c1bd9f90acebf4182abd713f3f9d95aaf32863743e4f778e590f8e4ca08069d0",
+   "bytes": 81430,
+   "sha256": "43944ed588cb7e5219398bcf1bc31fc013ffb48bbadcba2a4a34d527438024ae",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/hoy-1440.c1bd9f90.webp",
+   "url": "/s/img/producto/hoy-1440.43944ed5.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 45106,
-     "sha256": "c728b450e7503a7983bb7574f79b914a4e49285487a02fd0ef9496b72e472c24",
-     "url": "/s/img/producto/hoy-960.c728b450.webp"
+     "bytes": 45444,
+     "sha256": "d47791d19ea61ebde500fdf9a11c6a842158dbb523c7d4382614f12a3e297f8b",
+     "url": "/s/img/producto/hoy-960.d47791d1.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 81978,
-     "sha256": "c1bd9f90acebf4182abd713f3f9d95aaf32863743e4f778e590f8e4ca08069d0",
-     "url": "/s/img/producto/hoy-1440.c1bd9f90.webp"
+     "bytes": 81430,
+     "sha256": "43944ed588cb7e5219398bcf1bc31fc013ffb48bbadcba2a4a34d527438024ae",
+     "url": "/s/img/producto/hoy-1440.43944ed5.webp"
     }
    ]
   },
@@ -582,32 +1658,39 @@
    "ancho": 1440,
    "avif": [
     {
-     "alto": 900,
-     "ancho": 1440,
-     "bytes": 55001,
-     "sha256": "454e6b881053a06291e9126716ceec8a23739bf7d5667266076024744eba3e45",
-     "url": "/s/img/producto/hoy-oscuro-1440.454e6b88.avif"
-    }
-   ],
-   "bytes": 81024,
-   "sha256": "9d062193cf52271fc6695a84d3a90ccd1994095873dbe12e2b23f56b169dfe39",
-   "tema": "oscuro",
-   "tipo": "captura",
-   "url": "/s/img/producto/hoy-oscuro-1440.9d062193.webp",
-   "variantes": [
-    {
      "alto": 600,
      "ancho": 960,
-     "bytes": 45306,
-     "sha256": "120d0d5d14fe10ded9ea0f775dc5918ec1b1fe40e9cfdead769db4642e264175",
-     "url": "/s/img/producto/hoy-oscuro-960.120d0d5d.webp"
+     "bytes": 34041,
+     "sha256": "b28422acd70830fde260a8247162207940a3244f95c720d9d3a927219a41cea8",
+     "url": "/s/img/producto/hoy-oscuro-960.b28422ac.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 81024,
-     "sha256": "9d062193cf52271fc6695a84d3a90ccd1994095873dbe12e2b23f56b169dfe39",
-     "url": "/s/img/producto/hoy-oscuro-1440.9d062193.webp"
+     "bytes": 54872,
+     "sha256": "3be25aa2a4dd2dc7623255a83696bba5491a7bb23df8214fac09bd83280462ff",
+     "url": "/s/img/producto/hoy-oscuro-1440.3be25aa2.avif"
+    }
+   ],
+   "bytes": 81102,
+   "sha256": "5afc9fa0e1d12d0619b62db4ec4faeff5a14ae1e63615a09aa68909c5a36b253",
+   "tema": "oscuro",
+   "tipo": "captura",
+   "url": "/s/img/producto/hoy-oscuro-1440.5afc9fa0.webp",
+   "variantes": [
+    {
+     "alto": 600,
+     "ancho": 960,
+     "bytes": 45668,
+     "sha256": "e4b64624477218c62517b4579b5e2a995a5582b248d7ac3ef21b0517a2e8dc7e",
+     "url": "/s/img/producto/hoy-oscuro-960.e4b64624.webp"
+    },
+    {
+     "alto": 900,
+     "ancho": 1440,
+     "bytes": 81102,
+     "sha256": "5afc9fa0e1d12d0619b62db4ec4faeff5a14ae1e63615a09aa68909c5a36b253",
+     "url": "/s/img/producto/hoy-oscuro-1440.5afc9fa0.webp"
     }
    ]
   },
@@ -616,29 +1699,29 @@
     "en": "Rovaq Today cards: observed versus recoverable, and the Next best action card, which proposes preparing the claim package for a SKU with the notice that nothing is sent. Example data.",
     "es": "Tarjetas de Hoy en Rovaq: lo observado frente a lo recuperable y la tarjeta Siguiente mejor acción, que propone preparar el paquete de reclamo de un SKU con el aviso de que no se envía nada. Datos de ejemplo."
    },
-   "alto": 696,
+   "alto": 695,
    "ancho": 1200,
    "avif": [
     {
-     "alto": 696,
+     "alto": 695,
      "ancho": 1200,
-     "bytes": 29559,
-     "sha256": "af881637898ce7e9d18e97698d56a18562471b426544a8e8ed0a1e4ade94911b",
-     "url": "/s/img/producto/pantalla5-1200.af881637.avif"
+     "bytes": 29473,
+     "sha256": "f82e7fd1d16ac4abf01f4cd86736d9b5592cfc26a710cbf4a67c2f2f292222d1",
+     "url": "/s/img/producto/pantalla5-1200.f82e7fd1.avif"
     }
    ],
-   "bytes": 44592,
-   "sha256": "af7924b5adad9dbcb05235ecd0622fcfba1808a0fdee34b74afa0e845ba584ba",
+   "bytes": 42232,
+   "sha256": "f672e69ccf176888509ca078e79955223f773ddaa86fd2f63c0caaf33b7c2735",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/pantalla5-1200.af7924b5.webp",
+   "url": "/s/img/producto/pantalla5-1200.f672e69c.webp",
    "variantes": [
     {
-     "alto": 696,
+     "alto": 695,
      "ancho": 1200,
-     "bytes": 44592,
-     "sha256": "af7924b5adad9dbcb05235ecd0622fcfba1808a0fdee34b74afa0e845ba584ba",
-     "url": "/s/img/producto/pantalla5-1200.af7924b5.webp"
+     "bytes": 42232,
+     "sha256": "f672e69ccf176888509ca078e79955223f773ddaa86fd2f63c0caaf33b7c2735",
+     "url": "/s/img/producto/pantalla5-1200.f672e69c.webp"
     }
    ]
   },
@@ -653,37 +1736,37 @@
     {
      "alto": 603,
      "ancho": 736,
-     "bytes": 22145,
-     "sha256": "b7bb68754f5ec8a8af046987139d2d3ac30726807376c1d3170dc525fbecbdcb",
-     "url": "/s/img/producto/pareto-736.b7bb6875.avif"
+     "bytes": 22047,
+     "sha256": "93dd0c41c5a567d97bbd6f042868746000d2f244d5cb2879c4ccbacd420e199e",
+     "url": "/s/img/producto/pareto-736.93dd0c41.avif"
     },
     {
      "alto": 1206,
      "ancho": 1472,
-     "bytes": 47078,
-     "sha256": "3dc789090811670c9950efcd9c39a1a510a9240d2855a311d0d981d05f61a349",
-     "url": "/s/img/producto/pareto-1472.3dc78909.avif"
+     "bytes": 47037,
+     "sha256": "6d52134cb4aa276bd119b2b1affc5a9dee39afe1ffd54c1afb37c17997c610ce",
+     "url": "/s/img/producto/pareto-1472.6d52134c.avif"
     }
    ],
-   "bytes": 75194,
-   "sha256": "e43e25e07f09ebdf15495b821c4ec8c47f1693bd4725098cfdf6ddc9050d6565",
+   "bytes": 75142,
+   "sha256": "41e46f683fda5e683cfd01df623e53bd384911bd1ba95aaef9be99fe4fd4df38",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/pareto-1472.e43e25e0.webp",
+   "url": "/s/img/producto/pareto-1472.41e46f68.webp",
    "variantes": [
     {
      "alto": 603,
      "ancho": 736,
-     "bytes": 32572,
-     "sha256": "77799d11aacd6cf20e5fa38cdd9258173ebea32c6cecaeee9dd7a7f38b7189e3",
-     "url": "/s/img/producto/pareto-736.77799d11.webp"
+     "bytes": 32428,
+     "sha256": "cbabbe955ece8bcc45193db1ec50c4aa31b8664d2100cc02dcd2832348415baa",
+     "url": "/s/img/producto/pareto-736.cbabbe95.webp"
     },
     {
      "alto": 1206,
      "ancho": 1472,
-     "bytes": 75194,
-     "sha256": "e43e25e07f09ebdf15495b821c4ec8c47f1693bd4725098cfdf6ddc9050d6565",
-     "url": "/s/img/producto/pareto-1472.e43e25e0.webp"
+     "bytes": 75142,
+     "sha256": "41e46f683fda5e683cfd01df623e53bd384911bd1ba95aaef9be99fe4fd4df38",
+     "url": "/s/img/producto/pareto-1472.41e46f68.webp"
     }
    ]
   },
@@ -694,18 +1777,18 @@
    },
    "alto": 602,
    "ancho": 736,
-   "bytes": 12680,
-   "sha256": "9757590d8e09c2e38520debc9068085980c2edb0177240b842c5c2309c29c11e",
+   "bytes": 12675,
+   "sha256": "f44f8d75263b0aa27c06e5e93c4e1418799d63697333b9a586eaedd5744d63fc",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/pareto.9757590d.svg",
+   "url": "/s/img/producto/pareto.f44f8d75.svg",
    "variantes": [
     {
      "alto": 602,
      "ancho": 736,
-     "bytes": 12680,
-     "sha256": "9757590d8e09c2e38520debc9068085980c2edb0177240b842c5c2309c29c11e",
-     "url": "/s/img/producto/pareto.9757590d.svg"
+     "bytes": 12675,
+     "sha256": "f44f8d75263b0aa27c06e5e93c4e1418799d63697333b9a586eaedd5744d63fc",
+     "url": "/s/img/producto/pareto.f44f8d75.svg"
     }
    ]
   },
@@ -757,17 +1840,17 @@
     }
    ],
    "bytes": 19564,
-   "sha256": "74dce0c75b46cf69826e2ec7f09897e13ff7bd235dba9c56717eedebacf29786",
+   "sha256": "b49105ece19162fce2e4abfb327472fb50b7e64e230fb7586c7cba8cd7f1a95d",
    "tema": "oscuro",
    "tipo": "recorte",
-   "url": "/s/img/producto/paso2-1469.74dce0c7.webp",
+   "url": "/s/img/producto/paso2-1469.b49105ec.webp",
    "variantes": [
     {
      "alto": 446,
      "ancho": 1469,
      "bytes": 19564,
-     "sha256": "74dce0c75b46cf69826e2ec7f09897e13ff7bd235dba9c56717eedebacf29786",
-     "url": "/s/img/producto/paso2-1469.74dce0c7.webp"
+     "sha256": "b49105ece19162fce2e4abfb327472fb50b7e64e230fb7586c7cba8cd7f1a95d",
+     "url": "/s/img/producto/paso2-1469.b49105ec.webp"
     }
    ]
   },
@@ -782,23 +1865,23 @@
     {
      "alto": 324,
      "ancho": 1670,
-     "bytes": 19628,
-     "sha256": "d14c27744aada2b524b3b8ede04eab149fe70d7965faac143cdb4a66708d1019",
-     "url": "/s/img/producto/paso3-1670.d14c2774.avif"
+     "bytes": 19706,
+     "sha256": "ad28457878215ee074deb5df1b728d76ac70bed89540522f62d08727af1f21e6",
+     "url": "/s/img/producto/paso3-1670.ad284578.avif"
     }
    ],
-   "bytes": 30326,
-   "sha256": "8f08276951c5d36b030ade5e202ea952fd281639cc656439654e1db3f492dab7",
+   "bytes": 30392,
+   "sha256": "5a32c537bbbf2cfc4ebabf5264b15905b6dd247113a518c0668e38acf0de6ff4",
    "tema": "oscuro",
    "tipo": "recorte",
-   "url": "/s/img/producto/paso3-1670.8f082769.webp",
+   "url": "/s/img/producto/paso3-1670.5a32c537.webp",
    "variantes": [
     {
      "alto": 324,
      "ancho": 1670,
-     "bytes": 30326,
-     "sha256": "8f08276951c5d36b030ade5e202ea952fd281639cc656439654e1db3f492dab7",
-     "url": "/s/img/producto/paso3-1670.8f082769.webp"
+     "bytes": 30392,
+     "sha256": "5a32c537bbbf2cfc4ebabf5264b15905b6dd247113a518c0668e38acf0de6ff4",
+     "url": "/s/img/producto/paso3-1670.5a32c537.webp"
     }
    ]
   },
@@ -813,30 +1896,30 @@
     {
      "alto": 454,
      "ancho": 727,
-     "bytes": 9477,
-     "sha256": "e693405f8ed58d81dd1d88057c1c3015ce41f2bc9e0b1954bb7ebada1d9799ef",
-     "url": "/s/img/producto/paso4-727.e693405f.avif"
+     "bytes": 9462,
+     "sha256": "25bfa2552539c2afac152cc74f6d7069be77ea034adaada0cad47a46d775041f",
+     "url": "/s/img/producto/paso4-727.25bfa255.avif"
     }
    ],
-   "bytes": 15062,
-   "sha256": "b4a28fdb93115c67f0ce0ca835d6a571844ea6f77c857aa55004c0147d6579bb",
+   "bytes": 15090,
+   "sha256": "bad1c409f770877261dfe9feaccecea2ad9c9994398eb3a33fdbf686be0eda63",
    "tema": "oscuro",
    "tipo": "recorte",
-   "url": "/s/img/producto/paso4-727.b4a28fdb.webp",
+   "url": "/s/img/producto/paso4-727.bad1c409.webp",
    "variantes": [
     {
      "alto": 454,
      "ancho": 727,
-     "bytes": 15062,
-     "sha256": "b4a28fdb93115c67f0ce0ca835d6a571844ea6f77c857aa55004c0147d6579bb",
-     "url": "/s/img/producto/paso4-727.b4a28fdb.webp"
+     "bytes": 15090,
+     "sha256": "bad1c409f770877261dfe9feaccecea2ad9c9994398eb3a33fdbf686be0eda63",
+     "url": "/s/img/producto/paso4-727.bad1c409.webp"
     }
    ]
   },
   "producto/preguntale": {
    "alt": {
-    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars and the dropdown with the calculation steps. Example data.",
-    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras y el desplegable con los pasos del cálculo. Datos de ejemplo."
+    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars, the coverage of each figure and what is still to be loaded. Example data.",
+    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras, la cobertura de cada cifra y lo que falta cargar. Datos de ejemplo."
    },
    "alto": 900,
    "ancho": 1440,
@@ -844,44 +1927,44 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 25581,
-     "sha256": "52b8f28af8ebe862a48ca9e7aa95f9aa48baad1e4b8956726cbafe0ad945d1bc",
-     "url": "/s/img/producto/preguntale-960.52b8f28a.avif"
+     "bytes": 24990,
+     "sha256": "9cc13a491fda14a35dcc90c7d22e6f86d6f05736d91d2dac7a2f306682ae5684",
+     "url": "/s/img/producto/preguntale-960.9cc13a49.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 37307,
-     "sha256": "500fad11a487a5fb7a35a7d783c1cc17a723c5ea0435c34a5d7c69011c598520",
-     "url": "/s/img/producto/preguntale-1440.500fad11.avif"
+     "bytes": 35977,
+     "sha256": "1dd0ab45ff800c7a1f2c0affacba750c7a896397afc75378ce5b40a9699e6cb6",
+     "url": "/s/img/producto/preguntale-1440.1dd0ab45.avif"
     }
    ],
-   "bytes": 64442,
-   "sha256": "a05c285f1dfa51e1d52d897bc8b443b52804b70b0cf3dcd5f6ed4271b19c565d",
+   "bytes": 62966,
+   "sha256": "ab5c2a2d944ef03dc910c78d7cc6788da96f2fc05cfcf783ca58615dc765da48",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/preguntale-1440.a05c285f.webp",
+   "url": "/s/img/producto/preguntale-1440.ab5c2a2d.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 37260,
-     "sha256": "03d732bf7ea56a91ed389362aac7918c6b23af44e15e09e41d4d917ea6339947",
-     "url": "/s/img/producto/preguntale-960.03d732bf.webp"
+     "bytes": 36660,
+     "sha256": "0553c7af42546a6e97b4fe8950653a4f3d9ac8519d36d2877af97167fa47babd",
+     "url": "/s/img/producto/preguntale-960.0553c7af.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 64442,
-     "sha256": "a05c285f1dfa51e1d52d897bc8b443b52804b70b0cf3dcd5f6ed4271b19c565d",
-     "url": "/s/img/producto/preguntale-1440.a05c285f.webp"
+     "bytes": 62966,
+     "sha256": "ab5c2a2d944ef03dc910c78d7cc6788da96f2fc05cfcf783ca58615dc765da48",
+     "url": "/s/img/producto/preguntale-1440.ab5c2a2d.webp"
     }
    ]
   },
   "producto/preguntale-oscuro": {
    "alt": {
-    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars and the dropdown with the calculation steps. Example data.",
-    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras y el desplegable con los pasos del cálculo. Datos de ejemplo."
+    "en": "Ask your data: the question about which marketplace concentrates the most refunds with its answer as cards and bars, the coverage of each figure and what is still to be loaded. Example data.",
+    "es": "Pregúntale a tus datos: la pregunta sobre qué marketplace concentra más reembolsos con su respuesta en tarjetas y barras, la cobertura de cada cifra y lo que falta cargar. Datos de ejemplo."
    },
    "alto": 900,
    "ancho": 1440,
@@ -889,44 +1972,44 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 25879,
-     "sha256": "7da76e05131e2e85bfad3199119c224657927292e442487e4ba85b2ed6c66e43",
-     "url": "/s/img/producto/preguntale-oscuro-960.7da76e05.avif"
+     "bytes": 25184,
+     "sha256": "649dddae82a793c2c0fce180466a1548fa951de7234db83856e623160adec593",
+     "url": "/s/img/producto/preguntale-oscuro-960.649dddae.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 38640,
-     "sha256": "15ee2ec6499ada45e8f23ec11e4dac7444f9850456b4a1c22797f4aab42ef1fb",
-     "url": "/s/img/producto/preguntale-oscuro-1440.15ee2ec6.avif"
+     "bytes": 37342,
+     "sha256": "cdf67f0ae3c298e25eebba368908965054b48be66ac2e368aad384392642446a",
+     "url": "/s/img/producto/preguntale-oscuro-1440.cdf67f0a.avif"
     }
    ],
-   "bytes": 64090,
-   "sha256": "32a1af6b2cccc6300579f2a84895af128e45678357a00e9d70f54bb87e65c149",
+   "bytes": 62180,
+   "sha256": "97c5d271b54e3fbdc0fd1bad1c22ada9ff87277c5ff0308582b91002082e378a",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/preguntale-oscuro-1440.32a1af6b.webp",
+   "url": "/s/img/producto/preguntale-oscuro-1440.97c5d271.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 37678,
-     "sha256": "31797c893a5d0e9e2464eb785007ff94a9c979a07c794c4bca96e06f1946b9c5",
-     "url": "/s/img/producto/preguntale-oscuro-960.31797c89.webp"
+     "bytes": 36710,
+     "sha256": "19b35460682812c8a6a5a6d0049b6296d0528bf430d954c7efe5ba555bcb905c",
+     "url": "/s/img/producto/preguntale-oscuro-960.19b35460.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 64090,
-     "sha256": "32a1af6b2cccc6300579f2a84895af128e45678357a00e9d70f54bb87e65c149",
-     "url": "/s/img/producto/preguntale-oscuro-1440.32a1af6b.webp"
+     "bytes": 62180,
+     "sha256": "97c5d271b54e3fbdc0fd1bad1c22ada9ff87277c5ff0308582b91002082e378a",
+     "url": "/s/img/producto/preguntale-oscuro-1440.97c5d271.webp"
     }
    ]
   },
   "producto/problemas": {
    "alt": {
-    "en": "Rovaq Problems screen with three grouped problems, exposed revenue as a known subtotal with an Inferred seal and the data coverage status. Example data.",
-    "es": "Pantalla Problemas de Rovaq con tres problemas agrupados, ingresos expuestos como subtotal conocido con sello Inferido y el estado de la cobertura de datos. Datos de ejemplo."
+    "en": "Rovaq Problems screen with three grouped problems, exposed revenue as a known subtotal with an Inferred seal, with the notice that the data is partial. Example data.",
+    "es": "Pantalla Problemas de Rovaq con tres problemas agrupados, ingresos expuestos como subtotal conocido con sello Inferido, con el aviso de que son datos parciales. Datos de ejemplo."
    },
    "alto": 900,
    "ancho": 1440,
@@ -934,44 +2017,44 @@
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 27593,
-     "sha256": "4d84bb0261545600c49a0d94c963b7ff8ee9d9e0160066f088b9c222d5efb842",
-     "url": "/s/img/producto/problemas-960.4d84bb02.avif"
+     "bytes": 25294,
+     "sha256": "a0781a6da1a73ebf8d9c183d51000284abcc41b2de6cfc5ecf240e433f686049",
+     "url": "/s/img/producto/problemas-960.a0781a6d.avif"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 44294,
-     "sha256": "edb0b29606691541630424e754239b3f71a4114d5735fd932ddaf192984c9971",
-     "url": "/s/img/producto/problemas-1440.edb0b296.avif"
+     "bytes": 40533,
+     "sha256": "16258f3fa55611141a997b217a6c0435996dcaf0a4bfc565b561a1eac347c8a8",
+     "url": "/s/img/producto/problemas-1440.16258f3f.avif"
     }
    ],
-   "bytes": 68886,
-   "sha256": "16d3bb2c3c36361777a3e2504dee7f424661f3543855efb3b75224d10f8e6995",
+   "bytes": 63744,
+   "sha256": "00ff89a34c21598d224a5ec979211ecf7801cb827df97dcde587e69a7574752d",
    "tema": "claro",
    "tipo": "captura",
-   "url": "/s/img/producto/problemas-1440.16d3bb2c.webp",
+   "url": "/s/img/producto/problemas-1440.00ff89a3.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 39038,
-     "sha256": "aab0b5f60853b55fba66346531255a9892e44e8a21236d652d73dcaf0bdefada",
-     "url": "/s/img/producto/problemas-960.aab0b5f6.webp"
+     "bytes": 35508,
+     "sha256": "19dacf74f9c49792d9c5c88d82d3528e808ea5d8ab70a4834d114b00f70e46ac",
+     "url": "/s/img/producto/problemas-960.19dacf74.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 68886,
-     "sha256": "16d3bb2c3c36361777a3e2504dee7f424661f3543855efb3b75224d10f8e6995",
-     "url": "/s/img/producto/problemas-1440.16d3bb2c.webp"
+     "bytes": 63744,
+     "sha256": "00ff89a34c21598d224a5ec979211ecf7801cb827df97dcde587e69a7574752d",
+     "url": "/s/img/producto/problemas-1440.00ff89a3.webp"
     }
    ]
   },
   "producto/problemas-oscuro": {
    "alt": {
-    "en": "Rovaq Problems screen with three grouped problems, exposed revenue as a known subtotal with an Inferred seal and the data coverage status. Example data.",
-    "es": "Pantalla Problemas de Rovaq con tres problemas agrupados, ingresos expuestos como subtotal conocido con sello Inferido y el estado de la cobertura de datos. Datos de ejemplo."
+    "en": "Rovaq Problems screen with three grouped problems, exposed revenue as a known subtotal with an Inferred seal, with the notice that the data is partial. Example data.",
+    "es": "Pantalla Problemas de Rovaq con tres problemas agrupados, ingresos expuestos como subtotal conocido con sello Inferido, con el aviso de que son datos parciales. Datos de ejemplo."
    },
    "alto": 900,
    "ancho": 1440,
@@ -979,30 +2062,30 @@
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 46088,
-     "sha256": "8ab34e231eef8ce3871a2185aeea03a03ad6329b24103a728b41b9be31efa116",
-     "url": "/s/img/producto/problemas-oscuro-1440.8ab34e23.avif"
+     "bytes": 42110,
+     "sha256": "74f0ada45738e7696579c3b8c785cb7feba5ad21c2310dc980c188ceb42eddd3",
+     "url": "/s/img/producto/problemas-oscuro-1440.74f0ada4.avif"
     }
    ],
-   "bytes": 67766,
-   "sha256": "446befb682f97e9bf56933c4f5aa28c7be4af8d139d5108e45494716f4a7fd00",
+   "bytes": 62782,
+   "sha256": "ef1a9d640d7df507ad14febdcdddea07aa3eae09e275c62cb82d6459599e37ac",
    "tema": "oscuro",
    "tipo": "captura",
-   "url": "/s/img/producto/problemas-oscuro-1440.446befb6.webp",
+   "url": "/s/img/producto/problemas-oscuro-1440.ef1a9d64.webp",
    "variantes": [
     {
      "alto": 600,
      "ancho": 960,
-     "bytes": 38852,
-     "sha256": "bf6579a4533371e769d87c85b897a7ac5f99d24e3486cd7a0b6a171b664f3dcd",
-     "url": "/s/img/producto/problemas-oscuro-960.bf6579a4.webp"
+     "bytes": 35412,
+     "sha256": "0f19c7b4532181cf3c42c0d6f21605b3f44b92c0d96b3c73bddfc5082d3ba26b",
+     "url": "/s/img/producto/problemas-oscuro-960.0f19c7b4.webp"
     },
     {
      "alto": 900,
      "ancho": 1440,
-     "bytes": 67766,
-     "sha256": "446befb682f97e9bf56933c4f5aa28c7be4af8d139d5108e45494716f4a7fd00",
-     "url": "/s/img/producto/problemas-oscuro-1440.446befb6.webp"
+     "bytes": 62782,
+     "sha256": "ef1a9d640d7df507ad14febdcdddea07aa3eae09e275c62cb82d6459599e37ac",
+     "url": "/s/img/producto/problemas-oscuro-1440.ef1a9d64.webp"
     }
    ]
   },
@@ -1011,43 +2094,43 @@
     "en": "The four cards of Refund leakage: money returned, refunds, stuck money and repeat contact. Example data.",
     "es": "Las cuatro tarjetas de Fuga de reembolsos: dinero devuelto, reembolsos, dinero atorado y repetición de contacto. Datos de ejemplo."
    },
-   "alto": 250,
+   "alto": 214,
    "ancho": 2220,
    "avif": [
     {
-     "alto": 125,
+     "alto": 107,
      "ancho": 1110,
-     "bytes": 6774,
-     "sha256": "1290fb8aa880d2d273be9b48f8ae29127070e3336f654eddf917fb276652a1b3",
-     "url": "/s/img/producto/tarjetas-fuga-1110.1290fb8a.avif"
+     "bytes": 6489,
+     "sha256": "2a605dabeadb420fedbbc74891da8b6b6a64d880a5a5449dfa48cbb14d3c5bdb",
+     "url": "/s/img/producto/tarjetas-fuga-1110.2a605dab.avif"
     },
     {
-     "alto": 250,
+     "alto": 214,
      "ancho": 2220,
-     "bytes": 13950,
-     "sha256": "eddb89eddd090431bbb9fbe25b4957fb87286b3a6c819ae1a9494d7d87c7cfd3",
-     "url": "/s/img/producto/tarjetas-fuga-2220.eddb89ed.avif"
+     "bytes": 13344,
+     "sha256": "fd29f56f295a531fdaed77363761891530e72f142faae7efe3b3a41f6494338b",
+     "url": "/s/img/producto/tarjetas-fuga-2220.fd29f56f.avif"
     }
    ],
-   "bytes": 21478,
-   "sha256": "eb7a1b900e0a4c481acc982f6407ed663b48de4314b97ebfb58d773e61908af4",
+   "bytes": 20356,
+   "sha256": "91c5eee7a75297a7f2936cc5c927fda165d5d23d649445b27a0948a0d20bbf22",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/tarjetas-fuga-2220.eb7a1b90.webp",
+   "url": "/s/img/producto/tarjetas-fuga-2220.91c5eee7.webp",
    "variantes": [
     {
-     "alto": 125,
+     "alto": 107,
      "ancho": 1110,
-     "bytes": 9482,
-     "sha256": "a8c98b090b5c755b3bf40a2796a50a444b2e23a6ae8ba41370d10491bd1e9a9c",
-     "url": "/s/img/producto/tarjetas-fuga-1110.a8c98b09.webp"
+     "bytes": 9088,
+     "sha256": "eb2cdf7355aaf65f7ee6fa4efc77794e1081634d248d1b517a2207d1185ca4a6",
+     "url": "/s/img/producto/tarjetas-fuga-1110.eb2cdf73.webp"
     },
     {
-     "alto": 250,
+     "alto": 214,
      "ancho": 2220,
-     "bytes": 21478,
-     "sha256": "eb7a1b900e0a4c481acc982f6407ed663b48de4314b97ebfb58d773e61908af4",
-     "url": "/s/img/producto/tarjetas-fuga-2220.eb7a1b90.webp"
+     "bytes": 20356,
+     "sha256": "91c5eee7a75297a7f2936cc5c927fda165d5d23d649445b27a0948a0d20bbf22",
+     "url": "/s/img/producto/tarjetas-fuga-2220.91c5eee7.webp"
     }
    ]
   },
@@ -1062,37 +2145,37 @@
     {
      "alto": 162,
      "ancho": 1110,
-     "bytes": 13540,
-     "sha256": "dfb0678275f4cb980758c1ac1210c0bc377e0dd84fef44781d18bf51d1425e49",
-     "url": "/s/img/producto/tarjetas-hoy-1110.dfb06782.avif"
+     "bytes": 13539,
+     "sha256": "526decf9d3230005878790eb13535ef5a3d3240ab20eac2cfc994fbfe5a0e64e",
+     "url": "/s/img/producto/tarjetas-hoy-1110.526decf9.avif"
     },
     {
      "alto": 324,
      "ancho": 2220,
-     "bytes": 29812,
-     "sha256": "62e3f9892e0dd21758761a0a9c6b858debf9f9fc523f40d1acd1ae56122851d0",
-     "url": "/s/img/producto/tarjetas-hoy-2220.62e3f989.avif"
+     "bytes": 29861,
+     "sha256": "3932de50316ced5ca63e5036ad4d70120cd13c6369becc58c75397129c965e47",
+     "url": "/s/img/producto/tarjetas-hoy-2220.3932de50.avif"
     }
    ],
-   "bytes": 45130,
-   "sha256": "efbc2b543db6c40608a7ccf75e3d53c66d6697755a074d9cff98298e46f306dd",
+   "bytes": 45202,
+   "sha256": "c759f56c36561969ff32dc3289400580993338865284a72ac8589f99c11e3820",
    "tema": "claro",
    "tipo": "recorte",
-   "url": "/s/img/producto/tarjetas-hoy-2220.efbc2b54.webp",
+   "url": "/s/img/producto/tarjetas-hoy-2220.c759f56c.webp",
    "variantes": [
     {
      "alto": 162,
      "ancho": 1110,
-     "bytes": 19802,
-     "sha256": "cdb7ea27d1e24ee96028c8981a4d3f59218de133a4265499f46c602edeaae7f2",
-     "url": "/s/img/producto/tarjetas-hoy-1110.cdb7ea27.webp"
+     "bytes": 19806,
+     "sha256": "83ed18caf095f5fd421d10e5766bad0783f744d3b9f73fe14d4a8b7434d80610",
+     "url": "/s/img/producto/tarjetas-hoy-1110.83ed18ca.webp"
     },
     {
      "alto": 324,
      "ancho": 2220,
-     "bytes": 45130,
-     "sha256": "efbc2b543db6c40608a7ccf75e3d53c66d6697755a074d9cff98298e46f306dd",
-     "url": "/s/img/producto/tarjetas-hoy-2220.efbc2b54.webp"
+     "bytes": 45202,
+     "sha256": "c759f56c36561969ff32dc3289400580993338865284a72ac8589f99c11e3820",
+     "url": "/s/img/producto/tarjetas-hoy-2220.c759f56c.webp"
     }
    ]
   },
@@ -1104,18 +2187,18 @@
    "alto": 236,
    "ancho": 1560,
    "avif": [],
-   "bytes": 26000,
-   "sha256": "4cd0905bdddc06575b68c81323bf1fa3d3b39eb541270227ff4c45ddcf398fc8",
+   "bytes": 26012,
+   "sha256": "b9be99ebc8074470193690d07301bedb4392221cd36516e1aa68dbc0cc09359d",
    "tema": "oscuro",
    "tipo": "recorte",
-   "url": "/s/img/producto/valor-1560.4cd0905b.webp",
+   "url": "/s/img/producto/valor-1560.b9be99eb.webp",
    "variantes": [
     {
      "alto": 236,
      "ancho": 1560,
-     "bytes": 26000,
-     "sha256": "4cd0905bdddc06575b68c81323bf1fa3d3b39eb541270227ff4c45ddcf398fc8",
-     "url": "/s/img/producto/valor-1560.4cd0905b.webp"
+     "bytes": 26012,
+     "sha256": "b9be99ebc8074470193690d07301bedb4392221cd36516e1aa68dbc0cc09359d",
+     "url": "/s/img/producto/valor-1560.b9be99eb.webp"
     }
    ]
   }

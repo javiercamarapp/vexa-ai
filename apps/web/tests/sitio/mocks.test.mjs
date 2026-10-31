@@ -98,7 +98,9 @@ test('las seis pantallas son distintas entre sí', () => {
 
 // ---------- Sumas ----------
 test('la fuente única de datos suma lo que debe sumar', () => {
-  assert.equal(suma(D.PARETO.map((p) => p.v)), D.REEMBOLSOS, 'el Pareto de 10 SKU suma los reembolsos');
+  assert.equal(suma(D.PARETO.map((p) => p.v)), D.REEMBOLSOS_TOP10, 'el Pareto suma los diez SKU principales');
+  assert.equal((D.REEMBOLSOS_TOP10 / D.REEMBOLSOS * 100).toFixed(1), '67.9', 'los diez SKU principales explican el 67.9 % y no el 100 %');
+  assert.equal(D.SKU_TOTAL, 62);
   assert.equal(D.PARETO.length, 10);
   assert.deepEqual([...D.PARETO.map((p) => p.v)], [...D.PARETO.map((p) => p.v)].sort((a, b) => b - a), 'Pareto ordenado de mayor a menor');
   assert.equal(new Set(D.PARETO.map((p) => p.sku)).size, 10);
@@ -148,7 +150,7 @@ for (const lang of LANGS) {
     alturas.forEach((h, i) => assert.ok(Math.abs(h - (D.PARETO[i].v / tope) * 100) < 0.01, `barra ${i}`));
     const linea = /class="s-mock-acumulado" points="([^"]+)"/.exec(m2)[1].split(' ').map((p) => Number(p.split(',')[1]));
     assert.equal(linea.length, 10);
-    assert.ok(Math.abs(linea[9]) < 0.01, 'el acumulado termina en 100 por ciento');
+    assert.ok(Math.abs(linea[9] - (100 - (D.REEMBOLSOS_TOP10 / D.REEMBOLSOS) * 100)) < 0.01, 'el acumulado termina en el 67.9 por ciento, no en 100');
     assert.ok(linea.every((y, i) => i === 0 || y <= linea[i - 1]), 'el acumulado nunca baja');
     const m4 = R.mocks[`m4:${lang}:completo`];
     for (const v of D.totalesCanal) assert.ok(m4.includes(fmt(v)));

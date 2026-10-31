@@ -4,7 +4,9 @@
 // Reutiliza el MISMO código de los servicios (Fuga, Carga, informe CFO, agente) con una base simulada; el resto de rutas sale de fixtures.mjs.
 // NADA de config/cliente-piloto ni de VEXA_TENANT_ID: todo se inventa aquí. Las claves internas de canal (amazon/walmart/bestbuy) son las que exige el servicio;
 // el rotulado visible («Marketplace A/B/C») se aplica en la captura (tools de capturar-landing.mjs) y se verifica con una búsqueda de marcas.
-import {respond as respondBase} from './fixtures.mjs';
+import {respond as respondBase, SCOPE} from './fixtures.mjs';
+// Periodo único del recorrido: la barra «90 días» (mañana menos 90 días hasta mañana con el reloj fijado en AHORA) y base bruta.
+Object.assign(SCOPE, {date_start: '2026-08-07T00:00:00.000Z', date_end: '2026-11-05T00:00:00.000Z', basis: 'gross'});
 import {createRefundLeakRepository} from '../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import {createWorkloadRepository} from '../../../../packages/workspace-service/carga-sla.mjs';
 import {armarCco} from '../../../../packages/workspace-service/cco.mjs';
@@ -20,7 +22,17 @@ export const DINERO_ATORADO = 9_000;
 export const HILOS_MAS_24H = 14;
 export const EXPOSICION_SUBTOTAL = 21_600;
 export const INGRESO_EN_JUEGO = 8_200;
-export const PARETO = [['HM-210', 9800], ['HM-160', 7200], ['HM-130', 5400], ['HM-190', 4100], ['HM-150', 2900], ['HM-120', 2200], ['HM-180', 1700], ['HM-140', 1300], ['HM-170', 900], ['HM-200', 500]];
+// Diez SKU con más reembolsos (de un catálogo de 62): suman 24,450 USD, el 67.9 % de los 36,000 devueltos. Los otros 52 SKU (HM-301..HM-352) suman 11,550 y ninguno supera al décimo.
+export const PARETO = [['HM-210', 8000], ['HM-160', 4800], ['HM-130', 3300], ['HM-190', 2400], ['HM-150', 1700], ['HM-120', 1300], ['HM-180', 1000], ['HM-140', 800], ['HM-170', 650], ['HM-200', 500]];
+export const SKU_TOTAL = 62;
+const COLA_TOTAL = REEMBOLSOS - PARETO.reduce((a, [, v]) => a + v, 0);
+export const COLA = (() => {
+  const n = SKU_TOTAL - PARETO.length, w = Array.from({length: n}, (_, k) => 1 / (k + 1) ** 0.2), sw = w.reduce((a, b) => a + b, 0);
+  const v = w.map(x => Math.floor((x / sw) * COLA_TOTAL));
+  for (let r = COLA_TOTAL - v.reduce((a, b) => a + b, 0), i = 0; r > 0; r--, i = (i + 1) % n) v[i]++;
+  return v.map((x, k) => ['HM-' + (301 + k), x]);
+})();
+export const SKUS = [...PARETO, ...COLA];
 export const CANALES = {amazon: [5900, 6200, 6400], walmart: [3500, 3700, 4000], bestbuy: [2000, 2100, 2200]}; // A, B, C por mes
 export const ETIQUETA_CANAL = {amazon: 'Marketplace A', walmart: 'Marketplace B', bestbuy: 'Marketplace C'};
 export const MESES = ['2026-08', '2026-09', '2026-10'];
@@ -28,13 +40,16 @@ const AHORA = '2026-11-04T14:00:00.000Z'; // corte de la captura: Date.now() se 
 const CORTE = '2026-11-03T22:00:00.000Z';
 const FIN_MES = {'2026-08': '2026-08-31', '2026-09': '2026-09-30', '2026-10': '2026-10-31'};
 const TENANT = SYNTHETIC_TENANTS.A;
+// Idioma del fixture: el capturador lo fija con fijarIdioma('en'|'es') antes de pedir las pantallas. Todo texto propio del fixture sale de un solo lugar.
+let LANG = 'es';
+const L = (es, en) => (LANG === 'en' ? en : es);
 const suma = xs => xs.reduce((a, b) => a + b, 0);
 
 /** Matriz SKU x (canal, mes) en dólares enteros con márgenes exactos: filas = PARETO, columnas = CANALES (redondeo por déficits). */
 export function matrizReembolsos() {
   const cols = Object.entries(CANALES).flatMap(([ch, v]) => v.map((x, i) => ({ch, mes: MESES[i], total: x})));
-  const F = PARETO.map(([, v]) => cols.map(c => (v * c.total) / REEMBOLSOS)), M = F.map(r => r.map(Math.floor));
-  const dr = PARETO.map(([, v], i) => v - suma(M[i])), dc = cols.map((c, j) => c.total - suma(M.map(r => r[j])));
+  const F = SKUS.map(([, v]) => cols.map(c => (v * c.total) / REEMBOLSOS)), M = F.map(r => r.map(Math.floor));
+  const dr = SKUS.map(([, v], i) => v - suma(M[i])), dc = cols.map((c, j) => c.total - suma(M.map(r => r[j])));
   while (suma(dr) > 0) {
     let best = null;
     for (let i = 0; i < dr.length; i++) if (dr[i] > 0) for (let j = 0; j < dc.length; j++) if (dc[j] > 0) { const fr = F[i][j] - M[i][j]; if (!best || fr > best.fr) best = {i, j, fr}; }
@@ -42,13 +57,13 @@ export function matrizReembolsos() {
   }
   return {cols, M};
 }
-const PRECIO = i => 58 + i * 6; // ticket promedio por reembolso, determinista
+const PRECIO = i => i < 10 ? 58 + i * 6 : 62; // ticket promedio por reembolso, determinista
 
 export function filasReembolsos() {
   const {cols, M} = matrizReembolsos(), out = [];
-  PARETO.forEach(([sku], i) => cols.forEach((c, j) => {
+  SKUS.forEach(([sku], i) => cols.forEach((c, j) => {
     const d = M[i][j]; if (!d) return;
-    out.push({ch: c.ch, sku, month: c.mes, status: 'settled', currency: 'USD', exponent: 2, n: Math.max(1, Math.round(d / PRECIO(i))), sinMonto: 0, amount: String(d * 100), first_day: c.mes + '-01', last_day: FIN_MES[c.mes]});
+    out.push({ch: c.ch, sku, month: c.mes, status: 'settled', currency: 'USD', exponent: 2, n: Math.max(1, Math.round(d / PRECIO(i))), sinMonto: (() => { const n = Math.max(1, Math.round(d / PRECIO(i))); return n >= 3 ? Math.max(1, Math.round(n * 0.07)) : 0; })(), amount: String(d * 100), first_day: c.mes + '-01', last_day: FIN_MES[c.mes]});
   }));
   return out;
 }
@@ -113,7 +128,7 @@ export async function vistaCarga() {
     if (/conversation_monthly/.test(t)) return {rows: CONVS.map(([month, n]) => ({month, n}))};
     if (/insight_inbound_load/.test(t)) return {rows: []};
     if (/extract\(isodow/.test(t)) return {rows: filasCarga()};
-    if (/FROM public\.conversations WHERE tenant_id=\$1 AND deleted_at IS NULL/.test(t)) return {rows: [{total: 8420, con_canal: 0}]};
+    if (/FROM public\.conversations WHERE tenant_id=\$1 AND deleted_at IS NULL/.test(t)) return {rows: [{total: 14320, con_canal: 0}]};
     if (/WITH t AS/.test(t)) return {rows: [{hilos: 1690, medibles: 1650, con_resp: 1560, dentro: 1480, p50_h: '1.4', p90_h: '19.8', abiertos_sin_resp_24: HILOS_MAS_24H, abiertos_1_7: 0, abiertos_7_30: 0, abiertos_30: 0, cerrados_sin_resp: 76,
       min_creado: '2026-08-01', max_creado: '2026-11-03', corte: CORTE}]};
     return {rows: []};
@@ -144,22 +159,35 @@ export function informeCfo() {
   return {data: {status: 'ok', synthetic: true, exposureStatus: 'ok', report: serializeReport(r)}};
 }
 
+const PROB_ES = [
+  {t: 'Entrega marcada como completa sin recibirse', s: 'Pedidos que figuran como entregados y que el cliente dice no haber recibido.', expo: '1240000', ref: '460000', n: 124, cita: 'Mi pedido figura como entregado y no llegó. Ya escribí dos veces por correo.', cita2: 'Pedí el reembolso hace una semana y sigo sin respuesta.', sev: 'high'},
+  {t: 'Pieza distinta a la publicada', s: 'El producto recibido no coincide con la publicación del canal.', expo: '920000', ref: '310000', n: 86, cita: 'Es la segunda vez que pido el reemplazo. Dejé mi teléfono y nadie llamó.', cita2: 'La pieza que llegó no es la de la foto de la publicación.', sev: 'medium'},
+  {t: 'Cobro duplicado', s: 'El cliente reporta dos cargos por el mismo pedido.', expo: null, ref: null, n: 41, cita: 'Me cobraron dos veces el mismo pedido y no veo el reverso.', cita2: 'Revisé mi estado de cuenta: aparece el cargo duplicado.', sev: 'medium'},
+];
+const PROB_EN = [
+  {t: 'Delivery marked complete but never received', s: 'Orders shown as delivered that the customer says never arrived.', expo: '1240000', ref: '460000', n: 124, cita: 'My order shows as delivered and it never arrived. I have already written twice by email.', cita2: 'I asked for the refund a week ago and still have no answer.', sev: 'high'},
+  {t: 'Item differs from the listing', s: 'The product received does not match the channel listing.', expo: '920000', ref: '310000', n: 86, cita: 'This is the second time I ask for the replacement. I left my phone number and nobody called.', cita2: 'The item that arrived is not the one in the listing photo.', sev: 'medium'},
+  {t: 'Duplicate charge', s: 'The customer reports two charges for the same order.', expo: null, ref: null, n: 41, cita: 'I was charged twice for the same order and I do not see the reversal.', cita2: 'I checked my statement: the duplicate charge is there.', sev: 'medium'},
+];
+const PROB = new Proxy([], {get: (_, k) => (LANG === 'en' ? PROB_EN : PROB_ES)[k]});
+
 // ---------- Agente (Pregúntale) sobre el mismo libro ----------
 function datasetAgente() {
   const d = buildDataset({tenantId: TENANT});
   const MESES12 = ['2025-11', '2025-12', '2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10'];
   const ing = [330_000, 360_000, 340_000, 380_000, 395_000, 410_000, 425_000, 438_000, 450_000, 465_000, 472_000, INGRESO_BRUTO];
   const ref = [8_200, 9_100, 8_500, 9_100, 9_600, 10_200, 10_700, 11_000, 11_100, 11_400, 12_000, 12_600];
-  const porCanal = {A: {m: CANALES.amazon, p: 0.62}, B: {m: CANALES.walmart, p: 0.26}, C: {m: CANALES.bestbuy, p: 0.12}};
-  const led = [];
+  const porCanal = {A: {ch: 'amazon', m: CANALES.amazon, p: 0.62}, B: {ch: 'walmart', m: CANALES.walmart, p: 0.26}, C: {ch: 'bestbuy', m: CANALES.bestbuy, p: 0.12}};
+  const filas = filasReembolsos(), led = [];
   MESES12.forEach((month, i) => {
     let uo = 0, ur = 0;
     Object.entries(porCanal).forEach(([id, c], k, a) => {
       const last = k === a.length - 1, o = last ? ing[i] - uo : Math.round(ing[i] * c.p); uo += o;
       const r = i >= 9 ? c.m[i - 9] : last ? ref[i] - ur : Math.round(ref[i] * (c.m[0] / 11_400)); ur += r;
       const key = 'marketplace_' + id.toLowerCase(), label = 'Marketplace ' + id;
+      const fr = i >= 9 ? filas.filter(x => x.ch === c.ch && x.month === MESES[i - 9]) : [];
       led.push({source: key, sourceLabel: label, currency: 'USD', exponent: 2, month, kind: 'order', count: Math.round(o / 64), amountMinor: String(o * 100), unknown: 0});
-      led.push({source: key, sourceLabel: label, currency: 'USD', exponent: 2, month, kind: 'refund', count: Math.round(r / 62), amountMinor: String(r * 100), unknown: 0});
+      led.push({source: key, sourceLabel: label, currency: 'USD', exponent: 2, month, kind: 'refund', count: i >= 9 ? suma(fr.map(x => x.n)) : Math.round(r / 62), amountMinor: String(r * 100), unknown: i >= 9 ? suma(fr.map(x => x.sinMonto)) : 0});
     });
   });
   d.ledger = led.filter(r => r.month >= '2026-08'); // el libro de ejemplo solo cubre ago-oct: «los últimos 12 meses» del agente suman 36,000
@@ -169,30 +197,82 @@ function datasetAgente() {
   const CV = [820, 880, 910, 990, 1060, 1090, 1150, 1240, 1310, 1420, 1560, 1690];
   d.trends.conversations.series = MESES12.map((month, i) => ({month, count: CV[i]}));
   d.trends.conversations.outsideWindow = 0; d.trends.conversations.sampled = false; delete d.trends.conversations.sampleNote; d.trends.conversations.class = 'observed';
+  const compl = {dataThrough: '2026-11-03', partialMonth: null, partialMonths: []};
+  d.trends.ledger.completeness = compl; d.trends.conversations.completeness = compl; d.trends.conversations.undated = 0; d.trends.conversations.total = CV.reduce((a, b) => a + b, 0);
   d.trends.ledger.otherCurrencies = []; d.trends.ledger.currencies = ['USD:2'];
-  const TIT = ['Entrega marcada como completa sin recibirse', 'Pieza distinta a la publicada', 'Cobro duplicado'];
+  const TIT = [0, 1, 2].map(k => PROB[k].t);
   const CAS = [124, 86, 41];
-  d.problems.forEach((p, i) => { if (i < 3) { p.title = TIT[i]; p.customers = CAS[i]; } else { p.title = ['Reembolso tardío tras devolución', 'Talla incorrecta', 'Caja abierta al recibir'][i - 3]; p.customers = [38, 22, 15][i - 3]; } });
+  d.problems.forEach((p, i) => { if (i < 3) { p.title = TIT[i]; p.customers = CAS[i]; } else { p.title = (LANG === 'en' ? ['Late refund after a return', 'Wrong size', 'Box already open on arrival'] : ['Reembolso tardío tras devolución', 'Talla incorrecta', 'Caja abierta al recibir'])[i - 3]; p.customers = [38, 22, 15][i - 3]; } });
   d.exposure.rows = [[0, '1240000', null, 124, 124], [1, '920000', null, 86, 86], [2, null, null, 0, 41]].map(([i, amt, kn, k, e]) => ({problemId: d.problems[i].problemId, title: d.problems[i].title, amountMinor: amt, knownSubtotalMinor: kn, known_n: k, eligible_n: e}));
   const src = (key, label, cls, total, inc, rej, imports, detail = []) => ({key, label, loaded: true, status: 'ok', class: cls, imports, openImports: 0, total, incorporated: inc, rejected: rej, pending: 0, lastUpdate: '2026-11-04T05:50:00.000Z', detail});
-  d.coverage.sources = [src('hubspot', 'HubSpot (conversaciones, contactos)', 'observed', 8420, 8420, 0, 0), src('ledger', 'Exportes de marketplace (libro de registros)', 'observed', 14260, 14260, 0, 3, ['Marketplace A, B y C · USD', 'Carga manual desde exportes de marketplace']),
-    src('csv', 'Archivos CSV (importaciones)', 'observed', 640, 640, 0, 2)];
-  d.associations = {status: 'ok', class: 'observed', total: 8420, resolved: 8100, pending: 320, review: 0, held: 0, activeLinks: 7600, sampled: false};
+  const sinCargar = {key: 'surveys', label: L('Encuestas de satisfacción', 'Satisfaction surveys'), loaded: false, status: 'empty', class: 'observed', imports: 0, openImports: 0, total: 0, incorporated: 0, rejected: 0, pending: 0, lastUpdate: null, detail: []};
+  d.coverage.sources = [src('hubspot', L('HubSpot (conversaciones, contactos)', 'HubSpot (conversations, contacts)'), 'observed', 14320, 14010, 310, 0), src('ledger', L('Exportes de marketplace (libro de registros)', 'Marketplace exports (records ledger)'), 'observed', 14260, 14120, 140, 3, [L('Marketplace A, B y C · USD', 'Marketplace A, B and C · USD'), L('Carga manual desde exportes de marketplace', 'Manual upload from marketplace exports')]),
+    src('csv', L('Archivos CSV (importaciones)', 'CSV files (imports)'), 'observed', 640, 628, 12, 2), sinCargar];
+  d.associations = {status: 'ok', class: 'observed', total: 14010, resolved: 13500, pending: 510, review: 0, held: 0, activeLinks: 7600, sampled: false};
   d.tracker = {status: 'ok', class: 'observed', version: 'v1', rank: 1, versions: 1, sha: 'ab12cd34', rows: 60, rejected: 0, sheetsClosed: 1, sheetsTotal: 1};
   return d;
 }
 const store = new Map([[TENANT, datasetAgente()]]);
+export function fijarIdioma(l) { LANG = l === 'en' ? 'en' : 'es'; cacheFuga = cacheCarga = cacheCco = undefined; store.set(TENANT, datasetAgente()); }
 const agentPort = () => createSyntheticPort(store, {tenantId: TENANT, now: AHORA});
 const agentCtx = () => ({tenantId: TENANT, userId: 'fixture-user', role: 'owner', now: new Date(AHORA)});
+// Traducción al inglés de lo que el agente emite en español (sus textos viven en packages/agent-datos y el planificador solo entiende español):
+// la pregunta en inglés se mapea a su equivalente en español, y la respuesta y las sugerencias se traducen con este diccionario (más largo primero).
+const PREG_EN = [
+  ['¿Qué marketplace concentra más reembolsos?', 'Which marketplace concentrates the most refunds?'],
+  ['¿Qué cubre y qué falta de mi información?', 'What does my data cover and what is missing?'],
+  ['¿Cuáles son los 5 problemas con más incidencias este mes?', 'What are the 5 problems with the most incidents this month?'],
+  ['¿Cuánto dinero en reembolsos tuvimos por marketplace?', 'How much refund money did we have by marketplace?'],
+  ['¿Qué cambió entre julio y septiembre?', 'What changed between July and September?'],
+  ['¿Cómo van las conversaciones por mes?', 'How are conversations trending by month?'],
+  ['¿Cuánto ingreso está expuesto por problema?', 'How much revenue is exposed per problem?'],
+  ['¿Qué categorías crecieron en los últimos 6 meses?', 'Which categories grew in the last 6 months?'],
+  ['¿Cuántos clientes se ven afectados por el cobro duplicado?', 'How many customers are affected by the duplicate charge?'],
+  ['¿Qué dicen los clientes sobre el producto dañado en tránsito?', 'What do customers say about the product damaged in transit?'],
+  ['¿Cómo van las asociaciones ticket–contacto?', 'How are the ticket–contact associations going?'],
+  ['¿Qué versión del Tracker manda y cuántas hojas están cerradas?', 'Which Tracker version rules and how many sheets are closed?'],
+  ['¿Cómo evolucionaron los reembolsos mes a mes?', 'How did refunds evolve month by month?'],
+  ['¿Cuántos pedidos tuvimos por marketplace en septiembre?', 'How many orders did we have by marketplace in September?'],
+];
+const DICC_EN = [
+  ...PREG_EN,
+  ['Reembolsos liquidados por fuente en los últimos 90 días: ', 'Settled refunds by source over the last 90 days: '],
+  ['Reembolsos liquidados por fuente · los últimos 90 días', 'Settled refunds by source · last 90 days'],
+  ['(Observado · cobertura ', '(Observed · coverage '],
+  ['Libro de registros por fuente y moneda', 'Records ledger by source and currency'],
+  ['Sumando el libro por marketplace', 'Summing the ledger by marketplace'],
+  ['Toma la última revisión de cada registro; pedidos «registrados» y reembolsos «liquidados» por fecha efectiva; agrupa por fuente y moneda. No convierte ni suma monedas; los importes sin monto se cuentan aparte.', 'Takes the latest revision of each record; «recorded» orders and «settled» refunds by effective date; groups by source and currency. It neither converts nor adds currencies; amounts without a value are counted separately.'],
+  ['public.economic_ledger_entries (última revisión por entidad)', 'public.economic_ledger_entries (latest revision per entity)'],
+  ['El monto de los registros sin importe', 'The amount of the records without a value'],
+  ['Elegí qué consultar', 'I chose what to query'], ['Reglas deterministas, sin modelo de lenguaje. Consultas: ', 'Deterministic rules, no language model. Queries: '],
+  ['Redacté la respuesta', 'I wrote the answer'], ['Resumen determinista de lo que devolvieron las consultas.', 'Deterministic summary of what the queries returned.'],
+  ['Verifiqué clase y cobertura', 'I checked class and coverage'],
+  [' cifras y ', ' figures and '], [' bloques con clase y cobertura; las cifras salen de las consultas, no del modelo.', ' blocks with class and coverage; the figures come from the queries, not from a model.'],
+  ['"Fuente"', '"Source"'], ['"Moneda"', '"Currency"'], ['"Registros"', '"Records"'], ['"Importe"', '"Amount"'], ['"Sin importe"', '"Without amount"'],
+  ['importe en USD', 'amount in USD'],
+  ['"Cobertura"', '"Coverage"'], ['"Dinero"', '"Money"'], ['"Problemas y clientes"', '"Problems and customers"'],
+];
+const enEs = Object.fromEntries(PREG_EN.map(([es, en]) => [en, es]));
+function aIngles(obj) {
+  let t = JSON.stringify(obj);
+  for (const [es, en] of DICC_EN) t = t.split(es).join(en);
+  t = t.replace(/(coverage \d+) de (\d+)/g, '$1 of $2');
+  return JSON.parse(t);
+}
 async function agentState() {
   const cov = await agentPort().coverage();
-  return {available: true, mode: 'deterministic', role: 'owner', scope: '00000000', toolLabels: Object.fromEntries(TOOLS.map(t => [t.name, t.label])), canSeeEvidence: true, suggestions: buildSuggestions(cov, 'owner'),
+  const st = {available: true, mode: 'deterministic', role: 'owner', scope: '00000000', toolLabels: Object.fromEntries(TOOLS.map(t => [t.name, t.label])), canSeeEvidence: true, suggestions: buildSuggestions(cov, 'owner'),
     limits: {maxQuestionChars: LIMITS.maxQuestionChars, maxHistory: LIMITS.maxHistory, maxTurnsPerConversation: LIMITS.maxTurnsPerConversation}, note: 'Las respuestas salen de herramientas de consulta deterministas sobre datos agregados; nada de texto crudo de clientes se envía a un modelo.'};
+  return LANG === 'en' ? aIngles({...st, note: 'Answers come from deterministic query tools over aggregated data; no raw customer text is sent to a model.'}) : st;
 }
 async function agentTurn(body) {
-  const answer = await createAgent().answer({ctx: agentCtx(), port: agentPort(), question: body?.question, history: body?.history, directa: body?.directa, conversationTurns: body?.conversationTurns});
+  const pregunta = LANG === 'en' ? (enEs[body?.question] ?? body?.question) : body?.question;
+  const answer = await createAgent().answer({ctx: agentCtx(), port: agentPort(), question: pregunta, history: body?.history, directa: body?.directa, conversationTurns: body?.conversationTurns});
   const {violations, ...wire} = answer; void violations;
-  return {t: 'fin', respuesta: wire};
+  // La herramienta del libro dice «los últimos 12 meses» (parámetro months=12 por defecto); el libro de ejemplo cubre ago-oct, o sea el mismo periodo de 90 días de todo el recorrido.
+  let w = JSON.parse(JSON.stringify(wire).split('los últimos 12 meses').join('los últimos 90 días').split('"months":12').join('"months":3'));
+  if (LANG === 'en') w = aIngles(w);
+  return {t: 'fin', respuesta: w};
 }
 
 // ---------- CCO con SKU HM-xxx ----------
@@ -216,21 +296,16 @@ export async function vistaCco() {
 }
 
 // ---------- Ajustes a las respuestas base (problemas, conexiones, cobertura) ----------
-const PROB = [
-  {t: 'Entrega marcada como completa sin recibirse', s: 'Pedidos que figuran como entregados y que el cliente dice no haber recibido.', expo: '1240000', ref: '460000', n: 124, cita: 'Mi pedido figura como entregado y no llegó. Ya escribí dos veces por correo.', cita2: 'Pedí el reembolso hace una semana y sigo sin respuesta.', sev: 'high'},
-  {t: 'Pieza distinta a la publicada', s: 'El producto recibido no coincide con la publicación del canal.', expo: '920000', ref: '310000', n: 86, cita: 'Es la segunda vez que pido el reemplazo. Dejé mi teléfono y nadie llamó.', cita2: 'La pieza que llegó no es la de la foto de la publicación.', sev: 'medium'},
-  {t: 'Cobro duplicado', s: 'El cliente reporta dos cargos por el mismo pedido.', expo: null, ref: null, n: 41, cita: 'Me cobraron dos veces el mismo pedido y no veo el reverso.', cita2: 'Revisé mi estado de cuenta: aparece el cargo duplicado.', sev: 'medium'},
-];
 const PID = i => `00000000-0000-4000-8000-00000000010${i + 1}`;
 function parcheMetrics(ms, p) {
-  return ms.map(m => m.kind === 'exposure' ? {...m, amount_minor: p.expo, known_subtotal: null, status: p.expo ? 'complete' : 'unavailable', coverage: {known_n: p.expo ? p.n : 0, eligible_n: p.n}, missing_reasons: p.expo ? [] : ['relacion_sin_cobertura']}
+  return ms.map(m => m.kind === 'exposure' ? {...m, amount_minor: p.expo, known_subtotal: null, status: p.expo ? 'partial' : 'unavailable', coverage: {known_n: p.expo ? Math.round(p.n * 0.78) : 0, eligible_n: p.n}, missing_reasons: p.expo ? [] : ['relacion_sin_cobertura']}
     : m.kind === 'refunds' ? {...m, amount_minor: p.ref ?? '0', coverage: {known_n: Math.round(p.n / 3), eligible_n: Math.round(p.n / 3)}} : m);
 }
 function parcheRecord(rec, i) {
   const p = PROB[i];
   const ev = i === 2 ? [] : [{...(rec.evidence?.[0] ?? {id: '00000000-0000-4000-8000-00000000100' + i, source_ref: 'conv:00000000-0000-4000-8000-00000000080' + (i + 1) + '#m1', role: 'customer'}), quote: p.cita}, {...(rec.evidence?.[1] ?? rec.evidence?.[0] ?? {id: '00000000-0000-4000-8000-00000000110' + i, source_ref: 'conv:00000000-0000-4000-8000-00000000090' + (i + 1) + '#m2', role: 'customer'}), quote: p.cita2, id: '00000000-0000-4000-8000-00000000110' + i}];
   return {...rec, title: p.t, summary: p.s, status: i === 2 ? 'partial' : 'ready', metrics: parcheMetrics(rec.metrics?.length ? rec.metrics : [{label: 'Ingresos expuestos', kind: 'exposure', currency: 'USD', exponent: 2, source_ref: 'snapshot:exposure.' + PID(i)}, {label: 'Reembolsos liquidados', kind: 'refunds', currency: 'USD', exponent: 2, source_ref: 'snapshot:refunds.' + PID(i), status: 'complete', missing_reasons: []}], p),
-    evidence: ev, details: [{label: 'Conversaciones', value: `${p.n} · ${ev.length} con cita verificable`}]};
+    evidence: ev, details: [{label: 'Incidencias', value: String(p.n)}, {label: 'Conversaciones', value: L(`${p.n} · ${ev.length} con cita verificable`, `${p.n} · ${ev.length} with a verifiable quote`)}]};
 }
 const CONN = (id, source, accountId, extra = {}) => ({id, source, accountId, connectionStatus: 'active', state: 'healthy', lastAttempt: '2026-11-04T13:55:00.000Z', lastSuccess: '2026-11-04T13:55:00.000Z', watermark: null, coverage: null, lagSeconds: 300, lagBasis: 'time_since_success', permissions: 'available', errorCode: null, reconnect: null, ...extra});
 
@@ -242,15 +317,15 @@ export async function respond(url, method, bodyText) {
     if (p === '/api/cco') return [200, {data: await (cacheCco ??= vistaCco())}];
     if (p === '/cfo/data/report') return [200, informeCfo()];
     if (p === '/api/onboarding/estado') return [200, {data: {pista: 'owner', derivados: [], completados: []}}];
-    if (p === '/api/connections') return [200, {connections: [CONN('00000000-0000-4000-8000-000000003002', 'hubspot', 'Portal de ejemplo', {coverage: {observed: 8420, accepted: 8420, rejected: 0}, watermark: {kind: 'checkpoint_hash', value: 'a1b2c3d4e5f6'}}),
-      CONN('00000000-0000-4000-8000-000000003007', 'csv', 'Exporte de marketplace A', {lastAttempt: '2026-11-03T20:00:00.000Z', lastSuccess: '2026-11-03T20:00:00.000Z', lagSeconds: null, permissions: 'unknown'}),
-      CONN('00000000-0000-4000-8000-000000003008', 'csv', 'Exporte de marketplace B', {lastAttempt: '2026-11-03T20:10:00.000Z', lastSuccess: '2026-11-03T20:10:00.000Z', lagSeconds: null, permissions: 'unknown'}),
-      CONN('00000000-0000-4000-8000-000000003009', 'csv', 'Exporte de marketplace C', {lastAttempt: '2026-11-03T20:20:00.000Z', lastSuccess: '2026-11-03T20:20:00.000Z', lagSeconds: null, permissions: 'unknown'})]}];
-    if (p === '/api/connections/settings') return [200, {canConfigure: true, settings: [{connectionId: '00000000-0000-4000-8000-000000003002', source: 'hubspot', accountId: 'Portal de ejemplo', credentialRef: 'ref-ejemplo', historyFrom: '2026-08-01T00:00:00.000Z', enabled: true, overlapSeconds: 60, pollSeconds: 300, version: 1, errorCode: null, failureCount: 0}]}];
+    if (p === '/api/connections') return [200, {connections: [CONN('00000000-0000-4000-8000-000000003002', 'hubspot', L('Portal de ejemplo', 'Example portal'), {coverage: {observed: 14320, accepted: 14010, rejected: 310}, watermark: {kind: 'checkpoint_hash', value: 'a1b2c3d4e5f6'}}),
+      CONN('00000000-0000-4000-8000-000000003007', 'csv', L('Exporte de marketplace A', 'Marketplace A export'), {lastAttempt: '2026-11-03T20:00:00.000Z', lastSuccess: '2026-11-03T20:00:00.000Z', lagSeconds: null, permissions: 'unknown', state: 'manual'}),
+      CONN('00000000-0000-4000-8000-000000003008', 'csv', L('Exporte de marketplace B', 'Marketplace B export'), {lastAttempt: '2026-11-03T20:10:00.000Z', lastSuccess: '2026-11-03T20:10:00.000Z', lagSeconds: null, permissions: 'unknown', state: 'manual'}),
+      CONN('00000000-0000-4000-8000-000000003009', 'csv', L('Exporte de marketplace C', 'Marketplace C export'), {lastAttempt: '2026-11-03T20:20:00.000Z', lastSuccess: '2026-11-03T20:20:00.000Z', lagSeconds: null, permissions: 'unknown', state: 'manual'})]}];
+    if (p === '/api/connections/settings') return [200, {canConfigure: true, settings: [{connectionId: '00000000-0000-4000-8000-000000003002', source: 'hubspot', accountId: L('Portal de ejemplo', 'Example portal'), credentialRef: 'ref-ejemplo', historyFrom: '2026-08-01T00:00:00.000Z', enabled: true, overlapSeconds: 60, pollSeconds: 300, version: 1, errorCode: null, failureCount: 0}]}];
     if (p === '/api/freshness') {
       const ago = s => new Date(Date.parse(AHORA) - s * 1000).toISOString();
       return [200, {data: {availability: 'ready', version: 'demo', sources: [{key: 'hubspot', method: 'api_poll', status: 'idle', lastAttemptAt: ago(300), lastSuccessAt: ago(300), ageSeconds: 300, lastNewRecords: 12, errorCode: null, latencyMs: 820, nextRunAt: ago(-60), expectedEverySeconds: 300, dataWatermark: ago(360), stale: false},
-        {key: 'tracker', method: 'manual_upload', status: 'idle', lastAttemptAt: ago(86400), lastSuccessAt: ago(86400), ageSeconds: 86400, lastNewRecords: null, errorCode: null, latencyMs: null, nextRunAt: null, expectedEverySeconds: null, dataWatermark: null, stale: false}], insights: []}}];
+        {key: 'tracker', method: 'manual_upload', status: 'idle', lastAttemptAt: ago(86400), lastSuccessAt: ago(86400), ageSeconds: 86400, lastNewRecords: null, errorCode: null, latencyMs: null, nextRunAt: null, expectedEverySeconds: null, dataWatermark: null, stale: false}, {key: 'ledger', method: 'manual_upload', status: 'idle', lastAttemptAt: ago(86400), lastSuccessAt: ago(86400), ageSeconds: 86400, lastNewRecords: null, errorCode: null, latencyMs: null, nextRunAt: null, expectedEverySeconds: null, dataWatermark: null, stale: false}, {key: 'csv', method: 'manual_upload', status: 'idle', lastAttemptAt: ago(86400), lastSuccessAt: ago(86400), ageSeconds: 86400, lastNewRecords: null, errorCode: null, latencyMs: null, nextRunAt: null, expectedEverySeconds: null, dataWatermark: null, stale: false}], insights: []}}];
     }
     if (p === '/api/coverage') return ok(store.get(TENANT).coverage);
     if (p === '/api/agent/state') return [200, {data: await agentState()}];
@@ -269,7 +344,7 @@ export async function respond(url, method, bodyText) {
   const clone = structuredClone(j);
   if (p === '/api/workspace' && q.get('resource') === 'problems' && clone.data?.items) {
     clone.data.items = clone.data.items.slice(0, 3).map((it, i) => ({...parcheRecord(it, i), id: PID(i), problem_id: PID(i)}));
-    clone.data.meta = {...clone.data.meta, coverage: 'Corte de ejemplo: la exposición se muestra como subtotal conocido, no como total.', watermark: CORTE, state: 'partial'};
+    clone.data.meta = {...clone.data.meta, coverage: L('Corte de ejemplo: la exposición se muestra como subtotal conocido, no como total.', 'Example cut: exposure is shown as a known subtotal, not as a total.'), watermark: CORTE, state: 'partial'};
     return [st, clone];
   }
   if (p === '/api/problems' && clone.problems) { clone.problems = clone.problems.slice(0, 3).map((x, i) => ({...x, id: PID(i), label: PROB[i].t})); return [st, clone]; }
@@ -278,7 +353,7 @@ export async function respond(url, method, bodyText) {
     const i = Math.max(0, [0, 1, 2].findIndex(k => PID(k) === m[1]));
     clone.data.id = PID(i); clone.data.title = PROB[i].t; clone.data.record = {...parcheRecord(clone.data.record, i), id: PID(i), problem_id: PID(i)};
     clone.data.components = (clone.data.components ?? []).map(c => ({...c, money: c.money && PROB[i].ref ? {...c.money, amount_minor: PROB[i].ref} : c.money}));
-    clone.data.customers = []; clone.data.conversations = (clone.data.conversations ?? []).map(c => ({...c, label: 'Conversación de ejemplo', citations: (c.citations ?? []).map((x, k) => ({...x, quote: k ? PROB[i].cita2 : PROB[i].cita}))}));
+    clone.data.customers = []; clone.data.conversations = (clone.data.conversations ?? []).map(c => ({...c, label: L('Conversación de ejemplo', 'Example conversation'), citations: (c.citations ?? []).map((x, k) => ({...x, quote: k ? PROB[i].cita2 : PROB[i].cita}))}));
     return [st, clone];
   }
   const f = p.match(/^\/api\/problems\/([0-9a-f-]{36})\/facts$/);
@@ -292,8 +367,11 @@ export async function respond(url, method, bodyText) {
   }
   if (/^\/api\/trends\/incidences/.test(p) && clone.data) {
     const i = Math.max(0, [0, 1, 2].findIndex(k => PID(k) === q.get('problem'))), esc = [0.6, 0.45, 0.25][i];
-    clone.data.series = clone.data.series.filter(s => s.month >= '2025-11').map(s => ({...s, count: Math.max(1, Math.round(s.count * esc)), conversations: Math.max(1, Math.round(s.conversations * esc))}));
-    clone.data.completeness = {...clone.data.completeness, dataThrough: CORTE, partialMonth: null, partialMonths: []};
+    // Conversaciones por mes del problema: ago-oct suman EXACTAMENTE las del problema (los 90 días del recorrido); los meses previos van creciendo.
+    const nP = PROB[i].n, previos = [0.03, 0.04, 0.045, 0.055, 0.065, 0.075, 0.085, 0.095, 0.11], ult = [Math.round(nP * 0.3), Math.round(nP * 0.4)]; ult.push(nP - ult[0] - ult[1]);
+    const cuenta = [...previos.map(f => Math.max(1, Math.round(nP * f))), ...ult];
+    clone.data.series = clone.data.series.filter(s => s.month >= '2025-11').map((s, k) => ({...s, count: cuenta[k] ?? 1, conversations: cuenta[k] ?? 1}));
+    clone.data.completeness = {...clone.data.completeness, dataThrough: CORTE, partialMonth: null, partialMonths: [], undated: 0};
     return [st, clone];
   }
   return hit;

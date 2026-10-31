@@ -295,7 +295,7 @@ begin
  k as (select case when coalesce(st,'') in('refunded','refunded by amazon') then 'reembolsado' when st='older than 180 days' then 'vencido' when st in('can not refund','cannot refund') then 'no_reembolsable' when st='rejected' then 'rechazado'
     when st='submitted' then 'enviado' when coalesce(st,'')='' then 'sin_estado' else 'otro' end status_class,
    case when coalesce(rs,'')='' then 'sin_motivo' when rs in('defective','order','warranty','return','shipping','not as expected','change mind','price match') then replace(rs,' ','_') else 'otro' end reason_class,
-   case when coalesce(rt,'')='' then 'sin_retailer' when rt like 'amazon%' then 'amazon' when rt like 'walmart%' then 'walmart' when rt like 'best buy%' then 'bestbuy' when rt like 'clientex%' then 'tienda' when rt like 'lowe%' then 'lowes' when rt like 'home depot%' then 'homedepot' else 'otro' end retailer_class,
+   case when coalesce(rt,'')='' then 'sin_retailer' when rt like 'amazon%' then 'amazon' when rt like 'walmart%' then 'walmart' when rt like 'best buy%' then 'bestbuy' when rt like 'lowe%' then 'lowes' when rt like 'home depot%' then 'homedepot' else 'otro' end retailer_class,
    case when amt ~ '^[0-9]+(\.[0-9]+)?$' then round(amt::numeric*100) end amt_minor,
    (coalesce(st,'')='' and coalesce(rs,'')='' and coalesce(amt,'')='') empty_row from f)
  insert into public.insight_tracker_refund_status(tenant_id,status_class,reason_class,retailer_class,n,n_amount,amount_minor,refreshed_at,source_watermark)

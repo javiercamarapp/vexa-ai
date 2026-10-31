@@ -196,6 +196,10 @@ describe('S1 Hero y reglas, S2 Horizonte', () => {
       assert.equal(Number(attr(img, 'height')), e.alto);
       assert.equal(attr(img, 'alt'), e.alt[lang]);
       assert.match(h, /<source type="image\/avif" srcSet="[^"]*"|<source type="image\/avif" srcset="[^"]*"/i);
+      for (const tipo of ['avif', 'webp']) {
+        const srcset = attr(etiquetas(h, 'source').find((t) => attr(t, 'type') === `image/${tipo}`), 'srcset') ?? attr(etiquetas(h, 'source').find((t) => attr(t, 'type') === `image/${tipo}`), 'srcSet');
+        assert.match(srcset, /-960\.[0-9a-f]{8}\.\w+ 960w, .*-1440\.[0-9a-f]{8}\.\w+ 1440w, .*-2880\.[0-9a-f]{8}\.\w+ 2880w/, `${lang}: el héroe pide ${tipo} hasta 2880 para pantallas de doble densidad`);
+      }
       assert.ok(h.includes('<figure class="s-ventana s-ventana--producto"'), 'figure.s-ventana: la excepción de porcentajes de la regla 12 está acotada a ella');
       assert.doesNotMatch(h, /<canvas|s-poster|data-nube/);
     });

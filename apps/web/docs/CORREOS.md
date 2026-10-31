@@ -7,23 +7,23 @@ Estado: código y pruebas listos en la rama `correos-enterprise`. **Nada de esto
 | Pieza | Dónde |
 |---|---|
 | Sistema de diseño (tokens, bloques, HTML + texto, contraste) | `packages/notifications/email-system.mjs` |
-| 13 plantillas de Supabase Auth (6 acciones + 7 avisos de seguridad) | generador `support/F08-auth-brand/templates.mjs` -> `supabase/templates/auth/*.html` y `texto/*.txt` |
+| 13 plantillas de Supabase Auth (6 acciones + 7 avisos de seguridad) | generador `packages/notifications/auth-templates/templates.mjs` -> `supabase/templates/auth/*.html` y `texto/*.txt` |
 | Asuntos, `otp_expiry` y rutas de plantilla | `supabase/config.toml` (se genera con `--local-config`) |
 | Notificaciones de la app (digest, bienvenida, invitación, brief, acción asignada, conexión, importación) | `packages/notifications/email-template.mjs` |
 | Reporte semanal (función pura, sin cron ni envío) | `packages/notifications/email-weekly.mjs` -> `renderWeeklyReport()` |
 | Logos PNG claro y oscuro | `apps/web/public/email/` (URL pública `https://rovaq-ai.vercel.app/email/...`) |
-| Versión en inglés de las 13 plantillas de Auth (alternativa, sin aplicar) | `support/F08-auth-brand/templates-en.mjs` -> `supabase/templates/auth/en/` |
+| Versión en inglés de las 13 plantillas de Auth (alternativa, sin aplicar) | `packages/notifications/auth-templates/templates-en.mjs` -> `supabase/templates/auth/en/` |
 | Verificador de solo lectura de Resend, DNS y Supabase Auth | `node scripts/correos/verificar-resend.mjs` (opciones en el encabezado) |
 | Vista previa local | `node scripts/correos/previsualizar.mjs [carpeta]` |
-| Pruebas | `cd packages/notifications && npm test`, `node --test support/F08-auth-brand/templates.test.mjs` |
+| Pruebas | `cd packages/notifications && npm test`, `node --test packages/notifications/auth-templates/templates.test.mjs` |
 
 Supabase Auth solo envía HTML: la plantilla de Auth no admite parte de texto plano. Los `.txt` de `supabase/templates/auth/texto/` son la versión escrita para el día que esos correos salgan por el hook «Send Email» (ver abajo). Las notificaciones de la app sí salen multipart (HTML + texto).
 
 Regenerar tras cambiar el diseño o la redacción:
 
 ```sh
-node support/F08-auth-brand/templates.mjs --write        # HTML + texto de Auth
-node support/F08-auth-brand/templates.mjs --local-config  # bloque para config.toml
+node packages/notifications/auth-templates/templates.mjs --write        # HTML + texto de Auth
+node packages/notifications/auth-templates/templates.mjs --local-config  # bloque para config.toml
 UPDATE_SNAPSHOTS=1 node --test packages/notifications/tests/correos.test.mjs   # solo si el cambio visual es deliberado
 ```
 
@@ -47,7 +47,7 @@ Opción A, panel (sin tokens): Authentication -> Email Templates. Para cada una 
 Opción B, Management API con un token que Javier cree y autorice (Claude puede preparar y verificar, no crear el token):
 
 ```sh
-node support/F08-auth-brand/templates.mjs --management-patch > /ruta/privada/auth-email-patch.json
+node packages/notifications/auth-templates/templates.mjs --management-patch > /ruta/privada/auth-email-patch.json
 # PATCH https://api.supabase.com/v1/projects/proyecto-ejemplo/config/auth  (token en archivo local chmod 600, nunca en el chat)
 # Luego leer de vuelta la configuración y comparar el hash de cada campo.
 ```

@@ -8,7 +8,7 @@ import {fileURLToPath} from 'node:url';
 import {ALLOWED_HOSTS, CONTRAST_PAIRS, IDENTITY, OTP_EXPIRY_SECONDS, TOKENS, VIGENCIA, contrastRatio, fmtMonto, renderLayout, safeText} from '../email-system.mjs';
 import {catalog as appCatalog, renderEmail, safeResourceLabel, unsubscribeHeaders} from '../email-template.mjs';
 import {renderWeeklyReport} from '../email-weekly.mjs';
-import {catalog as authCatalog, GO_ACTIONS, managementPatch, localConfig, render as renderAuth, renderText as renderAuthText} from '../../../support/F08-auth-brand/templates.mjs';
+import {catalog as authCatalog, GO_ACTIONS, managementPatch, localConfig, render as renderAuth, renderText as renderAuthText} from '../auth-templates/templates.mjs';
 import {APP_SAMPLE, GO_SAMPLE, ORIGIN, WEEKLY_SAMPLE, renderGoLite} from '../../../scripts/correos/muestras.mjs';
 import {escribir, muestras} from '../../../scripts/correos/previsualizar.mjs';
 
@@ -230,7 +230,7 @@ test('config.toml, archivos generados y parche de Management API coinciden con e
   const config = read('supabase/config.toml');
   assert.ok(config.includes(localConfig()));
   for (const item of authCatalog) {
-    assert.equal(read(`supabase/templates/auth/${item.id}.html`), renderAuth(item), `${item.id}: ejecutar node support/F08-auth-brand/templates.mjs --write`);
+    assert.equal(read(`supabase/templates/auth/${item.id}.html`), renderAuth(item), `${item.id}: ejecutar node packages/notifications/auth-templates/templates.mjs --write`);
     assert.equal(read(`supabase/templates/auth/texto/${item.id}.txt`), renderAuthText(item), item.id);
     assert.equal(managementPatch()['mailer_templates_' + item.id + '_content'], renderAuth(item));
   }

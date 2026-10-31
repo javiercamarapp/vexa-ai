@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {IDENTITY, VIGENCIA, renderLayout} from '../../packages/notifications/email-system.mjs';
+import {IDENTITY, VIGENCIA, renderLayout} from '../email-system.mjs';
 import {catalogEn, renderEn, renderTextEn, managementPatchEn} from './templates-en.mjs';
 
 // Trece correos de Supabase Auth (seis acciones y siete avisos de seguridad) con el sistema de diseño de
@@ -143,7 +143,7 @@ export function managementPatch() {
 export function localConfig() { return catalog.map(item => `[auth.email.${item.notice ? 'notification.' + item.event : 'template.' + item.id}]\n${item.notice ? 'enabled = true\n' : ''}subject = ${JSON.stringify(item.subject)}\ncontent_path = "./supabase/templates/auth/${item.id}.html"`).join('\n\n') + '\n'; }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
   if (process.argv[2] === '--write') {
     const dir = path.join(root, 'supabase/templates/auth');
     fs.mkdirSync(path.join(dir, 'texto'), {recursive: true});

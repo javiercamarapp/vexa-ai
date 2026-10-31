@@ -2,7 +2,7 @@
 
 El acceso conserva las rutas aceptadas de Google (PKCE), magic link para cuentas existentes y aceptación explícita de invitaciones. `/login` presenta un formulario central adaptable con objetivos de48px y estados de carga, espera y error. El nombre tipográfico es provisional: Javier indicó que proporcionará después los logos. La referencia específica de agencia Atiende aún no fue identificada; no se afirma equivalencia visual exacta.
 
-`apps/web/src/lib/brand.json` es el punto único de marca para login y correos. Cuando llegue el logo autorizado, ubicar un PNG/JPEG optimizado en `apps/web/public/brand/`, establecer `logoPath` (por ejemplo `/brand/vexa-logo.png`) y sus dimensiones reales. No admite direcciones externas, queries ni rutas fuera de `/brand/`. Regenerar los HTML con `node support/F08-auth-brand/templates.mjs --write`; revisar la imagen en clientes de correo y publicar también el asset. El fallback actual usa el nombre VEXA y no pretende sustituir el logo oficial.
+`apps/web/src/lib/brand.json` es el punto único de marca para login y correos. Cuando llegue el logo autorizado, ubicar un PNG/JPEG optimizado en `apps/web/public/brand/`, establecer `logoPath` (por ejemplo `/brand/vexa-logo.png`) y sus dimensiones reales. No admite direcciones externas, queries ni rutas fuera de `/brand/`. Regenerar los HTML con `node packages/notifications/auth-templates/templates.mjs --write`; revisar la imagen en clientes de correo y publicar también el asset. El fallback actual usa el nombre VEXA y no pretende sustituir el logo oficial.
 
 Seis plantillas Auth y siete avisos de seguridad comparten la misma cabecera, paleta, jerarquía y pie. No cargan tracking, código, fuentes remotas ni contenido de user_metadata. El enlace permanece `ConfirmationURL` emitido por Auth: conserva verificación, caducidad y uso único. Abrir una invitación no concede acceso al equipo. Los avisos de seguridad no requieren una suscripción comercial. Las plantillas de recuperación/MFA/teléfono cubren eventos del proveedor; su existencia no añade pantallas de esas funciones al producto.
 
@@ -11,7 +11,7 @@ Seis plantillas Auth y siete avisos de seguridad comparten la misma cabecera, pa
 `supabase/config.toml` configura las13 plantillas locales, los siete avisos de seguridad y los redirects de callback, correo e invitación en el origen local3640. No cambiar el sitio por un comodín. En el Supabase gestionado, el operador autorizado puede preparar el patch de **sólo** asuntos, HTML y siete toggles con:
 
 ```sh
-node support/F08-auth-brand/templates.mjs --management-patch > /ruta/privada/auth-email-patch.json
+node packages/notifications/auth-templates/templates.mjs --management-patch > /ruta/privada/auth-email-patch.json
 ```
 
 El comando no lee credenciales, no conecta servicios, no envía correos y no aplica el patch. Aplicarlo mediante Management API `PATCH /v1/projects/<proyecto-VEXA>/config/auth` o dashboard con permiso legítimo; leer nuevamente los campos y comparar cada hash. Usar el mismo sitio HTTPS publicado y redirects exactos `/auth/callback`, `/auth/email/complete` y `/auth/invitations/*`. Los HTML de correo no se despliegan automáticamente por publicar la web.
@@ -23,8 +23,8 @@ Para magic link, `VEXA_EMAIL_AUTH_ENABLED=true`, URL/clave pública/origen de Au
 ## Verificación local
 
 ```sh
-node --test support/F08-auth-brand/templates.test.mjs
-VEXA_CANDIDATE=/ruta/candidato VEXA_AUTH_BRAND_EVIDENCE=/ruta/privada node support/F08-auth-brand/author.mjs
+node --test packages/notifications/auth-templates/templates.test.mjs
+VEXA_CANDIDATE=/ruta/candidato VEXA_AUTH_BRAND_EVIDENCE=/ruta/privada node packages/notifications/auth-templates/author.mjs
 ```
 
 El autor reutiliza el harness aceptado F01-02 sin editarlo: puertos64600–64603, imágenes Docker cacheadas, Postgres/Auth/PostgREST/Storage/Mailpit/Chromium reales aislados y compilación Next en TMP. Las sustituciones adaptan puertos, rutas de soporte y configuración de correo; no cambian reglas de Auth. Guarda resultados y limpieza fuera del candidato, sin tokens en el recibo. No ejecuta Google remoto ni envía fuera de Mailpit.

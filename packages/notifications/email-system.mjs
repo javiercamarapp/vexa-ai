@@ -1,6 +1,6 @@
 // Sistema de diseño de correo de Rovaq (CORREOS-DISENO.md, 24-oct-2026).
 // Módulo puro, sin dependencias: lo usan las plantillas de Supabase Auth
-// (support/F08-auth-brand, con variables Go `{{ .X }}`) y las notificaciones de la app
+// (packages/notifications/auth-templates, con variables Go `{{ .X }}`) y las notificaciones de la app
 // (email-template.mjs, email-weekly.mjs, con valores reales ya escapados aquí).
 // Una sola fuente por plantilla: bloques -> HTML y texto plano, en el mismo orden.
 // Idioma: todas las funciones de salida aceptan `idioma` ('es' | 'en'); sin él el resultado es el español de siempre, byte a byte.

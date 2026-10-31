@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {catalog as authCatalog, render as renderAuth, renderText as renderAuthText} from '../../support/F08-auth-brand/templates.mjs';
+import {catalog as authCatalog, render as renderAuth, renderText as renderAuthText} from '../../packages/notifications/auth-templates/templates.mjs';
 import {catalog as appCatalog, renderEmail} from '../../packages/notifications/email-template.mjs';
 import {renderWeeklyReport} from '../../packages/notifications/email-weekly.mjs';
 import {IDENTITY} from '../../packages/notifications/email-system.mjs';

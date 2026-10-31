@@ -1,4 +1,4 @@
-import {IDENTITY, OTP_EXPIRY_SECONDS, renderLayout} from '../../packages/notifications/email-system.mjs';
+import {IDENTITY, OTP_EXPIRY_SECONDS, renderLayout} from '../email-system.mjs';
 
 // Version en ingles de los trece correos de Supabase Auth. Misma estructura, mismas variables Go y mismo diseno que
 // templates.mjs (espanol, el que esta en produccion). Supabase solo admite UNA plantilla por tipo: este juego es la

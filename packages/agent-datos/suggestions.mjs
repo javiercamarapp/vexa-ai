@@ -25,10 +25,38 @@ export const DEMO_QUESTIONS = Object.freeze([
 ]);
 
 const byQ = (q) => DEMO_QUESTIONS.find((d) => d.q === q);
-export const defaultSuggestions = (role) => ['¿Qué cubre y qué falta de mi información?', '¿Cuáles son los 5 problemas con más incidencias este mes?', '¿Cuánto dinero en reembolsos tuvimos por marketplace?'].filter((q) => !byQ(q)?.roles || byQ(q).roles.includes(role));
+/** Texto en inglés de cada pregunta de demostración (la identidad interna sigue siendo el español). Los títulos de problemas entre comillas son datos del catálogo y no se traducen. */
+const Q_EN = Object.freeze({
+  '¿Cuáles son los 5 problemas con más incidencias este mes?': 'What are the 5 problems with the most incidents this month?',
+  '¿Cuánto dinero en reembolsos tuvimos por marketplace?': 'How much money did we have in refunds by marketplace?',
+  '¿Qué cubre y qué falta de mi información?': 'What does my data cover and what is missing?',
+  '¿Qué cambió entre julio y septiembre?': 'What changed between July and September?',
+  '¿Cómo van las conversaciones por mes?': 'How are conversations going per month?',
+  '¿Cuánto ingreso está expuesto por problema?': 'How much revenue is exposed per problem?',
+  '¿Qué categorías crecieron en los últimos 6 meses?': 'Which categories grew in the last 6 months?',
+  '¿Qué dicen los clientes sobre el producto dañado en tránsito?': 'What do customers say about "producto dañado en tránsito"?',
+  '¿Cuántos clientes se ven afectados por el cobro duplicado?': 'How many customers are affected by "cobro duplicado"?',
+  '¿Qué versión del Tracker manda y cuántas hojas están cerradas?': 'Which Tracker version leads and how many sheets are closed?',
+  '¿Cómo van las asociaciones ticket–contacto?': 'How are the ticket–contact associations going?',
+  '¿Cuántos pedidos tuvimos por marketplace en septiembre?': 'How many orders did we have by marketplace in September?',
+  '¿Cómo evolucionaron los reembolsos mes a mes?': 'How did refunds evolve month by month?',
+  '¿Cuántos reembolsos tuvimos en Zendesk?': 'How many refunds did we have in Zendesk?',
+  '¿Cómo rinde cada SKU en Amazon según venta, devoluciones y defectos?': 'How does each SKU perform on Amazon by sales, returns and defects?',
+  '¿Qué SKU parecen descontinuados porque llevan 3 meses sin venta?': 'Which SKUs look discontinued because they have had no sales for 3 months?',
+  '¿Qué bodega tarda más en despachar las reposiciones de garantía?': 'Which warehouse takes longest to dispatch warranty replacements?',
+  '¿En qué estados se concentran los casos?': 'In which states are the cases concentrated?',
+  '¿Qué SKU conviene vender como vendedor de Amazon y cuáles directo?': 'Which SKUs are better sold as an Amazon seller and which direct?',
+  '¿Qué SKU conviene enviar desde medios propios y cuáles con el cumplimiento de Amazon?': 'Which SKUs should ship from own means and which with Amazon fulfillment?',
+  '¿Cuánto voy a vender el próximo trimestre?': 'How much will I sell next quarter?',
+});
+export const preguntaEn = (q) => Q_EN[q] ?? q;
+const qIdioma = (q, idioma) => (idioma === 'en' ? preguntaEn(q) : q);
+/** «¿Qué dicen los clientes sobre X?» (X es el nombre de un problema: dato del catálogo). */
+export const preguntaSobre = (titulo, idioma = 'es') => (idioma === 'en' ? `What do customers say about "${titulo}"?` : `¿Qué dicen los clientes sobre ${titulo}?`);
+export const defaultSuggestions = (role, idioma = 'es') => ['¿Qué cubre y qué falta de mi información?', '¿Cuáles son los 5 problemas con más incidencias este mes?', '¿Cuánto dinero en reembolsos tuvimos por marketplace?'].filter((q) => !byQ(q)?.roles || byQ(q).roles.includes(role)).map((q) => qIdioma(q, idioma));
 
 /** Sugerencias, tarjetas y consultas directas según lo que hay cargado y el rol. `coverage` es la vista real de cobertura. */
-export function buildSuggestions(coverage, role = 'viewer') {
+export function buildSuggestions(coverage, role = 'viewer', idioma = 'es') {
   const loaded = new Set((coverage?.sources ?? []).filter((s) => s.loaded).map((s) => s.key));
   const total = (coverage?.sources ?? []).length;
   const ok = (d) => (!d.need || loaded.has(d.need)) && (!d.roles || d.roles.includes(role)) && !d.expect;
@@ -36,13 +64,13 @@ export function buildSuggestions(coverage, role = 'viewer') {
   const first = ['¿Qué cubre y qué falta de mi información?', ...pool.map((d) => d.q).filter((q) => q !== '¿Qué cubre y qué falta de mi información?')];
   const pick = (names) => DEMO_QUESTIONS.filter((d) => names.includes(d.tool) && ok(d)).map((d) => d.q);
   const categorias = [
-    { titulo: 'Cobertura', preguntas: pick(['cobertura_datos', 'estado_tracker', 'estado_asociaciones']) },
-    { titulo: 'Dinero', preguntas: pick(['ledger_por_fuente', 'ledger_por_mes', 'exposicion_por_problema']) },
+    { titulo: idioma === 'en' ? 'Coverage' : 'Cobertura', preguntas: pick(['cobertura_datos', 'estado_tracker', 'estado_asociaciones']) },
+    { titulo: idioma === 'en' ? 'Money' : 'Dinero', preguntas: pick(['ledger_por_fuente', 'ledger_por_mes', 'exposicion_por_problema']) },
     { titulo: 'CCO', preguntas: pick(['rendimiento_sku', 'candidatos_sin_venta', 'eficiencia_bodegas', 'casos_por_estado', 'casos_por_subcanal', 'envio_propio_vs_amazon']) },
-    { titulo: 'Problemas y clientes', preguntas: pick(['problemas_top', 'comparar_meses', 'categorias_por_mes', 'clientes_por_problema']) },
-  ].filter((c) => c.preguntas.length).map((c) => ({ ...c, preguntas: c.preguntas.slice(0, 3) }));
-  const directas = Object.fromEntries(DEMO_QUESTIONS.filter((d) => d.direct && d.tool).map((d) => [d.q, { tool: d.tool, args: d.args }]));
-  return { loaded: loaded.size, total, empty: loaded.size === 0, sugerencias: first.slice(0, 5), categorias, directas };
+    { titulo: idioma === 'en' ? 'Problems and customers' : 'Problemas y clientes', preguntas: pick(['problemas_top', 'comparar_meses', 'categorias_por_mes', 'clientes_por_problema']) },
+  ].filter((c) => c.preguntas.length).map((c) => ({ ...c, preguntas: c.preguntas.slice(0, 3).map((q) => qIdioma(q, idioma)) }));
+  const directas = Object.fromEntries(DEMO_QUESTIONS.filter((d) => d.direct && d.tool).map((d) => [qIdioma(d.q, idioma), { tool: d.tool, args: d.args }]));
+  return { loaded: loaded.size, total, empty: loaded.size === 0, sugerencias: first.slice(0, 5).map((q) => qIdioma(q, idioma)), categorias, directas };
 }
 
 /** Frases de ejemplo de las seis preguntas del CCO, en español e inglés. El enrutador por reglas (model.mjs) debe llevar cada una a su herramienta; una prueba lo exige. */

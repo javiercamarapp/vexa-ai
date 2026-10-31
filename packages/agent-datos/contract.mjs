@@ -11,6 +11,11 @@ export const CHART_KINDS = Object.freeze(['bar', 'line', 'donut']);
 export const STATUSES = Object.freeze(['ok', 'no_data', 'clarify', 'out_of_catalog', 'rate_limited', 'budget_exceeded', 'unavailable', 'invalid_input', 'forbidden']);
 export const CLASSES = Object.freeze(['observed', 'estimated', 'inferred']);
 export const CLASS_LABELS = Object.freeze({ observed: 'Observado', estimated: 'Estimado', inferred: 'Inferido' });
+export const CLASS_LABELS_EN = Object.freeze({ observed: 'Observed', estimated: 'Estimated', inferred: 'Inferred' });
+/** Etiquetas de clase en el idioma del turno. */
+export const classLabels = (idioma) => (idioma === 'en' ? CLASS_LABELS_EN : CLASS_LABELS);
+/** Texto de «dato desconocido» en cada idioma: una gráfica nunca dibuja 0 en su lugar. */
+export const NO_DISPONIBLE = Object.freeze({ es: 'No disponible', en: 'Not available' });
 /** viewer/operator: solo agregados. analyst/owner: además citas y clientes (afirmaciones sobre clientes llevan evidencia). */
 export const ROLES = Object.freeze(['viewer', 'operator', 'analyst', 'owner']);
 export const LIMITS = Object.freeze({
@@ -109,7 +114,7 @@ export function chartViolations(b) {
   for (const s of c.series) {
     if (typeof s.label !== 'string' || typeof s.display !== 'string') out.push(`${t}: punto sin etiqueta`);
     if (s.value !== null && !(Number.isFinite(s.value) && s.value >= 0)) out.push(`${t}: valor no válido`);
-    if (s.value === null && s.display !== 'No disponible') out.push(`${t}: un desconocido debe decir «No disponible», no 0`);
+    if (s.value === null && !Object.values(NO_DISPONIBLE).includes(s.display)) out.push(`${t}: un desconocido debe decir «No disponible», no 0`);
   }
   if (c.kind === 'donut') {
     if (c.additive !== true) out.push(`${t}: la dona exige partes aditivas del mismo todo`);

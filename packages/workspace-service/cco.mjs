@@ -167,8 +167,34 @@ export const FALTAN_ES = Object.freeze({
   costoSku: 'Costo por SKU, para poder calcular el margen de cada modalidad.', tiempoResolucion: 'Fechas de creación y de cierre de cada ticket, para medir el tiempo de resolución por modalidad.',
 });
 export const QUIEN_ES = Object.freeze({operaciones: 'al responsable de operaciones del cliente', datos: 'al responsable de datos del cliente'});
-/** «Texto. Pedir al responsable de operaciones del cliente.» para cada dato que falta de una pregunta. */
-export const faltanTexto = (id) => FALTAN[id].map((x) => `${FALTAN_ES[x.clave]} Pedir ${QUIEN_ES[x.quien]}.`);
+/** English of FALTAN_ES (same keys; mirrors `cco.falta.*` in the interface dictionary). */
+export const FALTAN_EN = Object.freeze({
+  unidades: 'Quantity sold per line in each marketplace order report.',
+  resenas: 'Product review export per marketplace.',
+  skuBestBuyShopify: 'SKU in the Best Buy and Shopify orders.',
+  inventario: 'Stock per SKU and warehouse, from NetSuite or the warehouses.',
+  estadoProducto: 'Product catalog with status, active or discontinued.',
+  recurrencia: 'A stable buyer identity in orders, if the marketplace provides it.',
+  transportista: 'Carrier of each shipment, for example from the Speedship shipments.',
+  entregaFecha: 'Delivery date and delivery events per shipment.',
+  denominadorEnvios: 'Total shipments per warehouse so that rates can be calculated.',
+  vinculoQuejaEnvio: 'A link between each complaint and the shipment it belongs to.',
+  destinoPedido: 'Destination state and postal code of each Amazon, Walmart, Best Buy and Shopify order.',
+  bodegaEstado: 'A warehouse to state table, confirmed by the client.',
+  propiedadRetailer: 'The Retailer property of HubSpot tickets, with ticket read permission.',
+  cumplimientoPedido: 'Fulfillment type of each order, own or Amazon.',
+  proveedorDirecto: 'Amazon sales as a direct supplier, from the vendor portal.',
+  tarifasAmazon: 'Amazon fees, commissions and fulfillment report.',
+  facturasTransportista: 'FedEx and UPS invoices or rate cards.',
+  bodegaOrigen: 'Origin warehouse of each sales order.',
+  ventaPorModalidad: 'Sales by SKU and by model: Amazon and Walmart orders showing who sells and which warehouse ships them.',
+  costoCumplimiento: 'Fulfillment cost per unit: marketplace fees and the cost of running the own warehouse.',
+  costoSku: 'Cost per SKU, so that the margin of each model can be calculated.',
+  tiempoResolucion: 'Creation and close dates of each ticket, to measure resolution time by model.',
+});
+export const QUIEN_EN = Object.freeze({operaciones: "the client's operations lead", datos: "the client's data lead"});
+/** «Texto. Pedir al responsable de operaciones del cliente.» para cada dato que falta de una pregunta (idioma 'es' por omisión; 'en' para la vista en inglés). */
+export const faltanTexto = (id, idioma = 'es') => FALTAN[id].map((x) => (idioma === 'en' ? `${FALTAN_EN[x.clave]} Ask ${QUIEN_EN[x.quien]}.` : `${FALTAN_ES[x.clave]} Pedir ${QUIEN_ES[x.quien]}.`));
 export const faltanDe = (id) => FALTAN[id].map((x) => ({...x}));
 /** Lo que falta de una pregunta, en datos (claves y a quién) y en texto español listo para el agente; mismo contenido, una sola fuente. */
 const faltanBase = (id) => ({faltan: faltanDe(id), faltanTextos: faltanTexto(id)});

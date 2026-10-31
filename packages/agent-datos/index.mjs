@@ -1,7 +1,7 @@
 export * from './contract.mjs';
-export { TOOLS, TOOL_INDEX, catalogForModel, executeTool, modelViewOf, toolAllowed, toolsForRole, monthLabel, resolveProblem } from './tools.mjs';
+export { TOOLS, TOOL_INDEX, TOOL_EN, toolLabel, catalogForModel, executeTool, modelViewOf, toolAllowed, toolsForRole, monthLabel, resolveProblem } from './tools.mjs';
 export { createAgent, sanitizeHistory } from './agent.mjs';
-export { createRuleModel, createSimulatedModel, createGatewayModel, planByRules, PLAN_SYSTEM, COMPOSE_SYSTEM } from './model.mjs';
+export { createRuleModel, createSimulatedModel, createGatewayModel, planByRules, PLAN_SYSTEM, COMPOSE_SYSTEM, COMPOSE_SYSTEM_EN } from './model.mjs';
 export { createAgentBudget, createTurnLimiter } from './budget.mjs';
 export { DEMO_QUESTIONS, CCO_EJEMPLOS, buildSuggestions, defaultSuggestions } from './suggestions.mjs';
 export { answerToMarkdown, answerToHtml, blockToCsv, chartToSvg } from './export.mjs';

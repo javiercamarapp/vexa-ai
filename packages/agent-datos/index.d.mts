@@ -32,11 +32,14 @@ export function createGatewayModel(options: { gateway: unknown; tenantId: string
 export function planByRules(input: unknown): { calls: Direct[]; clarify?: string; outOfCatalog?: string };
 export function createAgentBudget(options?: { limits?: Record<string, string>; defaultLimitMinor?: string; window?: string }): { reserve(i: { tenantId: string; amountMinor: string }): { ok: boolean; id?: string | null; reason?: string }; settle(id: string | null, actualMinor: string): void; usage(tenantId: string): { spentMinor: string; reservedMinor: string; limitMinor: string; pct: number; window: string; currency: 'USD'; exponent: 6 } };
 export function createTurnLimiter(options?: { maxTurnsPerConversation?: number; perUserPerDay?: number }): { check(i: { tenantId: string; userId: string; conversationTurns?: number; now?: Date }): { ok: boolean; reason?: string; limit?: number } };
-export function createAgent(options?: { model?: any; budget?: ReturnType<typeof createAgentBudget>; limiter?: ReturnType<typeof createTurnLimiter>; estimates?: { planMinor: string; composeMinor: string } }): { answer(input: { ctx: { tenantId: string; userId: string; role: string; now?: Date }; port: DataPort; question: string; history?: { role: 'user' | 'assistant'; text: string }[]; directa?: Direct; conversationTurns?: number; onEvent?: (e: AgentEvent) => void; signal?: AbortSignal }): Promise<Answer>; model: any };
+export function createAgent(options?: { model?: any; budget?: ReturnType<typeof createAgentBudget>; limiter?: ReturnType<typeof createTurnLimiter>; estimates?: { planMinor: string; composeMinor: string } }): { answer(input: { ctx: { tenantId: string; userId: string; role: string; now?: Date }; port: DataPort; question: string; history?: { role: 'user' | 'assistant'; text: string }[]; directa?: Direct; conversationTurns?: number; onEvent?: (e: AgentEvent) => void; signal?: AbortSignal; idioma?: 'es' | 'en' }): Promise<Answer>; model: any };
 export function sanitizeHistory(history: unknown): { role: 'user' | 'assistant'; text: string }[];
 export const DEMO_QUESTIONS: readonly { q: string; tool: string | null; args: Record<string, unknown>; direct: boolean; need: string | null; roles?: string[]; expect?: string }[];
-export function buildSuggestions(coverage: unknown, role?: string): SuggestionSet;
-export function defaultSuggestions(role: string): string[];
+export function buildSuggestions(coverage: unknown, role?: string, idioma?: 'es' | 'en'): SuggestionSet;
+export function defaultSuggestions(role: string, idioma?: 'es' | 'en'): string[];
+export function toolLabel(tool: { name: string; label: string }, idioma: 'es' | 'en'): string;
+export const TOOL_EN: Readonly<Record<string, { label: string; method: string; reads: string[] }>>;
+export const COMPOSE_SYSTEM_EN: string;
 export const CONTRACT_VERSION: number;
 export const CHART_KINDS: readonly ('bar' | 'line' | 'donut')[];
 export function chartViolations(block: Block): string[];

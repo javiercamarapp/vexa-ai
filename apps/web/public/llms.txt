@@ -28,6 +28,12 @@ Notas para quien cite este sitio. Ingreso bruto, nunca margen. Lo desconocido di
 ## Empresa y contacto
 
 - [Solicita acceso y revisa tus cifras con su evidencia.](https://rovaq.ai/s/md/es/solicitar-acceso.398d38fa.md): Escríbenos con tu puesto y las herramientas que usas. Te decimos qué se puede cargar hoy y qué sigue en hoja de ruta. El precio todavía no está publicado.
+- [Estado del servicio](https://rovaq.ai/s/md/es/estado.c01b952b.md): Cómo identificar la versión desplegada de Rovaq AI y cómo reportar un problema. No es un acuerdo de nivel de servicio ni una promesa de disponibilidad.
+
+## Blog
+
+- [Blog de Rovaq AI](https://rovaq.ai/s/md/es/blog.21903a0f.md): Artículos sobre cómo leer reembolsos, procedencia de cifras, puntos de dolor y decisiones con evidencia en negocios que venden por marketplaces.
+- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/s/md/es/a1.b1948a4e.md): Un total único de reembolsos no dice qué atender primero. Aprende a leer el dinero devuelto por canal, producto y mes, y qué lleva un paquete de evidencia.
 
 ## Referencia completa
 

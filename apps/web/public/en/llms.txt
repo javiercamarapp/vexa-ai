@@ -28,6 +28,12 @@ Notes for anyone citing this site. Gross revenue, never margin. What is unknown 
 ## Company and contact
 
 - [Request access and review your figures with their evidence.](https://rovaq.ai/s/md/en/solicitar-acceso.c899afd8.md): Write to us with your role and the tools you use. We tell you what can be loaded today and what is still on the roadmap. Pricing is not published yet.
+- [Service status](https://rovaq.ai/s/md/en/estado.a39ddff2.md): How to identify the deployed version of Rovaq AI and how to report a problem. This page is not an availability commitment or a service level agreement.
+
+## Blog
+
+- [Rovaq AI blog](https://rovaq.ai/s/md/en/blog.c939ff4d.md): Articles on reading refunds, the provenance of figures, pain points and evidence-based decisions for businesses that sell through marketplaces.
+- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/s/md/en/a1.03e81355.md): A single refund total does not say what to tackle first. Learn to read returned money by channel, product and month, and what an evidence package holds.
 
 ## Full reference
 

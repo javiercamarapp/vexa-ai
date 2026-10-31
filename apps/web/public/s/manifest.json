@@ -2224,6 +2224,13 @@
   }
  },
  "md": {
+  "en/a1": {
+   "brotli": 2155,
+   "bytes": 6450,
+   "hash": "03e81355",
+   "sha256": "03e81355a780fc2f60603fe2f30ffb63f26d59dfb782c06a6d8a0ad7b6093333",
+   "url": "/s/md/en/a1.03e81355.md"
+  },
   "en/analista": {
    "brotli": 467,
    "bytes": 1158,
@@ -2231,12 +2238,26 @@
    "sha256": "45c3f66f284b11b4bd6e8587fc310478acaaa98d5361e32f892b1572bdf98316",
    "url": "/s/md/en/analista.45c3f66f.md"
   },
+  "en/blog": {
+   "brotli": 506,
+   "bytes": 1331,
+   "hash": "c939ff4d",
+   "sha256": "c939ff4d4703a2b0b342ac8ee8f466da3a78545abe944056fd2bfce59ea8ccd8",
+   "url": "/s/md/en/blog.c939ff4d.md"
+  },
   "en/confianza-de-los-datos": {
    "brotli": 506,
    "bytes": 1279,
    "hash": "7a65c5e4",
    "sha256": "7a65c5e4aa44e4351eedc73cd5c3e2d1e5e9e8852820c50aa05519baac32d083",
    "url": "/s/md/en/confianza-de-los-datos.7a65c5e4.md"
+  },
+  "en/estado": {
+   "brotli": 585,
+   "bytes": 1738,
+   "hash": "a39ddff2",
+   "sha256": "a39ddff261931e413341c365730088f0dc8d1cd667c23556c541403ded4b86a7",
+   "url": "/s/md/en/estado.a39ddff2.md"
   },
   "en/finanzas": {
    "brotli": 626,
@@ -2301,6 +2322,13 @@
    "sha256": "c899afd8cf952695a39433242726a2c267ba602a7ae7e967181f91f51dc25de9",
    "url": "/s/md/en/solicitar-acceso.c899afd8.md"
   },
+  "es/a1": {
+   "brotli": 2498,
+   "bytes": 6686,
+   "hash": "b1948a4e",
+   "sha256": "b1948a4eeedae55f301ac234559c70a83861e736709662c5af6363e61723ec9b",
+   "url": "/s/md/es/a1.b1948a4e.md"
+  },
   "es/analista": {
    "brotli": 530,
    "bytes": 1145,
@@ -2308,12 +2336,26 @@
    "sha256": "d945dc72c9570c26c2dcb92551e84bb6029ad6cac726cb7ffe9e29cfcc8cabb5",
    "url": "/s/md/es/analista.d945dc72.md"
   },
+  "es/blog": {
+   "brotli": 610,
+   "bytes": 1431,
+   "hash": "21903a0f",
+   "sha256": "21903a0f1688a6407513f2bab403ccdab894a1b29a6351107cf346e4730e08ad",
+   "url": "/s/md/es/blog.21903a0f.md"
+  },
   "es/confianza-de-los-datos": {
    "brotli": 586,
    "bytes": 1340,
    "hash": "2eeb26be",
    "sha256": "2eeb26bea6f15e6b28e5d447af6b35a1ecfde2929fa5f2d672a13b180c68e7c1",
    "url": "/s/md/es/confianza-de-los-datos.2eeb26be.md"
+  },
+  "es/estado": {
+   "brotli": 695,
+   "bytes": 1831,
+   "hash": "c01b952b",
+   "sha256": "c01b952be0bae366c07138b35f017c5eeffafbf04947da3e2d82b8447b60d3be",
+   "url": "/s/md/es/estado.c01b952b.md"
   },
   "es/finanzas": {
    "brotli": 732,

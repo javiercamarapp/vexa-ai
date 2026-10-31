@@ -191,3 +191,6 @@ Solicitar acceso: https://rovaq.ai/solicitar-acceso
 - [Operador: ejecuta las acciones que le asignan](https://rovaq.ai/casos-de-uso/operador)
 - [Lector: consulta sin riesgo de cambiar nada](https://rovaq.ai/casos-de-uso/lector)
 - [Solicita acceso y revisa tus cifras con su evidencia.](https://rovaq.ai/solicitar-acceso)
+- [Estado del servicio](https://rovaq.ai/estado)
+- [Blog de Rovaq AI](https://rovaq.ai/blog)
+- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/blog/reembolsos-fuga-que-se-puede-localizar)

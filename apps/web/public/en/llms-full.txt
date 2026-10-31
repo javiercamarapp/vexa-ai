@@ -2,7 +2,7 @@
 
 > Rovaq AI connects conversations, orders and refunds to show where revenue is at risk. Every figure comes with its source and its cut-off date. Always gross revenue, never margin. Exposure is an inferred figure, not a loss.
 
-Content updated: 2026-10-28.
+Content updated: 2026-11-03.
 
 ---
 
@@ -187,6 +187,9 @@ Request access: https://rovaq.ai/en/request-access
 - [Operator: carries out the actions assigned to you](https://rovaq.ai/en/use-cases/operator)
 - [Viewer: read without any risk of changing anything](https://rovaq.ai/en/use-cases/viewer)
 - [Request access and review your figures with their evidence.](https://rovaq.ai/en/request-access)
+- [Service status](https://rovaq.ai/en/status)
+- [Rovaq AI blog](https://rovaq.ai/en/blog)
+- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate)
 
 ---
 
@@ -474,3 +477,117 @@ We review your case and tell you what can be loaded or connected today.
 Pricing is not published yet.
 
 ### Write to us
+
+---
+
+Fuente: https://rovaq.ai/en/status
+
+## Service status
+
+How to tell which version is deployed and how to report a problem. It is not an availability commitment.
+
+### What we publish here
+
+The service exposes a public identifier of the deployed version: the version number and the build identifier. You can read it at rovaq.ai/api/health/version. This page is static and does not show that value live; the identifier only says which build is in use and does not say whether each part of the service is working.
+
+### What this page is not
+
+- It is not a service level agreement or an availability commitment.
+- It is not a live monitor or an incident history. We do not publish availability percentages or response times.
+- It does not replace the Data trust screen, which inside the product says what date your data reaches, what it covers and what is not known.
+
+### How to report a problem
+
+To report a problem, use the contact on https://rovaq.ai/en/request-access This page does not set a response time.
+
+### What to include in the report
+
+- The screen where it happened and what you expected to see.
+- What happened instead, with the approximate time and your time zone.
+- The version shown at rovaq.ai/api/health/version, if you checked it.
+- No passwords and no personal data of your customers: we do not need them to understand the problem.
+
+---
+
+Fuente: https://rovaq.ai/en/blog
+
+## Rovaq AI blog
+
+Notes on refunds, the provenance of figures, pain points and decisions backed by evidence.
+
+### Recent articles
+
+- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate) (2026-11-03, 6 min read): A refund total mixes things that are not alike. This article explains how to split returned money by channel, product and month, how to read a Pareto without asking more of it than it gives, and what an evidence package should hold so a claim can be reviewed.
+
+### Topics
+
+- Refunds: where returned money concentrates and what evidence it takes to file a claim.
+- Provenance: the source, the cut-off date and what is still unknown about each figure.
+- Pain points: how to go from the free text of conversations to a priority with size and evidence.
+- Decisions: proposals with evidence, a person who decides and an outcome that gets recorded.
+
+---
+
+Fuente: https://rovaq.ai/en/blog/refund-leak-you-can-locate
+
+## Refunds are not a fixed cost: they are a leak you can locate
+
+A single total does not say what to tackle first. By channel, by product and by month, returned money starts to take shape.
+
+Many e-commerce teams treat refunds as a cost of doing business: a percentage that is accepted, budgeted and reviewed once a month. The total goes up or down, someone asks why, and the conversation ends with a general explanation about the season, returns or demanding customers.
+
+That reading has a problem. A single number mixes things that are not alike, and what is not separated cannot be handled. This article proposes a different stance: treat returned money as a leak, something that has a place, a shape and, with some work, an owner.
+
+### Why a single total fails
+
+Imagine the refund total for one month equals the previous month. The comfortable reading is that nothing happened. But that same total can hide that one channel improved while another got worse, or that a single product accounts for almost all the movement while the rest stays steady. Two months with the same total can tell opposite stories.
+
+A total answers how much, but it does not answer where or when, and those are the questions that get someone to act. If the number does not tell you what to open first, all it does is worry you.
+
+> A total says how much. To act, you need to know where, when and with what evidence.
+
+It does not help to compare any month against any month either. A half month against a full one makes everything look like an improvement, or a disaster, depending on the order you put them in. An honest comparison sets complete, comparable months side by side. And when there are not yet two of them, the most useful thing a tool can do is say so instead of drawing a trend that does not exist.
+
+### How to read a refund Pareto
+
+A Pareto is a simple chart: it sorts categories from largest to smallest and shows how much of the total each one adds up to. For refunds, the idea is to pick the axis you want to investigate and see whether a few bars explain a good part of the returned money. No magic ratio has to hold. What matters is that the distribution is almost never even, and the shape of the chart tells you where to begin.
+
+It helps to read it in three cuts, one at a time:
+
+- By channel. It shows whether the problem lives in one particular place of sale or is widespread. If one channel concentrates the movement, the conversation is with that channel and its rules, not with the whole business.
+- By product. It points to which items add up to the most returned money. A product at the top may be a matter of description, packaging or supplier; the cut does not say which, but it tells you whom to ask.
+- By month. It shows whether the movement is steady, has a spike or is growing. An isolated spike and a sustained climb call for different answers.
+
+Then cross the cuts with each other. A product that dominates in one channel tells a different story from one that dominates in all of them. And look at repeated contact too: customers who write more than once about the same matter often point to something the first message did not resolve.
+
+#### What a Pareto does not tell you
+
+It orders the money, but it does not explain the cause. With an export of orders and refunds you usually cannot calculate the refund rate per product, margin or net loss, because the columns needed to do it rigorously are missing. A Pareto tells you where to look. The reason is yours to supply, through conversations, inspection and judgment.
+
+### What an evidence package contains
+
+Locating the leak is half the work. The other half is being able to back what you found in front of whoever has to decide: a supplier, a carrier, an internal team. A claim without support gets argued; one with support gets reviewed.
+
+No matter which tool you build it with, a useful evidence package answers, in order, what the other party is going to ask:
+
+- Which product and which period it covers, so nobody argues about the scope.
+- How many refunds there were and for how much money, with the source and cut-off date of each figure.
+- The detail order by order, so each line can be checked one by one.
+- The recorded reasons and, when they exist, the related conversations.
+- The assumptions used to size the claim, written down by whoever chose them.
+
+In Rovaq AI, the refund leakage screen generates an evidence package per product, as HTML and CSV, and a list of products for the supplier. Everything is built in your browser and the screen confirms that nothing was sent: you review the package and you file the claim.
+
+### How to start with what you already have
+
+You do not need a big project. Take an export of orders and refunds from the last complete months and put three questions to it, in order. Which channel concentrates the most returned money? Which products lead that channel? Is that new, or was it already there the month before? With those three answers you have a place to look, which is more than a total gives you.
+
+Then decide who owns each finding. A leak without an owner turns back into a fixed cost, and the cycle starts over. And before moving money or writing to a supplier, check where each figure comes from and what date it reaches: [data trust](https://rovaq.ai/en/product/data-trust) is checked before deciding, not after.
+
+### What we do not claim
+
+- We do not claim that every refund is a leak. Many are legitimate returns and should stay that way.
+- We do not promise any amount. Any estimate of how large a claim could be depends on the assumptions you write.
+- We do not calculate the refund rate per product, margin, net loss or root cause from an export, because the data needed to do it is missing.
+- We do not treat unknown data as if it were zero: if information is missing, the screen says so.
+- Nothing is sent on its own: a person files the claim.

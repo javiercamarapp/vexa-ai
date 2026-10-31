@@ -191,3 +191,6 @@ Request access: https://rovaq.ai/en/request-access
 - [Operator: carries out the actions assigned to you](https://rovaq.ai/en/use-cases/operator)
 - [Viewer: read without any risk of changing anything](https://rovaq.ai/en/use-cases/viewer)
 - [Request access and review your figures with their evidence.](https://rovaq.ai/en/request-access)
+- [Service status](https://rovaq.ai/en/status)
+- [Rovaq AI blog](https://rovaq.ai/en/blog)
+- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate)

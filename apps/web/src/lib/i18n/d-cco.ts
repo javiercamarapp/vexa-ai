@@ -196,9 +196,9 @@ export const ccoEs = {
   'cco.falta.costoCumplimiento': 'Costo de cumplimiento por unidad: tarifas del marketplace y costo de operar la bodega propia.',
   'cco.falta.costoSku': 'Costo por SKU, para poder calcular el margen de cada modalidad.',
   'cco.falta.tiempoResolucion': 'Fechas de creación y de cierre de cada ticket, para medir el tiempo de resolución por modalidad.',
-  'onb.pant.cco.desc': 'Las preguntas del director de cliente, con lo que se puede contestar hoy y lo que falta.',
+  'onb.pant.cco.desc': 'Las preguntas del director de cliente, de la A a la F, contestadas solo con los datos reales que ya hay, que son parciales.',
   'onb.pant.cco.claveT': 'Qué tan lista está cada pregunta',
-  'onb.pant.cco.claveC': 'Cada tarjeta dice si está lista, si tiene salvedad o si falta dato, y a quién pedir lo que falta.',
+  'onb.pant.cco.claveC': 'Cada tarjeta dice si está lista, con salvedad o si falta dato, y qué falta pedir y a quién. E y F, modalidad de venta y de envío, salen con salvedad: muestran casos por modalidad, no ventas, y no dicen qué conviene.',
   'nav.item.cco': 'CCO',
   'meta.titulo.cco': 'CCO',
 };
@@ -393,9 +393,9 @@ export const ccoEn = {
   'cco.falta.costoCumplimiento': 'Fulfillment cost per unit: marketplace fees and the cost of running the own warehouse.',
   'cco.falta.costoSku': 'Cost per SKU, so that the margin of each model can be calculated.',
   'cco.falta.tiempoResolucion': 'Creation and close dates of each ticket, to measure resolution time by model.',
-  'onb.pant.cco.desc': 'The chief customer officer’s questions, with what can be answered today and what is missing.',
+  'onb.pant.cco.desc': 'The chief customer officer’s questions, A to F, answered only with the real data that exists so far, which is partial.',
   'onb.pant.cco.claveT': 'How ready each question is',
-  'onb.pant.cco.claveC': 'Each card says whether it is ready, has caveats or is missing data, and who to ask for what is missing.',
+  'onb.pant.cco.claveC': 'Each card says whether it is ready, has caveats or is missing data, and what to ask for and from whom. E and F, sales and shipping mode, show caveats: they count cases by mode, not sales, and do not say which is better.',
   'nav.item.cco': 'CCO',
   'meta.titulo.cco': 'CCO',
 };

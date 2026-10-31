@@ -47,3 +47,30 @@ test('verbos para descartar unificados: Omitir en la tarjeta, la invitación y e
   for(const k of ['onb.ui.omitir','onb.ui.saltar','onb.ui.noVolver'])assert.match(ESP[k],/^Omitir/,k);
   for(const k of ['onb.ui.omitir','onb.ui.saltar','onb.ui.noVolver'])assert.match(ING[k],/^Skip/,k);
 });
+
+const palabras=(t:string)=>t.trim().split(/\s+/).length;
+test('T37: la tarjeta del lector en Hoy es corta (25 palabras o menos) y no repite lo que ya dice la pantalla',()=>{
+  for(const [dic,idioma] of [[ESP,'es'],[ING,'en']] as const)assert.ok(palabras(dic['onb.lector.hoy.cuerpo'])<=25,idioma+' '+palabras(dic['onb.lector.hoy.cuerpo'])+' palabras');
+  assert.doesNotMatch(ESP['onb.lector.hoy.cuerpo'],/dinero/i);
+});
+test('T37: el anuncio de la cuenta regresiva dice algo cierto de Escape (solo cancela el viaje) y el recorrido no promete lo que Configuración no hace',()=>{
+  assert.match(ESP['onb.tour.ir.anuncio'],/«Quedarme aquí» o Escape para quedarte aquí/);assert.doesNotMatch(ESP['onb.tour.ir.anuncio'],/para cancelar/);
+  assert.match(ING['onb.tour.ir.anuncio'],/“Stay here” or Escape to stay on this screen/);assert.doesNotMatch(ING['onb.tour.ir.anuncio'],/to cancel/);
+  assert.doesNotMatch(ESP['onb.pant.connections.accionC'],/Pídelo/);assert.match(ESP['onb.pant.connections.accionC'],/hoja para soporte/);
+  assert.match(ESP['onb.pant.pain-points.claveC'],/devuelto, pendiente o cancelado/);
+  assert.equal(ESP['onb.propietario.datos.titulo'],ESP['nav.item.connections'],'el paso de /connections se titula como el menú');
+  assert.equal(ING['onb.propietario.datos.titulo'],ING['nav.item.connections']);
+  assert.doesNotMatch(ING['onb.tour.ir.titulo'],/^Next/,'el título del salto no se confunde con el botón «Next»');
+});
+test('T37: la tarjeta del recorrido sobre CCO refleja el estado real (seis preguntas, datos parciales, E y F con salvedad por casos, sin prometer recomendaciones)',()=>{
+  for(const [dic,idioma] of [[ESP,'es'],[ING,'en']] as const){
+    const v=dic['onb.pant.cco.desc']+' '+dic['onb.pant.cco.claveC'];
+    assert.doesNotMatch(v,/recomienda (qué|cuál)|te dice qué conviene|tells you which|will recommend/i,idioma);
+  }
+  assert.match(ESP['onb.pant.cco.desc'],/preguntas del director de cliente, de la A a la F.*parciales/);assert.match(ING['onb.pant.cco.desc'],/questions, A to F.*partial/);
+  assert.match(ESP['onb.pant.cco.claveC'],/E y F.*con salvedad.*casos por modalidad, no ventas.*no dicen qué conviene/);
+  assert.match(ING['onb.pant.cco.claveC'],/E and F.*caveats.*cases by mode, not sales.*do not say which is better/);
+  // Lo que dice la tarjeta es lo que dice la pantalla: misma salvedad (casos, no ventas) y misma lista de faltantes.
+  assert.match(ESP['cco.E.hoy'],/son casos, no ventas/);assert.match(ESP['cco.F.hoy'],/No se puede decir desde dónde conviene enviar/);
+  assert.match(ESP['cco.estado.salvedad'],/salvedad/i);assert.ok(ESP['cco.faltaTitulo']);
+});

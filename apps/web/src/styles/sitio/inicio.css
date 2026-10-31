@@ -1241,7 +1241,7 @@ html:not([data-js]) .s-pestanas { display: none; }
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--s-e24) var(--s-e48);
-  margin-bottom: var(--s-e96);
+  margin-bottom: var(--s-e144); /* el hueco natural bajo las píldoras es por donde cruza el hilo: no bajar de 112 px */
 }
 
 .s-integ-grupo {

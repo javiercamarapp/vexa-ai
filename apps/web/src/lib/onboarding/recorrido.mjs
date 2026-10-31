@@ -45,7 +45,9 @@ export function reducir(estado, evento, total, pasos, ruta = null) {
     case 'siguiente': return avanzar();
     case 'anterior': {
       if (!estado.abierto) return estado;
-      const i = sinIrInutiles(acotar(estado.indice - 1, total), -1, pasos, ruta);
+      // Hacia atrás un paso «ir» nunca es destino: ya se viajó (o no se pudo) y volver a él solo re-dispararía el viaje.
+      let i = acotar(estado.indice - 1, total);
+      while (i >= 0 && esIr(pasos?.[i])) i--;
       return { ...estado, indice: i < 0 ? estado.indice : i };
     }
     case 'cerrar': return estado.abierto ? { ...estado, abierto: false, terminado: false } : estado;

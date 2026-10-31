@@ -5,14 +5,14 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {CATALOGO,PISTAS,ROL_DE_PISTA,rolTieneCapacidad,ACCIONES_DE_ESCRITURA,CLAVES_UI,pasosDe} from '../src/lib/onboarding/catalogo.mjs';
-import {PANTALLAS,slugDe,CLAVES_PANTALLAS,clavesDePantalla} from '../src/lib/onboarding/pantallas.mjs';
+import {PANTALLAS,slugDe,CLAVES_PANTALLAS,clavesDePantalla,TEXTO_PISTA,CLAVES_TEXTO_PISTA} from '../src/lib/onboarding/pantallas.mjs';
 import {construirTour,pantallasDe,gruposDe} from '../src/lib/onboarding/tour.mjs';
 import {estadoInicial,reducir,eventoDeTecla,teclasPropias} from '../src/lib/onboarding/recorrido.mjs';
 import {enPantalla} from '../src/lib/onboarding/ruta.mjs';
 import {calcularChecklist,normalizarSenales} from '../src/lib/onboarding/prerrequisitos.mjs';
 import {actualizarEstado,leerEstado,claveEstado,ESTADO_VACIO,type Almacen} from '../src/lib/onboarding/estado';
 import {menuVisible} from '../src/lib/workspace/menu.mjs';
-import {TarjetaRecorrido,EtiquetaObjetivo,CapaFoco,BannerPantalla,MenuGuia,ventanaRuta} from '../src/components/onboarding/paneles';
+import {TarjetaRecorrido,EtiquetaObjetivo,CapaFoco,MenuGuia,ventanaRuta} from '../src/components/onboarding/paneles';
 import {Ilustracion,TIPOS_ILUSTRACION} from '../src/components/onboarding/ilustraciones';
 import {traductor} from '../src/lib/i18n';
 import {es} from '../src/lib/i18n/es';
@@ -115,7 +115,8 @@ test('máquina: siguiente cruza de pantalla hasta un «ir» (o lo salta si ya es
   assert.equal(tourDuenio[R(e,{tipo:'siguiente'},'/preguntale').indice].id,'preguntale.que','ya estás en la pantalla: no hay nada que apretar');
   const que=R(estadoInicial(),{tipo:'abrir',indice:idx('preguntale.que')},'/preguntale');
   assert.equal(tourDuenio[R(que,{tipo:'anterior'},'/preguntale').indice].id,tourDuenio[finOverview].id,'salta preguntale.ir y vuelve al último paso de Hoy');
-  assert.equal(tourDuenio[R(que,{tipo:'anterior'},'/otra').indice].id,'preguntale.ir','si no estás en la pantalla, el «ir» sí se muestra');
+  assert.equal(tourDuenio[R(que,{tipo:'anterior'},'/otra').indice].id,tourDuenio[finOverview].id,'hacia atrás un «ir» nunca es destino, estés donde estés (si no, el viaje automático quedaría en bucle)');
+  for(const ruta of ['/overview','/otra','/sin-acceso'])for(let i=0;i<N;i++){const antes=R(estadoInicial(),{tipo:'abrir',indice:i},ruta),sig=R(antes,{tipo:'anterior'},ruta);if(sig.indice!==antes.indice)assert.notEqual(tourDuenio[sig.indice].tipo,'ir',`Anterior desde ${tourDuenio[i].id} con ruta ${ruta}`);assert.ok(sig.indice<=antes.indice);}
   const primero=R(estadoInicial(),{tipo:'abrir'},'/overview');assert.equal(R(primero,{tipo:'anterior'},'/overview').indice,primero.indice,'no se sale por el principio');
 });
 test('máquina: retomar (abrir en el paso guardado), saltar a una pantalla (menú), terminar en el cierre y Esc que conserva el paso',()=>{
@@ -166,28 +167,100 @@ test('estado: el paso y «activo» se guardan y se leen; Esc/Omitir/Terminar lo 
 const T={es:traductor('es'),en:traductor('en')};
 const baseTarjeta={ilu:'nodos',n:7,total:80,grupoN:3,grupoTotal:24,ruta:{nombres:['Hoy','Pregúntale','CFO','Problemas'],actual:2},anterior:noop,omitir:noop,primario:noop};
 for(const idioma of ['es','en'] as const){
-  test(`tarjeta (${idioma}): paso «ir» = dialog no modal con «${idioma==='es'?'Llévame':'Take me there'}» como primario, un solo anuncio, ruta con pantalla actual, sin style=`,()=>{
+  test(`tarjeta (${idioma}): paso «ir» = dialog no modal con «Siguiente» como primario (nunca «Llévame»), un solo anuncio, ruta con pantalla actual, sin style=`,()=>{
     const t=T[idioma],dic=idioma==='es'?ESP:ING;
     const html=renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="ir" titulo={t('onb.tour.ir.titulo',{pantalla:'Problemas'})} cuerpo={t('onb.tour.ir.cuerpo',{nombre:'Problemas'})} {...baseTarjeta}/>);
     assert.match(html,/role="dialog"/);assert.doesNotMatch(html,/aria-modal|\bstyle=|tabindex/i);
     assert.equal((html.match(/role="status"/g)??[]).length,1,'«Paso n de N» se anuncia una vez');assert.doesNotMatch(html,/aria-live/);
     assert.match(html,/class="onb-cab" aria-hidden="true"/);
-    assert.match(html,new RegExp(`data-onb-primario[^>]*>${dic['onb.tour.llevame']}<`));assert.doesNotMatch(html,new RegExp(`>${dic['onb.ui.siguiente']}<`));
+    assert.match(html,new RegExp(`data-onb-primario[^>]*>${dic['onb.ui.siguiente']}<`));assert.doesNotMatch(html,/Llévame|Take me there/);
     assert.match(html,/<progress[^>]*max="80"[^>]*value="7"/);assert.match(html,/<ol class="onb-ruta" aria-label=/);
     assert.equal((html.match(/aria-current="step"/g)??[]).length,1);assert.match(html,/<li[^>]*data-actual[^>]*>CFO</);
     assert.ok(html.includes(dic['onb.ui.omitir'])&&html.includes(dic['onb.ui.anterior']));
   });
 }
-test('tarjeta: paso informativo usa «Siguiente»; el cierre muestra resumen, «Ir a Configuración» y «Terminar», sin «Omitir», y no repite el contador de pantalla',()=>{
+test('tarjeta: paso informativo usa «Siguiente»; el cierre no lista pantallas, muestra «Ir a Configuración» y «Terminar», sin «Omitir», y no repite el contador de pantalla',()=>{
   const t=T.es;
   const info=renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="Qué es" cuerpo="Cuerpo" {...baseTarjeta}/>);
   assert.match(info,/data-onb-primario[^>]*>Siguiente</);assert.match(info,/Pantalla 3 de 24/);
-  const cierre=renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="cierre" titulo={t('onb.tour.cierre.titulo')} cuerpo={t('onb.tour.cierre.cuerpo')} resumen={t('onb.tour.cierre.resumen',{n:24,lista:'Hoy · CFO'})} mostrarSetup irSetup={noop} {...baseTarjeta} ilu="cierre" n={80} ruta={{nombres:['Hoy','CFO'],actual:-1}}/>);
-  assert.match(cierre,/data-onb-primario[^>]*>Terminar</);assert.match(cierre,/Ir a Configuración/);assert.doesNotMatch(cierre,/Omitir recorrido/);assert.match(cierre,/Pasaste por 24 pantallas: Hoy · CFO\./);
+  const cierre=renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="cierre" titulo={t('onb.tour.cierre.titulo')} cuerpo={t('onb.tour.cierre.cuerpo')} mostrarSetup irSetup={noop} {...baseTarjeta} ilu="cierre" n={80} ruta={{nombres:[],actual:-1}}/>);
+  assert.match(cierre,/data-onb-primario[^>]*>Terminar</);assert.match(cierre,/Ir a Configuración/);assert.doesNotMatch(cierre,/Omitir recorrido/);assert.match(cierre,/Terminaste el recorrido/);assert.match(cierre,/Puedes repetirlo o saltar a cualquier pantalla desde Guía\./);assert.doesNotMatch(cierre,/Pasaste por|onb-ruta|Ya conoces cada pantalla|de tu rol/,'el cierre no afirma lo que no puede saber ni repite la ruta');
   assert.doesNotMatch(cierre,/Pantalla \d+ de/);assert.doesNotMatch(cierre,/aria-current="step"/,'en el cierre ninguna pantalla queda marcada como actual');assert.match(cierre,/ilu-grueso/,'checkmark que se dibuja');
   assert.doesNotMatch(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="cierre" titulo="x" cuerpo="y" {...baseTarjeta} mostrarSetup={false}/>),/Ir a Configuración/,'la consola de plataforma no tiene Configuración');
   assert.doesNotMatch(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="x" cuerpo="y" {...baseTarjeta} n={1}/>),/>Anterior</,'sin «Anterior» en el primer paso');
-  assert.match(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="x" cuerpo="y" sinObjetivo centrada {...baseTarjeta}/>),/data-centrada="true"[\s\S]*No veo este elemento/,'destino ausente: tarjeta centrada con aviso');
+  assert.match(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="x" cuerpo="y" sinObjetivo centrada {...baseTarjeta}/>),/data-centrada="true"[\s\S]*Esta parte de la pantalla aún no está disponible/,'destino ausente: tarjeta centrada con aviso');
+});
+test('cierre sin lista falsa: el mismo texto para corto, completo y plataforma, sin «tu rol», sin número a mano y sin ruta de pantallas',()=>{
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
+    const cuerpo=dic['onb.tour.cierre.titulo']+' '+dic['onb.tour.cierre.cuerpo'];
+    assert.doesNotMatch(cuerpo,/tu rol|your role|cada pantalla|every screen|\d/,clave);
+    assert.equal(variables(dic['onb.tour.cierre.cuerpo']),'',clave);
+  }
+  assert.equal(ESP['onb.tour.cierre.titulo'],'Terminaste el recorrido');assert.equal(ING['onb.tour.cierre.titulo'],'You finished the tour');
+  assert.match(leer('src/components/onboarding/guia.tsx'),/ruta=\{\{nombres:cierre\?\[\]:nombres,/,'en el cierre no se pinta la ruta de pantallas');
+  assert.doesNotMatch(leer('src/components/onboarding/guia.tsx'),/onb\.tour\.cierre\.resumen/);
+});
+test('paso «ir»: título, cuerpo y etiqueta usan el MISMO nombre, el rótulo del menú (etiquetaItem), no el title del enlace; el cuerpo es corto y no repite el título',()=>{
+  const guia=leer('src/components/onboarding/guia.tsx');
+  assert.match(guia,/t\('onb\.tour\.ir\.titulo',\{pantalla\}\)/);assert.match(guia,/t\('onb\.tour\.ir\.cuerpo',\{nombre:pantalla\}\)/);assert.match(guia,/t\('onb\.tour\.clic',\{nombre:pantalla\}\)/);
+  assert.doesNotMatch(guia,/onb\.tour\.clic',\{nombre:nombreEl\}|onb\.tour\.ir\.cuerpo',\{nombre:nombreEl/,'el nombre leído del DOM (aria-label/title/texto) ya no se usa en pasos «ir»');
+  assert.match(guia,/pantalla=nombrePantalla\(paso\.pantalla\)/);assert.match(guia,/etiquetaItem\(t,item\)/);
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
+    assert.ok(dic['onb.tour.ir.cuerpo'].length<=80,clave+': cuerpo corto');
+    const t=T[clave];
+    for(const nombre of ['Hoy','Problemas'])for(const k of ['onb.tour.ir.titulo','onb.tour.ir.cuerpo','onb.tour.clic'] as const)assert.ok(t(k,{pantalla:nombre,nombre}).includes(nombre),clave+k);
+  }
+});
+test('textos de pantalla: el cuerpo no repite el título como prefijo («Importaciones: …») y «qué es» y «elemento clave» no se repiten frase por frase',()=>{
+  const frases=(x:string)=>x.split(/[.;:]\s+|[.;:]$/).map(f=>f.trim().toLowerCase()).filter(f=>f.length>=25);
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
+    for(const pista of PISTAS){
+      for(const modo of ['completo'] as const){
+        const pasos=construirTour(pista,modo),porPantalla=new Map<string,Record<string,string>>();
+        for(const p of pasos){
+          if(p.tipo!=='info'||!p.cuerpo)continue;
+          const cuerpo=dic[p.cuerpo],titulo=p.titulo?dic[p.titulo]:'';
+          if(titulo)assert.ok(!cuerpo.toLowerCase().startsWith(titulo.toLowerCase()+':'),`${clave}:${pista}:${p.id} repite su título como prefijo`);
+          for(const nombre of [dic['nav.item.'+slugDe(p.pantalla!)],dic['tr.pf.n'+({platform:'Resumen','platform-organizaciones':'Organizaciones','platform-costos-ia':'CostosIa','platform-auditoria':'Auditoria'} as Record<string,string>)[slugDe(p.pantalla!)]]].filter(Boolean))assert.ok(!cuerpo.toLowerCase().startsWith(nombre.toLowerCase()+':'),`${clave}:${pista}:${p.id} empieza con el nombre del menú «${nombre}: »`);
+          const g=porPantalla.get(p.pantalla!)??{};g[p.clave]=cuerpo;porPantalla.set(p.pantalla!,g);
+        }
+        for(const [href,g] of porPantalla)if(g.que&&g.clave){const a=new Set(frases(g.que));assert.deepEqual(frases(g.clave).filter(f=>a.has(f)),[],`${clave}:${pista}:${href} repite una frase entre «qué es» y «clave»`);assert.notEqual(g.que,g.clave);}
+      }
+    }
+  }
+});
+test('texto por rol: operador y lector no leen periodos ni conciliación, nadie lee una promesa que su rol no cumple, y cada variante existe en es y en',()=>{
+  for(const k of CLAVES_TEXTO_PISTA){assert.ok(ESP[k]&&ING[k],k);assert.equal(variables(ESP[k]),variables(ING[k]),k);assert.ok((CLAVES_UI as readonly string[]).includes(k),k+' declarada en CLAVES_UI');}
+  for(const mapa of Object.values(TEXTO_PISTA))for(const pista of Object.keys(mapa))assert.ok((PISTAS as readonly string[]).includes(pista),pista);
+  const texto=(pista:(typeof PISTAS)[number],dic:Record<string,string>,filtro:(id:string)=>boolean)=>construirTour(pista).filter(p=>filtro(p.id)).flatMap(p=>[p.titulo,p.cuerpo]).filter(Boolean).map(k=>dic[k!]).join(' | ');
+  for(const dic of [ESP,ING]){
+    for(const pista of ['operador','lector'] as const)assert.doesNotMatch(texto(pista,dic,id=>id==='overview.clave'),/period|reconcil|concili|conciliar/i,pista+' overview.clave');
+    for(const pista of ['lector','analista','operador'] as const)assert.doesNotMatch(texto(pista,dic,id=>id.startsWith('recommendations.')),/decidir|decide|deciding|decidi/i,pista+' recommendations');
+    for(const pista of ['lector','analista'] as const)assert.doesNotMatch(texto(pista,dic,id=>id.startsWith('interventions.')),/lo que hiciste|what you did/i,pista+' interventions');
+    assert.doesNotMatch(texto('propietario',dic,id=>id==='interventions.accion'),/te asignaron|assigned to you/i);
+    assert.doesNotMatch(texto('operador',dic,id=>id==='operador.hoy'||id==='overview.que'),/decidir|decide /i,'operador hoy');
+  }
+  assert.match(texto('operador',ESP,id=>id==='interventions.accion'),/te asignaron/,'el operador sí trabaja intervenciones asignadas');
+});
+test('datos que no se pueden comprobar no se escriben a mano: sin «cuatro», «veinticuatro horas» ni «seis» en Hoy ni en CCO',()=>{
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
+    const hoy=dic['onb.propietario.hoy.titulo']+' '+dic['onb.propietario.hoy.cuerpo']+' '+dic['onb.pant.cco.desc'];
+    assert.doesNotMatch(hoy,/cuatro|veinticuatro|seis|\bfour\b|twenty|\bsix\b|24/i,clave);
+  }
+  assert.match(ESP['onb.propietario.hoy.cuerpo'],/respuestas con demora/);assert.match(ING['onb.propietario.hoy.cuerpo'],/delayed replies/);
+});
+test('plataforma: los títulos de las tarjetas son los rótulos del menú de la consola, la etiqueta del rol se traduce y la guía no ofrece Configuración',()=>{
+  const nav={resumen:'Resumen',organizaciones:'Organizaciones',costos:'CostosIa',auditoria:'Auditoria'};
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const)for(const [id,n] of Object.entries(nav))assert.equal(dic[`onb.plataforma.${id}.titulo`],dic['tr.pf.n'+n],`${clave}:${id}`);
+  assert.equal(ESP['tr.pf.plataforma'],'Plataforma');assert.equal(ING['tr.pf.plataforma'],'Platform');
+  const layout=leer('src/app/(app)/platform/layout.tsx');assert.match(layout,/rolEtiqueta: t\('tr\.pf\.plataforma'\)/);assert.doesNotMatch(layout,/rolEtiqueta: 'Plataforma'/);
+  assert.match(leer('src/components/onboarding/guia.tsx'),/abrirSetup=\{c\.pista==='plataforma'\?undefined:c\.abrirSetup\}/);
+  const menu=renderToStaticMarkup(<MenuGuia t={T.es} contexto="Rovaq · Plataforma" tienePaso={false} mostrarChecklistOpcion={false} descartado={false} iniciar={noop} retomar={noop} mostrarChecklist={noop} noVolver={noop} cerrar={noop}/>);
+  assert.doesNotMatch(menu,/Ver configuración completa/);
+});
+test('invitación: no promete una duración («en un minuto») frente a recorridos de decenas de pasos',()=>{
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const)for(const k of ['onb.ui.invitacionTitulo','onb.ui.invitacionCuerpo','onb.ui.invitacionElige'])assert.doesNotMatch(dic[k],/minuto|minute|segundos|seconds|\bmin\b/i,clave+':'+k);
+  assert.equal(ESP['onb.ui.invitacionTitulo'],'Conoce Rovaq');assert.equal(ING['onb.ui.invitacionTitulo'],'Get to know Rovaq');
 });
 test('ventana de la ruta: pocas pantallas alrededor de la actual con «…» a los lados',()=>{
   const nombres=['A','B','C','D','E','F','G','H'];
@@ -195,11 +268,11 @@ test('ventana de la ruta: pocas pantallas alrededor de la actual con «…» a l
   const medio=ventanaRuta(nombres,3);assert.equal(medio.items.length,5);assert.ok(medio.antes&&medio.despues&&medio.items.some(i=>i.actual&&i.nombre==='D'));
   const fin=ventanaRuta(nombres,7);assert.equal(fin.items.at(-1)!.nombre,'H');assert.equal(fin.despues,false);assert.equal(ventanaRuta(['A','B'],1).antes,false);
 });
-test('etiqueta, capa de foco y aviso de pantalla: decorativos para lectores de pantalla, sin style=; la etiqueta dice qué apretar con el nombre real',()=>{
+test('etiqueta y capa de foco: decorativos para lectores de pantalla, sin style=; la etiqueta dice qué apretar con el nombre real',()=>{
   const t=T.es,etq=renderToStaticMarkup(<EtiquetaObjetivo texto={t('onb.tour.clic',{nombre:'Problemas'})}/>);
   assert.match(etq,/aria-hidden="true"/);assert.match(etq,/Haz clic aquí: Problemas/);assert.doesNotMatch(etq,/\bstyle=/);assert.match(etq,/<svg/);
   const capa=renderToStaticMarkup(<CapaFoco scrim/>);assert.match(capa,/aria-hidden="true"/);assert.match(capa,/data-sin-foco/);assert.doesNotMatch(capa,/\bstyle=|<button|<a /);
-  const banner=renderToStaticMarkup(<BannerPantalla t={t} pantalla="Fuentes conectadas"/>);assert.match(banner,/aria-hidden="true"/);assert.match(banner,/Ahora: Fuentes conectadas/);
+  assert.equal(ESP['onb.tour.entrada'],undefined,'el aviso «Ahora: X» repetía el título y se retiró');assert.doesNotMatch(leer('src/components/onboarding/guia.tsx'),/BannerPantalla|onb\.tour\.entrada/);
   assert.match(renderToStaticMarkup(<EtiquetaObjetivo texto={T.en('onb.tour.clic',{nombre:'Problems'})}/>),/Click here: Problems/);
 });
 test('menú Guía: repetir, retomar y saltar a una pantalla concreta (lista con la actual marcada)',()=>{
@@ -230,7 +303,7 @@ test('scroll guiado y espera del elemento: scrollIntoView suave (instantáneo co
   const guia=leer('src/components/onboarding/guia.tsx'),obj=leer('src/components/onboarding/objetivo.ts');
   assert.match(guia,/scrollIntoView\(\{behavior:reducirMovimiento\(\)\?'auto':'smooth',block:estrecha\?'start':'center'\}\)/);
   assert.match(obj,/new MutationObserver/);assert.match(obj,/tope = 4000/);assert.match(obj,/alAgotar\(\)/);
-  assert.match(guia,/centrada=cierre\|\|el===null/,'sin elemento: tarjeta centrada, sin fallar');assert.match(guia,/sinObjetivo=\{!cierre&&el===null\}/);
+  assert.match(guia,/centrada=cierre\|\|el===null/,'sin elemento: tarjeta centrada, sin fallar');assert.match(guia,/sinObjetivo=\{!cierre&&paso\.tipo!=='ir'&&el===null\}/,'en un paso «ir» sin elemento (menú plegado) no se muestra la nota: la guía navega directo');
   assert.match(guia,/addEventListener\('click',alClic,true\)/,'el clic real se escucha sin impedirlo');assert.doesNotMatch(guia,/alClic[^\n]*preventDefault|stopPropagation/);
 });
 test('CSS: capa sin eventos de puntero (no bloquea el objetivo ni la salida), anillo que pulsa y recorte que se desliza solo con movimiento permitido; forced-colors; móvil sobre la barra inferior',()=>{
@@ -238,13 +311,13 @@ test('CSS: capa sin eventos de puntero (no bloquea el objetivo ni la salida), an
   const fuera=css.replace(/@media \(prefers-reduced-motion:no-preference\) \{[\s\S]*?\n\}\n/,'');
   assert.doesNotMatch(fuera,/animation\s*:|animation-delay|transition\s*:|@keyframes/,'ningún movimiento fuera de no-preference');
   assert.equal((css.match(/@media \(prefers-reduced-motion/g)??[]).length,1);assert.doesNotMatch(css,/reduced-motion:\s*reduce/);
-  for(const clase of ['.onb-capa','.onb-etiqueta','.onb-entrada'])assert.match(css,new RegExp(clase.replace('.','\\.')+' \\{[^}]*pointer-events:none'),clase);
+  for(const clase of ['.onb-capa','.onb-etiqueta'])assert.match(css,new RegExp(clase.replace('.','\\.')+' \\{[^}]*pointer-events:none'),clase);
   assert.match(css,/\.onb-capa\[data-animar\] \.onb-foco \{ transition:transform 380ms/);assert.match(css,/\.onb-foco::after \{ animation:onb-pulso/);assert.match(css,/@keyframes onb-pulso/);
   assert.match(css,/box-shadow:0 0 0 2px #fff, 0 0 0 4px var\(--onb-resalte\), 0 0 0 9999px/,'recorte con sombra gigante + anillo de contraste');
   assert.match(css,/@media \(forced-colors:active\)[\s\S]*\.onb-foco \{ box-shadow:none; outline:3px solid Highlight/);
   assert.match(css,/@media \(max-width:767px\)[\s\S]*bottom:calc\(var\(--nav-total, 0px\) \+ 12px\)/);
   assert.match(css,/stroke-dashoffset/);assert.match(css,/@keyframes onb-barra/);assert.match(css,/@keyframes onb-arco/);assert.match(css,/@keyframes onb-pop/);
-  assert.match(css,/\.onb-entrada \{ display:none;/);assert.match(css,/\.onb-entrada \{ display:block; animation:onb-banner/);
+  assert.doesNotMatch(css,/onb-entrada|onb-banner/,'sin estilos del aviso retirado');
 });
 test('botón Guía compacto: ~26 px, texto 12 px, sin bloque oscuro, punto de acento, área táctil ≥ 36 px solo en pantallas táctiles, claro y oscuro con tokens',()=>{
   const css=leer('src/components/onboarding/onboarding.css'),linea=css.split('\n').find(l=>l.startsWith('.workspace-header .onb-boton, .onb-boton {'))!;
@@ -263,8 +336,8 @@ test('claves del recorrido por pantallas: existen en es y en con las mismas {var
   assert.equal(CLAVES_PANTALLAS.length,Object.keys(PANTALLAS).reduce((n,h)=>n+clavesDePantalla(h).length,0));
   for(const k of CLAVES_PANTALLAS)assert.ok((CLAVES_UI as readonly string[]).includes(k),k);
   for(const h of Object.keys(PANTALLAS)){assert.ok(ESP[`onb.pant.${slugDe(h)}.desc`]);}
-  assert.equal(variables(ESP['onb.tour.ir.titulo']),'pantalla');assert.equal(variables(ESP['onb.tour.ir.cuerpo']),'nombre');assert.equal(variables(ESP['onb.tour.clic']),'nombre');assert.equal(variables(ESP['onb.tour.cierre.resumen']),'lista,n');
-  assert.match(ESP['onb.tour.clic'],/^Haz clic aquí/);assert.match(ING['onb.tour.clic'],/^Click here/);assert.equal(ESP['onb.tour.llevame'],'Llévame');assert.equal(ING['onb.tour.llevame'],'Take me there');
+  assert.equal(variables(ESP['onb.tour.ir.titulo']),'pantalla');assert.equal(variables(ESP['onb.tour.ir.cuerpo']),'nombre');assert.equal(variables(ESP['onb.tour.clic']),'nombre');assert.equal(ESP['onb.tour.cierre.resumen'],undefined);assert.equal(ING['onb.tour.cierre.resumen'],undefined);
+  assert.match(ESP['onb.tour.clic'],/^Haz clic aquí/);assert.match(ING['onb.tour.clic'],/^Click here/);assert.equal(ESP['onb.tour.llevame'],undefined);assert.equal(ING['onb.tour.llevame'],undefined);
 });
 test('textos por pantalla: no prometen escrituras al lector ni dinero al operador; el cierre lleva a Configuración',()=>{
   const texto=(pista:(typeof ROLES_PISTA)[number])=>construirTour(pista).map(p=>[p.titulo,p.cuerpo]).flat().filter(Boolean).map(k=>ESP[k!]).join(' ');
@@ -277,8 +350,10 @@ test('textos por pantalla: no prometen escrituras al lector ni dinero al operado
 test('checklist: «n de m que puedes hacer ahora» y cuántos esperan a un tercero (nunca «2 de 2 listos» con pasos en espera)',()=>{
   assert.equal(ESP['onb.check.progreso'],'{hechos} de {total} que puedes hacer ahora');assert.equal(ING['onb.check.progreso'],'{hechos} of {total} you can do now');
   assert.match(ESP['onb.check.esperan'],/tercero/);assert.match(ING['onb.check.esperan'],/third party/);
-  const l=calcularChecklist('propietario',normalizarSenales({historial_importado:true,corte_publicado:true}));
-  assert.deepEqual(l.progreso,{hechos:2,total:2});assert.equal(l.esperan,1,'el correo de acceso sigue en espera');
+  const l=calcularChecklist('analista',normalizarSenales({}));
+  assert.deepEqual(l.progreso,{hechos:0,total:0});assert.equal(l.esperan,1,'publicar el corte espera al propietario: se dice, no cuenta como del analista');
+  const p=calcularChecklist('propietario',normalizarSenales({historial_importado:true,corte_publicado:true}));
+  assert.deepEqual(p.progreso,{hechos:2,total:3});assert.equal(p.esperan,0,'invitar al equipo es un paso pendiente propio, no una espera inventada');
   assert.equal(calcularChecklist('lector',null).esperan,0);
   const src=leer('src/components/onboarding/checklist.tsx');
   assert.match(src,/lista\.completo&&lista\.esperan===0/,'una lista con pasos en espera no se oculta como si estuviera completa');assert.match(src,/onb\.check\.esperan/);

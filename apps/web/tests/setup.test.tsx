@@ -52,7 +52,7 @@ test('cada paso del asistente existe en el catálogo y es válido para su pista:
       const paso=CATALOGO.find(p=>p.id===e.id)!;
       // Un paso de OTRO rol (p. ej. «propietario.crm» en la lista del analista) se muestra sin enlace; solo se valida con el rol dueño del paso.
       assert.deepEqual(problemasDePaso(paso,menuVisible),[],e.id);
-      assert.ok(Number.isInteger(e.min)&&e.min>0,e.id+' trae tiempo estimado');
+      assert.equal('min' in e,false,e.id+' sin tiempo escrito a mano');
     }
     assert.equal(new Set(entradas.map(e=>e.id)).size,entradas.length,pista+' sin ids repetidos');
   }
@@ -86,12 +86,12 @@ test('propietario: estados honestos con datos de PILOTO (conexión activa, histo
   assert.equal(por.dimensiones.estado,'informativo','no hay forma barata de saberlo: nunca «hecho»');
   assert.equal(por.conciliar.estado,'pendiente');assert.equal(por.conciliar.cuenta,true);
   assert.equal(por.corte.estado,'salvedad');
-  assert.equal(por.equipo.estado,'esperando');assert.equal(por.equipo.esperaA,'onb.tercero.correo');assert.equal(por.equipo.cuenta,false);
+  assert.equal(por.equipo.estado,'pendiente');assert.equal(por.equipo.esperaA,null,'sin bloqueo inventado por el correo de acceso');assert.equal(por.equipo.cuenta,true);
   assert.equal(por.avisos.estado,'esperando');assert.equal(por.avisos.esperaA,'onb.tercero.push');assert.equal(por.avisos.cuenta,false);
-  assert.equal(por.mfa.estado,'pendiente');assert.equal(por.mfa.cuenta,false,'MFA no existe para propietarios: pendiente, fuera del progreso');assert.equal(por.mfa.href,null);
+  assert.equal(por.mfa,undefined,'no hay paso de verificación en dos pasos: no se promete ni se simula');
   assert.equal(por.retencion.estado,'informativo');
   assert.equal(l.siguiente,'propietario.conciliar','el siguiente es el primer paso propio pendiente; nunca uno de tercero');
-  assert.deepEqual(l.progreso,{hechos:3,total:4},'cuentan historial, pedidos, conciliar y corte (3 de 4 hechos, el corte con salvedad); nada de terceros, MFA ni informativos');
+  assert.deepEqual(l.progreso,{hechos:3,total:5},'cuentan historial, pedidos, conciliar, corte (con salvedad) y equipo (pendiente); nada de terceros ni informativos');
 });
 test('propietario: el push solo se ofrece (pendiente y con enlace) si el servidor dice configured=true; con dispositivos queda hecho',()=>{
   const base={senales:SENALES_PILOTO,consultadas:consultadasDe('owner')};
@@ -156,10 +156,10 @@ for(const idioma of ['es','en'] as const){
     assert.equal((html.match(/aria-labelledby="setup-paso-\d+"/g)??[]).length,n);
     assert.ok(html.includes(dic['onb.setup.irAHacerlo']));
     assert.ok(html.includes(dic['onb.setup.pide']));
-    assert.match(html,idioma==='es'?/Unos 15 min/:/About 15 min/);
+    assert.doesNotMatch(html,/Unos \d+ min|About \d+ min/,'sin minutos escritos a mano');
     assert.ok(html.includes(dic['onb.setup.hoja.boton']));
     assert.doesNotMatch(html,/Probar ahora|Test now|Try now|Probar conexión|Test connection/i);
-    assert.match(html,/<progress max="5" value="3" aria-label=/);
+    assert.match(html,/<progress max="6" value="3" aria-label=/);
     assert.ok(html.includes(dic['onb.check.siguiente']));
     for(const h of ['/connections','/imports','/economics','/settings/team','/settings/notifications','/settings/retention'])assert.ok(hrefs(html).includes(h),h);
     assert.equal(hrefs(html).filter(h=>h==='/economics').length,4,'pedidos, dimensiones, conciliar y corte');
@@ -213,7 +213,7 @@ test('conciliación: PILOTO (85 mil pedidos del libro, 0 enlaces) → «0 de N p
   assert.deepEqual({tipo:c.tipo,ligados:c.ligados,total:c.total},{tipo:'base',ligados:0,total:85357});
   for(const idioma of ['es','en'] as const){
     const html=renderToStaticMarkup(<IndicadorConciliacion t={traductor(idioma)} c={c} fecha="27 oct 2026" formato={n=>new Intl.NumberFormat(idioma==='es'?'es-MX':'en-US').format(n)}/>);
-    assert.ok(html.includes(idioma==='es'?'0 de 85,357 pedidos del libro ligados a un cliente':'0 of 85,357 ledger orders linked to a customer'),html);
+    assert.ok(html.includes(idioma==='es'?'0 de 85,357 pedidos relacionados con un cliente':'0 of 85,357 orders matched to a customer'),html);
     assert.doesNotMatch(html,/%/);assert.ok(html.includes(traductor(idioma)('onb.setup.conc.pendiente')));
   }
 });
@@ -297,13 +297,101 @@ test('textos de /setup: sin cifras, porcentajes, RLS, respaldos, SLA, certificac
   const prohibido=/\d|%|\bRLS\b|SOC\s?2|ISO\s?27|respaldo|backup|\bSLA\b|pruebas cruzadas|certific|cross-tenant/i;
   for(const k of NUEVAS)for(const [idioma,dic] of [['es',ESP],['en',ING]] as const)assert.doesNotMatch(dic[k],prohibido,`${idioma}:${k}`);
 });
-test('textos de /setup: ninguna promesa de MFA, push, Zendesk ni Google; MFA dice «hoja de ruta»; push solo si el servidor lo permite',()=>{
+test('textos de /setup: ninguna promesa de MFA, push, Zendesk ni Google, y ninguna frase de «hoja de ruta»; push solo si el servidor lo permite',()=>{
   for(const k of NUEVAS)for(const dic of [ESP,ING])assert.doesNotMatch(dic[k],/zendesk|google|oauth/i,k);
-  assert.match(ESP['onb.propietario.mfa.cuerpo'],/hoja de ruta/);assert.match(ING['onb.propietario.mfa.cuerpo'],/roadmap/);
-  assert.doesNotMatch(ESP['onb.propietario.mfa.cuerpo']+ING['onb.propietario.mfa.cuerpo'],/activa tu|turn on your|enable|habilita|próximamente|coming soon|pronto/i);
-  assert.match(ESP['onb.propietario.avisos.cuerpo'],/solo si el servidor lo permite/);assert.match(ING['onb.propietario.avisos.cuerpo'],/only if the server allows/);
+  for(const k of Object.keys(ESP).filter(x=>/^onb\./.test(x)))assert.doesNotMatch(ESP[k]+' '+ING[k],/hoja de ruta|roadmap|próximamente|coming soon|segundo factor|second[- ]factor|dos pasos|two-step|\bMFA\b/i,k);
+  assert.equal(ESP['onb.propietario.mfa.titulo'],undefined);assert.equal(ING['onb.propietario.mfa.cuerpo'],undefined);
+  assert.ok(!CATALOGO.some(p=>p.id==='propietario.mfa'),'el paso de MFA se quitó del catálogo');
+  assert.match(ESP['onb.propietario.avisos.cuerpo'],/si están disponibles/);assert.match(ING['onb.propietario.avisos.cuerpo'],/if available/);
   assert.match(ESP['onb.propietario.crm.cuerpo'],/equipo de Rovaq/);assert.match(ESP['onb.propietario.crm.cuerpo'],/nunca se escribe/);
   for(const k of Object.keys(ESP).filter(x=>/^onb\.setup\.hoja\./.test(x)))assert.doesNotMatch(ESP[k]+ING[k],/probar ahora|test now|try now/i);
+});
+
+test('jerga fuera del recorrido y de /setup: sin «sello de procedencia», «ligados», «conciliar», «salvedad», «libro», «ledger», «token», «credencial» ni «servidor» en los textos que lee el cliente',()=>{
+  const prohibido=/sello de procedencia|provenance|ligad|conciliar|conciliaci|reconcil|libro de pedidos|\bledger\b|\btoken\b|credencial|credential|servidor|\bserver\b|mapear dimensiones|map dimensions/i;
+  const claves=Object.keys(ESP).filter(k=>/^onb\.(pant|tour|setup|check|propietario|analista|operador|lector|plataforma|tercero|soporte)\./.test(k));
+  assert.ok(claves.length>150);
+  // «salvedad» sigue existiendo como nombre de la etiqueta de la pantalla CCO (cco.estado.*), que el recorrido describe; no como texto propio del onboarding.
+  for(const k of claves)for(const [idioma,dic] of [['es',ESP],['en',ING]] as const)assert.doesNotMatch(dic[k].replace(/\{\w+\}/g,''),prohibido,`${idioma}:${k}`);
+  for(const k of claves.filter(x=>!/^onb\.pant\.cco\./.test(x)))for(const dic of [ESP,ING])assert.doesNotMatch(dic[k],/salvedad|caveat/i,k);
+});
+test('hoja para soporte: la organización va por su nombre y el identificador técnico va rotulado como dato para soporte',()=>{
+  const h=datosHojaSoporte({tenantId:TENANT,organizacion:'Org'});
+  for(const idioma of ['es','en'] as const){
+    const txt=textoHoja(traductor(idioma),h),lineas=txt.split('\n');
+    const t=traductor(idioma);
+    assert.ok(lineas.includes(`${t('onb.setup.hoja.organizacion')}: Org`),'la línea de la organización no lleva el UUID');
+    assert.ok(lineas.includes(`${t('onb.setup.hoja.idTecnico')}: ${TENANT}`));
+    assert.match(t('onb.setup.hoja.idTecnico'),idioma==='es'?/soporte/:/support/);
+    assert.ok(!lineas.some(l=>l.startsWith(t('onb.setup.hoja.organizacion'))&&l.includes(TENANT)));
+  }
+});
+
+test('«Publicar y revisar el corte» lo hace solo el propietario (regla del servidor), no «cualquier persona de la organización»',()=>{
+  const l=calcularAsistente('propietario',{senales:SENALES_PILOTO,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}});
+  const corte=l.items.find(i=>i.id==='propietario.corte')!;
+  assert.deepEqual(corte.quien,['owner']);
+  assert.match(leer('src/app/(app)/(workspace)/economics/page.tsx'),/puedePreparar=active\.role==='owner'/,'la pantalla de cortes sigue exigiendo propietario');
+  for(const idioma of ['es','en'] as const){
+    const html=vista('propietario',{senales:SENALES_PILOTO,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}},{idioma});
+    const t=traductor(idioma),bloque=html.split('<li class="setup-paso"').find(x=>x.includes(t('onb.propietario.corte.titulo')))!;
+    assert.ok(bloque.includes(t('onb.setup.quien',{quien:idioma==='es'?'Administrador del espacio':'Workspace administrator'})),'dice quién: el propietario');
+    assert.ok(!bloque.includes(t('onb.setup.quienCualquiera')));
+  }
+});
+test('un paso que el rol no puede hacer y que es de otra pista muestra un resumen neutro (título, estado y a quién pedirlo), no el texto en segunda persona del propietario',()=>{
+  for(const idioma of ['es','en'] as const){
+    const t=traductor(idioma);
+    const html=vista('analista',{senales:normalizarSenales({...TODO_FALSO,historial_importado:true}),consultadas:consultadasDe('analyst'),push:{configurado:true,dispositivos:0}},{idioma});
+    for(const id of ['crm','pedidos','dimensiones','conciliar']){
+      assert.ok(html.includes(t(`onb.propietario.${id}.titulo` as never)),id+' título visible');
+      assert.ok(!html.includes(t(`onb.propietario.${id}.cuerpo` as never)),id+': sin el texto del propietario');
+    }
+    assert.ok(html.includes(t('onb.analista.corte.cuerpo')),'el paso propio del analista (espera al propietario) conserva su explicación en tercera persona');
+    assert.ok(html.includes(t('onb.analista.importar.cuerpo')));
+  }
+});
+test('«Invitar a tu equipo»: etiqueta «Pendiente», aclara cuándo se marca hecho y no menciona el correo ni un «esperando a»',()=>{
+  for(const [idioma,dic] of [['es',ESP],['en',ING]] as const){
+    assert.doesNotMatch(dic['onb.propietario.equipo.cuerpo']+dic['onb.pant.settings-team.accionC'],/correo|e-?mail/i,idioma);
+    assert.match(dic['onb.propietario.equipo.cuerpo'],idioma==='es'?/Se marca como hecho cuando/:/marked as done once/);
+    const html=vista('propietario',{senales:SENALES_PILOTO,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}},{idioma});
+    const bloque=html.split('<li class="setup-paso"').find(x=>x.includes(dic['onb.propietario.equipo.titulo']))!;
+    assert.ok(bloque.includes(`>${dic['onb.check.estado.pendiente']}<`));assert.ok(!bloque.includes(dic['onb.ui.esperando'].replace(/\{.*\}/,'').trim()));
+  }
+});
+
+test('robustez: la lectura de Hoy y la de /setup tienen tope de espera y un estado de error con «Reintentar»; nunca «Calculando…» para siempre',()=>{
+  const lista=leer('src/components/onboarding/checklist.tsx'),pant=leer('src/components/onboarding/setup-pantalla.tsx'),piezas=leer('src/components/onboarding/setup-piezas.tsx');
+  assert.match(lista,/TOPE_LECTURA_MS=8_000/);assert.match(lista,/setTimeout\(\(\)=>corte\.abort\(\),topeMs\)/);assert.match(lista,/signal:corte\.signal/);assert.match(lista,/clearTimeout\(tope\)/);
+  assert.match(lista,/onClick=\{reintentar\}/);assert.match(lista,/onb\.check\.reintentar/);
+  assert.match(pant,/setTimeout\(\(\)=>setVencido\(true\),TOPE_LECTURA_MS\)/);assert.match(pant,/cargando=esperandoLectura&&!vencido/);assert.match(pant,/reintentar=\{/);
+  assert.match(piezas,/errorDeLectura&&[\s\S]*onb\.check\.reintentar/);
+  for(const [idioma,dic] of [['es',ESP],['en',ING]] as const)assert.ok(dic['onb.check.reintentar']?.trim(),idioma);
+  // Con el error y el reintento disponibles, la vista pinta el aviso y el botón en lugar de «Calculando…».
+  for(const idioma of ['es','en'] as const){
+    const t=traductor(idioma);
+    const html=envolver('propietario',<SetupVista t={t} locale="es-MX" pista="propietario" rolEtiqueta="x" soporteTerminado={false} cargando={false} errorDeLectura reintentar={()=>{}} lista={calcularAsistente('propietario',{senales:null,consultadas:[]})} conciliacion={null} fechaResumen={null} hoja={null}/>);
+    assert.ok(html.includes(t('onb.check.noDisponible')));assert.ok(html.includes(`>${t('onb.check.reintentar')}<`));assert.ok(!html.includes(t('onb.check.cargando')));
+  }
+});
+
+test('robustez (comportamiento): una lectura que nunca responde se corta al vencer el tope y rechaza; una que responde a tiempo no',async()=>{
+  const {leerSenales}=await import('../src/components/onboarding/checklist');
+  const original=globalThis.fetch;
+  try{
+    globalThis.fetch=((_u:unknown,init?:{signal?:AbortSignal})=>new Promise((_res,rej)=>{init?.signal?.addEventListener('abort',()=>rej(Object.assign(new Error('abortado'),{name:'AbortError'})));})) as typeof fetch;
+    const t0=Date.now();
+    await assert.rejects(leerSenales('tenant-colgado',new AbortController().signal,30),(e:Error)=>e.name==='AbortError');
+    assert.ok(Date.now()-t0<2000,'se cortó por el tope, no esperó indefinidamente');
+    globalThis.fetch=(async()=>new Response(JSON.stringify({data:{senales:{historial_importado:true}}}),{status:200})) as typeof fetch;
+    const ok=await leerSenales('tenant-rapido',new AbortController().signal,500);
+    assert.equal(ok?.historial_importado,true);
+    // Si quien llama cancela (cambio de pantalla), la lectura se cancela también.
+    globalThis.fetch=((_u:unknown,init?:{signal?:AbortSignal})=>new Promise((_res,rej)=>{init?.signal?.addEventListener('abort',()=>rej(new Error('cancelado')));})) as typeof fetch;
+    const ctl=new AbortController(),p=leerSenales('tenant-cancelado',ctl.signal,60_000);ctl.abort();
+    await assert.rejects(p);
+  }finally{globalThis.fetch=original;}
 });
 
 // ---- Entradas: menú, Hoy, Guía y /confianza
@@ -316,7 +404,7 @@ test('menú por rol: «Configuración» (/setup) visible para los cuatro roles, 
 test('el checklist de Hoy y el botón Guía enlazan a /setup (Ver como no tiene Guía ni checklist: solo el aviso)',()=>{
   assert.match(leer('src/components/onboarding/checklist.tsx'),/<Link href="\/setup"[^>]*>\{t\('onb\.setup\.verTodo'\)\}<\/Link>/);
   assert.match(leer('src/components/onboarding/contexto.tsx'),/router\.push\('\/setup'\)/);
-  assert.match(leer('src/components/onboarding/guia.tsx'),/abrirSetup=\{c\.abrirSetup\}/);
+  assert.match(leer('src/components/onboarding/guia.tsx'),/abrirSetup=\{c\.pista==='plataforma'\?undefined:c\.abrirSetup\}/,'el menú Guía pasa abrirSetup salvo en la consola de plataforma, que no tiene Configuración');
   assert.match(leer('src/components/onboarding/paneles.tsx'),/abrirSetup&&<button type="button" onClick=\{abrirSetup\}>\{t\('onb\.setup\.verTodo'\)\}/);
   assert.equal(ESP['onb.setup.verTodo'],'Ver configuración completa');
 });

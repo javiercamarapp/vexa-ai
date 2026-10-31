@@ -51,6 +51,21 @@ export const PANTALLAS = Object.freeze({
 });
 export { QUE, ACCIONES };
 
+/**
+ * Textos de pantalla que cambian según la pista: la clave `<slug>.<campo>` (campo = desc, claveT, claveC, accionT, accionC) apunta, por pista, a otra clave i18n.
+ * Se usan cuando el texto general promete algo que ese rol no hace (decidir, mirar periodos y conciliación de dinero, «lo que hiciste»).
+ */
+export const TEXTO_PISTA = Object.freeze({
+  'overview.claveC': Object.freeze({ operador: 'onb.pant.overview.claveC.operador', lector: 'onb.pant.overview.claveC.lector' }),
+  'recommendations.desc': Object.freeze({ analista: 'onb.pant.recommendations.desc.sinAprobar', operador: 'onb.pant.recommendations.desc.sinAprobar', lector: 'onb.pant.recommendations.desc.sinAprobar' }),
+  'recommendations.claveT': Object.freeze({ analista: 'onb.pant.recommendations.claveT.sinAprobar', operador: 'onb.pant.recommendations.claveT.sinAprobar', lector: 'onb.pant.recommendations.claveT.sinAprobar' }),
+  'interventions.desc': Object.freeze({ analista: 'onb.pant.interventions.desc.general', lector: 'onb.pant.interventions.desc.general' }),
+  'interventions.accionC': Object.freeze({ propietario: 'onb.pant.interventions.accionC.propietario' }),
+});
+/** Texto (clave i18n) de un campo de una pantalla para una pista: el propio de la pista si lo hay; si no, el general. */
+export const textoDe = (pista, href, campo, general) => TEXTO_PISTA[`${slugDe(href)}.${campo}`]?.[pista] ?? general;
+export const CLAVES_TEXTO_PISTA = Object.freeze([...new Set(Object.values(TEXTO_PISTA).flatMap((m) => Object.values(m)))]);
+
 /** Claves i18n que usa una pantalla (la de «accion» solo si la tiene). */
 export const clavesDePantalla = (href) => {
   const s = slugDe(href), d = PANTALLAS[href];

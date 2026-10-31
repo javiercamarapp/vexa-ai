@@ -7,9 +7,10 @@ import {etiquetaItem} from '../../lib/i18n/menu';
 import {todosLosItems} from '../../lib/workspace/menu.mjs';
 import {pasosDe} from '../../lib/onboarding/catalogo.mjs';
 import {enPantalla} from '../../lib/onboarding/ruta.mjs';
+import {reducir} from '../../lib/onboarding/recorrido.mjs';
 import type {Clave} from '../../lib/i18n';
 import {useOnboarding} from './contexto';
-import {BannerPantalla,CapaFoco,EtiquetaObjetivo,InvitacionRecorrido,MenuGuia,TarjetaRecorrido,type LadoEtiqueta} from './paneles';
+import {CapaFoco,EtiquetaObjetivo,InvitacionRecorrido,MenuGuia,TarjetaRecorrido,type LadoEtiqueta} from './paneles';
 import {abrirGrupoDelMenu,esperarObjetivo,nombreDe,pantallaEstrecha,reducirMovimiento} from './objetivo';
 import './onboarding.css';
 
@@ -58,6 +59,15 @@ export function GuiaPaneles(){
   const alClic=()=>despachar({tipo:'clic'});
   el.addEventListener('click',alClic,true);return()=>el.removeEventListener('click',alClic,true);
  },[el,tipo,despachar]);
+ // 3b) Un paso «ir» alcanzado por una acción de la persona (Siguiente, flecha derecha, Empezar) no se queda esperando otro botón: se señala el elemento
+ // y, tras un instante, la guía lo pulsa sola y la lleva a la pantalla. Si el elemento no existe (menú plegado), navega directo. Un recorrido restaurado al recargar no viaja solo.
+ const llevame=c?.llevame,viajeAutomatico=c?.viajeAutomatico,llevarRef=useRef(llevame),viajeRef=useRef(viajeAutomatico);
+ useEffect(()=>{llevarRef.current=llevame;viajeRef.current=viajeAutomatico;});
+ useEffect(()=>{
+  if(tipo!=='ir'||el===undefined||!viajeRef.current?.())return;
+  const id=setTimeout(()=>llevarRef.current?.(),el?1600:0);
+  return()=>clearTimeout(id);
+ },[el,tipo,pasoId]);
  // 4) Seguir al elemento (scroll, tamaño, animaciones): recorte, anillo y etiqueta por CSSOM. Si desaparece (cambio de pantalla) se vuelve a buscar.
  useEffect(()=>{
   const capaEl=capa.current;if(!capaEl)return;
@@ -103,24 +113,24 @@ export function GuiaPaneles(){
  };
  const opciones=c.hayModoCorto?{corto:c.pasosCorto,completo:c.pasosCompleto}:undefined;
  const nombres=c.pantallas.map(g=>nombrePantalla(g.href)),total=c.pasos.length,n=c.rec.indice+1;
- let tarjetaUi=null,etiquetaUi=null,bannerUi=null;
+ let tarjetaUi=null,etiquetaUi=null;
  if(abierto&&paso){
   const cierre=paso.tipo==='cierre',pantalla=nombrePantalla(paso.pantalla),nombreEl=el?nombreDe(el):'';
   const titulo=cierre?t(paso.titulo as Clave):paso.tipo==='ir'?t('onb.tour.ir.titulo',{pantalla}):paso.titulo?t(paso.titulo as Clave):pantalla;
-  const cuerpo=cierre||paso.tipo==='info'?t(paso.cuerpo as Clave):t('onb.tour.ir.cuerpo',{nombre:nombreEl||pantalla});
+  const cuerpo=cierre||paso.tipo==='info'?t(paso.cuerpo as Clave):t('onb.tour.ir.cuerpo',{nombre:pantalla});
   const centrada=cierre||el===null;
   tarjetaUi=<TarjetaRecorrido t={t} innerRef={tarjeta} tipo={paso.tipo} titulo={titulo} cuerpo={cuerpo} ilu={paso.ilu} n={n} total={total} grupoN={Math.min(paso.grupo+1,nombres.length)} grupoTotal={nombres.length}
-   ruta={{nombres,actual:cierre?-1:paso.grupo}} centrada={centrada} sinObjetivo={!cierre&&el===null} resumen={cierre?t('onb.tour.cierre.resumen',{n:nombres.length,lista:nombres.join(' · ')}):undefined} mostrarSetup={c.pista!=='plataforma'}
+   hayAnterior={reducir(c.rec,{tipo:'anterior'},c.pasos.length,c.pasos,c.ruta).indice!==c.rec.indice} ruta={{nombres:cierre?[]:nombres,actual:paso.grupo}} centrada={centrada} sinObjetivo={!cierre&&paso.tipo!=='ir'&&el===null} mostrarSetup={c.pista!=='plataforma'}
    anterior={()=>c.despachar({tipo:'anterior'})} omitir={c.omitir} primario={cierre?()=>c.despachar({tipo:'siguiente'}):c.siguiente} irSetup={c.terminarEIrASetup}/>;
-  if(el&&nombreEl&&(paso.tipo==='ir'||esControl(el)))etiquetaUi=<EtiquetaObjetivo innerRef={etiqueta} texto={paso.tipo==='ir'?t('onb.tour.clic',{nombre:nombreEl}):t('onb.tour.aqui',{nombre:nombreEl})}/>;
-  if(paso.clave==='que')bannerUi=<BannerPantalla t={t} pantalla={pantalla}/>;
+  // En un paso «ir» título, cuerpo y etiqueta dicen lo mismo: el rótulo del menú (etiquetaItem), nunca el title del enlace ni su texto interno.
+  if(el&&((paso.tipo==='ir'&&pantalla)||(nombreEl&&esControl(el))))etiquetaUi=<EtiquetaObjetivo innerRef={etiqueta} texto={paso.tipo==='ir'?t('onb.tour.clic',{nombre:pantalla}):t('onb.tour.aqui',{nombre:nombreEl})}/>;
  }
  return <>
   {c.menuAbierto&&<MenuGuia t={t} innerRef={menu} contexto={t('onb.ui.rolOrg',{organizacion:c.datos.organizacion,rol:c.datos.rolEtiqueta})} tienePaso={c.pasos.some(p=>p.id===c.local.paso)} mostrarChecklistOpcion={c.tieneChecklist} descartado={c.local.descartado}
-   iniciar={m=>c.iniciar('inicio',m)} opciones={opciones} retomar={()=>c.iniciar('retomar')} mostrarChecklist={c.mostrarChecklist} abrirSetup={c.abrirSetup} noVolver={c.noVolver} cerrar={()=>{c.cerrarMenu();c.enfocarBoton();}}
+   iniciar={m=>c.iniciar('inicio',m)} opciones={opciones} retomar={()=>c.iniciar('retomar')} mostrarChecklist={c.mostrarChecklist} abrirSetup={c.pista==='plataforma'?undefined:c.abrirSetup} noVolver={c.noVolver} cerrar={()=>{c.cerrarMenu();c.enfocarBoton();}}
    pantallas={c.pantallas.map((g,i)=>({href:g.href,nombre:nombres[i],actual:abierto&&paso?.grupo===g.grupo}))} irAPantalla={c.irAPantalla}/>}
   {c.invitacionVisible&&<InvitacionRecorrido t={t} saltar={c.saltarInvitacion} empezar={m=>c.iniciar('inicio',m)} opciones={opciones}/>}
   {abierto&&paso&&<CapaFoco innerRef={capa} scrim={paso.tipo==='cierre'||el===null}/>}
-  {etiquetaUi}{tarjetaUi}{bannerUi}
+  {etiquetaUi}{tarjetaUi}
  </>;
 }

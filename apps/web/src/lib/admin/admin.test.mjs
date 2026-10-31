@@ -1,6 +1,9 @@
 // Pruebas de las correcciones QA3 (vistas de administración): contraste de Conexiones, estados, Histórico, Equipo, login.
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';
 const leer=(rel)=>readFileSync(new URL(rel,import.meta.url),'utf8');
+import {readdirSync} from 'node:fs';
+// Los textos visibles viven en los diccionarios i18n: las pruebas de código comprueban la clave y que el diccionario ES diga lo esperado.
+const dic=()=>{const d=new URL('../i18n/',import.meta.url);return readdirSync(d).filter(f=>/^(es|d-.*)\.ts$/.test(f)).map(f=>readFileSync(new URL(f,d),'utf8')).join('\n');};
 const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),lin=v=>{v/=255;return v<=0.03928?v/12.92:((v+0.055)/1.055)**2.4;},L=c=>0.2126*lin(c[0])+0.7152*lin(c[1])+0.0722*lin(c[2]);
 const ratio=(a,b)=>{const x=L(a),y=L(b);return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05);};
 const tokens=(glob)=>({claro:/(?:^|\n):root \{([^}]*)\}/.exec(glob)[1],oscuro:/:root\[data-theme=dark\] \{([^}]*)\}/.exec(glob)[1]});
@@ -11,12 +14,15 @@ test('QA3-001: la lista de Conexiones fija color y fondo con tokens en una regla
  const base=/\.list \.item\{([^}]*)\}/.exec(css)?.[1];assert.ok(base,'regla .list .item');
  assert.match(base,/color:var\(--ink\)/);assert.match(base,/background:var\(--ui-surface\)/);
  const marcada=/\.list \.item\[aria-pressed=true\][^{]*\{([^}]*)\}/.exec(css)?.[1];assert.ok(marcada,'estado seleccionado');
- assert.match(marcada,/color:var\(--ink\)/);assert.match(marcada,/background:var\(--ui-soft\)/);
+ assert.match(marcada,/color:var\(--ink\)/);assert.match(marcada,/background:var\(--tint-info\)/);
  assert.match(css,/\.name small\{[^}]*color:var\(--muted\)/);
 });
-test('QA3-001: tinta y subtítulo de la lista cumplen 4.5:1 sobre superficie y fondo suave, y el borde activo 3:1, en claro y oscuro',()=>{
- for(const [tema,b] of Object.entries(tokens(leer('../../app/globals.css')))){
-  for(const fondo of ['ui-surface','ui-soft'])for(const t of ['ink','muted']){const r=ratio(tok(b,t),tok(b,fondo));assert.ok(r>=4.5,`${tema}: ${t} sobre ${fondo} ${r.toFixed(2)}:1`);}
+test('QA3-001: tinta y subtítulo de la lista cumplen 4.5:1 sobre superficie, fondo suave y fondo seleccionado, y el borde activo 3:1, en claro y oscuro',()=>{
+ const glob=leer('../../app/(app)/globals.css'),ui=leer('../../app/(app)/ui.css');
+ const tint=(tema)=>{const m=new RegExp((tema==='claro'?':root\\{':':root\\[data-theme=dark\\]\\{')+'[^}]*--tint-info:(#[0-9a-fA-F]{6})').exec(ui);assert.ok(m,'tint-info '+tema);return rgb(m[1]);};
+ for(const [tema,b] of Object.entries(tokens(glob))){
+  const fondos={'ui-surface':tok(b,'ui-surface'),'ui-soft':tok(b,'ui-soft'),'tint-info (seleccionado)':tint(tema)};
+  for(const [fondo,c] of Object.entries(fondos))for(const t of ['ink','muted']){const r=ratio(tok(b,t),c);assert.ok(r>=4.5,`${tema}: ${t} sobre ${fondo} ${r.toFixed(2)}:1`);}
   const r=ratio(tok(b,'ui-focus'),tok(b,'ui-surface'));assert.ok(r>=3,`${tema}: borde activo ${r.toFixed(2)}:1`);
  }
 });
@@ -63,19 +69,20 @@ test('QA3-002: los KPI de Importaciones suman todas las cargas, separan metadato
 });
 test('QA3-002: el panel de Conexiones deriva su estado del resumen de cobertura y ya no imprime «rechazados» ni el hash a la vista',()=>{
  const t=leer('../../components/connection-health.tsx');
- assert.match(t,/useJson<CoverageView>\('\/api\/coverage'/);assert.match(t,/estadoConexion\(r,sources\)/);
+ assert.match(t,/useJson<CoverageView>\('\/api\/coverage'/);assert.match(t,/estadoConexion\(r,sources,t,idioma\)/);
  assert.doesNotMatch(t,/rechazados/);assert.doesNotMatch(t,/Sin sincronización comprobada/);
- assert.match(t,/<details className=\{styles\.tech\}><summary>Detalle técnico<\/summary>/);
+ assert.match(t,/<details className=\{styles\.tech\}><summary>\{t\('conx\.h\.detalleTec'\)\}<\/summary>/);assert.match(dic(),/'conx\.h\.detalleTec': 'Detalle técnico'/);
  assert.doesNotMatch(t,/Configuración: \{row\.connectionStatus\}/);
 });
 test('QA3-007: Importaciones totaliza con la cobertura, rotula las cargas listadas y no reutiliza el tooltip de Economía',()=>{
  const t=leer('../../components/import-preview.tsx'),k=leer('../../components/ui/kind-badge.tsx'),c=leer('../../components/ui/stat-card.tsx');
- assert.match(t,/agregadoImportaciones\(coverage\?\.sources\)/);assert.match(t,/Mostrando las \$\{nf\.format\(teamJobs\.length\)\} cargas más recientes/);
+ assert.match(t,/agregadoImportaciones\(coverage\?\.sources\)/);assert.match(t,/t\('conx\.i\.t\.mostrando',\{n:nf\.format\(teamJobs\.length\)/);assert.match(dic(),/'conx\.i\.t\.mostrando': 'Mostrando las \{n\} cargas más recientes/);
  assert.doesNotMatch(t,/cuenta técnica/);assert.doesNotMatch(t,/foot="En las cargas listadas"/);
- assert.match(t,/ref\. \{j\.id\.slice\(0,6\)\}/,'cada trabajo lleva una referencia distinta');
+ assert.match(t,/t\('conx\.i\.t\.ref'\)\} \{j\.id\.slice\(0,6\)\}/,'cada trabajo lleva una referencia distinta');assert.match(dic(),/'conx\.i\.t\.ref': 'ref\.'/);
  assert.match(k,/title=\{hint\?\?info\.hint\}/);assert.match(c,/kindHint/);
- const kpis=t.slice(t.indexOf('<div className="stat-grid">'),t.indexOf('<div className="task-columns import-start">'));
- assert.equal((kpis.match(/<StatCard /g)??[]).length,(kpis.match(/kindHint=/g)??[]).length,'todos los KPI de importaciones tienen tooltip propio');
+ const kpis=t.slice(t.indexOf('<KpiLinea '),t.indexOf('</section>',t.indexOf('<KpiLinea ')));
+ assert.ok((kpis.match(/,c:\d+,/g)??[]).length>=4);
+ assert.equal((kpis.match(/,c:\d+,/g)??[]).length,(kpis.match(/nota:/g)??[]).length,'todos los KPI de importaciones llevan su propia nota (ya no comparten el tooltip de Economía)');
 });
 import {motivoVinculo,estadoProcesamiento,tituloLote,detalleAsociaciones,ESTADO_VINCULO} from '../history/historico.mjs';
 test('QA3-004: los códigos internos de vínculo se traducen al español y un código desconocido no sale crudo',()=>{
@@ -95,10 +102,10 @@ test('QA3-003: sin lotes el estado es informativo, nunca «falta configuración�
 test('QA3-003/004: Histórico ya no imprime ids, códigos ni el banner de configuración, y las acciones del propietario están tras capacidad',()=>{
  const h=leer('../../components/history-panel.tsx'),a=leer('../../components/association-panel.tsx'),i=leer('../../components/history-items.tsx');
  assert.doesNotMatch(h,/Falta configuración o habilitación explícita del servicio/);assert.doesNotMatch(h,/<span>Lote \{b\.id\}<\/span>/);
- assert.match(h,/estadoProcesamiento\(/);assert.match(h,/estado\.puedeAutorizar&&/);assert.match(h,/Ver detalle técnico/);
- assert.doesNotMatch(a,/> \{f\.reason\}<\/small>/);assert.match(a,/motivoVinculo\(f\.reason\)/);assert.match(a,/Ver detalle técnico/);
+ assert.match(h,/estadoProcesamiento\(/);assert.match(h,/estado\.puedeAutorizar&&/);assert.match(h,/t\('hist\.verTecnico'\)/);assert.match(dic(),/'hist\.verTecnico': 'Ver detalle técnico'/);
+ assert.doesNotMatch(a,/> \{f\.reason\}<\/small>/);assert.match(a,/motivoVinculo\(f\.reason,t\)/);assert.match(a,/t\('tr\.assoc\.detalleTec'\)/);assert.match(dic(),/'tr\.assoc\.detalleTec': 'Ver detalle técnico/);
  assert.match(a,/\{canResolveFacts&&<td><Button size="sm"/);assert.match(a,/\{canApprove&&<details/);
- assert.match(i,/<details[^>]*>\s*<summary>Ver detalle técnico/);
+ assert.match(i,/<details[^>]*>\s*<summary>\{t\('hist\.verTecnico'\)\}/);
 });
 import {esCuentaTecnica,visibles,puedeRevocar,rolEs,ROLES,ROL_ES} from '../team/vista.mjs';
 const miembro=(id,role,email='x@y.com',status='active')=>({id,role,email,status});
@@ -122,17 +129,17 @@ test('QA3-005: no se ofrece Revocar sobre uno mismo ni sobre el último propieta
 });
 test('QA3-005: TeamPanel usa las guardas y el servidor entrega la identidad de quien consulta',()=>{
  const t=leer('../../components/team-panel.tsx'),s=leer('../team/server.ts');
- assert.match(t,/visibles\(items\)/);assert.match(t,/puedeRevocar\(item,/);assert.match(t,/rolEs\(role\)/);assert.doesNotMatch(t,/<option key=\{role\}>\{role\}<\/option>/);assert.doesNotMatch(t,/\{item\.role\} · \{item\.status\}/);
+ assert.match(t,/visibles\(items\)/);assert.match(t,/puedeRevocar\(item,/);assert.match(t,/rolT\(role\)/);assert.match(t,/ROL_CLAVE/);assert.match(dic(),/'conx\.e\.rol\.owner': 'Administrador del espacio'/);assert.doesNotMatch(t,/<option key=\{role\}>\{role\}<\/option>/);assert.doesNotMatch(t,/\{item\.role\} · \{item\.status\}/);
  assert.match(s,/viewerId:verified\.data\.user\.id/);
 });
 test('QA3-006: /login con sesión válida redirige a /overview y no muestra «pendiente de configurar»',()=>{
- const l=leer('../../app/login/page.tsx'),e=leer('../../components/email-login.tsx');
+ const l=leer('../../app/(app)/login/page.tsx'),e=leer('../../components/email-login.tsx');
  assert.match(l,/if\(signedIn&&!loginError\)redirect\('\/overview'\)/);assert.match(l,/import \{ redirect \} from 'next\/navigation'/);
  assert.ok(l.indexOf("redirect('/overview')")>l.indexOf('signedIn=!error&&!!data.user'),'la redirección va después de leer la sesión');
- assert.doesNotMatch(l+e,/pendiente de configurar/i);assert.match(l,/\{google&&<>/);
+ assert.doesNotMatch(l+e,/pendiente de configurar/i);assert.match(l,/disabled=\{!google\}/,'sin Google configurado el botón se deshabilita con un aviso de disponibilidad, no con «pendiente de configurar»');
 });
 test('QA3-016: el 404 respeta el tema guardado y no ofrece iniciar sesión a quien ya la tiene',()=>{
- const n=leer('../../app/not-found.tsx'),b=leer('../../components/theme-boot.tsx');
+ const n=leer('../../app/(app)/not-found.tsx'),b=leer('../../components/theme-boot.tsx');
  assert.match(n,/<ThemeBoot\/>/);assert.doesNotMatch(n,/Iniciar sesión con otra cuenta/);
  assert.match(b,/localStorage\.getItem\('vexa-theme'\)/);assert.match(b,/documentElement\.dataset\.theme/);
 });

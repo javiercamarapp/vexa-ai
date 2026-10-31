@@ -857,6 +857,16 @@
   }
 }
 
+/* Pasos apilados en escritorio (movimiento reducido o sin JavaScript): rejilla de 2 por 2 en lugar de cuatro bloques en fila, para que la sección mida
+   casi lo mismo que la escena fija (la pista de 172 svh) y la página no crezca 14 por ciento. Con la escena fija, html[data-js] la reemplaza. */
+@media (min-width: 1101px) {
+  .s-escena__fijo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 var(--s-e64);
+  }
+}
+
 /* ==================== S6 Seis pantallas, claro ==================== */
 .s-pantallas {
   display: grid;
@@ -1063,6 +1073,9 @@
   font-size: var(--s-t-h3-serif);
   letter-spacing: var(--s-k-h3-serif);
 }
+
+/* Sin JavaScript las pestañas no hacen nada y los cuatro paneles ya están a la vista: se quitan los botones muertos */
+html:not([data-js]) .s-pestanas { display: none; }
 
 .s-puestos__texto {
   max-width: 520px;
@@ -1792,9 +1805,7 @@ html:not([data-js]) .s-hilo-zona::before {
   *,
   *::before,
   *::after {
-    transition-property: color, background-color, border-color, opacity !important;
-    transition-duration: 150ms !important;
-    transition-delay: 0s !important;
+    transition: none !important;
     animation: none !important;
   }
 

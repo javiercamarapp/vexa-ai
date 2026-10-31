@@ -156,3 +156,23 @@ test('Chrome: el trazo serpenteante cruza de lado a lado y no toca texto, imáge
   assert.match(salida, /OK +vp 1440: grosor 3\.5 px \(7\.5 en bandas\), (1[0-9]|[2-9]\d) cruces/);
   assert.match(salida, /OK +vp 390/);
 });
+
+test('Chrome: la altura de la página con movimiento reducido es la misma que con movimiento (± 2 %) a 1440 y a 390; sin JavaScript no pasa de 9 % más', {skip: vivo ? false : motivo}, async () => {
+  const alto = async (vp, opc) => {
+    let h = 0;
+    await sesion({vp, etiqueta: 'mov-altura', ...opc}, async (s) => {
+      await s.page.goto(URL_VIVA, {waitUntil: 'load'});
+      await dormir(2500);
+      h = await s.page.evaluate(() => document.documentElement.scrollHeight);
+    });
+    return h;
+  };
+  for (const vp of [1440, 390]) {
+    const normal = await alto(vp, {});
+    const reducido = await alto(vp, {movimiento: 'reduce'});
+    assert.ok(Math.abs(reducido - normal) / normal <= 0.02, `${vp}: reducido ${reducido} contra ${normal}`);
+  }
+  const normal = await alto(1440, {});
+  const sinJs = await alto(1440, {js: false});
+  assert.ok((sinJs - normal) / normal <= 0.09, `sin JS ${sinJs} contra ${normal}: solo los paneles de puestos y las respuestas de preguntas frecuentes pueden quedar abiertos`);
+});

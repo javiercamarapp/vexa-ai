@@ -179,16 +179,26 @@ for(const idioma of ['es','en'] as const){
     assert.ok(html.includes(dic['onb.ui.omitir'])&&html.includes(dic['onb.ui.anterior']));
   });
 }
-test('tarjeta: paso informativo usa «Siguiente»; el cierre muestra resumen, «Ir a Configuración» y «Terminar», sin «Omitir», y no repite el contador de pantalla',()=>{
+test('tarjeta: paso informativo usa «Siguiente»; el cierre no lista pantallas, muestra «Ir a Configuración» y «Terminar», sin «Omitir», y no repite el contador de pantalla',()=>{
   const t=T.es;
   const info=renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="Qué es" cuerpo="Cuerpo" {...baseTarjeta}/>);
   assert.match(info,/data-onb-primario[^>]*>Siguiente</);assert.match(info,/Pantalla 3 de 24/);
-  const cierre=renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="cierre" titulo={t('onb.tour.cierre.titulo')} cuerpo={t('onb.tour.cierre.cuerpo')} resumen={t('onb.tour.cierre.resumen',{n:24,lista:'Hoy · CFO'})} mostrarSetup irSetup={noop} {...baseTarjeta} ilu="cierre" n={80} ruta={{nombres:['Hoy','CFO'],actual:-1}}/>);
-  assert.match(cierre,/data-onb-primario[^>]*>Terminar</);assert.match(cierre,/Ir a Configuración/);assert.doesNotMatch(cierre,/Omitir recorrido/);assert.match(cierre,/Pasaste por 24 pantallas: Hoy · CFO\./);
+  const cierre=renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="cierre" titulo={t('onb.tour.cierre.titulo')} cuerpo={t('onb.tour.cierre.cuerpo')} mostrarSetup irSetup={noop} {...baseTarjeta} ilu="cierre" n={80} ruta={{nombres:[],actual:-1}}/>);
+  assert.match(cierre,/data-onb-primario[^>]*>Terminar</);assert.match(cierre,/Ir a Configuración/);assert.doesNotMatch(cierre,/Omitir recorrido/);assert.match(cierre,/Terminaste el recorrido/);assert.match(cierre,/Puedes repetirlo o saltar a cualquier pantalla desde Guía\./);assert.doesNotMatch(cierre,/Pasaste por|onb-ruta|Ya conoces cada pantalla|de tu rol/,'el cierre no afirma lo que no puede saber ni repite la ruta');
   assert.doesNotMatch(cierre,/Pantalla \d+ de/);assert.doesNotMatch(cierre,/aria-current="step"/,'en el cierre ninguna pantalla queda marcada como actual');assert.match(cierre,/ilu-grueso/,'checkmark que se dibuja');
   assert.doesNotMatch(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="cierre" titulo="x" cuerpo="y" {...baseTarjeta} mostrarSetup={false}/>),/Ir a Configuración/,'la consola de plataforma no tiene Configuración');
   assert.doesNotMatch(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="x" cuerpo="y" {...baseTarjeta} n={1}/>),/>Anterior</,'sin «Anterior» en el primer paso');
   assert.match(renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="info" titulo="x" cuerpo="y" sinObjetivo centrada {...baseTarjeta}/>),/data-centrada="true"[\s\S]*No veo este elemento/,'destino ausente: tarjeta centrada con aviso');
+});
+test('cierre sin lista falsa: el mismo texto para corto, completo y plataforma, sin «tu rol», sin número a mano y sin ruta de pantallas',()=>{
+  for(const [clave,dic] of [['es',ESP],['en',ING]] as const){
+    const cuerpo=dic['onb.tour.cierre.titulo']+' '+dic['onb.tour.cierre.cuerpo'];
+    assert.doesNotMatch(cuerpo,/tu rol|your role|cada pantalla|every screen|\d/,clave);
+    assert.equal(variables(dic['onb.tour.cierre.cuerpo']),'',clave);
+  }
+  assert.equal(ESP['onb.tour.cierre.titulo'],'Terminaste el recorrido');assert.equal(ING['onb.tour.cierre.titulo'],'You finished the tour');
+  assert.match(leer('src/components/onboarding/guia.tsx'),/ruta=\{\{nombres:cierre\?\[\]:nombres,/,'en el cierre no se pinta la ruta de pantallas');
+  assert.doesNotMatch(leer('src/components/onboarding/guia.tsx'),/onb\.tour\.cierre\.resumen/);
 });
 test('ventana de la ruta: pocas pantallas alrededor de la actual con «…» a los lados',()=>{
   const nombres=['A','B','C','D','E','F','G','H'];
@@ -264,7 +274,7 @@ test('claves del recorrido por pantallas: existen en es y en con las mismas {var
   assert.equal(CLAVES_PANTALLAS.length,Object.keys(PANTALLAS).reduce((n,h)=>n+clavesDePantalla(h).length,0));
   for(const k of CLAVES_PANTALLAS)assert.ok((CLAVES_UI as readonly string[]).includes(k),k);
   for(const h of Object.keys(PANTALLAS)){assert.ok(ESP[`onb.pant.${slugDe(h)}.desc`]);}
-  assert.equal(variables(ESP['onb.tour.ir.titulo']),'pantalla');assert.equal(variables(ESP['onb.tour.ir.cuerpo']),'nombre');assert.equal(variables(ESP['onb.tour.clic']),'nombre');assert.equal(variables(ESP['onb.tour.cierre.resumen']),'lista,n');
+  assert.equal(variables(ESP['onb.tour.ir.titulo']),'pantalla');assert.equal(variables(ESP['onb.tour.ir.cuerpo']),'nombre');assert.equal(variables(ESP['onb.tour.clic']),'nombre');assert.equal(ESP['onb.tour.cierre.resumen'],undefined);assert.equal(ING['onb.tour.cierre.resumen'],undefined);
   assert.match(ESP['onb.tour.clic'],/^Haz clic aquí/);assert.match(ING['onb.tour.clic'],/^Click here/);assert.equal(ESP['onb.tour.llevame'],undefined);assert.equal(ING['onb.tour.llevame'],undefined);
 });
 test('textos por pantalla: no prometen escrituras al lector ni dinero al operador; el cierre lleva a Configuración',()=>{

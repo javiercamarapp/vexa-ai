@@ -22,7 +22,6 @@
 .onb-avance::-webkit-progress-bar { background:var(--ui-soft); }
 .onb-avance::-webkit-progress-value { background:var(--onb-resalte); }
 .onb-avance::-moz-progress-bar { background:var(--onb-resalte); }
-.onb-tarjeta .onb-resumen { color:var(--ink); }
 .onb-tarjeta .onb-nota { padding:6px 10px; border-radius:8px; background:var(--ui-soft); font-size:12px; }
 .onb-acciones { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin:0; }
 .onb-btn, .onb-btn-sec { min-height:36px; padding:0 14px; border-radius:8px; font:500 13px/1 var(--font-ui); cursor:pointer; }

@@ -145,7 +145,7 @@ test('críticos: el aviso, la frase y la fecha del brief se arman con las cuenta
   assert.match(fraseVigilar({total: 5, listados: 3}, '5 oct 2026', (n) => fraseCriticos({grupos: n})), /^Al guardarse este brief \(5 oct 2026\) había 5 grupos de problemas con revisión crítica/);
   const panel = leer('src/components/workspace/shared-panel.tsx'), brief = leer('src/components/briefs/panel.tsx');
   assert.match(panel, /avisoDeMeta\(t,bundle\.meta\)/); assert.doesNotMatch(panel, /DEFINICION|\{bundle\.meta\.critical_notice\}/);
-  assert.match(brief, /fraseCriticosT\(tx,/); assert.doesNotMatch(brief, /DEFINICION\.grupo/);
+  assert.match(brief, /fraseCriticosT\(tx,/); assert.match(brief, /fraseCriticosT\(tx,\{grupos:n\}\),tx\)/, 'el brief pasa el traductor a fraseVigilar'); assert.doesNotMatch(brief, /DEFINICION\.grupo/);
 });
 
 test('validación del flujo de acciones: cada error lleva su código y la pantalla lo traduce; el mensaje en español y los campos no cambian', async () => {
@@ -170,6 +170,7 @@ test('citas: los marcadores de datos de terceros se rotulan en el idioma activo;
   assert.match(texto, /\[nombre\]|\[dirección\]/);
   const ing = marcasEnIdioma(texto, en);
   assert.doesNotMatch(ing, /\[nombre\]|\[dirección\]|\[dato personal oculto\]/); assert.match(ing, /\[address\]|\[name\]/); assert.match(ing, /\[personal data hidden\]/);
+  assert.equal(marcasEnIdioma('Hola [nombre], envío a [dirección]. [dato personal oculto]', en), 'Hola [name], envío a [address]. [personal data hidden]', 'las tres marcas, una por una');
   assert.equal(marcasEnIdioma(texto, es), texto); assert.equal(marcasEnIdioma(texto), texto);
   assert.equal(marcasEnIdioma('Sin marcas aquí.', en), 'Sin marcas aquí.', 'el resto de la cita no se toca');
   assert.match(leer('src/components/ui/citation.tsx'), /marcasEnIdioma\(enmascararTerceros\(quote\),t\)/);

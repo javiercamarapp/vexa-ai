@@ -115,7 +115,8 @@ test('máquina: siguiente cruza de pantalla hasta un «ir» (o lo salta si ya es
   assert.equal(tourDuenio[R(e,{tipo:'siguiente'},'/preguntale').indice].id,'preguntale.que','ya estás en la pantalla: no hay nada que apretar');
   const que=R(estadoInicial(),{tipo:'abrir',indice:idx('preguntale.que')},'/preguntale');
   assert.equal(tourDuenio[R(que,{tipo:'anterior'},'/preguntale').indice].id,tourDuenio[finOverview].id,'salta preguntale.ir y vuelve al último paso de Hoy');
-  assert.equal(tourDuenio[R(que,{tipo:'anterior'},'/otra').indice].id,'preguntale.ir','si no estás en la pantalla, el «ir» sí se muestra');
+  assert.equal(tourDuenio[R(que,{tipo:'anterior'},'/otra').indice].id,tourDuenio[finOverview].id,'hacia atrás un «ir» nunca es destino, estés donde estés (si no, el viaje automático quedaría en bucle)');
+  for(const ruta of ['/overview','/otra','/sin-acceso'])for(let i=0;i<N;i++){const antes=R(estadoInicial(),{tipo:'abrir',indice:i},ruta),sig=R(antes,{tipo:'anterior'},ruta);if(sig.indice!==antes.indice)assert.notEqual(tourDuenio[sig.indice].tipo,'ir',`Anterior desde ${tourDuenio[i].id} con ruta ${ruta}`);assert.ok(sig.indice<=antes.indice);}
   const primero=R(estadoInicial(),{tipo:'abrir'},'/overview');assert.equal(R(primero,{tipo:'anterior'},'/overview').indice,primero.indice,'no se sale por el principio');
 });
 test('máquina: retomar (abrir en el paso guardado), saltar a una pantalla (menú), terminar en el cierre y Esc que conserva el paso',()=>{
@@ -230,7 +231,7 @@ test('scroll guiado y espera del elemento: scrollIntoView suave (instantáneo co
   const guia=leer('src/components/onboarding/guia.tsx'),obj=leer('src/components/onboarding/objetivo.ts');
   assert.match(guia,/scrollIntoView\(\{behavior:reducirMovimiento\(\)\?'auto':'smooth',block:estrecha\?'start':'center'\}\)/);
   assert.match(obj,/new MutationObserver/);assert.match(obj,/tope = 4000/);assert.match(obj,/alAgotar\(\)/);
-  assert.match(guia,/centrada=cierre\|\|el===null/,'sin elemento: tarjeta centrada, sin fallar');assert.match(guia,/sinObjetivo=\{!cierre&&el===null\}/);
+  assert.match(guia,/centrada=cierre\|\|el===null/,'sin elemento: tarjeta centrada, sin fallar');assert.match(guia,/sinObjetivo=\{!cierre&&paso\.tipo!=='ir'&&el===null\}/,'en un paso «ir» sin elemento (menú plegado) no se muestra la nota: la guía navega directo');
   assert.match(guia,/addEventListener\('click',alClic,true\)/,'el clic real se escucha sin impedirlo');assert.doesNotMatch(guia,/alClic[^\n]*preventDefault|stopPropagation/);
 });
 test('CSS: capa sin eventos de puntero (no bloquea el objetivo ni la salida), anillo que pulsa y recorte que se desliza solo con movimiento permitido; forced-colors; móvil sobre la barra inferior',()=>{

@@ -7,6 +7,7 @@ import {etiquetaItem} from '../../lib/i18n/menu';
 import {todosLosItems} from '../../lib/workspace/menu.mjs';
 import {pasosDe} from '../../lib/onboarding/catalogo.mjs';
 import {enPantalla} from '../../lib/onboarding/ruta.mjs';
+import {reducir} from '../../lib/onboarding/recorrido.mjs';
 import type {Clave} from '../../lib/i18n';
 import {useOnboarding} from './contexto';
 import {BannerPantalla,CapaFoco,EtiquetaObjetivo,InvitacionRecorrido,MenuGuia,TarjetaRecorrido,type LadoEtiqueta} from './paneles';
@@ -64,7 +65,7 @@ export function GuiaPaneles(){
  useEffect(()=>{llevarRef.current=llevame;viajeRef.current=viajeAutomatico;});
  useEffect(()=>{
   if(tipo!=='ir'||el===undefined||!viajeRef.current?.())return;
-  const id=setTimeout(()=>llevarRef.current?.(),el?(reducirMovimiento()?400:1100):0);
+  const id=setTimeout(()=>llevarRef.current?.(),el?1600:0);
   return()=>clearTimeout(id);
  },[el,tipo,pasoId]);
  // 4) Seguir al elemento (scroll, tamaño, animaciones): recorte, anillo y etiqueta por CSSOM. Si desaparece (cambio de pantalla) se vuelve a buscar.
@@ -119,7 +120,7 @@ export function GuiaPaneles(){
   const cuerpo=cierre||paso.tipo==='info'?t(paso.cuerpo as Clave):t('onb.tour.ir.cuerpo',{nombre:nombreEl||pantalla});
   const centrada=cierre||el===null;
   tarjetaUi=<TarjetaRecorrido t={t} innerRef={tarjeta} tipo={paso.tipo} titulo={titulo} cuerpo={cuerpo} ilu={paso.ilu} n={n} total={total} grupoN={Math.min(paso.grupo+1,nombres.length)} grupoTotal={nombres.length}
-   ruta={{nombres,actual:cierre?-1:paso.grupo}} centrada={centrada} sinObjetivo={!cierre&&el===null} resumen={cierre?t('onb.tour.cierre.resumen',{n:nombres.length,lista:nombres.join(' · ')}):undefined} mostrarSetup={c.pista!=='plataforma'}
+   hayAnterior={reducir(c.rec,{tipo:'anterior'},c.pasos.length,c.pasos,c.ruta).indice!==c.rec.indice} ruta={{nombres,actual:cierre?-1:paso.grupo}} centrada={centrada} sinObjetivo={!cierre&&paso.tipo!=='ir'&&el===null} resumen={cierre?t('onb.tour.cierre.resumen',{n:nombres.length,lista:nombres.join(' · ')}):undefined} mostrarSetup={c.pista!=='plataforma'}
    anterior={()=>c.despachar({tipo:'anterior'})} omitir={c.omitir} primario={cierre?()=>c.despachar({tipo:'siguiente'}):c.siguiente} irSetup={c.terminarEIrASetup}/>;
   if(el&&nombreEl&&(paso.tipo==='ir'||esControl(el)))etiquetaUi=<EtiquetaObjetivo innerRef={etiqueta} texto={paso.tipo==='ir'?t('onb.tour.clic',{nombre:nombreEl}):t('onb.tour.aqui',{nombre:nombreEl})}/>;
   if(paso.clave==='que')bannerUi=<BannerPantalla t={t} pantalla={pantalla}/>;

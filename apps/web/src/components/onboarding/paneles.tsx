@@ -8,7 +8,7 @@ export type LadoEtiqueta='arriba'|'abajo'|'izq'|'der';
 export interface RutaTour {nombres:string[];actual:number}
 export interface PropsTarjeta {
  t:Traductor;innerRef?:Ref<HTMLElement>;tipo:'ir'|'info'|'cierre';titulo:string;cuerpo:string;ilu:string;
- n:number;total:number;grupoN:number;grupoTotal:number;ruta:RutaTour;
+ n:number;total:number;grupoN:number;grupoTotal:number;ruta:RutaTour;hayAnterior?:boolean;
  centrada?:boolean;sinObjetivo?:boolean;resumen?:string;mostrarSetup?:boolean;
  anterior:()=>void;omitir:()=>void;primario:()=>void;irSetup?:()=>void;
 }
@@ -17,7 +17,7 @@ export function ventanaRuta(nombres:string[],actual:number,ancho=5){
  const desde=Math.max(0,Math.min(actual-1,nombres.length-ancho)),hasta=Math.min(nombres.length,desde+ancho);
  return {items:nombres.slice(desde,hasta).map((nombre,i)=>({nombre,actual:desde+i===actual})),antes:desde>0,despues:hasta<nombres.length};
 }
-export function TarjetaRecorrido({t,innerRef,tipo,titulo,cuerpo,ilu,n,total,grupoN,grupoTotal,ruta,centrada,sinObjetivo,resumen,mostrarSetup,anterior,omitir,primario,irSetup}:PropsTarjeta){
+export function TarjetaRecorrido({t,innerRef,tipo,titulo,cuerpo,ilu,n,total,grupoN,grupoTotal,ruta,centrada,sinObjetivo,resumen,mostrarSetup,hayAnterior,anterior,omitir,primario,irSetup}:PropsTarjeta){
  const v=ventanaRuta(ruta.nombres,ruta.actual),cierre=tipo==='cierre';
  return <section ref={innerRef} className="onb-tarjeta" role="dialog" aria-labelledby="onb-t-titulo" aria-describedby="onb-t-cuerpo" data-tipo={tipo} data-centrada={centrada||undefined}>
   <div className="onb-ilu-marco" key={ilu}><Ilustracion tipo={ilu}/></div>
@@ -34,7 +34,7 @@ export function TarjetaRecorrido({t,innerRef,tipo,titulo,cuerpo,ilu,n,total,grup
   </ol>}
   <div className="onb-acciones">
    {!cierre&&<button type="button" className="onb-btn-sec" onClick={omitir}>{t('onb.ui.omitir')}</button>}
-   {n>1&&<button type="button" className="onb-btn-sec" onClick={anterior}>{t('onb.ui.anterior')}</button>}
+   {(hayAnterior??n>1)&&<button type="button" className="onb-btn-sec" onClick={anterior}>{t('onb.ui.anterior')}</button>}
    {cierre&&mostrarSetup&&irSetup&&<button type="button" className="onb-btn-sec" onClick={irSetup}>{t('onb.tour.cierre.setup')}</button>}
    <button type="button" className="onb-btn" data-onb-primario onClick={primario}>{cierre?t('onb.ui.terminar'):t('onb.ui.siguiente')}</button>
   </div>

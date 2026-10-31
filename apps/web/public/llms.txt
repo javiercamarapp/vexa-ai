@@ -27,19 +27,19 @@ Notas para quien cite este sitio. Ingreso bruto, nunca margen. Lo desconocido di
 
 ## Empresa y contacto
 
-- [Solicita acceso y revisa tus cifras con su evidencia.](https://rovaq.ai/s/md/es/solicitar-acceso.398d38fa.md): Escríbenos con tu puesto y las herramientas que usas. Te decimos qué se puede cargar hoy y qué sigue en hoja de ruta. El precio todavía no está publicado.
+- [Solicita acceso y revisa tus cifras con su evidencia.](https://rovaq.ai/s/md/es/solicitar-acceso.4ff7c35c.md): Escríbenos con tu puesto y las herramientas que usas. Te decimos qué se puede cargar hoy y qué sigue en hoja de ruta. El precio todavía no está publicado.
 - [Versión desplegada y reporte de problemas](https://rovaq.ai/s/md/es/estado.7474ed99.md): Cómo identificar la versión desplegada de Rovaq AI y cómo reportar un problema. No es un acuerdo de nivel de servicio ni una promesa de disponibilidad.
 
 ## Blog
 
-- [Blog de Rovaq AI](https://rovaq.ai/s/md/es/blog.9d68da58.md): Artículos sobre cómo leer reembolsos, procedencia de cifras, puntos de dolor y decisiones con evidencia en negocios que venden por marketplaces.
-- [Los reembolsos no son un costo fijo: son una fuga que se puede localizar](https://rovaq.ai/s/md/es/a1.dc374506.md): Un total único de reembolsos no dice qué atender primero. Aprende a leer el dinero devuelto por canal, producto y mes, y qué lleva un paquete de evidencia.
-- [De dónde sale cada número: la procedencia como requisito, no como adorno](https://rovaq.ai/s/md/es/a2.504aaa4d.md): Un tablero sin procedencia obliga a creerle. Con fecha de corte, fuente y lo que aún no se sabe, una cifra se puede discutir. Así lo hacemos en Rovaq AI.
-- [La IA clasifica y redacta; las personas deciden](https://rovaq.ai/s/md/es/a3.19545b7e.md): Una herramienta que inventa importes pierde la confianza en el primer reporte. Explicamos por qué la IA no crea cifras y una persona decide cada acción.
-- [Un puesto, una vista: por qué cada persona ve solo lo que le toca](https://rovaq.ai/s/md/es/a4.3395ba95.md): Mostrar menos da seguridad y claridad. Las vistas de administrador del espacio, analista, operador y lectura, con permisos decididos en el servidor.
-- [Tus exportaciones de marketplace ya son datos: cómo cargarlas con procedencia](https://rovaq.ai/s/md/es/a5.c8277589.md): Antes de esperar un conector directo, tu historial en Excel y CSV puede cargarse con vista previa y conservar el origen de cada fila. Esto sí se puede hoy.
-- [Puntos de dolor: del texto libre de las conversaciones a una prioridad con evidencia](https://rovaq.ai/s/md/es/a6.409dc5e3.md): Un tema repetido en conversaciones no es un tema que importa. Cómo pasar del texto libre de tus tickets a una prioridad con tamaño, evidencia y vacíos.
-- [Una recomendación debe poder discutirse: evidencia, aprobación y resultado](https://rovaq.ai/s/md/es/a8.03a213af.md): Una sugerencia sin evidencia se ignora. Con evidencia, responsable y registro del resultado se vuelve hábito del equipo: propuesta, decisión y resultado.
+- [Blog de Rovaq AI](https://rovaq.ai/s/md/es/blog.367a1ccd.md): Artículos sobre cómo leer reembolsos, procedencia de cifras, puntos de dolor y decisiones con evidencia en negocios que venden por marketplaces.
+- [Los reembolsos no son un costo fijo: son una fuga localizable](https://rovaq.ai/s/md/es/a1.ef87e5df.md): Un total único de reembolsos no dice qué atender primero. Aprende a leer el dinero devuelto por canal, producto y mes, y qué lleva un paquete de evidencia.
+- [De dónde sale cada número: la procedencia es un requisito](https://rovaq.ai/s/md/es/a2.b4af56aa.md): Un tablero sin procedencia obliga a creerle. Con fecha de corte, fuente y lo que aún no se sabe, una cifra se puede discutir. Así lo hacemos en Rovaq AI.
+- [La IA clasifica y redacta; las personas deciden](https://rovaq.ai/s/md/es/a3.8d66b778.md): Una herramienta que inventa importes pierde la confianza en el primer reporte. Explicamos por qué la IA no crea cifras y una persona decide cada acción.
+- [Un puesto, una vista: por qué cada persona ve solo lo que le toca](https://rovaq.ai/s/md/es/a4.57fb6130.md): Mostrar menos da seguridad y claridad. Las vistas de administrador del espacio, analista, operador y lectura, con permisos decididos en el servidor.
+- [Tus exportaciones de marketplace ya son datos: cárgalas con origen](https://rovaq.ai/s/md/es/a5.ff7ce6e3.md): Antes de esperar un conector directo, tu historial en Excel y CSV puede cargarse con vista previa y conservar el origen de cada fila. Esto sí se puede hoy.
+- [Puntos de dolor: del texto libre a una prioridad con evidencia](https://rovaq.ai/s/md/es/a6.b9efa70a.md): Un tema repetido en conversaciones no es un tema que importa. Cómo pasar del texto libre de tus tickets a una prioridad con tamaño, evidencia y vacíos.
+- [Una recomendación debe poder discutirse: evidencia y resultado](https://rovaq.ai/s/md/es/a8.23ae0196.md): Una sugerencia sin evidencia se ignora. Con evidencia, responsable y registro del resultado se vuelve hábito del equipo: propuesta, decisión y resultado.
 
 ## Referencia completa
 

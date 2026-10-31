@@ -72,7 +72,7 @@ Walk through the product with example data. No data is from a customer.
 - Workspace administrator. Configures, decides and approves. Manages team, notices and retention. All screens, the team, notices and retention.
 - Analyst. Investigates, prepares and proposes. Sees money and imports files. Money, problems, pain points and imports. Proposes and does not approve.
 - Operator. Carries out the actions assigned to them. Sees problems and actions, without money figures. Problems, assigned actions and evidence. No money figures.
-- Read-only. Reads with read-only access, with no risk of changing anything. The screens that apply to them, unable to modify data, connections or decisions.
+- Read-only. View access only, with no risk of changing anything. The screens that apply to them, unable to modify data, connections or decisions.
 
 Finance and customer experience read the same problem: the money that is returned and the reason it is returned.
 
@@ -194,9 +194,9 @@ Request access: https://rovaq.ai/en/request-access
 - [Deployed version and problem reports](https://rovaq.ai/en/status)
 - [Rovaq AI blog](https://rovaq.ai/en/blog)
 - [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/en/blog/refund-leak-you-can-locate)
-- [Where every number comes from: provenance as a requirement, not decoration](https://rovaq.ai/en/blog/where-every-number-comes-from)
+- [Where every number comes from: provenance is a requirement](https://rovaq.ai/en/blog/where-every-number-comes-from)
 - [AI classifies and drafts; people decide](https://rovaq.ai/en/blog/ai-classifies-people-decide)
 - [One role, one view: why each role sees only what belongs to it](https://rovaq.ai/en/blog/one-role-one-view)
-- [Your marketplace exports are already data: how to load them with provenance](https://rovaq.ai/en/blog/marketplace-exports-are-data)
-- [Pain points: from free text in conversations to a priority backed by evidence](https://rovaq.ai/en/blog/pain-points-from-text-to-priority)
-- [A recommendation must be debatable: evidence, approval and outcome](https://rovaq.ai/en/blog/a-recommendation-must-be-debatable)
+- [Your marketplace exports are already data: load them with provenance](https://rovaq.ai/en/blog/marketplace-exports-are-data)
+- [Pain points: from free text to a priority backed by evidence](https://rovaq.ai/en/blog/pain-points-from-text-to-priority)
+- [A recommendation must be debatable: evidence and outcome](https://rovaq.ai/en/blog/a-recommendation-must-be-debatable)

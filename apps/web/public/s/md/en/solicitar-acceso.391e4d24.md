@@ -31,3 +31,5 @@ We review your case and tell you what can be loaded or connected today.
 Pricing is not published yet.
 
 ## Write to us
+
+To write to us, use the contact at https://rovaq.ai/en/request-access.

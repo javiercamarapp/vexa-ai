@@ -1,5 +1,5 @@
 ---
-title: Read-only | Reads Without Any Risk of Changing Anything
+title: Read-only | Look Without Risk of Changing Data | Rovaq AI
 description: The read-only role reads the screens that apply to it and cannot modify data, connections or decisions. Useful for leadership and finance teams.
 url: https://rovaq.ai/en/use-cases/viewer
 canonical_url: https://rovaq.ai/en/use-cases/viewer
@@ -12,7 +12,7 @@ robots: noindex
 
 # Read-only: read without any risk of changing anything
 
-Reads with read-only access.
+View access only.
 
 ## What they can read
 

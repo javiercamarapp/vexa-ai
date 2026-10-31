@@ -14,7 +14,7 @@ Notes for anyone citing this site. Gross revenue, never margin. What is unknown 
 - [Today: four figures with period, formula and coverage](https://rovaq.ai/s/md/en/hoy.f2a41eb7.md): The Today screen gathers four figures with period, formula and coverage. When a figure is partial, Rovaq AI says so and never shows it as a full total.
 - [Pain points: which reason repeats and what it carries](https://rovaq.ai/s/md/en/puntos-de-dolor.a2fb8949.md): From support conversations to a bubble map by volume or money. Export without personal data and tell what merely repeats from what really matters.
 - [Ask your data: calculated figures, visible steps](https://rovaq.ai/s/md/en/pregunta-a-tus-datos.e68e3782.md): Ask about your sales and customers and get calculated figures with every step in view. It uses rules and read-only tools and respects a monthly budget.
-- [To decide: proposal, a person decides, outcome recorded](https://rovaq.ai/s/md/en/por-decidir.ee14c52a.md): Each proposal comes with evidence, a responsible person and a recorded outcome. A person decides with Proceed, Adjust or Dismiss; nothing runs on its own.
+- [To decide: proposal, a person decides, outcome recorded](https://rovaq.ai/s/md/en/por-decidir.7af01cba.md): Each proposal comes with evidence, a responsible person and a recorded outcome. A person decides with Proceed, Adjust or Dismiss; nothing runs on its own.
 - [Data trust: freshness, coverage and what is unknown](https://rovaq.ai/s/md/en/confianza-de-los-datos.846997dc.md): Before you decide, check the date your data reaches, how much it covers and what is still unknown. It is trust in the data, not a security certification.
 - [Finance: a report by currency, bases never mixed](https://rovaq.ai/s/md/en/finanzas.77ae8ab8.md): Gross revenue reports by currency and by cutoff, bases never mixed. Rovaq AI does not calculate margin and flags any figure with incomplete reconciliation.
 
@@ -23,23 +23,23 @@ Notes for anyone citing this site. Gross revenue, never margin. What is unknown 
 - [Workspace administrator: configure, decide and approve](https://rovaq.ai/s/md/en/propietario.7af192f3.md): The workspace administrator sets up the organization, connects sources and approves actions. Their screens, their decisions and what gets recorded.
 - [Analyst: investigate, prepare and propose](https://rovaq.ai/s/md/en/analista.2bd950ae.md): The analyst investigates refunds, problems and pain points, prepares evidence and proposes actions. See where proposing ends and approving begins.
 - [Operator: carries out the actions assigned to you](https://rovaq.ai/s/md/en/operador.1f8c652b.md): The operator receives assigned actions and records the result. They see actions and evidence, not money figures, and leave a record of what was done.
-- [Read-only: read without any risk of changing anything](https://rovaq.ai/s/md/en/lector.f202a688.md): The read-only role reads the screens that apply to it and cannot modify data, connections or decisions. Useful for leadership and finance teams.
+- [Read-only: read without any risk of changing anything](https://rovaq.ai/s/md/en/lector.fd08c600.md): The read-only role reads the screens that apply to it and cannot modify data, connections or decisions. Useful for leadership and finance teams.
 
 ## Company and contact
 
-- [Request access and review your figures with their evidence.](https://rovaq.ai/s/md/en/solicitar-acceso.c899afd8.md): Write to us with your role and the tools you use. We tell you what can be loaded today and what is still on the roadmap. Pricing is not published yet.
+- [Request access and review your figures with their evidence.](https://rovaq.ai/s/md/en/solicitar-acceso.391e4d24.md): Write to us with your role and the tools you use. We tell you what can be loaded today and what is still on the roadmap. Pricing is not published yet.
 - [Deployed version and problem reports](https://rovaq.ai/s/md/en/estado.3d4685f6.md): How to identify the deployed version of Rovaq AI and how to report a problem. This page is not an availability commitment or a service level agreement.
 
 ## Blog
 
-- [Rovaq AI blog](https://rovaq.ai/s/md/en/blog.0925dd4a.md): Articles on reading refunds, the provenance of figures, pain points and evidence-based decisions for businesses that sell through marketplaces.
-- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/s/md/en/a1.f9a59998.md): A single refund total does not say what to tackle first. Learn to read returned money by channel, product and month, and what an evidence package holds.
-- [Where every number comes from: provenance as a requirement, not decoration](https://rovaq.ai/s/md/en/a2.507e7f22.md): A dashboard without provenance forces you to believe it. With a cut-off date, a source and what is still unknown, a figure can be debated. Here is how.
-- [AI classifies and drafts; people decide](https://rovaq.ai/s/md/en/a3.6a828f5c.md): A tool that invents amounts loses trust at the first report. We explain the principle that AI never creates figures and that a person decides every action.
-- [One role, one view: why each role sees only what belongs to it](https://rovaq.ai/s/md/en/a4.8d9556b0.md): Showing less aids security and clarity. How views divide among workspace administrator, analyst, operator and read-only, with access decided on the server.
-- [Your marketplace exports are already data: how to load them with provenance](https://rovaq.ai/s/md/en/a5.4e8414e1.md): Before waiting for a direct connector, your Excel and CSV history can be loaded with a preview and keep where each row came from. This works today.
-- [Pain points: from free text in conversations to a priority backed by evidence](https://rovaq.ai/s/md/en/a6.c5d20ca5.md): A topic repeated in conversations is not a topic that matters. How to go from free text in your tickets to a priority with size, evidence and gaps.
-- [A recommendation must be debatable: evidence, approval and outcome](https://rovaq.ai/s/md/en/a8.14360795.md): A suggestion without evidence gets ignored. With evidence, a responsible person and a recorded outcome it becomes a team habit: proposal, decision, result.
+- [Rovaq AI blog](https://rovaq.ai/s/md/en/blog.8568204e.md): Articles on reading refunds, the provenance of figures, pain points and evidence-based decisions for businesses that sell through marketplaces.
+- [Refunds are not a fixed cost: they are a leak you can locate](https://rovaq.ai/s/md/en/a1.7700922c.md): A single refund total does not say what to tackle first. Learn to read returned money by channel, product and month, and what an evidence package holds.
+- [Where every number comes from: provenance is a requirement](https://rovaq.ai/s/md/en/a2.fa52321d.md): A dashboard without provenance forces you to believe it. With a cut-off date, a source and what is still unknown, a figure can be debated. Here is how.
+- [AI classifies and drafts; people decide](https://rovaq.ai/s/md/en/a3.60574939.md): A tool that invents amounts loses trust at the first report. We explain the principle that AI never creates figures and that a person decides every action.
+- [One role, one view: why each role sees only what belongs to it](https://rovaq.ai/s/md/en/a4.b37b7d9a.md): Showing less aids security and clarity. Views for workspace administrator, analyst, operator and read-only roles, with access decided on the server.
+- [Your marketplace exports are already data: load them with provenance](https://rovaq.ai/s/md/en/a5.047666d0.md): Before waiting for a direct connector, your Excel and CSV history can be loaded with a preview and keep where each row came from. This works today.
+- [Pain points: from free text to a priority backed by evidence](https://rovaq.ai/s/md/en/a6.aa238cbf.md): A topic repeated in conversations is not a topic that matters. How to go from free text in your tickets to a priority with size, evidence and gaps.
+- [A recommendation must be debatable: evidence and outcome](https://rovaq.ai/s/md/en/a8.7da82e32.md): A suggestion without evidence gets ignored. With evidence, a responsible person and a recorded outcome it becomes a team habit: proposal, decision, result.
 
 ## Full reference
 

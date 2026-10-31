@@ -322,6 +322,8 @@ describe('S6 Seis pantallas', () => {
       assert.equal((h.match(/data-pantalla-sel=/g) ?? []).length, 6, 'selector de las seis pantallas');
       assert.match(h, /role="region" aria-roledescription="carrusel"[^>]*tabindex="0"/, 'carrusel enfocable');
       assert.doesNotMatch(h, /s-indicador/, 'sin rojo en las miniaturas');
+      // T22 (axe landmark-unique): la región del carrusel no repite el nombre de la sección (aria-labelledby = el titular)
+      assert.doesNotMatch(h, /role="region" aria-roledescription="carrusel" aria-label="[^"]*(Seis pantallas|Six screens)/, 'el carrusel lleva un nombre distinto del de su sección');
     });
   }
 });

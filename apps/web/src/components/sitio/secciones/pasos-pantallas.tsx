@@ -67,7 +67,7 @@ export function Pantallas({lang, t}: {lang: Lang; t: TextosPortada}) {
             </button>
           ))}
         </div>
-        <div className="s-pantallas" role="region" aria-roledescription="carrusel" aria-label={p.titulo} tabIndex={0} data-pantallas="">
+        <div className="s-pantallas" role="region" aria-roledescription="carrusel" aria-label={p.etiqueta} tabIndex={0} data-pantallas="">
           {p.items.map((it, i) => {
             const href = enlaceInterno(it.href);
             const clave = CAPTURA_PANTALLA[i];

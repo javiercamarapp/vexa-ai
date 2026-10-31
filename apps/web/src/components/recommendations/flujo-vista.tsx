@@ -40,7 +40,7 @@ const ICONO:Record<string,string>={propuesta:'sparkle',ajustada:'settings',respo
 export function LineaFlujo({item,miembros}:{item:FlowItem;miembros:Miembro[]}){
  const t=useT(),idioma=useIdioma(),filas=construirLinea({item,eventos:item.flow?.events??[],nombre:id=>persona(id,miembros,t)});
  return <details className={css.linea}><summary>{t('tr.recs.lineaTiempo',{n:filas.length})}</summary>
-  <Timeline events={filas.map(f=>({key:f.clave,title:f.titulo,icon:ICONO[f.tipo]??'message',meta:<>{f.quien} · <time dateTime={f.cuando}>{horaTxt(f.cuando,idioma)}</time></>,body:f.detalle?textoLegible(f.detalle):undefined}))}/>
+  <Timeline events={filas.map(f=>({key:f.clave,title:f.titulo,icon:ICONO[f.tipo]??'message',meta:<>{f.quien} · <time dateTime={f.cuando}>{horaTxt(f.cuando,idioma)}</time></>,body:f.detalle?textoLegible(f.detalle,t):undefined}))}/>
  </details>;
 }
 export function ComparacionBloque({c}:{c:NonNullable<FlowEvent['comparison']>}){
@@ -63,12 +63,12 @@ export function SeguimientoBloque({item,miembros,acciones}:{item:FlowItem;miembr
     <div><dt>{t('tr.recs.prioridad')}</dt><dd>{prioridad}</dd></div>
     <div><dt>{t('tr.recs.intervencion')}</dt><dd>{apr.interventionId?<LinkButton href={'/interventions#intervention-'+apr.interventionId} size="sm" variant="ghost" icon={<Arrow/>}>{t('acc.abrirInterv')}</LinkButton>:t('tr.recs.sinVincular')}</dd></div>
    </dl>
-   {apr.comment&&<p className="card-lead">{t('tr.recs.comentarioAprob')}{textoLegible(apr.comment)}</p>}
+   {apr.comment&&<p className="card-lead">{t('tr.recs.comentarioAprob')}{textoLegible(apr.comment,t)}</p>}
    {acciones}
   </section>
   {res&&<section className={css.resultado} aria-label={t('tr.recs.resultadoAria')}><h4>{t('tr.recs.resultado')}</h4>
    <p><StatusChip tone={res.outcome==='yes'?'ok':res.outcome==='partial'?'warn':'bad'}>{resultadoTxt(t,res.outcome??'')}</StatusChip></p>
-   <p className="card-lead">{textoLegible(res.note??'')}</p>
+   <p className="card-lead">{textoLegible(res.note??'',t)}</p>
    <p className={css.rotulo}>{t('tr.recs.registradoPor',{quien:persona(res.actorId,miembros,t),fecha:fechaTxt(res.createdAt,idioma)})}</p>
    {res.comparison?<ComparacionBloque c={res.comparison}/>:<p className={css.rotulo}>{t('tr.recs.sinComparacion')}</p>}
   </section>}

@@ -1,6 +1,7 @@
 // Presentación de las recomendaciones (sin red, sin React). NO modifica lo guardado: solo traduce etiquetas de la taxonomía en pantalla cuando es seguro
 // (coincidencia exacta con una categoría conocida) y deriva el siguiente paso del estado real de la recomendación.
 import {CATEGORIAS} from './categorias.mjs';
+import {idiomaDe} from './trad.mjs';
 const PARES=Object.entries(CATEGORIAS).sort((a,b)=>b[0].length-a[0].length);
 const escapa=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const RE=new RegExp('(?<![\\p{L}\\p{N}])('+PARES.map(([en])=>escapa(en)).join('|')+')(?![\\p{L}\\p{N}])','gu');
@@ -34,7 +35,8 @@ export function resumenRecomendaciones(items){
 
 const CAUSAL_ES={unassessed:'sin evaluar',hypothesis:'causa probable, no confirmada',confirmed:'causa confirmada',retracted:'causa retractada',candidate:'candidata',supported:'con respaldo',unsupported:'sin respaldo',insufficient:'evidencia insuficiente'};
 /** «unassessed» -> «Sin evaluar». Un estado desconocido se muestra tal cual (no se inventa una traducción). */
-export function etiquetaCausal(estado){const e=CAUSAL_ES[estado];return e?e.charAt(0).toUpperCase()+e.slice(1):estado;}
+const CAUSAL_EN={unassessed:'not assessed',hypothesis:'probable cause, not confirmed',confirmed:'confirmed cause',retracted:'retracted cause',candidate:'candidate',supported:'supported',unsupported:'unsupported',insufficient:'insufficient evidence'};
+export function etiquetaCausal(estado,t=null){const e=(idiomaDe(t)==='en'?CAUSAL_EN:CAUSAL_ES)[estado];return e?e.charAt(0).toUpperCase()+e.slice(1):estado;}
 /** Versión del generador vigente: las recomendaciones guardadas con otra son inmutables y se pueden regenerar (flujo de propuesta, con aprobación). */
 export const GENERADOR_VIGENTE='conditioned-rules-v2';
 export const esDeGeneradorAnterior=item=>!!item?.generatorVersion&&item.generatorVersion!==GENERADOR_VIGENTE;
@@ -50,8 +52,10 @@ const PLANTILLAS_V1=[
 ];
 const ESTADO_RE=/Estado causal:? (unassessed|hypothesis|confirmed|retracted|candidate|supported|unsupported|insufficient)\b:?\.?/gu;
 /** Texto de una recomendación o brief listo para leer: taxonomía en español, plantillas v1 resumidas y estados causales traducidos. NO modifica lo guardado. */
-export function textoLegible(texto){
+export function textoLegible(texto,tr=null){
  if(typeof texto!=='string'||!texto)return texto;
+ // Inglés: la taxonomía ya está en inglés y las plantillas guardadas son texto del sistema; solo se traduce la etiqueta de presentación «Estado causal».
+ if(idiomaDe(tr)==='en')return texto.replace(ESTADO_RE,(_,e)=>'Causal status: '+(CAUSAL_EN[e]??e)+'.');
  let t=traducirTaxonomia(texto);
  for(const [re,por] of PLANTILLAS_V1)t=t.replace(re,por);
  t=t.replace(ESTADO_RE,(_,e)=>'Estado causal: '+(CAUSAL_ES[e]??e)+'.').replace(/(Estado causal: [^.]+\.) los /u,'$1 Los ');

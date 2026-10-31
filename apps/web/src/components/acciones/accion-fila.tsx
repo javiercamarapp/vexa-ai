@@ -60,16 +60,16 @@ export function AccionFila({item,members,busy,conflict,operate,vista,descartada=
    <div className="ac-linea"><span className="pc-estado" data-tono={descartada?'off':PRIO_TONO[prioKey]}>{descartada?t('acc.descartada'):PRIO[item.priority]?t(PRIO[item.priority]):item.priority}</span>{conFlujo&&!descartada&&<span className="ac-etapa">{ETAPA[etapa]?t(ETAPA[etapa]):etapa} · v{item.version}</span>}{item.stale&&<span className="pc-estado" data-tono="warn">{t('acc.evCambio')}</span>}</div>
    <h3 className="ac-t">{titulo}</h3>
    <TituloAuto problemId={item.problemId} label={item.title}/>
-   <p className="ac-a">{textoLegible(item.action)}</p>
-   {vista==='por-decidir'&&!descartada&&<p className="ac-w"><b>{t('acc.porQue')}</b> {textoLegible(item.rationale)}</p>}
-   {descartada&&motivoDescarte&&<p className="ac-w"><b>{t('acc.motivo')}</b> {textoLegible(motivoDescarte)}</p>}
-   {vista==='en-curso'&&aprobada?.comment&&<p className="ac-w"><b>{t('acc.alAprobar')}</b> {textoLegible(aprobada.comment)}</p>}
-   {vista==='resultados'&&resuelta&&<p className="ac-w"><span className="pc-estado" data-tono={resuelta.outcome==='yes'?'ok':resuelta.outcome==='partial'?'warn':'bad'}>{RESULT[resuelta.outcome??'']?t(RESULT[resuelta.outcome??'']):resuelta.outcome}</span> {textoLegible(resuelta.note??'')} <i>{t('acc.lasEscribioPersona')}</i></p>}
+   <p className="ac-a">{textoLegible(item.action,t)}</p>
+   {vista==='por-decidir'&&!descartada&&<p className="ac-w"><b>{t('acc.porQue')}</b> {textoLegible(item.rationale,t)}</p>}
+   {descartada&&motivoDescarte&&<p className="ac-w"><b>{t('acc.motivo')}</b> {textoLegible(motivoDescarte,t)}</p>}
+   {vista==='en-curso'&&aprobada?.comment&&<p className="ac-w"><b>{t('acc.alAprobar')}</b> {textoLegible(aprobada.comment,t)}</p>}
+   {vista==='resultados'&&resuelta&&<p className="ac-w"><span className="pc-estado" data-tono={resuelta.outcome==='yes'?'ok':resuelta.outcome==='partial'?'warn':'bad'}>{RESULT[resuelta.outcome??'']?t(RESULT[resuelta.outcome??'']):resuelta.outcome}</span> {textoLegible(resuelta.note??'',t)} <i>{t('acc.lasEscribioPersona')}</i></p>}
   </div>
   {vista==='por-decidir'&&!descartada&&<dl className="ac-cifras" aria-label={t('acc.evidAria')}>
    <Cifra etiqueta={t('acc.citas')} valor={nf.format(item.evidenceCount)} pie={t('acc.verifGuardar')} c={6}/>
    <Cifra etiqueta={t('acc.version')} valor={'v'+item.version} pie={item.history.length>1?t('acc.enHistorial',{n:nf.format(item.history.length)}):t('acc.sinAjustes')}/>
-   <Cifra etiqueta={t('acc.causa')} valor={CAUSAL[item.causalState]?t(CAUSAL[item.causalState]):etiquetaCausal(item.causalState)} pie={t('acc.noDemuestra')}/>
+   <Cifra etiqueta={t('acc.causa')} valor={CAUSAL[item.causalState]?t(CAUSAL[item.causalState]):etiquetaCausal(item.causalState,t)} pie={t('acc.noDemuestra')}/>
   </dl>}
   {vista==='en-curso'&&<div className="ac-curso">{conFlujo&&<EtapasFlujo etapa={etapa}/>}
    <dl className="ac-datos"><div><dt>{t('acc.responsable')}</dt><dd>{resp}</dd></div><div><dt>{t('acc.compromiso')}</dt><dd>{fechaTxt(aprobada?.dueDate,idioma)}</dd></div><div><dt>{t('acc.borradores')}</dt><dd>{item.drafts.length>0?nf.format(item.drafts.length):'—'}</dd></div></dl></div>}
@@ -98,9 +98,9 @@ export function AccionFila({item,members,busy,conflict,operate,vista,descartada=
   </>}
   <Drawer open={evidence} onClose={()=>setEvidence(false)} width={420} title={titulo} subtitle={t('acc.drawerSub')} footer={<LinkButton href={'/problems/'+item.problemId+'?'+evidenceQuery.toString()} size="sm" variant="primary" icon={<Arrow/>}>{t('acc.verProblema')}</LinkButton>}>
    <div className="stack">
-    <p className="card-lead">{textoLegible(item.rationale)}</p>
+    <p className="card-lead">{textoLegible(item.rationale,t)}</p>
     <p className="card-lead">{t('acc.noCausalidad')}</p>
-    <details className={css.fold}><summary>{t('acc.condiciones',{n:item.preconditions.length})}</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{textoLegible(v)}</li>)}</ul></details>
+    <details className={css.fold}><summary>{t('acc.condiciones',{n:item.preconditions.length})}</summary><ul>{item.preconditions.map((v,i)=><li key={i}>{textoLegible(v,t)}</li>)}</ul></details>
     <section><h3>{t('acc.evidRec',{n:full?full.evidenceRefs.length:item.evidenceCount})}</h3>{openState==='loading'&&<WaitStatus {...ESPERA.evidencia}/>}{openState==='unavailable'&&<p className="state state-error" role="alert">{t('acc.evidNoDisp')}</p>}{openState==='error'&&<p className="state state-error" role="alert">{t('acc.evidError')} <Button size="sm" icon={<Refresh/>} onClick={openEvidence}>{t('acc.reintentar')}</Button></p>}{full&&full.evidenceRefs.map((e,i)=><Citation key={e.runId+':'+e.messageRevisionId+':'+i} quote={e.quote} role={e.role} category={e.category} messageRevisionId={e.messageRevisionId}/>)}</section>
     <div className="meta-row"><span className="chip">{t('acc.problemaV',{n:item.problemVersion})}</span><IdChip value={item.snapshotId} label={t('acc.publicacion')}/><IdChip value={item.scopeHash} label={t('acc.alcance')}/></div>
     <details><summary>{t('acc.historialVer',{n:item.history.length})}</summary><ol>{item.history.map(v=><li key={v.version}><strong>v{v.version} · {v.status==='dismissed'?t('acc.vDescartada'):t('acc.vPropuesta')}</strong><p>{v.action}</p><p>{v.reason}</p><p>{t('acc.respLinea',{r:v.ownerId??t('acc.sinAsignar'),a:v.actorId})}<time>{v.createdAt}</time></p></li>)}</ol></details>

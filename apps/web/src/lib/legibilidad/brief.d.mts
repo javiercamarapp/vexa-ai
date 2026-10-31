@@ -1,3 +1,4 @@
+import type {Tr} from './trad.mjs';
 import type {Metric} from '../workspace/contracts';
 import type {BriefDocument,BriefProblem,BriefAction} from '../../../../../packages/briefs/index.mjs';
 export type CifraBrief={tipo:'exacta'|'subtotal'|'sin_cobertura'|'desconocida';valor:string|null;rotulo:string|null};
@@ -8,6 +9,6 @@ export function accionPrincipal(top3:readonly BriefProblem[]|null|undefined,acti
 export function resumenVigilar(doc:Pick<BriefDocument,'critical'>&{selection?:{criticalCandidates:number}}|null|undefined):{total:number|null;listados:number;omitidos:number|null};
 export function criticosAparte(doc:Pick<BriefDocument,'top3'|'critical'>):{nuevos:BriefProblem[];repetidos:BriefProblem[]};
 export const ESTADO_ACCION:Readonly<Record<string,string>>;
-export function estadoAccion(s:string):string;
-export function tituloEs(t:string):string;
+export function estadoAccion(s:string,t?:Tr|null):string;
+export function tituloEs(titulo:string,t?:Tr|null):string;
 export function fraseVigilar(vig:{total:number|null;listados:number},fechaCorte:string|null|undefined,fraseGrupos:(n:number)=>string):string;

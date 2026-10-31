@@ -1,7 +1,11 @@
 // Lectura humana de los análisis de conversaciones: qué hallazgo dejó cada uno, su severidad y cuánto del total de conversaciones cubren.
 import {etiquetaCategoria} from './categorias.mjs';
+import {idiomaDe} from './trad.mjs';
 export const SEVERIDAD = Object.freeze({low: 'Baja', medium: 'Media', high: 'Alta', critical: 'Crítica', unknown: 'Sin determinar'});
 const ORDEN = ['critical', 'high', 'medium', 'low', 'unknown'];
+const SEVERIDAD_EN = Object.freeze({low: 'Low', medium: 'Medium', high: 'High', critical: 'Critical', unknown: 'Undetermined'});
+/** Severidad de un hallazgo en el idioma del traductor `t` (español sin traductor). */
+export const severidadDe = (s, t = null) => (idiomaDe(t) === 'en' ? SEVERIDAD_EN : SEVERIDAD)[s] ?? s;
 export const tonoSeveridad = (s) => (s === 'critical' || s === 'high' ? 'bad' : s === 'medium' ? 'warn' : s === 'low' ? 'ok' : 'neutral');
 /** Evidencia de una ejecución (`/api/extraction/:id/evidence`) -> título del hallazgo principal, severidad máxima y nº de citas. null = aún no consultada. */
 export function resumenEvidencia(ev) {

@@ -2,13 +2,15 @@
 // en filas legibles, las agrupa por categoría, numera los grupos del mismo título («grupo 2 de 14»), ordena y filtra.
 // Honestidad: lo desconocido es null y nunca se convierte en 0; el importe solo existe si el registro trae uno exacto.
 import {etiquetaCategoria} from './categorias.mjs';
+import {idiomaDe} from './trad.mjs';
 const norm=s=>String(s??'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
 const clave=titulo=>norm(titulo)||'sin-categoria';
 const exacto=m=>!!m&&m.amount_minor!==null&&m.amount_minor!==undefined&&/^-?\d+$/.test(String(m.amount_minor));
 const primaria=item=>item?.metrics?.find(x=>x.kind==='exposure')??item?.metrics?.[0]??null;
 const SEV={critical:4,high:3,medium:2,low:1};
 const SEV_ES={critical:'Crítica',high:'Alta',medium:'Media',low:'Baja'};
-export const etiquetaSeveridad=v=>v===null||v===undefined||v===''?null:(SEV_ES[v]??String(v));
+const SEV_EN={critical:'Critical',high:'High',medium:'Medium',low:'Low'};
+export const etiquetaSeveridad=(v,t=null)=>v===null||v===undefined||v===''?null:((idiomaDe(t)==='en'?SEV_EN:SEV_ES)[v]??String(v));
 /** Chip de severidad coherente con la revisión crítica: si el grupo tiene señales críticas pero su severidad registrada es baja/media, NO se dice «baja» a secas (se contradice con
  *  «Revisión crítica»): se rotula «mixta» y la ayuda explica la diferencia. Devuelve null si no hay severidad. */
 export function chipSeveridad(severidad,critico){

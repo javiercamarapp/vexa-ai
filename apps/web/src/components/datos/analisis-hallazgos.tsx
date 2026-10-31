@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
 import type {TrendsView} from '../../../../../packages/workspace-service/trends.mjs';
-import {resumenEvidencia,SEVERIDAD,tonoSeveridad,type ResumenEvidencia} from '../../lib/legibilidad/hallazgos.mjs';
+import {resumenEvidencia,severidadDe,tonoSeveridad,type ResumenEvidencia} from '../../lib/legibilidad/hallazgos.mjs';
 import {coberturaDeTendencias} from '../../lib/legibilidad/resumen-ejecutivo.mjs';
 import {fechaCorteLegible} from '../../lib/legibilidad/fechas.mjs';
 import {StatusChip} from '../ui/status-chip';
@@ -49,7 +49,7 @@ export function HallazgosAnalisis({jobs,fuentes,masPaginas}:{jobs:JobFila[];fuen
      const termino=j.runStatus==='succeeded';
      return <tr key={j.id}>
       <th scope="row" className="dn-asunto">{!termino?<span className="muted">{j.state==='failed'?tx('tr.datos.anSinResultado'):j.state==='succeeded'?tx('tr.datos.anSinConcluyente'):tx('tr.datos.anPendiente')}</span>:e===undefined?<span className="muted">{tx('tr.datos.anLeyendo')}</span>:e==='error'?<span className="muted">{tx('hoy.noDisponible')}</span>:e.sinConclusion?<span className="muted">{tx('tr.datos.anSinConcluyente')}</span>:<>{e.titulo}{e.otros>0&&<small className="muted"> · {tx('tr.datos.anYMas',{n:e.otros})}</small>}<small className="muted"> · {tx(e.citas===1?'tr.datos.anCita1':'tr.datos.anCitaN',{n:nf.format(e.citas)})}</small></>}</th>
-      <td>{termino&&e&&e!=='error'&&e.severidad?<StatusChip tone={tonoSeveridad(e.severidad)}>{SEVERIDAD[e.severidad]}</StatusChip>:<span className="muted">—</span>}</td>
+      <td>{termino&&e&&e!=='error'&&e.severidad?<StatusChip tone={tonoSeveridad(e.severidad)}>{severidadDe(e.severidad,tx)}</StatusChip>:<span className="muted">—</span>}</td>
       <td>{fuentes[j.conversationId]??tx('det.conversacion')} · <code className="dn-code">{j.conversationId.slice(0,8)}</code></td>
       <td><Tip label={tx('tr.datos.anTip')}><span className="muted">{tx('tr.datos.anSinVinculo')}</span></Tip></td>
       <td>{fechaCorteLegible(j.createdAt,{hora:false}).replace(' (UTC)','')||tx('tr.ui.cbNoDisp')}</td>

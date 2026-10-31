@@ -2,6 +2,7 @@
 // prioridades, «Qué hacer» y «Qué vigilar»: todo sale de las prioridades (top3) y de la selección registrada en el documento.
 // Honestidad: desconocido no es 0; un subtotal conocido se rotula «no es el total»; sin registros elegibles es «Sin cobertura».
 import {etiquetaCategoria} from './categorias.mjs';
+import {idiomaDe} from './trad.mjs';
 const entero=v=>typeof v==='string'&&/^-?\d+$/.test(v);
 /** Cómo se muestra una cifra del brief. tipo: exacta | subtotal | sin_cobertura | desconocida. `valor` es el importe o null. */
 export function cifraBrief(metric){
@@ -45,5 +46,6 @@ export function criticosAparte(doc){
  return {nuevos:(doc?.critical??[]).filter(p=>!ya.has(p.id)),repetidos:(doc?.critical??[]).filter(p=>ya.has(p.id))};
 }
 export const ESTADO_ACCION={proposed:'Propuesta',dismissed:'Descartada',draft:'Borrador',approved:'Aprobada',executing:'En ejecución',closed:'Cerrada',cancelled:'Cancelada'};
-export const estadoAccion=s=>ESTADO_ACCION[s]??s;
-export const tituloEs=t=>etiquetaCategoria(t);
+const ESTADO_ACCION_EN={proposed:'Proposed',dismissed:'Dismissed',draft:'Draft',approved:'Approved',executing:'In progress',closed:'Closed',cancelled:'Canceled'};
+export const estadoAccion=(s,t=null)=>(idiomaDe(t)==='en'?ESTADO_ACCION_EN:ESTADO_ACCION)[s]??s;
+export const tituloEs=(titulo,t=null)=>etiquetaCategoria(titulo,t);

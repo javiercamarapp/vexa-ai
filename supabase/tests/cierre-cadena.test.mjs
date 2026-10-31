@@ -1,4 +1,4 @@
-// Integracion de cierre 29-oct: la cadena COMPLETA de migraciones (0001 ... 20261201000000 ... 20261206000500) en un Postgres LOCAL efimero y su reversion.
+// Integracion de cierre 29-oct: la cadena COMPLETA de migraciones (0001 ... 20261201000000 ... 20261207000000) en un Postgres LOCAL efimero y su reversion.
 //   node --test supabase/tests/cierre-cadena.test.mjs
 // Comprueba: prefijos unicos y estrictamente posteriores a 20261205000700; la cadena aplica de cero; los objetos que verifica el script
 // 2-aplicar-migraciones-cierre.sh existen; la reversion (F1 down + rollback de F5) deja el esquema igual al de 20261205000700 (salvo comentarios).
@@ -8,7 +8,8 @@ import fs from 'node:fs';
 import {startLocalPg, listMigrations, migrationsDir, root} from '../../ops/lib/localpg.mjs';
 
 const BASE = '20261205000700_default_privileges_and_trigger_functions.sql';
-const NUEVAS = ['20261206000000', '20261206000100', '20261206000200', '20261206000300', '20261206000400', '20261206000500'];
+const NUEVAS = ['20261206000000', '20261206000100', '20261206000200', '20261206000300', '20261206000400', '20261206000500', '20261207000000'];
+const DOWN_CCO_MODALIDAD = root + '/packages/workspace-service/tests/20261207000000_insight_cco_modalidad.down.sql';
 const DOWN_F1 = root + '/packages/workspace-service/tests/20261206000500_problem_conversations_link.down.sql';
 const ROLLBACK_F5 = root + '/supabase/operations/20261206_f5_seguridad.rollback.sql';
 const norm = s => s.split('\n').filter(l => !/^\\(un)?restrict /.test(l) && !/^\s*--/.test(l)).join('\n');
@@ -39,6 +40,7 @@ test('cadena completa de migraciones aplica de cero, expone lo que el script ver
     assert.equal(q(`select count(*) from public.organization_security where require_owner_mfa`), '0');
     assert.equal(q(`select count(*) from public.problem_conversations`), '0');
     // reversion: F1 primero, luego F5 (el archivo de F5 ya trae el orden interno correcto)
+    pg.file('d', DOWN_CCO_MODALIDAD);
     pg.file('d', DOWN_F1);
     pg.file('d', ROLLBACK_F5);
     assert.equal(q(`select to_regprocedure('public.refresh_problem_conversations(uuid,boolean)') is null`), 't');

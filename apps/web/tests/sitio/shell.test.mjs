@@ -15,7 +15,9 @@ const salida = execFileSync(process.execPath, ['--import', 'tsx', '--import', jo
 const R = JSON.parse(salida.toString('utf8'));
 
 const hrefs = (html) => [...html.matchAll(/<a\b[^>]*\shref="([^"]*)"/g)].map((m) => m[1]);
-const internos = (html) => hrefs(html).filter((h) => h.startsWith('/'));
+// Los canales RSS del blog son archivos, no páginas del registro: los enlaza el índice del blog.
+const CANALES_RSS = new Set(['/blog/rss.xml', '/en/blog/rss.xml']);
+const internos = (html) => hrefs(html).filter((h) => h.startsWith('/') && !CANALES_RSS.has(h));
 const publicables = new Set(PAGINAS.filter((p) => R.estados[p.id]).flatMap((p) => [p.es.ruta, p.en.ruta]));
 const noPublicables = PAGINAS.filter((p) => !R.estados[p.id]).flatMap((p) => [p.es.ruta, p.en.ruta]);
 
@@ -177,5 +179,60 @@ test('las rutas del sitio son estáticas: force-static y dynamicParams false en 
     assert.match(src, /dynamic = 'force-static'/, f);
     assert.match(src, /dynamicParams = false/, f);
     assert.ok(!/cookies\(|headers\(/.test(src), f);
+  }
+});
+
+// ---- T24: blog y Estado en el despachador
+// R.lanzados guarda las rutas internas del despachador: en inglés sin el prefijo /en.
+const claveLanzada = (lang, ruta) => `${lang}:${lang === 'en' ? ruta.replace(/^\/en/, '') : ruta}`;
+test('el aviso de privacidad y los términos siguen devolviendo el 404 propio, en los dos idiomas', () => {
+  for (const id of ['aviso-de-privacidad', 'terminos']) {
+    assert.equal(R.estados[id], false, `${id} no es publicable`);
+    for (const lang of ['es', 'en']) assert.ok(R.lanzados.includes(claveLanzada(lang, rutaDe(id, lang))), `${id}.${lang} lanza notFound`);
+    assert.ok(!R.casos.some((c) => c.id === id), `${id} no se rinde`);
+  }
+});
+
+test('un artículo sin contenido da 404 y uno con contenido se rinde: a1 sí, y el índice y Estado también', () => {
+  const conContenido = new Set(['a1']);
+  for (const reg of PAGINAS.filter((p) => p.tipo === 'articulo')) {
+    for (const lang of ['es', 'en']) {
+      const lanzo = R.lanzados.includes(claveLanzada(lang, reg[lang].ruta));
+      assert.equal(lanzo, !R.estados[reg.id], `${reg.id}.${lang}`);
+      if (conContenido.has(reg.id)) assert.equal(lanzo, false, `${reg.id}.${lang} se rinde`);
+    }
+  }
+  assert.equal(R.estados.a1, true);
+  assert.equal(R.estados.blog, true);
+  assert.equal(R.estados.estado, true);
+});
+
+test('a1 se rinde como artículo: un h1, fecha en time, tiempo de lectura, tabla de contenido, nota y JSON-LD BlogPosting', () => {
+  for (const lang of ['es', 'en']) {
+    const c = R.casos.find((x) => x.nombre === `pagina:${lang}:a1`);
+    assert.ok(c, `a1.${lang}`);
+    assert.match(c.html, /<article class="s-art">/);
+    assert.match(c.html, /<time dateTime="2026-11-03">/);
+    assert.match(c.html, lang === 'es' ? /\d+ min de lectura/ : /\d+ min read/);
+    assert.match(c.html, /<nav class="s-art__toc"/);
+    assert.match(c.html, /<blockquote class="s-art__cita">/);
+    assert.match(c.html, lang === 'es' ? /<aside class="s-art__limites" aria-labelledby="lo-que-no-afirmamos">/ : /<aside class="s-art__limites" aria-labelledby="what-we-do-not-claim">/);
+    assert.ok(!/\{\{|\}\}/.test(c.html.replace(/<script[\s\S]*?<\/script>/g, '')), 'la sintaxis de enlace interno no llega al HTML');
+    const ld = JSON.parse(c.html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+    assert.ok(ld['@graph'].some((n) => n['@type'] === 'BlogPosting' && n.datePublished === '2026-11-03'));
+    // Enlaces internos del artículo: solo a páginas publicables (la pantalla de fuga de reembolsos sigue pendiente y no se enlaza).
+    assert.ok(!c.html.includes(rutaDe('fuga-de-reembolsos', lang)) || R.estados['fuga-de-reembolsos']);
+  }
+});
+
+test('el índice del blog lista a1 con fecha y el enlace al canal RSS; Estado no pinta el cierre de ventas', () => {
+  for (const lang of ['es', 'en']) {
+    const idx = R.casos.find((x) => x.nombre === `pagina:${lang}:blog`).html;
+    assert.ok(idx.includes(`href="${rutaDe('a1', lang)}"`));
+    assert.match(idx, /<ol class="s-art-indice">/);
+    assert.ok(idx.includes(lang === 'es' ? '/blog/rss.xml' : '/en/blog/rss.xml'));
+    const estado = R.casos.find((x) => x.nombre === `pagina:${lang}:estado`).html;
+    assert.ok(!estado.includes('s-cierre'), 'Estado no lleva el cierre de ventas');
+    assert.ok(/[\w.+-]+@[\w-]+\.[\w.-]+/.test(estado), 'Estado muestra el contacto resuelto');
   }
 });

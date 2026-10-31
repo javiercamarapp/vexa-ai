@@ -300,8 +300,11 @@ describe('sitemap', () => {
   });
   test('lastmod real: fecha del contenido con formato ISO, no futura y estable entre llamadas', () => {
     const hoy = new Date().toISOString().slice(0, 10);
+    const urlsDeArticulos = new Set(fichas.filter((f) => f.tipo === 'articulo').flatMap((f) => IDIOMAS.map((l) => urlAbsoluta(f.ruta[l]))));
     for (const e of entradas) {
       assert.match(e.lastModified, /^\d{4}-\d{2}-\d{2}$/);
+      // Un artículo lleva la fecha de publicación que se fijó a mano (a1: 3 de noviembre de 2026), que puede ser posterior al día del build.
+      if (urlsDeArticulos.has(e.url)) continue;
       assert.ok(e.lastModified <= hoy, `${e.url} con fecha futura`);
     }
     assert.deepEqual(entradasSitemap(fichas), entradas);
@@ -368,8 +371,9 @@ describe('robots por host', () => {
 
 describe('RSS 2.0', () => {
   test('canal válido y vacío mientras no haya artículos publicados, en los dos idiomas', () => {
+    const sinArticulos = fichas.filter((f) => f.tipo !== 'articulo');
     for (const l of IDIOMAS) {
-      const xml = rssXml({ lang: l, fichas });
+      const xml = rssXml({ lang: l, fichas: sinArticulos });
       assert.match(xml, /^<\?xml version="1.0" encoding="UTF-8"\?>\n<rss version="2.0" xmlns:atom="http:\/\/www.w3.org\/2005\/Atom">/);
       assert.match(xml, new RegExp(`<language>${HREFLANG[l].toLowerCase()}</language>`));
       assert.match(xml, new RegExp(`<atom:link href="${BASE}${l === 'es' ? '' : '/en'}/blog/rss.xml" rel="self" type="application/rss\\+xml" />`));
@@ -390,7 +394,7 @@ describe('RSS 2.0', () => {
   });
   test('los artículos pendientes no entran al canal', () => {
     const pendiente = { id: 'a2', tipo: 'articulo', indexable: false, ruta: { es: '/blog/y', en: '/en/blog/y' }, titulo: { es: 'T', en: 'T' }, descripcion: { es: 'D', en: 'D' }, h1: { es: 'H', en: 'H' }, pub: '2026-10-20' };
-    assert.ok(!rssXml({ lang: 'es', fichas: [...fichas, pendiente] }).includes('<item>'));
+    assert.ok(!rssXml({ lang: 'es', fichas: [...fichas.filter((f) => f.tipo !== 'articulo'), pendiente] }).includes('<item>'));
   });
   test('las dos rutas del canal existen como route handlers estáticos', () => {
     for (const r of ['src/app/(sitio)/blog/rss.xml/route.ts', 'src/app/(sitio)/en/blog/rss.xml/route.ts']) {

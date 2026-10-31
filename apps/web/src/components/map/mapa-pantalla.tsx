@@ -3,6 +3,7 @@ import {ConMarca} from '../ui/brand-mark';
 import {RovaqCargando} from '../rovaq-cargando';
 import {useMemo,useState} from 'react';
 import {useIdioma,useT} from '../i18n/proveedor';
+import {motivoEtiqueta,tipoCasoEtiqueta,retailerEtiqueta} from '../../lib/legibilidad/motivos';
 import type {MapaVista,EstadoMapa,Celdas} from '../../../../../packages/workspace-service/mapa-problemas.mjs';
 import {PageHeader} from '../ui/page-header';
 import {Button,LinkButton,Refresh,Arrow} from '../ui/button';
@@ -20,13 +21,13 @@ function Esqueleto({}:{segundos:number}){
  const t=useT();
  return <RovaqCargando compacto mensaje={t('mapa.cargando')}/>;
 }
-function Lista({titulo,celdas,max=2}:{titulo:string;celdas:Celdas;max?:number}){
+function Lista({titulo,celdas,max=2,rotulo}:{titulo:string;celdas:Celdas;max?:number;rotulo?:(r:string)=>string}){
   const t=useT();
   if(celdas.ocultoTodo)return <section className="mp-lista"><h3>{titulo}</h3><p className="fg-sm">{t('mapa.sinDesglose')}</p></section>;
   const vis=celdas.items.slice(0,max),mas=celdas.items.length-vis.length+(celdas.otros>0?1:0);
   const tope=Math.max(1,...vis.map(i=>i.n));
   return <section className="mp-lista" aria-label={titulo}><h3>{titulo}{mas>0&&<small> · {t('mapa.mas',{n:mas})}</small>}</h3>
-   <ul>{vis.map(i=><li key={i.etiqueta}><span><ConMarca marca={titulo===t('mapa.retailer')?i.etiqueta:null}>{i.etiqueta}</ConMarca></span><b>{num(i.n)}</b><i style={{inlineSize:`${Math.max(4,(i.n*100)/tope)}%`}} aria-hidden="true"/></li>)}</ul></section>;
+   <ul>{vis.map(i=><li key={i.etiqueta}><span><ConMarca marca={titulo===t('mapa.retailer')?i.etiqueta:null}>{rotulo?rotulo(i.etiqueta):i.etiqueta}</ConMarca></span><b>{num(i.n)}</b><i style={{inlineSize:`${Math.max(4,(i.n*100)/tope)}%`}} aria-hidden="true"/></li>)}</ul></section>;
 }
 /** Ranking de los estados con más casos: barras finas en el verde de Geografía; el elegido lleva marca roja. */
 function Ranking({estados,sel,onElegir}:{estados:EstadoMapa[];sel:string|null;onElegir:(c:string)=>void;pais:'US'|'MX'}){
@@ -45,7 +46,7 @@ function Panel({e,total,estados,pais,sel,onElegir,ocultos}:{e:EstadoMapa|null;to
   {d&&<div className="mp-det">
    <p className="eyebrow">{e?(d.pais==='US'?t('mapa.us'):t('mapa.mx')):t('mapa.mayor')}</p>
    <p className="mp-panel-t">{d.nombre}<span><b>{num(d.n)}</b> {d.n===1?t('mapa.caso'):t('mapa.casos')} · {t('mapa.pctConEstado',{pct:pctTxt(total>0?Math.round((d.n*1000)/total)/10:null,idioma)})}</span></p>
-   <div className="mp-listas"><Lista titulo={t('mapa.tipo')} celdas={d.tipos}/><Lista titulo={t('mapa.motivo')} celdas={d.motivos}/><Lista titulo={t('mapa.retailer')} celdas={d.retailers}/></div>
+   <div className="mp-listas"><Lista titulo={t('mapa.tipo')} celdas={d.tipos} rotulo={r=>tipoCasoEtiqueta(r,t)}/><Lista titulo={t('mapa.motivo')} celdas={d.motivos} rotulo={r=>motivoEtiqueta(r,t)}/><Lista titulo={t('mapa.retailer')} celdas={d.retailers} rotulo={r=>retailerEtiqueta(r,t)}/></div>
   </div>}
   <p className="mp-pie">{t('mapa.pie')}{ocultos?` ${ocultos}`:''}</p>
  </div></aside>;

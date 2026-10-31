@@ -12,6 +12,7 @@ export const MAPA_BUDGET_MS = Object.freeze({tracker: 12000});
 export const HOJAS_ESPEJO = Object.freeze(['WTR', 'WPR']); // espejos de Warranty Tools / Parts: contarlos duplicaría casos
 const TIPOS = new Map([['Warranty Tools', 'Garantía de herramientas'], ['Warranty Parts', 'Garantía de piezas'], ['Refunds', 'Reembolsos'], ['Refunds Requests', 'Solicitudes de reembolso'], ['Return Labels', 'Etiquetas de devolución'],
   ['Quotes', 'Cotizaciones'], ['Waitlist', 'Lista de espera'], ['B&S', 'B&S'], ['RMA', 'RMA'], ['Cancellations', 'Cancelaciones'], ['Cancel Subscriptions', 'Cancelar suscripciones']]);
+export const TIPOS_CATALOGO = TIPOS;
 export const tipoDeHoja = hoja => TIPOS.get(hoja) ?? 'Otro';
 export const NOMBRE_RETAILER = Object.freeze({amazon: 'Amazon', walmart: 'Walmart', bestbuy: 'Best Buy', tienda: 'Tienda propia', lowes: "Lowe's", homedepot: 'Home Depot', otro: 'Otro'});
 

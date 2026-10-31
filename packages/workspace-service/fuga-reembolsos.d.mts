@@ -53,3 +53,5 @@ export const etiquetaMes: (m: string) => string;
 export function createRefundLeakRepository(a: {database: any; now?: () => Date; budgets?: Record<string, number>}): {get(q?: {dateStart?: string | null; dateEnd?: string | null}): Promise<FugaVista>};
 
 export function rangoDe(por: Record<string, {desde: string | null; hasta: string | null} | null>): RangoDias | null;
+export const MOTIVOS_CATALOGO: ReadonlyMap<string, string>;
+export const SUBMOTIVOS_CATALOGO: ReadonlyMap<string, string>;

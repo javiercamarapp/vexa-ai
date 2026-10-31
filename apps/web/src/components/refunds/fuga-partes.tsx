@@ -1,6 +1,7 @@
 'use client';
 import {ConMarca} from '../ui/brand-mark';
 import {useIdioma,useT} from '../i18n/proveedor';
+import {motivoEtiqueta,submotivoEtiqueta} from '../../lib/legibilidad/motivos';
 import type {Clave,Traductor} from '../../lib/i18n';
 import {Fragment,useId} from 'react';
 import type {ReactNode} from 'react';
@@ -93,7 +94,7 @@ export function Expediente({v,sku,lineasOk,onPaquete}:{v:FugaVista;sku:string;li
  ];
  if(tr){
   sabe.push(<>{tx('tr.fuga.trackerFilas',{n:num(Object.values(tr.hojas).reduce((a,n)=>a+n,0)),hojas:orden(tr.hojas).map(([h,n])=>`${hojaTxt(tx,h)} ${num(n)}`).join(' · ')})}</>);
-  if(Object.keys(tr.motivos).length)sabe.push(<>{tx('tr.fuga.motivoContacto',{lista:orden(tr.motivos).slice(0,4).map(([k,n])=>`${k} ${num(n)}`).join(' · ')})}{Object.keys(tr.submotivos).length?tx('tr.fuga.subrazon',{lista:orden(tr.submotivos).slice(0,3).map(([k,n])=>`${k} ${num(n)}`).join(' · ')}):''}.</>);
+  if(Object.keys(tr.motivos).length)sabe.push(<>{tx('tr.fuga.motivoContacto',{lista:orden(tr.motivos).slice(0,4).map(([k,n])=>`${motivoEtiqueta(k,tx)} ${num(n)}`).join(' · ')})}{Object.keys(tr.submotivos).length?tx('tr.fuga.subrazon',{lista:orden(tr.submotivos).slice(0,3).map(([k,n])=>`${submotivoEtiqueta(k,tx)} ${num(n)}`).join(' · ')}):''}.</>);
   if(Object.keys(tr.estados).length)sabe.push(<>{tx('tr.fuga.estadoSolicP',{lista:orden(tr.estados).map(([k,n])=>`${estadoTxt(tx,k)} ${num(n)}`).join(' · ')})}</>);
   sabe.push(<>{tx('tr.fuga.convAsoc',{x:tr.vinculadas>0?tx('tr.fuga.vincNP',{n:num(tr.vinculadas)}):tx('tr.fuga.vincNingP')})}</>);
  } else sabe.push(trackerEstado==='unavailable'?<>{tx('fuga.trackerNoDisp')}</>:<>{tx('fuga.trackerSinSku')}</>);
@@ -124,7 +125,7 @@ export function SeccionTracker({v,onCola,onReintentar}:{v:FugaVista;onCola:()=>v
   <ul className="fg-leyenda fg-leyenda-n">{orden2.map(k=><li key={k}><i style={{background:ESTADO_COLOR[k]}}/>{estadoTxt(tx,k)} <b>{num(e[k])}</b></li>)}</ul>
   <div className="fg-tabla-wrap" role="region" aria-label={tx('fuga.motivoRegion')} tabIndex={0}>
    <table className="fg-tabla fg-tabla-t" aria-label={tx('fuga.motivoTabla')}><thead><tr><th scope="col">{tx('fuga.thMotivo')}</th><th scope="col" className="fg-r">{tx('fuga.thSolicitudes')}</th><th scope="col" className="fg-r">{tx('fuga.thReembolsadas')}</th><th scope="col" className="fg-r">{tx('fuga.thNegadas')}</th><th scope="col" className="fg-r">{tx('fuga.thMonto')}</th></tr></thead>
-    <tbody>{t.porMotivo.map(m=><tr key={m.motivo}><th scope="row">{m.motivo}</th><td className="fg-r">{num(m.n)}</td><td className="fg-r">{num(m.reembolsados)}</td><td className="fg-r">{num(m.negados)}</td><td className="fg-r">{usd(m.montoMinor)}{m.sinMonto>0&&<small className="fg-sm">{tx('fuga.sinMontoN',{n:num(m.sinMonto)})}</small>}</td></tr>)}</tbody></table>
+    <tbody>{t.porMotivo.map(m=><tr key={m.motivo}><th scope="row">{motivoEtiqueta(m.motivo,tx)}</th><td className="fg-r">{num(m.n)}</td><td className="fg-r">{num(m.reembolsados)}</td><td className="fg-r">{num(m.negados)}</td><td className="fg-r">{usd(m.montoMinor)}{m.sinMonto>0&&<small className="fg-sm">{tx('fuga.sinMontoN',{n:num(m.sinMonto)})}</small>}</td></tr>)}</tbody></table>
   </div>
   <div className="fg-fila-acc"><Button size="sm" icon={<Download/>} onClick={onCola}>{tx('fuga.colaBtn')}</Button><span className="fg-sm">{tx('fuga.filasCsv',{n:num(t.negados)})}</span></div>
   <p className="fg-pie">{t.nota} {tx('tr.fuga.soloHoja')}</p>

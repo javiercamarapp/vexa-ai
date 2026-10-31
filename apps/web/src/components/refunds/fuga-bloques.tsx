@@ -2,6 +2,7 @@
 import {ConMarca} from '../ui/brand-mark';
 import type {ReactNode} from 'react';
 import {useIdioma,useT} from '../i18n/proveedor';
+import {motivoEtiqueta} from '../../lib/legibilidad/motivos';
 import type {FugaVista,SkuFila} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 import {Chip} from '../ui/chip';
 import {DataTable,type Column} from '../ui/data-table';
@@ -89,7 +90,7 @@ export function Expediente({v,sku,onPaquete}:{v:FugaVista;sku:string;onPaquete:(
  ];
  if(tr){
   sabe.push(<>{t('tr.fuga.trackerFilas',{n:num(Object.values(tr.hojas).reduce((a,n)=>a+n,0)),hojas:orden(tr.hojas).map(([h,n])=>`${hojaTxt(t,h)} ${num(n)}`).join(' · ')})}</>);
-  if(Object.keys(tr.motivos).length)sabe.push(<>{t('tr.fuga.motivoContacto',{lista:orden(tr.motivos).slice(0,4).map(([k,n])=>`${k} ${num(n)}`).join(' · ')})}.</>);
+  if(Object.keys(tr.motivos).length)sabe.push(<>{t('tr.fuga.motivoContacto',{lista:orden(tr.motivos).slice(0,4).map(([k,n])=>`${motivoEtiqueta(k,t)} ${num(n)}`).join(' · ')})}.</>);
   if(Object.keys(tr.estados).length)sabe.push(<>{t('tr.fuga.estadoSolicB',{lista:orden(tr.estados).map(([k,n])=>`${estadoTxt(t,k)} ${num(n)}`).join(' · ')})}</>);
   sabe.push(<>{t('tr.fuga.convAsoc',{x:tr.vinculadas>0?t('tr.fuga.vincNB',{n:num(tr.vinculadas)}):t('tr.fuga.vincNingB')})}</>);
  } else sabe.push(v.tracker.status==='unavailable'?<>{t('fuga.trackerNoDisp')}</>:<>{t('tr.fuga.trackerSinSkuB')}</>);
@@ -113,7 +114,7 @@ export function PanelTracker({v,onCola,onReintentar}:{v:FugaVista;onCola:()=>voi
  const e=t.estados,ks=['reembolsado','vencido','no_reembolsable','rechazado','enviado','otro','sin_estado'].filter(k=>(e[k]??0)>0);
  return <div className="dg-fill">
   <BarraApilada label={tx('tr.fuga.estadoSolic')} items={ks.map(k=>({label:estadoTxt(tx,k),value:e[k]}))}/>
-  <ListaBarras c={4} label={tx('tr.fuga.motivosNegadas')} apilado max={Math.max(1,...t.porMotivo.map(m=>m.n))} items={[...t.porMotivo].sort((a,b)=>b.negados-a.negados).slice(0,4).map(m=>({key:m.motivo,etiqueta:m.motivo,sub:tx('tr.fuga.negadasDe',{a:num(m.negados),b:num(m.n)}),valor:m.n,texto:num(m.n),sub2:m.montoMinor!==0?usd(m.montoMinor):undefined}))}/>
+  <ListaBarras c={4} label={tx('tr.fuga.motivosNegadas')} apilado max={Math.max(1,...t.porMotivo.map(m=>m.n))} items={[...t.porMotivo].sort((a,b)=>b.negados-a.negados).slice(0,4).map(m=>({key:m.motivo,etiqueta:motivoEtiqueta(m.motivo,tx),sub:tx('tr.fuga.negadasDe',{a:num(m.negados),b:num(m.n)}),valor:m.n,texto:num(m.n),sub2:m.montoMinor!==0?usd(m.montoMinor):undefined}))}/>
   <div style={{marginTop:'auto',paddingTop:10}}><Button size="sm" icon={<Download/>} onClick={onCola}>{tx('fuga.colaVencidos')}</Button></div></div>;
 }
 

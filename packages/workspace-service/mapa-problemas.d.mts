@@ -13,3 +13,4 @@ export function suprimirCeldas(conteos: Record<string, number>, k?: number): Cel
 export function agregarGeo(filas: ReturnType<typeof filaGeo>[], k?: number): Required<Pick<MapaVista, 'cobertura' | 'estados' | 'ocultos'>>;
 export function quejasPor100Pedidos(pedidos: GeoPedido[], conversaciones: {orderId: string | null}[], o?: {minPedidos?: number; k?: number}): {clave: string; nombre: string | null; pedidos: number | null; quejas: number | null; por100: number | null; nota: string | null}[];
 export function createGeoMapRepository(o: {database: unknown; now?: () => Date; budgets?: Record<string, number>}): {get(): Promise<MapaVista>};
+export const TIPOS_CATALOGO: ReadonlyMap<string, string>;

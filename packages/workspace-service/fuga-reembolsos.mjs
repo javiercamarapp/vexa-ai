@@ -51,6 +51,8 @@ const SUBMOTIVOS = new Map([['tool replacement', 'Reemplazo de herramienta'], ['
   ['confirmation', 'Confirmación'], ['no longer wanted', 'Ya no lo quiere'], ['wrong item received', 'Artículo equivocado'], ['lost in transit', 'Perdido en tránsito'], ['shipment delay', 'Retraso de envío'],
   ['part replacement ot', 'Reemplazo de pieza'], ['delivery not received', 'No recibido'], ['cancel - shipped', 'Cancelar (ya enviado)'], ['performance / quality not adequate', 'Desempeño o calidad'],
   ['battery & charger replacement', 'Reemplazo de batería y cargador'], ['battery replacement', 'Reemplazo de batería'], ['stops working', 'Dejó de funcionar'], ['spare parts', 'Refacciones'], ['unable to deliver', 'No se pudo entregar']]);
+/** Catálogos cerrados (clave del Tracker -> rótulo en español): la presentación traduce por rótulo y una prueba exige que cada uno tenga su traducción. */
+export const MOTIVOS_CATALOGO = MOTIVOS, SUBMOTIVOS_CATALOGO = SUBMOTIVOS;
 export const motivoDe = raw => (raw ? MOTIVOS.get(clave(raw)) ?? 'Otro' : null);
 export const submotivoDe = raw => (raw ? SUBMOTIVOS.get(clave(raw)) ?? 'Otro (texto libre omitido)' : null);
 /** Estado del reembolso en el Tracker. «Allen passed it on…» y otros textos libres caen en 'otro' sin conservar el texto. */

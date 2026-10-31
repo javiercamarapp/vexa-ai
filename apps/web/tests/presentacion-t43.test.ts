@@ -62,3 +62,28 @@ test('todo llamador de failure() le pasa la petición, y import-preview ya no ll
   }
   assert.doesNotMatch(leer('src/components/import-preview.tsx'), /No se pudo completar la solicitud de importación\.'\)|\(código \$\{r\.status\}/);
 });
+
+test('motivos, submotivos, tipos de caso y retailers: cada rótulo del catálogo del paquete tiene su inglés; los datos no se tocan', async () => {
+  const {MOTIVOS_CATALOGO, SUBMOTIVOS_CATALOGO, motivoDe, submotivoDe} = await import('../../../packages/workspace-service/fuga-reembolsos.mjs');
+  const {TIPOS_CATALOGO, tipoDeHoja, NOMBRE_RETAILER} = await import('../../../packages/workspace-service/mapa-problemas.mjs');
+  const {motivoEtiqueta, submotivoEtiqueta, tipoCasoEtiqueta, retailerEtiqueta} = await import('../src/lib/legibilidad/motivos');
+  const mot = [...MOTIVOS_CATALOGO.values(), 'Otro', 'Sin motivo'], sub = [...SUBMOTIVOS_CATALOGO.values(), 'Otro (texto libre omitido)'];
+  for (const r of mot) { const x = motivoEtiqueta(r, en); assert.ok(!ACENTOS.test(x) && x !== r || r === 'Otro' && x === 'Other', `motivo ${r} -> ${x}`); assert.equal(motivoEtiqueta(r, es), r, 'en español no cambia'); assert.equal(motivoEtiqueta(r), r, 'sin traductor no cambia'); }
+  for (const r of sub) { const x = submotivoEtiqueta(r, en); assert.ok(!ACENTOS.test(x) && x !== r, `submotivo ${r} -> ${x}`); assert.equal(submotivoEtiqueta(r, es), r); }
+  for (const r of [...TIPOS_CATALOGO.values()].filter((x) => !['B&S', 'RMA'].includes(x)).concat('Otro')) { const x = tipoCasoEtiqueta(r, en); assert.ok(!ACENTOS.test(x) && x !== r || r === 'Otro', `tipo ${r} -> ${x}`); assert.equal(tipoCasoEtiqueta(r, es), r); }
+  assert.equal(tipoCasoEtiqueta('B&S', en), 'B&S'); assert.equal(tipoCasoEtiqueta('RMA', en), 'RMA');
+  assert.equal(motivoEtiqueta('Defectuoso', en), 'Defective'); assert.equal(motivoEtiqueta('Llegó tarde', en), 'Arrived too late'); assert.equal(motivoEtiqueta('Sin motivo', en), 'No reason');
+  assert.equal(submotivoEtiqueta('Artículo equivocado', en), 'Wrong item received'); assert.equal(motivoEtiqueta('Artículo equivocado', en), 'Wrong item sent', 'mismo rótulo, tablas distintas');
+  assert.equal(tipoCasoEtiqueta('Garantía de herramientas', en), 'Tool warranty'); assert.equal(retailerEtiqueta(NOMBRE_RETAILER.tienda, en), 'Own store'); assert.equal(retailerEtiqueta('Amazon', en), 'Amazon');
+  assert.equal(motivoEtiqueta('Un motivo nuevo del cliente', en), 'Un motivo nuevo del cliente', 'dato fuera del catálogo: tal cual');
+  // El paquete sigue mandando el rótulo en español (los datos guardados y agrupados no cambian).
+  assert.equal(motivoDe('Defective'), 'Defectuoso'); assert.equal(submotivoDe('Damaged'), 'Dañado'); assert.equal(tipoDeHoja('Warranty Tools'), 'Garantía de herramientas');
+});
+
+test('las pantallas de fuga y mapa traducen los rótulos al pintar', () => {
+  for (const rel of ['src/components/refunds/fuga-bloques.tsx', 'src/components/refunds/fuga-partes.tsx']) assert.match(leer(rel), /motivoEtiqueta\(/, rel);
+  assert.match(leer('src/components/refunds/fuga-partes.tsx'), /submotivoEtiqueta\(k,tx\)/);
+  assert.doesNotMatch(leer('src/components/refunds/fuga-partes.tsx'), /\{m\.motivo\}<\/th>/);
+  const mapa = leer('src/components/map/mapa-pantalla.tsx');
+  for (const f of ['tipoCasoEtiqueta', 'motivoEtiqueta', 'retailerEtiqueta']) assert.match(mapa, new RegExp('rotulo=\\{r=>' + f + '\\(r,t\\)\\}'));
+});

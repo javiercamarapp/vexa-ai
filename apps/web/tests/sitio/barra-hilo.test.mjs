@@ -47,7 +47,7 @@ test('CSS: la capa del hilo lleva máscara con --s-corte, opaca desde su origen 
   assert.match(r, /position:\s*absolute/);
   assert.match(r, /inset:\s*0/);
   assert.match(r, /z-index:\s*var\(--s-z-hilo\)/, 'misma altura de apilado que tenían el trazo, los nodos y las notas');
-  assert.match(r, /mask-image:\s*linear-gradient\(to bottom, transparent var\(--s-corte\), #000 calc\(var\(--s-corte\) \+ 28px\)\)/);
+  assert.match(r, /(?<!-webkit-)mask-image:\s*linear-gradient\(to bottom, transparent var\(--s-corte\), #000 calc\(var\(--s-corte\) \+ 28px\)\)/);
   assert.match(r, /-webkit-mask-image:\s*linear-gradient\(to bottom, transparent var\(--s-corte\), #000 calc\(var\(--s-corte\) \+ 28px\)\)/);
 });
 

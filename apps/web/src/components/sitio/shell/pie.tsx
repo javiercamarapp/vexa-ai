@@ -10,7 +10,7 @@ export function Pie({lang}: {lang: Lang}) {
   const l = lineasPie(lang);
   return (
     <>
-      <footer className="s-pie" data-tema="oscuro" aria-label={t.pie}>
+      <footer className="s-pie" id="pie" data-tema="oscuro" aria-label={t.pie}>
         <div className="s-pie__cuerpo s-contenedor">
           <div className="s-pie__cols">
             {columnas.map((c) => (

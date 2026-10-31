@@ -119,6 +119,7 @@ export function textosShell(lang: Lang) {
     principal: lang === 'es' ? 'Principal' : 'Main',
     inicio: lang === 'es' ? 'Rovaq AI, inicio' : 'Rovaq AI, home',
     pie: lang === 'es' ? 'Pie de página' : 'Footer',
+    irPie: lang === 'es' ? 'Ir a todos los enlaces del pie' : 'Go to all the links in the footer',
     idioma: lang === 'es' ? 'Idioma' : 'Language',
   };
 }

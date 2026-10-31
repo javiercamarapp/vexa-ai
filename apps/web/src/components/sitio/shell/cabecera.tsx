@@ -77,6 +77,7 @@ export function Cabecera({lang, id, tema = 'oscuro'}: Props) {
             data-etiqueta-abrir={t.menuAbrir}
             data-etiqueta-cerrar={t.menuCerrar}
           />
+          <a className="s-cabecera__ir-pie" href="#pie" aria-label={t.irPie} />
         </div>
         <nav className="s-panel-movil" id="panel-movil" aria-label={t.principal}>
           {grupos.flatMap((g) =>

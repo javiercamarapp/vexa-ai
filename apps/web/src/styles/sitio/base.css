@@ -668,27 +668,49 @@ html:not([data-ambiente]) [data-tema="claro"] .s-logo__negativo { opacity: 0; }
   }
 }
 
-/* Sin JavaScript no hay hamburguesa: el panel queda como lista visible bajo la barra */
+/* Sin JavaScript no hay hamburguesa ni panel: dentro de la barra de 58 px una lista de enlaces se salía del borde y tapaba el héroe.
+   El móvil recibe un enlace con el mismo trazo que la hamburguesa que lleva al pie, donde están todos los enlaces del sitio. */
+.s-cabecera__ir-pie {
+  display: none;
+}
+
 @media (scripting: none) {
-  .s-cabecera__burger {
+  .s-cabecera__burger,
+  .s-panel-movil {
     display: none;
   }
 
-  .s-panel-movil {
-    position: static;
-    opacity: 1;
-    visibility: visible;
-    padding: var(--s-e16) var(--s-pad-x);
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: var(--s-e16);
+  .s-cabecera__ir-pie {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--s-r-total);
+    border: var(--s-borde) solid var(--s-linea-fuerte);
   }
 
-  .s-panel-movil__enlace {
-    font-size: var(--s-t-boton);
-    font-family: var(--s-f-sans);
-    font-weight: 500;
+  .s-cabecera__ir-pie::before,
+  .s-cabecera__ir-pie::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    height: 1.5px;
+    background: var(--s-tinta);
+  }
+
+  .s-cabecera__ir-pie::before { top: 15px; }
+  .s-cabecera__ir-pie::after { bottom: 15px; }
+}
+
+@media (scripting: none) and (min-width: 769px) {
+  .s-cabecera__ir-pie {
+    display: none;
+  }
+}
+
+@media (scripting: none) and (max-width: 768px) {
+  .s-cabecera__ir-pie {
+    display: block;
   }
 }
 

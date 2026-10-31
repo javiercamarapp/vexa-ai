@@ -174,9 +174,27 @@ html[data-js] .s-pantallas__selector {
   .s-pantalla { flex-basis: 86%; scroll-snap-align: start; }
   .s-pantalla__miniatura,
   .s-pantalla__miniatura[data-n="5"] { aspect-ratio: 326 / 300; }
-  /* Acercamiento de 1.5x sin salirse de la caja: object-fit cover con el punto de enfoque en la columna principal (sin la barra lateral) */
-  .s-pantalla__img { width: 100%; height: 100%; max-width: none; margin-left: 0; object-fit: cover; object-position: 56% 0; }
-  .s-pantalla__miniatura[data-n="5"] .s-pantalla__img { object-position: 50% 0; }
+  /* Recorte pensado para móvil: en lugar de la pantalla completa reducida (texto de 3 a 5 px) la miniatura enseña una región clave a 3.45x del ancho
+     de la caja (580 de las 2000 unidades de la captura): el texto de la imagen queda en 9 px o más. --x e --y son la esquina de la región en unidades de 2000 por 1250. */
+  .s-pantalla__miniatura { position: relative; overflow: hidden; }
+  .s-pantalla__img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 345%;
+    height: auto;
+    max-width: none;
+    margin: 0;
+    object-fit: fill;
+    transform: translate(calc(var(--x, 0) / -20 * 1%), calc(var(--y, 0) / -12.5 * 1%));
+  }
+  .s-pantalla__miniatura[data-n="1"] { --x: 400; --y: 385; }
+  .s-pantalla__miniatura[data-n="2"] { --x: 400; --y: 490; }
+  .s-pantalla__miniatura[data-n="3"] { --x: 400; --y: 395; }
+  .s-pantalla__miniatura[data-n="4"] { --x: 700; --y: 270; }
+  .s-pantalla__miniatura[data-n="5"] { --x: 0; --y: 0; }
+  .s-pantalla__miniatura[data-n="5"] .s-pantalla__img { width: 160%; }
+  .s-pantalla__miniatura[data-n="6"] { --x: 430; --y: 700; }
   .s-pantalla__cuerpo { padding: var(--s-e16); grid-template-columns: auto minmax(0, 1fr) auto; }
   .s-pantalla__titulo { font-size: 20px; }
   .s-pantallas__selector { overflow-x: auto; scrollbar-width: none; }

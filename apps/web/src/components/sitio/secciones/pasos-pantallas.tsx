@@ -74,7 +74,7 @@ export function Pantallas({lang, t}: {lang: Lang; t: TextosPortada}) {
             return (
               <div className={`s-pantalla s-tarjeta${href ? ' s-tarjeta--capacidad' : ''}`} role="group" aria-roledescription="diapositiva" aria-label={`${i + 1} / ${p.items.length}`} data-pantalla={i} key={it.t}>
                 <div className="s-pantalla__miniatura" data-n={i + 1}>
-                  <Captura nombre={clave} clave={clave === 'pantalla5' ? 'img/producto/pantalla5' : undefined} tema="claro" lang={lang} tamanos="(max-width: 768px) 230vw, 1152px" clase="s-pantalla__img" anchos={clave === 'pantalla5' ? [medidas('img/producto/pantalla5').ancho] : [960, 1440]} />
+                  <Captura nombre={clave} clave={clave === 'pantalla5' ? 'img/producto/pantalla5' : undefined} tema="claro" lang={lang} tamanos="(max-width: 768px) 300vw, 1152px" clase="s-pantalla__img" anchos={clave === 'pantalla5' ? [medidas('img/producto/pantalla5').ancho] : [960, 1440]} />
                   <span className="s-pantalla__barrido" aria-hidden="true" />
                 </div>
                 <div className="s-pantalla__cuerpo">

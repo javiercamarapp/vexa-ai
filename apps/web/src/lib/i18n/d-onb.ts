@@ -18,7 +18,7 @@ export const onbEs = {
   'onb.check.estado.hecho': 'Hecho', 'onb.check.estado.salvedad': 'Hecho, con notas', 'onb.check.estado.esperando': 'En espera', 'onb.check.estado.bloqueado': 'Bloqueado', 'onb.check.estado.pendiente': 'Pendiente', 'onb.check.estado.informativo': 'Para revisar',
   'onb.check.concil': 'Pendiente: las cifras de dinero son parciales hasta relacionar los pedidos con sus clientes.',
   'onb.check.bloq.sinDatos': 'Primero necesitas datos: una conexión activa o un historial importado.', 'onb.check.bloq.sinIntervencion': 'Primero necesitas una intervención asignada a ti.',
-  'onb.tercero.crm': 'el equipo de Rovaq (conexión del CRM)', 'onb.tercero.correo': 'la configuración del correo de acceso', 'onb.tercero.propietario': 'el propietario de la organización',
+  'onb.tercero.crm': 'el equipo de Rovaq (conexión del CRM)', 'onb.tercero.propietario': 'el propietario de la organización',
   // Propietario
   'onb.propietario.nombre': 'Recorrido del propietario',
   'onb.propietario.hoy.titulo': 'Hoy: tus cifras principales', 'onb.propietario.hoy.cuerpo': 'Ingreso, reembolsos, dinero atorado y respuestas con demora, cada una con su periodo. Si aún no se relacionan todos los pedidos con sus clientes, la cifra lo dice en lugar de aparentar estar completa.',
@@ -28,7 +28,7 @@ export const onbEs = {
   'onb.propietario.acciones.titulo': 'Decide la primera acción', 'onb.propietario.acciones.cuerpo': 'Solo el propietario aprueba. Revisa lo propuesto, apruébalo y después sigue su resultado en Acciones.',
   'onb.propietario.historial.titulo': 'Importar el historial', 'onb.propietario.historial.cuerpo': 'Carga el historial por archivo para que Rovaq tenga contexto desde el primer día.',
   'onb.propietario.corte.titulo': 'Publicar y revisar el corte', 'onb.propietario.corte.cuerpo': 'Prepara el corte económico y revísalo antes de publicarlo; las cifras parciales se marcan como tales.',
-  'onb.propietario.equipo.titulo': 'Invitar a tu equipo', 'onb.propietario.equipo.cuerpo': 'Invita a analistas, operadores y lectores. Si el correo de acceso aún no está listo, este paso queda en espera y no cuenta como pendiente tuyo.',
+  'onb.propietario.equipo.titulo': 'Invitar a tu equipo', 'onb.propietario.equipo.cuerpo': 'Invita a analistas, operadores y lectores. Se marca como hecho cuando al menos otra persona tiene acceso a la organización.',
   'onb.propietario.retencion.titulo': 'Revisar la retención', 'onb.propietario.retencion.cuerpo': 'Define cuánto tiempo se conservan los datos y cómo se borran cuando lo pidas.',
   // Analista
   'onb.analista.nombre': 'Recorrido del analista',
@@ -84,7 +84,7 @@ export const onbEn = {
   'onb.check.estado.hecho': 'Done', 'onb.check.estado.salvedad': 'Done, with notes', 'onb.check.estado.esperando': 'Waiting', 'onb.check.estado.bloqueado': 'Blocked', 'onb.check.estado.pendiente': 'To do', 'onb.check.estado.informativo': 'To review',
   'onb.check.concil': 'Pending: money numbers are partial until orders are matched to their customers.',
   'onb.check.bloq.sinDatos': 'You need data first: an active connection or an imported history.', 'onb.check.bloq.sinIntervencion': 'You first need an intervention assigned to you.',
-  'onb.tercero.crm': 'the Rovaq team (CRM connection)', 'onb.tercero.correo': 'sign-in email setup', 'onb.tercero.propietario': 'the organization owner',
+  'onb.tercero.crm': 'the Rovaq team (CRM connection)', 'onb.tercero.propietario': 'the organization owner',
   // Owner
   'onb.propietario.nombre': 'Owner tour',
   'onb.propietario.hoy.titulo': 'Today: your main numbers', 'onb.propietario.hoy.cuerpo': 'Revenue, refunds, stuck money and delayed replies, each with its period. If not every order is matched to its customer yet, the number says so instead of looking complete.',
@@ -94,7 +94,7 @@ export const onbEn = {
   'onb.propietario.acciones.titulo': 'Decide the first action', 'onb.propietario.acciones.cuerpo': 'Only the owner approves. Review what was proposed, approve it, then follow its result under Actions.',
   'onb.propietario.historial.titulo': 'Import the history', 'onb.propietario.historial.cuerpo': 'Upload the history from a file so Rovaq has context from day one.',
   'onb.propietario.corte.titulo': 'Publish and review the cut', 'onb.propietario.corte.cuerpo': 'Prepare the economic cut and review it before publishing; partial numbers are labeled as such.',
-  'onb.propietario.equipo.titulo': 'Invite your team', 'onb.propietario.equipo.cuerpo': 'Invite analysts, operators and viewers. If the sign-in email is not ready yet, this step waits and does not count as pending on you.',
+  'onb.propietario.equipo.titulo': 'Invite your team', 'onb.propietario.equipo.cuerpo': 'Invite analysts, operators and viewers. It is marked as done once at least one other person has access to the organization.',
   'onb.propietario.retencion.titulo': 'Review retention', 'onb.propietario.retencion.cuerpo': 'Set how long data is kept and how it is erased when you ask.',
   // Analyst
   'onb.analista.nombre': 'Analyst tour',

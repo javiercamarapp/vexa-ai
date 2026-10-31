@@ -62,17 +62,19 @@ export function IndicadorConciliacion({t,c,fecha,formato}:{t:Traductor;c:Concili
  </section>;
 }
 
-export interface PropsLista{t:Traductor;locale:string;items:ItemAsistente[];siguiente:string|null;hoja:DatosHoja|null;soloLectura?:boolean}
+export interface PropsLista{t:Traductor;locale:string;pista?:string|null;items:ItemAsistente[];siguiente:string|null;hoja:DatosHoja|null;soloLectura?:boolean}
 /** Lista ordenada de pasos. Un paso con enlace solo aparece si el rol puede ejecutarlo; si no puede, dice a quién pedirlo. */
-export function ListaPasos({t,locale,items,siguiente,hoja,soloLectura=false}:PropsLista){
+export function ListaPasos({t,locale,pista=null,items,siguiente,hoja,soloLectura=false}:PropsLista){
  return <ol className="setup-lista" aria-label={t('onb.setup.listaAria')}>
   {items.map((i,n)=>{
    const idT=`setup-paso-${n}`;
    const quien=i.quien.length>=4?t('onb.setup.quienCualquiera'):listaDeRoles(t,i.quien,locale);
+   // Un paso de OTRA pista (p. ej. «Conectar el CRM» en la lista del analista) está escrito para el propietario: solo se muestra su título, su estado y a quién pedirlo, sin su texto en segunda persona.
+   const ajeno=!i.puede&&Boolean(pista)&&!i.id.startsWith(pista+'.');
    return <li key={i.id} className="setup-paso" data-estado={i.estado} data-siguiente={siguiente===i.id||undefined} aria-labelledby={idT}>
     <div className="setup-paso-cab"><h3 id={idT}>{txt(t,i.textos.titulo)}</h3><span className="onb-estado">{etiquetaEstado(t,i.estado)}</span></div>
-    <p className="setup-meta">{t('onb.setup.tiempo',{min:i.min})}{' · '}{t('onb.setup.quien',{quien})}</p>
-    <p className="setup-pide"><span className="setup-rotulo">{t('onb.setup.pide')}</span>{' '}{txt(t,i.textos.cuerpo)}</p>
+    <p className="setup-meta">{t('onb.setup.quien',{quien})}</p>
+    {!ajeno&&<p className="setup-pide"><span className="setup-rotulo">{t('onb.setup.pide')}</span>{' '}{txt(t,i.textos.cuerpo)}</p>}
     {i.mixto&&<p className="setup-nota">{t('onb.setup.mixto')}</p>}
     {i.esperaA&&<p className="setup-espera">{t('onb.ui.esperando',{quien:txt(t,i.esperaA)})}</p>}
     {i.nota&&<p className="setup-nota">{txt(t,i.nota)}</p>}
@@ -100,7 +102,7 @@ export function SetupVista({t,locale,pista,rolEtiqueta,soporteTerminado,cargando
    {errorDeLectura&&<p role="status">{t('onb.check.noDisponible')}</p>}
    {lista.progreso.total>0&&<div className="setup-progreso"><progress max={lista.progreso.total} value={lista.progreso.hechos} aria-label={t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}/><span>{t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}</span></div>}
    {conciliacion&&<IndicadorConciliacion t={t} c={conciliacion} fecha={fechaResumen} formato={n=>nf.format(n)}/>}
-   <ListaPasos t={t} locale={locale} items={lista.items} siguiente={lista.siguiente} hoja={hoja}/>
+   <ListaPasos t={t} locale={locale} pista={pista} items={lista.items} siguiente={lista.siguiente} hoja={hoja}/>
   </>}
  </section>;
 }

@@ -350,8 +350,10 @@ test('textos por pantalla: no prometen escrituras al lector ni dinero al operado
 test('checklist: «n de m que puedes hacer ahora» y cuántos esperan a un tercero (nunca «2 de 2 listos» con pasos en espera)',()=>{
   assert.equal(ESP['onb.check.progreso'],'{hechos} de {total} que puedes hacer ahora');assert.equal(ING['onb.check.progreso'],'{hechos} of {total} you can do now');
   assert.match(ESP['onb.check.esperan'],/tercero/);assert.match(ING['onb.check.esperan'],/third party/);
-  const l=calcularChecklist('propietario',normalizarSenales({historial_importado:true,corte_publicado:true}));
-  assert.deepEqual(l.progreso,{hechos:2,total:2});assert.equal(l.esperan,1,'el correo de acceso sigue en espera');
+  const l=calcularChecklist('analista',normalizarSenales({}));
+  assert.deepEqual(l.progreso,{hechos:0,total:0});assert.equal(l.esperan,1,'publicar el corte espera al propietario: se dice, no cuenta como del analista');
+  const p=calcularChecklist('propietario',normalizarSenales({historial_importado:true,corte_publicado:true}));
+  assert.deepEqual(p.progreso,{hechos:2,total:3});assert.equal(p.esperan,0,'invitar al equipo es un paso pendiente propio, no una espera inventada');
   assert.equal(calcularChecklist('lector',null).esperan,0);
   const src=leer('src/components/onboarding/checklist.tsx');
   assert.match(src,/lista\.completo&&lista\.esperan===0/,'una lista con pasos en espera no se oculta como si estuviera completa');assert.match(src,/onb\.check\.esperan/);

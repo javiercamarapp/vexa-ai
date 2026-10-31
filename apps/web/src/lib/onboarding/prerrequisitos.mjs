@@ -15,7 +15,7 @@ export function normalizarSenales(crudo) {
   return s;
 }
 
-const TERCERO_TEXTO = Object.freeze({ crm: 'onb.tercero.crm', correo: 'onb.tercero.correo', propietario: 'onb.tercero.propietario', push: 'onb.tercero.push' });
+const TERCERO_TEXTO = Object.freeze({ crm: 'onb.tercero.crm', propietario: 'onb.tercero.propietario', push: 'onb.tercero.push' });
 
 /**
  * Estado de un paso con prerrequisito.

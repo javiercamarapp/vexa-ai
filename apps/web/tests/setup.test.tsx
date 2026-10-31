@@ -52,7 +52,7 @@ test('cada paso del asistente existe en el catálogo y es válido para su pista:
       const paso=CATALOGO.find(p=>p.id===e.id)!;
       // Un paso de OTRO rol (p. ej. «propietario.crm» en la lista del analista) se muestra sin enlace; solo se valida con el rol dueño del paso.
       assert.deepEqual(problemasDePaso(paso,menuVisible),[],e.id);
-      assert.ok(Number.isInteger(e.min)&&e.min>0,e.id+' trae tiempo estimado');
+      assert.equal('min' in e,false,e.id+' sin tiempo escrito a mano');
     }
     assert.equal(new Set(entradas.map(e=>e.id)).size,entradas.length,pista+' sin ids repetidos');
   }
@@ -86,12 +86,12 @@ test('propietario: estados honestos con datos de PILOTO (conexión activa, histo
   assert.equal(por.dimensiones.estado,'informativo','no hay forma barata de saberlo: nunca «hecho»');
   assert.equal(por.conciliar.estado,'pendiente');assert.equal(por.conciliar.cuenta,true);
   assert.equal(por.corte.estado,'salvedad');
-  assert.equal(por.equipo.estado,'esperando');assert.equal(por.equipo.esperaA,'onb.tercero.correo');assert.equal(por.equipo.cuenta,false);
+  assert.equal(por.equipo.estado,'pendiente');assert.equal(por.equipo.esperaA,null,'sin bloqueo inventado por el correo de acceso');assert.equal(por.equipo.cuenta,true);
   assert.equal(por.avisos.estado,'esperando');assert.equal(por.avisos.esperaA,'onb.tercero.push');assert.equal(por.avisos.cuenta,false);
   assert.equal(por.mfa,undefined,'no hay paso de verificación en dos pasos: no se promete ni se simula');
   assert.equal(por.retencion.estado,'informativo');
   assert.equal(l.siguiente,'propietario.conciliar','el siguiente es el primer paso propio pendiente; nunca uno de tercero');
-  assert.deepEqual(l.progreso,{hechos:3,total:4},'cuentan historial, pedidos, conciliar y corte (3 de 4 hechos, el corte con salvedad); nada de terceros ni informativos');
+  assert.deepEqual(l.progreso,{hechos:3,total:5},'cuentan historial, pedidos, conciliar, corte (con salvedad) y equipo (pendiente); nada de terceros ni informativos');
 });
 test('propietario: el push solo se ofrece (pendiente y con enlace) si el servidor dice configured=true; con dispositivos queda hecho',()=>{
   const base={senales:SENALES_PILOTO,consultadas:consultadasDe('owner')};
@@ -156,10 +156,10 @@ for(const idioma of ['es','en'] as const){
     assert.equal((html.match(/aria-labelledby="setup-paso-\d+"/g)??[]).length,n);
     assert.ok(html.includes(dic['onb.setup.irAHacerlo']));
     assert.ok(html.includes(dic['onb.setup.pide']));
-    assert.match(html,idioma==='es'?/Unos 15 min/:/About 15 min/);
+    assert.doesNotMatch(html,/Unos \d+ min|About \d+ min/,'sin minutos escritos a mano');
     assert.ok(html.includes(dic['onb.setup.hoja.boton']));
     assert.doesNotMatch(html,/Probar ahora|Test now|Try now|Probar conexión|Test connection/i);
-    assert.match(html,/<progress max="5" value="3" aria-label=/);
+    assert.match(html,/<progress max="6" value="3" aria-label=/);
     assert.ok(html.includes(dic['onb.check.siguiente']));
     for(const h of ['/connections','/imports','/economics','/settings/team','/settings/notifications','/settings/retention'])assert.ok(hrefs(html).includes(h),h);
     assert.equal(hrefs(html).filter(h=>h==='/economics').length,4,'pedidos, dimensiones, conciliar y corte');
@@ -324,6 +324,40 @@ test('hoja para soporte: la organización va por su nombre y el identificador t�
     assert.ok(lineas.includes(`${t('onb.setup.hoja.idTecnico')}: ${TENANT}`));
     assert.match(t('onb.setup.hoja.idTecnico'),idioma==='es'?/soporte/:/support/);
     assert.ok(!lineas.some(l=>l.startsWith(t('onb.setup.hoja.organizacion'))&&l.includes(TENANT)));
+  }
+});
+
+test('«Publicar y revisar el corte» lo hace solo el propietario (regla del servidor), no «cualquier persona de la organización»',()=>{
+  const l=calcularAsistente('propietario',{senales:SENALES_PILOTO,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}});
+  const corte=l.items.find(i=>i.id==='propietario.corte')!;
+  assert.deepEqual(corte.quien,['owner']);
+  assert.match(leer('src/app/(app)/(workspace)/economics/page.tsx'),/puedePreparar=active\.role==='owner'/,'la pantalla de cortes sigue exigiendo propietario');
+  for(const idioma of ['es','en'] as const){
+    const html=vista('propietario',{senales:SENALES_PILOTO,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}},{idioma});
+    const t=traductor(idioma),bloque=html.split('<li class="setup-paso"').find(x=>x.includes(t('onb.propietario.corte.titulo')))!;
+    assert.ok(bloque.includes(t('onb.setup.quien',{quien:idioma==='es'?'Administrador del espacio':'Workspace administrator'})),'dice quién: el propietario');
+    assert.ok(!bloque.includes(t('onb.setup.quienCualquiera')));
+  }
+});
+test('un paso que el rol no puede hacer y que es de otra pista muestra un resumen neutro (título, estado y a quién pedirlo), no el texto en segunda persona del propietario',()=>{
+  for(const idioma of ['es','en'] as const){
+    const t=traductor(idioma);
+    const html=vista('analista',{senales:normalizarSenales({...TODO_FALSO,historial_importado:true}),consultadas:consultadasDe('analyst'),push:{configurado:true,dispositivos:0}},{idioma});
+    for(const id of ['crm','pedidos','dimensiones','conciliar']){
+      assert.ok(html.includes(t(`onb.propietario.${id}.titulo` as never)),id+' título visible');
+      assert.ok(!html.includes(t(`onb.propietario.${id}.cuerpo` as never)),id+': sin el texto del propietario');
+    }
+    assert.ok(html.includes(t('onb.analista.corte.cuerpo')),'el paso propio del analista (espera al propietario) conserva su explicación en tercera persona');
+    assert.ok(html.includes(t('onb.analista.importar.cuerpo')));
+  }
+});
+test('«Invitar a tu equipo»: etiqueta «Pendiente», aclara cuándo se marca hecho y no menciona el correo ni un «esperando a»',()=>{
+  for(const [idioma,dic] of [['es',ESP],['en',ING]] as const){
+    assert.doesNotMatch(dic['onb.propietario.equipo.cuerpo']+dic['onb.pant.settings-team.accionC'],/correo|e-?mail/i,idioma);
+    assert.match(dic['onb.propietario.equipo.cuerpo'],idioma==='es'?/Se marca como hecho cuando/:/marked as done once/);
+    const html=vista('propietario',{senales:SENALES_PILOTO,consultadas:consultadasDe('owner'),push:{configurado:true,dispositivos:0}},{idioma});
+    const bloque=html.split('<li class="setup-paso"').find(x=>x.includes(dic['onb.propietario.equipo.titulo']))!;
+    assert.ok(bloque.includes(`>${dic['onb.check.estado.pendiente']}<`));assert.ok(!bloque.includes(dic['onb.ui.esperando'].replace(/\{.*\}/,'').trim()));
   }
 });
 

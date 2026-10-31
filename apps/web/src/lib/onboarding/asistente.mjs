@@ -9,41 +9,42 @@ import { estadoDePaso } from './prerrequisitos.mjs';
 const ORDEN_ROLES = Object.freeze(['owner', 'analyst', 'operator', 'viewer']);
 
 /**
- * Entradas por pista: `min` = minutos estimados; `mixto` = paso compartido con el equipo de Rovaq (hoja para soporte);
- * `pre` = prerrequisito propio del asistente cuando el paso del catálogo no lo declara.
+ * Entradas por pista: `mixto` = paso compartido con el equipo de Rovaq (hoja para soporte); `pre` = prerrequisito propio del asistente cuando el paso del catálogo no lo declara;
+ * `quien` = roles que pueden hacerlo cuando la capacidad del catálogo es más amplia que la regla real del servidor. Sin tiempos estimados: no hay forma de comprobarlos.
  */
 export const ASISTENTE = Object.freeze({
   propietario: Object.freeze([
-    { id: 'propietario.idioma', min: 1 },
-    { id: 'propietario.crm', min: 15, mixto: true },
-    { id: 'propietario.historial', min: 10 },
-    { id: 'propietario.pedidos', min: 15 },
-    { id: 'propietario.dimensiones', min: 10 },
-    { id: 'propietario.conciliar', min: 20 },
-    { id: 'propietario.corte', min: 5 },
-    { id: 'propietario.equipo', min: 5 },
-    { id: 'propietario.avisos', min: 2, pre: 'push' },
-    { id: 'propietario.retencion', min: 3 },
+    { id: 'propietario.idioma' },
+    { id: 'propietario.crm', mixto: true },
+    { id: 'propietario.historial' },
+    { id: 'propietario.pedidos' },
+    { id: 'propietario.dimensiones' },
+    { id: 'propietario.conciliar' },
+    // El servidor exige propietario para preparar, cargar, clasificar, asociar y publicar el corte (economics/page.tsx: snapshot_owner_required); el analista solo revisa.
+    { id: 'propietario.corte', quien: ['owner'] },
+    { id: 'propietario.equipo' },
+    { id: 'propietario.avisos', pre: 'push' },
+    { id: 'propietario.retencion' },
   ]),
   analista: Object.freeze([
-    { id: 'analista.idioma', min: 1 },
-    { id: 'analista.importar', min: 10 },
-    { id: 'analista.corte', min: 5 },
-    { id: 'analista.avisos', min: 2, pre: 'push' },
-    { id: 'propietario.crm', min: 15 },
-    { id: 'propietario.pedidos', min: 15 },
-    { id: 'propietario.dimensiones', min: 10 },
-    { id: 'propietario.conciliar', min: 20 },
+    { id: 'analista.idioma' },
+    { id: 'analista.importar' },
+    { id: 'analista.corte' },
+    { id: 'analista.avisos', pre: 'push' },
+    { id: 'propietario.crm' },
+    { id: 'propietario.pedidos' },
+    { id: 'propietario.dimensiones' },
+    { id: 'propietario.conciliar' },
   ]),
   operador: Object.freeze([
-    { id: 'operador.idioma', min: 1 },
-    { id: 'operador.avisos', min: 2, pre: 'push' },
-    { id: 'operador.propuesta', min: 5 },
-    { id: 'operador.resultado', min: 5 },
+    { id: 'operador.idioma' },
+    { id: 'operador.avisos', pre: 'push' },
+    { id: 'operador.propuesta' },
+    { id: 'operador.resultado' },
   ]),
   lector: Object.freeze([
-    { id: 'lector.idioma', min: 1 },
-    { id: 'lector.avisos', min: 2, pre: 'push' },
+    { id: 'lector.idioma' },
+    { id: 'lector.avisos', pre: 'push' },
   ]),
 });
 
@@ -81,8 +82,8 @@ export function estadoAsistente(pista, entrada, ctx = {}) {
 export function calcularAsistente(pista, ctx = {}) {
   const items = (ASISTENTE[pista] ?? []).map((entrada) => {
     const paso = PASO.get(entrada.id);
-    const quien = paso.espera === 'propietario' ? ['owner'] : rolesQueLoHacen(paso.accion);
-    return { id: paso.id, textos: paso.textos, href: paso.href, accion: paso.accion, min: entrada.min, mixto: entrada.mixto === true, quien, ...estadoAsistente(pista, entrada, ctx) };
+    const quien = entrada.quien ?? (paso.espera === 'propietario' ? ['owner'] : rolesQueLoHacen(paso.accion));
+    return { id: paso.id, textos: paso.textos, href: paso.href, accion: paso.accion, mixto: entrada.mixto === true, quien, ...estadoAsistente(pista, entrada, ctx) };
   });
   const propios = items.filter((i) => i.cuenta);
   const hechos = propios.filter((i) => i.estado === 'hecho' || i.estado === 'salvedad').length;

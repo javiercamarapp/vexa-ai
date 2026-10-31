@@ -127,17 +127,17 @@ test('cierre de sesión borra las claves onb.* (shell y página de ingreso)',()=
 });
 
 // ---- Prerrequisitos con datos simulados
-test('checklist del propietario: sin datos todo pendiente; el tercero (correo) en espera y fuera del progreso; el dinero publicado va «con salvedad»',()=>{
+test('checklist del propietario: sin datos todo pendiente; invitar al equipo es un paso propio «pendiente» (sin bloqueo inventado); el dinero publicado va «con salvedad»',()=>{
   const vacio=calcularChecklist('propietario',normalizarSenales(TODO_FALSO));
   const por=Object.fromEntries(vacio.items.map(i=>[i.id.split('.')[1],i]));
   assert.equal(por.historial.estado,'pendiente');assert.equal(por.corte.estado,'bloqueado');assert.equal(por.corte.nota,'onb.check.bloq.sinDatos');
-  assert.equal(por.equipo.estado,'esperando');assert.equal(por.equipo.esperaA,'onb.tercero.correo');assert.equal(por.retencion.estado,'informativo');
-  assert.deepEqual(vacio.progreso,{hechos:0,total:2},'equipo (tercero) y retención (informativa) no cuentan');
+  assert.equal(por.equipo.estado,'pendiente');assert.equal(por.equipo.esperaA,null,'no se inventa un bloqueo por el correo de acceso');assert.equal(por.equipo.cuenta,true);assert.equal(por.retencion.estado,'informativo');
+  assert.deepEqual(vacio.progreso,{hechos:0,total:3},'historial, corte y equipo cuentan; la retención (informativa) no');
   assert.equal(vacio.siguiente,'propietario.historial','el siguiente nunca es uno en espera, bloqueado o informativo');
   const con=calcularChecklist('propietario',normalizarSenales({...TODO_FALSO,historial_importado:true,corte_publicado:true,equipo_invitado:true}));
   const c2=Object.fromEntries(con.items.map(i=>[i.id.split('.')[1],i]));
   assert.equal(c2.historial.estado,'hecho');assert.equal(c2.corte.estado,'salvedad');assert.equal(c2.corte.nota,'onb.check.concil');assert.equal(c2.equipo.estado,'hecho');
-  assert.deepEqual(con.progreso,{hechos:2,total:2});assert.equal(con.siguiente,null);assert.equal(con.completo,true);
+  assert.deepEqual(con.progreso,{hechos:3,total:3});assert.equal(con.siguiente,null);assert.equal(con.completo,true);
 });
 test('checklist: señales ausentes (error de red) → desconocido, sin progreso ni siguiente; sin señales nunca se inventa «hecho»',()=>{
   const c=calcularChecklist('propietario',null);

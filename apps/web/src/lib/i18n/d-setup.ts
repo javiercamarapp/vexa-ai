@@ -16,7 +16,7 @@ export const setupEs = {
   'onb.lector.idioma.titulo': 'Idioma de la interfaz', 'onb.lector.idioma.cuerpo': 'Rovaq usa el idioma que elijas con el selector del encabezado.',
   // Interfaz de /setup
   'onb.setup.titulo': 'Configuración', 'onb.setup.desc': 'Qué está listo y qué falta en tu organización, según tu rol. Esta pantalla solo muestra el estado: no cambia nada.',
-  'onb.setup.listaAria': 'Pasos de configuración, en orden', 'onb.setup.tiempo': 'Unos {min} min', 'onb.setup.pide': 'Qué se pide', 'onb.setup.quien': 'Quién puede hacerlo: {quien}', 'onb.setup.quienCualquiera': 'cualquier persona de la organización',
+  'onb.setup.listaAria': 'Pasos de configuración, en orden', 'onb.setup.pide': 'Qué se pide', 'onb.setup.quien': 'Quién puede hacerlo: {quien}', 'onb.setup.quienCualquiera': 'cualquier persona de la organización',
   'onb.setup.noPuedes': 'Tu rol no puede hacer este paso. Pídeselo a quien tenga el rol de {quien}.', 'onb.setup.irAHacerlo': 'Ir a hacerlo',
   'onb.setup.estado.otro': 'Lo hace otra persona', 'onb.setup.estado.desconocido': 'No se pudo comprobar', 'onb.setup.mixto': 'Paso compartido con el equipo de Rovaq',
   'onb.setup.rolActual': 'Estás viendo la configuración como: {rol}', 'onb.setup.verTodo': 'Ver configuración completa',
@@ -25,7 +25,7 @@ export const setupEs = {
   // Hoja para soporte (paso mixto del CRM)
   'onb.setup.hoja.boton': 'Copiar hoja para soporte', 'onb.setup.hoja.copiada': 'Hoja copiada', 'onb.setup.hoja.fallo': 'No se pudo copiar. Selecciona el texto de la hoja y cópialo a mano.',
   'onb.setup.hoja.resumen': 'Ver la hoja', 'onb.setup.hoja.titulo': 'Hoja para soporte: conexión del CRM', 'onb.setup.hoja.proveedor': 'Proveedor', 'onb.setup.hoja.organizacion': 'Organización', 'onb.setup.hoja.idTecnico': 'Dato técnico para soporte (identificador de la organización)',
-  'onb.setup.hoja.cuenta': 'Identificador de la cuenta', 'onb.setup.hoja.cuentaPendiente': 'pendiente: lo completa el propietario con el identificador de su cuenta del CRM',
+  'onb.setup.hoja.cuenta': 'Identificador de la cuenta', 'onb.setup.hoja.cuentaPendiente': 'pendiente: complétalo con el identificador de tu cuenta del CRM',
   'onb.setup.hoja.credencial': 'Nombre sugerido de la conexión', 'onb.setup.hoja.permisos': 'Permisos mínimos', 'onb.setup.hoja.permisosOpcionales': 'Permisos adicionales solo si se leen tickets y notas',
   'onb.setup.hoja.nota': 'Esta hoja no contiene claves de acceso. La clave se entrega por el canal que acuerdes con soporte, nunca por esta pantalla.',
   // Conciliación pedido-cliente
@@ -48,7 +48,7 @@ export const setupEn: Record<keyof typeof setupEs, string> = {
   'onb.operador.idioma.titulo': 'Interface language', 'onb.operador.idioma.cuerpo': 'Rovaq uses the language you pick with the selector in the header.',
   'onb.lector.idioma.titulo': 'Interface language', 'onb.lector.idioma.cuerpo': 'Rovaq uses the language you pick with the selector in the header.',
   'onb.setup.titulo': 'Setup', 'onb.setup.desc': 'What is ready and what is missing in your organization, for your role. This screen only shows status: it changes nothing.',
-  'onb.setup.listaAria': 'Setup steps, in order', 'onb.setup.tiempo': 'About {min} min', 'onb.setup.pide': 'What is asked', 'onb.setup.quien': 'Who can do it: {quien}', 'onb.setup.quienCualquiera': 'anyone in the organization',
+  'onb.setup.listaAria': 'Setup steps, in order', 'onb.setup.pide': 'What is asked', 'onb.setup.quien': 'Who can do it: {quien}', 'onb.setup.quienCualquiera': 'anyone in the organization',
   'onb.setup.noPuedes': 'Your role cannot do this step. Ask someone with the {quien} role.', 'onb.setup.irAHacerlo': 'Go do it',
   'onb.setup.estado.otro': 'Done by someone else', 'onb.setup.estado.desconocido': 'Could not check', 'onb.setup.mixto': 'Step shared with the Rovaq team',
   'onb.setup.rolActual': 'You are viewing setup as: {rol}', 'onb.setup.verTodo': 'See full setup',
@@ -56,7 +56,7 @@ export const setupEn: Record<keyof typeof setupEs, string> = {
   'onb.setup.soporte': 'You are in a read-only support session. This view shows no steps that can be done.',
   'onb.setup.hoja.boton': 'Copy sheet for support', 'onb.setup.hoja.copiada': 'Sheet copied', 'onb.setup.hoja.fallo': 'Could not copy. Select the sheet text and copy it by hand.',
   'onb.setup.hoja.resumen': 'View the sheet', 'onb.setup.hoja.titulo': 'Support sheet: CRM connection', 'onb.setup.hoja.proveedor': 'Provider', 'onb.setup.hoja.organizacion': 'Organization', 'onb.setup.hoja.idTecnico': 'Technical data for support (organization identifier)',
-  'onb.setup.hoja.cuenta': 'Account identifier', 'onb.setup.hoja.cuentaPendiente': 'pending: the owner fills in the identifier of their CRM account',
+  'onb.setup.hoja.cuenta': 'Account identifier', 'onb.setup.hoja.cuentaPendiente': 'pending: fill in the identifier of your CRM account',
   'onb.setup.hoja.credencial': 'Suggested connection name', 'onb.setup.hoja.permisos': 'Minimum scopes', 'onb.setup.hoja.permisosOpcionales': 'Extra scopes only if tickets and notes are read',
   'onb.setup.hoja.nota': 'This sheet contains no access keys. The key is handed over through the channel you agree on with support, never through this screen.',
   'onb.setup.conc.titulo': 'Orders matched to customers', 'onb.setup.conc.base': '{ligados} of {total} orders matched to a customer',

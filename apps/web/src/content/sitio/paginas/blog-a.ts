@@ -105,4 +105,107 @@ export const ARTICULO_A2: Articulo = articulo({
   ],
 });
 
-export const ARTICULOS_A: readonly Articulo[] = [ARTICULO_A2];
+export const ARTICULO_A3: Articulo = articulo({
+  id: 'a3',
+  pub: '2026-11-03',
+  etiqueta: b('Inteligencia artificial', 'Artificial intelligence'),
+  seo: {
+    titulo: b('La IA clasifica y redacta; las personas deciden | Rovaq AI', 'AI Classifies and Drafts, People Decide | Rovaq AI'),
+    descripcion: b(
+      'Una herramienta que inventa importes pierde la confianza en el primer reporte. Explicamos por qué la IA no crea cifras y una persona decide cada acción.',
+      'A tool that invents amounts loses trust at the first report. We explain the principle that AI never creates figures and that a person decides every action.',
+    ),
+  },
+  h1: b('La IA clasifica y redacta; las personas deciden', 'AI classifies and drafts; people decide'),
+  subtitulo: b(
+    'Dónde conviene usar un modelo de lenguaje en un producto financiero, dónde no, y por qué las cifras no deben salir de él.',
+    'Where a language model belongs in a financial product, where it does not, and why the figures should never come from it.',
+  ),
+  resumen: b(
+    'Una herramienta que inventa importes pierde la confianza en el primer reporte. Este artículo explica el principio con el que diseñamos Rovaq AI: la IA ayuda a clasificar y a redactar, las cifras salen de registros verificables y una persona decide cada acción.',
+    'A tool that invents amounts loses trust at the first report. This article explains the principle we used to design Rovaq AI: AI helps classify and draft, figures come from verifiable records and a person decides every action.',
+  ),
+  relacionados: ['pregunta-a-tus-datos', 'por-decidir', 'problemas', 'confianza-de-los-datos'],
+  bloques: [
+    p(
+      'Hay una promesa que se repite en casi todos los productos que incorporan inteligencia artificial: hará el trabajo por ti. Se dice de los resúmenes, de las recomendaciones, de las respuestas a preguntas de negocio. La promesa es atractiva y, en tareas de texto, a menudo se cumple. El problema aparece cuando se extiende, sin más, al dinero.',
+      'There is a promise repeated in almost every product that adds artificial intelligence: it will do the work for you. It is said of summaries, of recommendations, of answers to business questions. The promise is attractive and, in text tasks, it is often kept. The problem appears when it is extended, without further thought, to money.',
+    ),
+    p(
+      'Este artículo explica el principio con el que diseñamos Rovaq AI y por qué lo consideramos una condición de confianza y no una limitación: la IA ayuda a ordenar y a redactar; las cifras salen de registros que se pueden verificar; y una persona decide cada acción.',
+      'This article explains the principle we used to design Rovaq AI and why we consider it a condition of trust and not a limitation: AI helps to organize and to draft; figures come from records that can be verified; and a person decides every action.',
+    ),
+    h2('El riesgo de una IA que inventa importes', 'The risk of AI that invents amounts'),
+    p(
+      'Un modelo de lenguaje produce texto verosímil. Esa es su fortaleza y también su riesgo: una frase puede sonar exacta sin serlo. Si le pides que resuma una conversación, un error menor casi no importa. Si le pides un importe, la misma clase de error cambia una decisión.',
+      'A language model produces plausible text. That is its strength and also its risk: a sentence can sound exact without being so. If you ask it to summarize a conversation, a minor error hardly matters. If you ask it for an amount, the same kind of error changes a decision.',
+    ),
+    p(
+      'Además, el daño no se reparte parejo. Una herramienta que acierta casi siempre, pero que de vez en cuando inventa un importe, tiene un costo peor que una que falla seguido: con la segunda sabes que debes verificar todo; con la primera dejas de verificar y el error pasa. La confianza se pierde en el primer reporte donde alguien descubre que una cifra no tenía de dónde salir, y recuperarla es lento.',
+      'Besides, the harm is not evenly spread. A tool that is right almost always, but now and then invents an amount, has a worse cost than one that fails often: with the second you know you must verify everything; with the first you stop verifying and the error gets through. Trust is lost at the first report where someone discovers that a figure had nowhere to come from, and earning it back is slow.',
+    ),
+    cita(
+      'La IA puede ayudar a leer y a escribir. Los importes no se le piden.',
+      'AI can help to read and to write. Amounts are not asked of it.',
+    ),
+    h2('Las cifras salen del libro verificable', 'Figures come from the verifiable ledger'),
+    p(
+      'La alternativa es separar dos trabajos que suelen mezclarse. Uno es entender texto: agrupar conversaciones parecidas, proponer una categoría, redactar un borrador. El otro es calcular dinero: sumar reembolsos, comparar periodos, medir cuánto ingreso está expuesto a un problema. El primero tolera cierta ambigüedad y se revisa leyendo. El segundo no la tolera y debe poder rehacerse.',
+      'The alternative is to separate two jobs that tend to get mixed. One is understanding text: grouping similar conversations, proposing a category, drafting a message. The other is calculating money: adding up refunds, comparing periods, measuring how much revenue is exposed to a problem. The first tolerates some ambiguity and is reviewed by reading. The second does not tolerate it and must be repeatable.',
+    ),
+    p(
+      'En Rovaq AI, el segundo trabajo lo hacen reglas y cálculos sobre el libro de la organización, que es de solo inserción y conserva el origen de cada registro. Cada cifra importante lleva su clase, su fuente y su fecha de corte, como explicamos en {{a2|el artículo sobre procedencia}}. Cuando algo no se sabe, el sistema dice Sin dato; no rellena el hueco con una suposición redactada con aplomo.',
+      'In Rovaq AI, the second job is done by rules and calculations over the organization ledger, which is insert-only and keeps the origin of each record. Every important figure carries its class, its source and its cut-off date, as we explain in {{a2|the article on provenance}}. When something is not known, the system says No data; it does not fill the gap with an assumption written with confidence.',
+    ),
+    p(
+      'La pantalla {{pregunta-a-tus-datos|Pregúntale a tus datos}} es el ejemplo más claro. Hoy responde con reglas y con herramientas de solo lectura, sin un modelo de lenguaje, y muestra los pasos con los que calculó cada respuesta. Si no tiene el dato, lo dice. Quien la usa puede seguir el cálculo y repetirlo; no tiene que creer en una respuesta redactada.',
+      'The {{pregunta-a-tus-datos|Ask your data}} screen is the clearest example. Today it answers with rules and with read-only tools, without a language model, and it shows the steps it took to calculate each answer. If it does not have the data, it says so. Whoever uses it can follow the calculation and repeat it; they do not have to believe a written answer.',
+    ),
+    h2('Qué hace hoy la IA y qué no', 'What AI does today and what it does not'),
+    p(
+      'Decir que la IA no crea cifras no significa que no tenga trabajo. Hay tareas donde un modelo es útil precisamente porque su salida se puede leer y corregir:',
+      'Saying that AI does not create figures does not mean it has no work to do. There are tasks where a model is useful precisely because its output can be read and corrected:',
+    ),
+    ul(
+      ['Agrupar conversaciones en problemas. La agrupación con modelos de IA se habilita por organización, y cada grupo conserva sus citas para que alguien pueda comprobar que de verdad pertenecen ahí.', 'Grouping conversations into problems. Grouping with AI models is enabled per organization, and each group keeps its quotes so that someone can check they really belong there.'],
+      ['Clasificar. Proponer una categoría para un tema repetido, para que una persona la revise.', 'Classifying. Proposing a category for a repeated theme, for a person to review.'],
+      ['Redactar. Preparar el borrador de un mensaje a un proveedor o de una nota interna, que una persona revisa antes de enviar.', 'Drafting. Preparing the draft of a message to a supplier or of an internal note, which a person reviews before sending.'],
+    ),
+    p(
+      'Y hay cosas que no hace. No produce importes. No decide qué acción tomar. No envía nada por su cuenta. No escribe en tu CRM, que en el caso de HubSpot se conecta en solo lectura. Un borrador es una propuesta de texto, no una acción realizada.',
+      'And there are things it does not do. It does not produce amounts. It does not decide what action to take. It does not send anything on its own. It does not write to your CRM, which in the case of HubSpot connects read-only. A draft is a proposal of text, not an action taken.',
+    ),
+    h3('Una persona decide cada acción', 'A person decides every action'),
+    p(
+      'El último paso es siempre humano. En la pantalla {{por-decidir|Por decidir}}, cada propuesta llega con su evidencia y su motivo, y la persona responsable elige entre Proceder, Ajustar o Descartar. Proceder crea la intervención y los borradores que alguien revisa y envía. Nada se envía solo, y el resultado queda registrado.',
+      'The last step is always human. In the {{por-decidir|To decide}} screen, each proposal arrives with its evidence and its reason, and the person in charge chooses between Proceed, Adjust or Dismiss. Proceed creates the intervention and the drafts that someone reviews and sends. Nothing is sent on its own, and the outcome is recorded.',
+    ),
+    p(
+      'Registrar el resultado cumple dos funciones. La primera es de memoria: dentro de seis meses, alguien puede saber por qué se actuó o no se actuó. La segunda es de aprendizaje: un equipo que anota qué decidió y qué pasó después puede mejorar sus propios criterios, sin atribuirle a una máquina un juicio que no le corresponde.',
+      'Recording the outcome serves two purposes. The first is memory: six months from now, someone can know why action was or was not taken. The second is learning: a team that notes what it decided and what happened next can improve its own criteria, without attributing to a machine a judgment that is not its to make.',
+    ),
+    h2('Una regla para evaluar cualquier herramienta', 'A rule for evaluating any tool'),
+    p(
+      'Si evalúas software con inteligencia artificial para tu negocio, hay tres preguntas que ayudan más que cualquier demostración:',
+      'If you are evaluating software with artificial intelligence for your business, three questions help more than any demonstration:',
+    ),
+    pasos(
+      ['De dónde sale cada importe: de un registro que puedo abrir o de un texto que el modelo redactó.', 'Where each amount comes from: a record I can open or a text the model wrote.'],
+      ['Qué pasa cuando falta información: si lo dice, o si la rellena con algo que suena razonable.', 'What happens when information is missing: whether it says so, or fills in the gap with something that sounds reasonable.'],
+      ['Quién ejecuta la acción: si una persona la aprueba o si ocurre sola.', 'Who carries out the action: whether a person approves it or it happens on its own.'],
+    ),
+    p(
+      'Una herramienta que responde bien a las tres puede equivocarse, como cualquiera, pero sus errores serán visibles y corregibles. Eso es lo que buscamos al separar con claridad lo que el modelo hace de lo que le queda fuera. Si quieres ver cómo se aplica a un caso concreto, revisa cómo se agrupan las conversaciones en {{problemas|la pantalla de Problemas}}.',
+      'A tool that answers all three well can still be wrong, like any other, but its errors will be visible and correctable. That is what we aim for by separating clearly what the model does from what stays outside it. If you want to see how this applies to a concrete case, look at how conversations are grouped in {{problemas|the Problems screen}}.',
+    ),
+    noAfirmamos(
+      ['No afirmamos que la IA no se equivoque. Por eso sus propuestas se leen y una persona decide qué hacer con ellas.', 'We do not claim that AI makes no mistakes. That is why its proposals are read and a person decides what to do with them.'],
+      ['No afirmamos que Rovaq AI sea un agente autónomo: prepara paquetes y borradores, y una persona decide y presenta cada acción.', 'We do not claim that Rovaq AI is an autonomous agent: it prepares packages and drafts, and a person decides and files every action.'],
+      ['No afirmamos que la agrupación con modelos esté encendida en todas las organizaciones: se habilita por organización.', 'We do not claim that grouping with models is on for every organization: it is enabled per organization.'],
+      ['No afirmamos que los datos estén anonimizados. Redactar o enmascarar un texto no es anonimizarlo.', 'We do not claim that data is anonymized. Redacting or masking a text is not anonymizing it.'],
+      ['No prometemos ningún monto ni ningún resultado económico como consecuencia de una recomendación.', 'We do not promise any amount or any financial result as a consequence of a recommendation.'],
+    ),
+  ],
+});
+
+export const ARTICULOS_A: readonly Articulo[] = [ARTICULO_A2, ARTICULO_A3];

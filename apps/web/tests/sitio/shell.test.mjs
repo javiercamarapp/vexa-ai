@@ -8,6 +8,10 @@ import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { escanearHtml, escanearFuente, listarArchivos, leer, rel } from './_escaner.mjs';
 import { PAGINAS, RUTAS, rutaDe, idDeRuta } from '../../src/content/sitio/registro.mjs';
+import { FECHA_CONTENIDO } from '../../src/content/sitio/fecha-contenido.mjs';
+import { PAGINAS_INTERNAS } from '../../src/content/sitio/paginas/index.ts';
+
+const ARTICULOS = PAGINAS_INTERNAS.filter((x) => /^a\d$/.test(x.id));
 import { LOGOS } from '../../../../packages/workspace-service/marca.mjs';
 
 const WEB = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -204,7 +208,15 @@ test('un artículo sin contenido da 404 y uno con contenido se rinde: a1 sí, y 
   }
   assert.equal(R.estados.a1, true);
   assert.equal(R.estados.blog, true);
-  assert.equal(R.estados.estado, true);
+  assert.equal(R.estados.estado, false, 'Estado sigue pendiente de revisión');
+});
+
+test('Estado devuelve el 404 propio y no aparece como enlace en ninguna página rendida (pie incluido)', () => {
+  for (const lang of ['es', 'en']) {
+    assert.ok(R.lanzados.includes(claveLanzada(lang, rutaDe('estado', lang))), `estado.${lang} lanza notFound`);
+    assert.ok(!R.casos.some((c) => c.nombre === `pagina:${lang}:estado`), `estado.${lang} no se rinde`);
+  }
+  for (const c of R.casos) for (const lang of ['es', 'en']) assert.ok(!c.html.includes(`href="${rutaDe('estado', lang)}"`), `${c.nombre} enlaza Estado`);
 });
 
 test('a1 se rinde como artículo: un h1, fecha en time, tiempo de lectura, tabla de contenido, nota y JSON-LD BlogPosting', () => {
@@ -212,27 +224,38 @@ test('a1 se rinde como artículo: un h1, fecha en time, tiempo de lectura, tabla
     const c = R.casos.find((x) => x.nombre === `pagina:${lang}:a1`);
     assert.ok(c, `a1.${lang}`);
     assert.match(c.html, /<article class="s-art">/);
-    assert.match(c.html, /<time dateTime="2026-11-03">/);
+    assert.ok(c.html.includes(`<time dateTime="${FECHA_CONTENIDO}">`));
     assert.match(c.html, lang === 'es' ? /\d+ min de lectura/ : /\d+ min read/);
     assert.match(c.html, /<nav class="s-art__toc"/);
     assert.match(c.html, /<blockquote class="s-art__cita">/);
     assert.match(c.html, lang === 'es' ? /<aside class="s-art__limites" aria-labelledby="lo-que-no-afirmamos">/ : /<aside class="s-art__limites" aria-labelledby="what-we-do-not-claim">/);
     assert.ok(!/\{\{|\}\}/.test(c.html.replace(/<script[\s\S]*?<\/script>/g, '')), 'la sintaxis de enlace interno no llega al HTML');
     const ld = JSON.parse(c.html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
-    assert.ok(ld['@graph'].some((n) => n['@type'] === 'BlogPosting' && n.datePublished === '2026-11-03'));
+    assert.ok(ld['@graph'].some((n) => n['@type'] === 'BlogPosting' && n.datePublished === FECHA_CONTENIDO));
     // Enlaces internos del artículo: solo a páginas publicables (la pantalla de fuga de reembolsos sigue pendiente y no se enlaza).
     assert.ok(!c.html.includes(rutaDe('fuga-de-reembolsos', lang)) || R.estados['fuga-de-reembolsos']);
   }
 });
 
-test('el índice del blog lista a1 con fecha y el enlace al canal RSS; Estado no pinta el cierre de ventas', () => {
+test('el índice del blog lista los artículos con su fecha, su subtítulo corto y el enlace al canal RSS', () => {
   for (const lang of ['es', 'en']) {
     const idx = R.casos.find((x) => x.nombre === `pagina:${lang}:blog`).html;
     assert.ok(idx.includes(`href="${rutaDe('a1', lang)}"`));
     assert.match(idx, /<ol class="s-art-indice">/);
     assert.ok(idx.includes(lang === 'es' ? '/blog/rss.xml' : '/en/blog/rss.xml'));
-    const estado = R.casos.find((x) => x.nombre === `pagina:${lang}:estado`).html;
-    assert.ok(!estado.includes('s-cierre'), 'Estado no lleva el cierre de ventas');
-    assert.ok(/[\w.+-]+@[\w-]+\.[\w.-]+/.test(estado), 'Estado muestra el contacto resuelto');
+    for (const a of ARTICULOS) assert.ok(idx.includes(`href="${rutaDe(a.id, lang)}"`), `${a.id}.${lang} en el índice`);
+    const a1 = ARTICULOS.find((a) => a.id === 'a1');
+    assert.ok(idx.includes(a1.subtitulo[lang].replace(/&/g, '&amp;')), 'la tarjeta lleva el subtítulo');
+    assert.ok(!idx.includes(a1.resumen[lang].replace(/&/g, '&amp;')), 'no el resumen largo');
+  }
+});
+
+test('los rótulos de viñeta se rinden con strong (sin color nuevo) y ninguna sintaxis de énfasis llega al HTML', () => {
+  for (const lang of ['es', 'en']) {
+    for (const id of ['a1', 'a2', 'a4', 'a8']) {
+      const h = R.casos.find((x) => x.nombre === `pagina:${lang}:${id}`).html.replace(/<script[\s\S]*?<\/script>/g, '');
+      assert.match(h, /<strong class="s-art__rotulo">/, `${id}.${lang}`);
+      assert.ok(!h.includes('**'), `${id}.${lang}: asteriscos en el HTML`);
+    }
   }
 });

@@ -13,13 +13,14 @@ import { ARTICULOS_A } from '../../src/content/sitio/paginas/blog-a.ts';
 import { ARTICULOS_B } from '../../src/content/sitio/paginas/blog-b.ts';
 import { ARTICULO_A1, BLOG_INDICE } from '../../src/content/sitio/paginas/blog.ts';
 import { ESTADO } from '../../src/content/sitio/paginas/estado.ts';
+import { FECHA_CONTENIDO } from '../../src/content/sitio/fecha-contenido.mjs';
 import { articulo, b, h2, p } from '../../src/content/sitio/ayudas.ts';
 import { construirFichas, entradasSitemap, fichasPublicas, metadatosSitio, urlAbsoluta } from '../../src/lib/sitio/metadatos.mjs';
 import { grafoDePagina, serializar } from '../../src/lib/sitio/jsonld.mjs';
 import { rssXml } from '../../src/lib/sitio/rss.mjs';
 import { estadoPagina, hojas } from '../../src/lib/sitio/marcadores.mjs';
 import {
-  contarPalabras, esFechaIso, fechaLegible, idsEnlazados, minutosDeLectura, palabrasDeArticulo, partirEnlaces, seccionesDe, sinEnlaces, slug, textoPlano,
+  contarPalabras, esFechaIso, fechaLegible, idsEnlazados, minutosDeLectura, palabrasDeArticulo, partirEnlaces, partirNegrita, seccionesDe, sinEnlaces, sinNegrita, slug, textoPlano,
 } from '../../src/lib/sitio/articulos.mjs';
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
@@ -48,6 +49,10 @@ function articuloDePrueba(id, extra = {}) {
   });
 }
 const fichasCon = (...extras) => construirFichas({ landing: LANDING, paginas: [...PAGINAS_INTERNAS, ...extras], aprobaciones, fechas, ctx });
+/** Estado ya publicable: es lo que pasaría con el único cambio pendiente (estado a publicable), sin tocar el contenido. */
+const { pendiente: _motivo, ...ESTADO_SIN_MOTIVO } = ESTADO;
+const ESTADO_LISTO = { ...ESTADO_SIN_MOTIVO, estado: 'publicable' };
+const fichasEstadoListo = () => construirFichas({ landing: LANDING, paginas: PAGINAS_INTERNAS.map((x) => (x.id === 'estado' ? ESTADO_LISTO : x)), aprobaciones, fechas, ctx });
 
 describe('funciones puras de lectura', () => {
   test('el tiempo de lectura se deriva del cuerpo: 200 palabras por minuto, hacia arriba, mínimo 1', () => {
@@ -99,7 +104,12 @@ describe('estado de publicación de un artículo', () => {
     assert.equal(e.publicable, false);
   });
   test('la misma exigencia no se aplica a las demás páginas: sin tipo articulo no se pide fecha', () => {
-    assert.equal(estadoPagina(ESTADO, { aprobaciones, ctx, tipo: 'institucional' }).publicable, true);
+    assert.equal(estadoPagina(ESTADO_LISTO, { aprobaciones, ctx, tipo: 'institucional' }).publicable, true);
+  });
+  test('Estado está pendiente de revisión y por eso no se publica, con el motivo escrito', () => {
+    assert.equal(ESTADO.estado, 'pendiente-de-revision');
+    assert.match(ESTADO.pendiente, /canal de contacto que reciba correo/);
+    assert.equal(estadoPagina(ESTADO, { aprobaciones, ctx, tipo: 'institucional' }).publicable, false);
   });
 });
 
@@ -190,7 +200,8 @@ describe('RSS y sitemap solo con lo publicable', () => {
     const entradas = entradasSitemap(fichas);
     const urls = new Set(entradas.map((e) => e.url));
     for (const f of fichas.filter((x) => x.tipo === 'articulo')) for (const l of IDIOMAS) assert.equal(urls.has(urlAbsoluta(f.ruta[l])), f.indexable, `${f.id}.${l}`);
-    for (const id of ['blog', 'estado']) for (const l of IDIOMAS) assert.ok(urls.has(urlAbsoluta(rutaDe(id, l))), `${id}.${l}`);
+    for (const l of IDIOMAS) assert.ok(urls.has(urlAbsoluta(rutaDe('blog', l))), `blog.${l}`);
+    for (const l of IDIOMAS) assert.ok(!urls.has(urlAbsoluta(rutaDe('estado', l))), `estado.${l} fuera del sitemap`);
     for (const e of entradas.filter((x) => publicados.some((f) => IDIOMAS.some((l) => urlAbsoluta(f.ruta[l]) === x.url)))) {
       assert.deepEqual(Object.keys(e.alternates.languages).sort(), ['en', 'es-MX', 'x-default']);
       assert.match(e.lastModified, /^\d{4}-\d{2}-\d{2}$/);
@@ -217,11 +228,12 @@ describe('el aviso de privacidad y los términos siguen sin contenido', () => {
 });
 
 describe('JSON-LD de blog, artículos y Estado', () => {
-  const grafo = (id, lang) => JSON.parse(serializar(grafoDePagina(id, lang, { fichas })));
+  const listas = fichasEstadoListo();
+  const grafo = (id, lang) => JSON.parse(serializar(grafoDePagina(id, lang, { fichas: listas })));
   const tipos = (g) => g['@graph'].map((n) => n['@type']);
 
   test('cada página publicada del blog emite JSON válido con contexto y ids únicos que se resuelven', () => {
-    for (const f of fichas.filter((x) => (x.tipo === 'articulo' || x.tipo === 'blog-indice' || x.id === 'estado') && x.indexable)) for (const l of IDIOMAS) {
+    for (const f of fichasEstadoListo().filter((x) => (x.tipo === 'articulo' || x.tipo === 'blog-indice' || x.id === 'estado') && x.indexable)) for (const l of IDIOMAS) {
       const g = grafo(f.id, l);
       assert.equal(g['@context'], 'https://schema.org');
       const ids = g['@graph'].map((n) => n['@id']).filter(Boolean);
@@ -361,22 +373,71 @@ describe('Estado', () => {
     assert.match(todo('es'), /rovaq\.ai\/api\/health\/version/);
   });
 
-  test('el contacto de reportes sale del mismo marcador que solicitar-acceso y no se escribe a mano', () => {
+  test('el contacto manda a la página de solicitud de acceso: ningún correo ni marcador en el archivo, así el HTML y el espejo dicen lo mismo', () => {
     const fuente = fs.readFileSync(path.join(WEB, 'src', 'content', 'sitio', 'paginas', 'estado.ts'), 'utf8');
     assert.ok(!RE_CORREO.test(fuente), 'ningún correo escrito en el archivo');
-    assert.match(fuente, /\[CORREO_DE_CONTACTO\]/);
-    assert.match(fuente, /\[CONTACT_EMAIL\]/);
-    const ficha = fichas.find((f) => f.id === 'estado');
-    assert.ok(RE_CORREO.test(JSON.stringify(ficha.arbol)), 'el árbol publicado resuelve el marcador con el contacto del sitio');
-    assert.ok(JSON.stringify(ficha.arbol).includes(ctx.contacto));
+    assert.ok(!/\[CORREO_DE_CONTACTO\]|\[CONTACT_EMAIL\]/.test(hojas(ESTADO).map((h) => `${h.hoja.es} ${h.hoja.en}`).join(' ')), 'ningún marcador en el texto');
+    const enlaces = ESTADO.bloques.find((x) => x.tipo === 'enlaces');
+    assert.ok(enlaces.items.some((it) => it.href.es === rutaDe('solicitar-acceso', 'es') && it.href.en === rutaDe('solicitar-acceso', 'en')));
+    assert.ok(enlaces.items.some((it) => it.href.es === rutaDe('confianza-de-los-datos', 'es')));
   });
 
-  test('es publicable y no vende: su descripción SEO no promete la versión en vivo', () => {
+  test('su título y su h1 no prometen un estado en vivo y aclaran que el campo status no mide el funcionamiento', () => {
+    const todo = hojas(ESTADO).map((h) => `${h.hoja.es} ${h.hoja.en}`).join(' ');
+    assert.ok(!/en vivo|tiempo real/i.test(`${ESTADO.seo.titulo.es} ${ESTADO.h1.es} ${ESTADO.seo.descripcion.es}`.replace('no muestra ese valor en vivo', '')));
+    assert.ok(!/^Estado del servicio/.test(ESTADO.h1.es) && !/Service status/.test(ESTADO.h1.en));
+    assert.match(todo, /campo llamado status/);
+    assert.match(todo, /field named status/);
+  });
+
+  test('NO se publica: 404, sin ficha indexable, y fuera del sitemap, del RSS, del índice, de los llms y de los espejos', () => {
     const f = fichas.find((x) => x.id === 'estado');
+    assert.equal(f.publicable, false);
+    assert.equal(f.indexable, false);
+    assert.equal(f.arbol, null);
+    assert.ok(!fichasPublicas(fichas).some((x) => x.id === 'estado'));
+    const mapa = entradasSitemap(fichas).map((e) => e.url).join('\n');
+    const rss = IDIOMAS.map((l) => rssXml({ lang: l, fichas })).join('\n');
+    const md = IDIOMAS.map((l) => espejoMd(fichas.find((x) => x.id === 'blog'), l, fichas)).join('\n');
+    for (const l of IDIOMAS) for (const todo of [mapa, rss, md]) assert.ok(!todo.includes(rutaDe('estado', l)), `estado.${l}`);
+    // Lo que hay en disco (espejos y llms) tampoco la menciona, y no existe su espejo.
+    const pub = path.join(WEB, 'public');
+    const manifest = JSON.parse(fs.readFileSync(path.join(pub, 's', 'manifest.json'), 'utf8'));
+    assert.ok(!JSON.stringify(manifest.md).includes('estado'), 'sin espejo de Estado en el manifest');
+    for (const l of IDIOMAS) assert.ok(!fs.readdirSync(path.join(pub, 's', 'md', l)).some((n) => n.startsWith('estado.')), `sin archivo espejo de Estado ${l}`);
+    for (const archivo of ['llms.txt', 'llms-full.txt', 'en/llms.txt', 'en/llms-full.txt', 'index.md', 'en/index.md']) {
+      const t = fs.readFileSync(path.join(pub, archivo), 'utf8');
+      for (const l of IDIOMAS) assert.ok(!t.includes(`https://rovaq.ai${rutaDe('estado', l)}`), `${archivo} no enlaza Estado`);
+    }
+  });
+
+  test('ningún texto publicable la enlaza: ni un artículo, ni el índice, ni el pie', () => {
+    const rutas = IDIOMAS.map((l) => rutaDe('estado', l));
+    for (const f of fichas.filter((x) => x.indexable && x.id !== 'inicio')) {
+      const texto = JSON.stringify(f.arbol);
+      for (const r of rutas) assert.ok(!texto.includes(`"${r}"`) && !texto.includes(`rovaq.ai${r}`), `${f.id} enlaza ${r}`);
+    }
+    for (const a of articulosConContenido) assert.ok(!idsEnlazados(textoPlano(a.bloques, 'es')).includes('estado') && !a.relacionados.includes('estado'), a.id);
+  });
+
+  test('lista para publicar con un solo cambio: con estado publicable pasa a ser indexable, con el HTML y el espejo iguales', () => {
+    assert.equal(estadoPagina(ESTADO_LISTO, { aprobaciones, ctx, tipo: 'institucional' }).publicable, true);
+    const listas = fichasEstadoListo();
+    const f = listas.find((x) => x.id === 'estado');
     assert.equal(f.indexable, true);
-    assert.ok(!/en vivo|tiempo real|live|real-time/i.test(`${f.descripcion.es} ${f.descripcion.en}`));
+    assert.ok(!RE_CORREO.test(JSON.stringify(f.arbol)), 'ningún correo en el árbol publicado');
+    for (const l of IDIOMAS) {
+      const t = espejoMd(f, l, listas);
+      assert.ok(!RE_CORREO.test(t));
+      // El texto del contacto en el espejo es el del HTML, palabra por palabra.
+      const contacto = l === 'es' ? 'Para reportar un problema, usa el contacto de la página de solicitud de acceso, que aparece al final de esta página.' : 'To report a problem, use the contact on the request access page, linked at the end of this page.';
+      assert.ok(t.includes(contacto), `${l}: espejo con el texto del HTML`);
+      assert.ok(hojas(ESTADO).some((h) => h.hoja[l].includes(contacto)), `${l}: el HTML dice lo mismo`);
+      assert.ok(t.includes(`](${urlAbsoluta(rutaDe('solicitar-acceso', l))})`), `${l}: enlaza solicitar acceso`);
+    }
   });
 });
+
 
 describe('espejos Markdown del blog y de Estado', () => {
   const md = (id, l) => espejoMd(fichas.find((f) => f.id === id), l, fichas);
@@ -385,7 +446,7 @@ describe('espejos Markdown del blog y de Estado', () => {
     for (const l of IDIOMAS) {
       const t = md('a1', l);
       assert.match(t, /^---\ntitle: /);
-      assert.match(t, /\npublished: 2026-11-03\n/);
+      assert.match(t, new RegExp(`\\npublished: ${FECHA_CONTENIDO}\\n`));
       assert.match(t, /\nauthor: Rovaq AI\n/);
       assert.match(t, /\nreading_time_minutes: \d+\n/);
       assert.match(t, /\n## /);
@@ -402,18 +463,12 @@ describe('espejos Markdown del blog y de Estado', () => {
       const t = md('blog', l);
       const a1 = fichas.find((f) => f.id === 'a1');
       assert.ok(t.includes(`](${urlAbsoluta(a1.ruta[l])})`));
-      assert.ok(t.includes('2026-11-03'));
-      assert.ok(t.includes(a1.resumen[l]));
+      assert.ok(t.includes(FECHA_CONTENIDO));
+      assert.ok(t.includes(a1.subtitulo[l]), 'la tarjeta lleva el subtítulo corto');
+      assert.ok(!t.includes(a1.resumen[l]), 'no el resumen largo');
     }
   });
 
-  test('Estado en Markdown no repite el correo: manda al contacto de la página de acceso', () => {
-    for (const l of IDIOMAS) {
-      const t = md('estado', l);
-      assert.ok(!RE_CORREO.test(t));
-      assert.match(t, l === 'es' ? /Para reportar un problema, usa el contacto de https:\/\/rovaq\.ai\/solicitar-acceso/ : /To report a problem, use the contact on https:\/\/rovaq\.ai\/en\/request-access/);
-    }
-  });
 });
 
 describe('infraestructura vacía lista para los redactores', () => {
@@ -426,5 +481,117 @@ describe('infraestructura vacía lista para los redactores', () => {
   test('fichasPublicas no incluye ningún artículo sin contenido', () => {
     const ids = new Set(PAGINAS_INTERNAS.map((x) => x.id));
     for (const f of fichasPublicas(fichas).filter((x) => x.tipo === 'articulo')) assert.ok(ids.has(f.id), f.id);
+  });
+});
+
+describe('T28: enlaces vivos, fecha única, índice y énfasis', () => {
+  const idsPublicables = new Set(fichas.filter((f) => f.indexable).map((f) => f.id));
+  const enlacesEnTexto = (a) => a.bloques.flatMap((bl) => [...(bl.items ?? []), ...(bl.texto ? [bl.texto] : [])]).flatMap((h) => [...idsEnlazados(h.es), ...idsEnlazados(h.en)]);
+
+  test('ningún artículo enlaza ni relaciona una página que no se publica, y cada uno trae al menos un relacionado publicable', () => {
+    for (const a of articulosConContenido) {
+      for (const id of a.relacionados) assert.ok(idsPublicables.has(id), `${a.id}: relacionado no publicable ${id}`);
+      for (const id of enlacesEnTexto(a)) assert.ok(idsPublicables.has(id), `${a.id}: enlace en el texto a una página no publicable ${id}`);
+      assert.ok(a.relacionados.filter((id) => idsPublicables.has(id)).length >= 1, `${a.id}: sin relacionados publicables`);
+    }
+  });
+
+  test('a1 a a8 se enlazan entre sí: cada artículo recibe al menos un enlace de otro artículo', () => {
+    const recibidos = new Map(articulosConContenido.map((a) => [a.id, 0]));
+    for (const a of articulosConContenido) for (const id of new Set([...a.relacionados, ...enlacesEnTexto(a)])) if (recibidos.has(id) && id !== a.id) recibidos.set(id, recibidos.get(id) + 1);
+    for (const [id, n] of recibidos) assert.ok(n >= 1, `${id}: nadie lo enlaza`);
+  });
+
+  test('ningún artículo nombra ni promete una página pendiente de revisión', () => {
+    const prohibidas = /hoja de ruta|roadmap|casos de uso|use cases|integraciones|integrations|fuentes e importaciones|sources and imports|seguridad y privacidad|security and privacy|pantalla de problemas|problems screen/i;
+    for (const a of articulosConContenido) for (const { ruta, hoja } of hojas(a, a.id)) {
+      if (ruta.endsWith('.condicion')) continue;
+      for (const l of IDIOMAS) assert.ok(!prohibidas.test(sinEnlaces(hoja[l])), `${ruta}.${l}: nombra una página pendiente: ${hoja[l].match(prohibidas)?.[0]}`);
+    }
+  });
+
+  test('una sola constante de fecha: todos los artículos la usan y ningún archivo de contenido la escribe a mano', () => {
+    assert.match(FECHA_CONTENIDO, /^\d{4}-\d{2}-\d{2}$/);
+    for (const a of articulosConContenido) assert.equal(a.pub, FECHA_CONTENIDO, a.id);
+    const dir = path.join(WEB, 'src', 'content', 'sitio', 'paginas');
+    for (const n of fs.readdirSync(dir).filter((x) => x.endsWith('.ts'))) {
+      const fuente = fs.readFileSync(path.join(dir, n), 'utf8');
+      assert.ok(!/pub:\s*'\d{4}-\d{2}-\d{2}'/.test(fuente), `${n}: pub escrito a mano`);
+      assert.ok(!fuente.includes(`'${FECHA_CONTENIDO}'`), `${n}: la fecha del contenido escrita a mano`);
+    }
+    for (const n of ['blog.ts', 'blog-a.ts', 'blog-b.ts']) assert.match(fs.readFileSync(path.join(dir, n), 'utf8'), /import \{ FECHA_CONTENIDO \}/, n);
+    const datos = fs.readFileSync(path.join(WEB, 'src', 'components', 'sitio', 'shell', 'datos.ts'), 'utf8');
+    assert.match(datos, /\.filter\(\(a\) => a\.pub <= FECHA_CONTENIDO\)/, 'el índice HTML filtra por la fecha del contenido');
+  });
+
+  test('el índice en Markdown lista solo artículos con fecha menor o igual a la del contenido', () => {
+    const futuro = articuloDePrueba('a2', { pub: '2999-01-01' });
+    const hacia = fichasCon();
+    const conFuturo = construirFichas({ landing: LANDING, paginas: PAGINAS_INTERNAS.map((x) => (x.id === 'a2' ? futuro : x)), aprobaciones, fechas, ctx });
+    const antes = espejoMd(hacia.find((f) => f.id === 'blog'), 'es', hacia);
+    const despues = espejoMd(conFuturo.find((f) => f.id === 'blog'), 'es', conFuturo);
+    const a2 = rutaDe('a2', 'es');
+    assert.ok(antes.includes(a2));
+    assert.ok(!despues.includes(a2), 'un artículo con fecha posterior no entra al índice');
+    assert.ok(despues.includes(rutaDe('a1', 'es')));
+  });
+
+  test('el índice del blog lista los temas de los ocho artículos', () => {
+    const temas = BLOG_INDICE.bloques.find((x) => x.tipo === 'lista').items;
+    assert.ok(temas.length >= 8, 'ocho temas o más');
+    const todo = temas.map((t) => t.es.toLowerCase()).join(' ');
+    for (const palabra of ['reembolsos', 'procedencia', 'puntos de dolor', 'decisiones', 'inteligencia artificial', 'puestos', 'fuentes', 'seguridad']) assert.ok(todo.includes(palabra), `tema ${palabra}`);
+  });
+
+  test('el énfasis de rótulo **texto** se parte, se quita del texto plano y no cambia el conteo de palabras', () => {
+    assert.deepEqual(partirNegrita('a **b** c'), [{ texto: 'a ', negrita: false }, { texto: 'b', negrita: true }, { texto: ' c', negrita: false }]);
+    assert.equal(sinNegrita('**Por canal.** Muestra'), 'Por canal. Muestra');
+    assert.equal(palabrasDeArticulo([p('**Por canal.** Muestra', 'x')], 'es'), 3);
+    assert.equal(textoPlano([p('**Por canal.** Muestra', 'x')], 'es'), 'Por canal. Muestra');
+    // Los asteriscos van siempre en pareja y nunca quedan sueltos en el texto de un artículo.
+    for (const a of articulosConContenido) for (const { ruta, hoja } of hojas(a, a.id)) for (const l of IDIOMAS) {
+      assert.ok(!/\*/.test(sinNegrita(hoja[l])), `${ruta}.${l}: asterisco suelto`);
+    }
+  });
+
+  test('los artículos no comparten el arranque ni el cierre, ni repiten la frase de la IA en su caja', () => {
+    const arranque = (a, l) => a.bloques.find((x) => x.tipo === 'p').texto[l].slice(0, 40);
+    for (const l of IDIOMAS) assert.equal(new Set(articulosConContenido.map((a) => arranque(a, l))).size, articulosConContenido.length);
+    for (const a of articulosConContenido) for (const bl of a.bloques.filter((x) => x.tipo === 'p')) assert.ok(!/^Este artículo|^This article/.test(bl.texto.es) && !/^This article/.test(bl.texto.en), `${a.id}: "Este artículo" al arranque de un párrafo`);
+    const cajas = articulosConContenido.flatMap((a) => a.bloques.filter((x) => x.tipo === 'no-afirmamos').flatMap((x) => x.items.map((it) => it.es)));
+    const frases = ['Cuando la inteligencia artificial interviene, clasifica y redacta', 'No tratamos un dato desconocido como'];
+    for (const f of frases) assert.ok(cajas.filter((c) => c.includes(f)).length <= 1, `la caja repite: ${f}`);
+    const titulos = articulosConContenido.flatMap((a) => a.bloques.filter((x) => x.tipo === 'h2').map((x) => x.texto.es));
+    assert.equal(new Set(titulos).size, titulos.length, 'ningún h2 repetido entre artículos');
+  });
+
+  test('a4 no afirma nada sobre datos personales del lector, a5 declara la cobertura de HubSpot y a4 dice siempre en el servidor', () => {
+    const a4 = articulosConContenido.find((x) => x.id === 'a4');
+    const a5 = articulosConContenido.find((x) => x.id === 'a5');
+    const t4 = textoPlano(a4.bloques, 'es') + textoPlano(a4.bloques, 'en');
+    assert.ok(!/datos personales|personal data/i.test(t4), 'a4 sin datos personales');
+    assert.ok(!/cada vez que se pide|every time it is requested/.test(t4));
+    assert.match(textoPlano(a4.bloques, 'es'), /siempre en el servidor/);
+    assert.match(textoPlano(a4.bloques, 'en'), /always on the server/);
+    const caja5 = a5.bloques.find((x) => x.tipo === 'no-afirmamos').items.map((it) => it.es).join(' ');
+    assert.match(caja5, /cobertura se limita a lo que expone su API/);
+    assert.match(textoPlano(a5.bloques, 'es'), /la cobertura se limita a lo que expone la API de HubSpot/);
+  });
+
+  test('a2 no sobreafirma: sin libro que no borra, sin absoluto sobre todo el sitio y con la excepción de la retención', () => {
+    const a2 = articulosConContenido.find((x) => x.id === 'a2');
+    for (const l of IDIOMAS) {
+      const t = textoPlano(a2.bloques, l);
+      assert.ok(!/no borra|deletes nothing|ninguna parte|nowhere|bajo cada número|under every important number/i.test(t), l);
+    }
+    assert.match(textoPlano(a2.bloques, 'es'), /retención/);
+    assert.match(textoPlano(a2.bloques, 'en'), /retention/);
+  });
+
+  test('a7 no llama verificadas a sus prácticas y declara al menos un desconocido real', () => {
+    const a7 = articulosConContenido.find((x) => x.id === 'a7');
+    assert.ok(!/verificad[ao]s?\b/i.test(textoPlano(a7.bloques, 'es')), 'es');
+    assert.ok(!/verified (practices|means)/i.test(textoPlano(a7.bloques, 'en')), 'en');
+    assert.match(textoPlano(a7.bloques, 'es'), /encabezados de seguridad/);
   });
 });

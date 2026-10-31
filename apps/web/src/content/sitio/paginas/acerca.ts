@@ -6,7 +6,7 @@ import { LANDING } from '../landing.ts';
 export const ACERCA: Pagina = {
   id: 'acerca',
   estado: 'pendiente-de-revision',
-  pendiente: 'Revisión de Javier y de Responsable A. Sin nombres de personas, sin clientes, sin domicilio y sin tracción hasta que lo decidan.',
+  pendiente: 'Revisión de Javier y del responsable del cliente. Sin nombres de personas, sin clientes, sin domicilio y sin tracción hasta que lo decidan.',
   seo: {
     titulo: b('Acerca de Rovaq AI | Tres principios guían el producto', 'About Rovaq AI | Three Principles Guide the Product'),
     descripcion: b(

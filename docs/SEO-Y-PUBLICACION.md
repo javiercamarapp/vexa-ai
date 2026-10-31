@@ -48,7 +48,7 @@ Pruebas: `node --test tests/seo-produccion.test.mjs` (código) y `node tests/ui/
 
 1. **Vercel:** poner `NEXT_PUBLIC_SITE_URL=https://rovaq-ai.vercel.app` solo cuando el redirect de Supabase Auth (`Site URL` y redirect URLs) ya incluya el dominio nuevo: esa variable también construye los enlaces de acceso. Sin ella se usa el respaldo para SEO, pero el login seguiría con el origen configurado.
 2. **Google Search Console:** crear la propiedad del dominio nuevo, verificar la propiedad (meta o DNS), enviar `https://rovaq-ai.vercel.app/sitemap.xml` y pedir indexar `/login`.
-3. **Dominio propio `rovaq.ai`** cuando Responsable A lo libere: agregarlo en Vercel como dominio principal, redirigir 308 el resto a él, cambiar `SITE_URL_RESPALDO` y `NEXT_PUBLIC_SITE_URL`, actualizar `Canonical` de `security.txt` y repetir Search Console.
+3. **Dominio propio `rovaq.ai`** cuando el responsable del cliente lo libere: agregarlo en Vercel como dominio principal, redirigir 308 el resto a él, cambiar `SITE_URL_RESPALDO` y `NEXT_PUBLIC_SITE_URL`, actualizar `Canonical` de `security.txt` y repetir Search Console.
 4. **Open Graph:** pegar la URL en el depurador de Facebook/LinkedIn y en el validador de X para refrescar la vista previa.
 5. **Correo de seguridad:** hoy `security.txt` apunta al correo personal de Javier; si se crea `seguridad@` en el dominio propio, cambiarlo.
 6. **Retiro del dominio viejo:** cuando termine la transición, redirigir `vexa-ai.vercel.app` al nuevo (301) en Vercel.

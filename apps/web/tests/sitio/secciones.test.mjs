@@ -367,7 +367,7 @@ describe('S8 Seguridad y límites', () => {
       assert.equal(t.seguridad.noHay.length, 5);
       const filas = (h.match(/class="s-limite" data-reveal="linea"/g) ?? []).length;
       assert.equal(filas, t.limites.items.length);
-      assert.equal(filas, 10, 'la fila 8 de límites espera su aprobación de Responsable A y del abogado');
+      assert.equal(filas, 10, 'la fila 8 de límites espera su aprobación del responsable del cliente y del abogado');
       assert.match(h, /id="limites"/);
       assert.match(h, /<h2 class="s-h2-grande">/);
       assert.ok(textoPlano(h).includes(t.limites.subtitulo));

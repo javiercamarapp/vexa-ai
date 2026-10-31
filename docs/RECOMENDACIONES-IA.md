@@ -2,7 +2,7 @@
 
 Estado: **diseño + interfaz implementada detrás de una bandera apagada**. No se llama a ningún modelo, no hay gasto y no hay credenciales. Las pruebas usan un cliente simulado.
 
-## Qué pidió Responsable A
+## Qué pidió el responsable del cliente
 
 Una IA «experta en la industria» (herramientas eléctricas y posventa e-commerce) que dé las mejores recomendaciones con toda la información. Hoy el generador es de reglas (`conditioned-rules-v2`). La IA no reemplaza al responsable: **solo un humano aprueba** (Proceder / Ajustar / Descartar); la ejecución automática es V2.
 
@@ -42,11 +42,11 @@ Una salida rechazada **se cobra al costo real** (ya se gastó) y no se muestra c
 - `estimarCosto(entrada)` da un **rango** en micro-USD (tarifa baja y alta) antes de llamar. Las tarifas incluidas son **supuestas** (`supuesta: true`) y deben confirmarse contra el catálogo del gateway antes de activar.
 - `topeMinor` es el tope **por recomendación**: si el peor caso lo excede, no se llama.
 - `reserve` por el peor caso → llamada → `settle` con el costo real. Si el costo real es desconocido o la llamada falla, se liquida el peor caso (nunca cero).
-- El presupuesto del periodo lo fija Javier/Responsable A en el panel; este módulo no lo cambia.
+- El presupuesto del periodo lo fija Javier/el responsable del cliente en el panel; este módulo no lo cambia.
 
 ## Cómo se conectaría (no hecho)
 
-1. Confirmar con Responsable A la aprobación de gasto de IA para recomendaciones (R4 es P2, fase 2).
+1. Confirmar con el responsable del cliente la aprobación de gasto de IA para recomendaciones (R4 es P2, fase 2).
 2. Implementar un `cliente` real sobre el gateway (`packages/gateway`) con modelo y tarifas del catálogo vigente.
 3. Calcular las cifras `insight_*` por problema y pasarlas a `construirEntrada`.
 4. Guardar la salida verificada como propuesta: requiere una versión nueva del generador (`ia-anclada-v1`) aceptada por `recommendation_managed_guard` (hoy solo acepta `conditioned-rules-v1/v2`), es decir, **una migración nueva**. La propuesta entra al mismo flujo humano (`proposed` → Proceder/Ajustar/Descartar).

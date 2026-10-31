@@ -82,7 +82,7 @@ Responsable Javier, salvo lectura con `dig`:
 8. Aplicar las 13 plantillas (sección anterior).
 9. Vercel (proyecto `rovaq-ai`, antes `vexa-ai`), variables secretas: `VEXA_EMAIL_MODE=resend`, `RESEND_API_KEY`, `VEXA_EMAIL_FROM=avisos@avisos.rovaq.ai`, `VEXA_EMAIL_REPLY_TO=soporte@rovaq.ai`, `VEXA_APP_ORIGIN`, `RESEND_WEBHOOK_SECRET`, `VEXA_EMAIL_DATABASE_URL` (+ CA). `vercel env add` de secretos suele bloquearse en sesión: darlo como script o hacerlo en el panel.
 10. Resend -> Webhooks: `https://<dominio>/api/webhooks/email` con delivered, bounced, complained, delivery_delayed, suppressed, failed; copiar el secreto a `RESEND_WEBHOOK_SECRET`. Los correos de Auth enviados por el SMTP de Resend llegan a este webhook como huérfanos, caso ya soportado.
-11. Pruebas con buzones reales: Gmail, Outlook/Hotmail y el de Responsable A; revisar bandeja (no spam) y `Authentication-Results: spf=pass dkim=pass dmarc=pass`; mail-tester >= 9/10; Litmus o bandejas reales en claro y oscuro (Gmail iOS/Android, Outlook Windows). El VML y el modo oscuro de Gmail y Outlook no se han verificado en clientes reales.
+11. Pruebas con buzones reales: Gmail, Outlook/Hotmail y el del responsable del cliente; revisar bandeja (no spam) y `Authentication-Results: spf=pass dkim=pass dmarc=pass`; mail-tester >= 9/10; Litmus o bandejas reales en claro y oscuro (Gmail iOS/Android, Outlook Windows). El VML y el modo oscuro de Gmail y Outlook no se han verificado en clientes reales.
 
 Verificación en lectura (Claude): `dig +short TXT acceso.rovaq.ai`, `dig +short TXT resend._domainkey.acceso.rovaq.ai`, `dig +short MX acceso.rovaq.ai`, `dig +short TXT _dmarc.acceso.rovaq.ai`.
 

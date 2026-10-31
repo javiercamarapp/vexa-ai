@@ -1,6 +1,6 @@
 # Brechas de ingreso (`/gaps`)
 
-Pantalla del grupo «Dinero» que responde las tres preguntas de Responsable A: **dónde gano más, dónde pierdo y por qué, y dónde podría ganar más**. Rama `rediseno-brechas` (23-oct-2026). Nada aplicado ni desplegado.
+Pantalla del grupo «Dinero» que responde las tres preguntas del responsable del cliente: **dónde gano más, dónde pierdo y por qué, y dónde podría ganar más**. Rama `rediseno-brechas` (23-oct-2026). Nada aplicado ni desplegado.
 
 ## Regla de oro: todo es INGRESO BRUTO
 Cliente piloto no compartirá costo por producto. Ninguna cifra es margen, utilidad ni ganancia, y la pantalla lo rotula («ingreso bruto»). Las recomendaciones miden **ingreso en juego**; lo recuperable solo se estima con supuestos que teclea el usuario (estimador con candado, el mismo de `/refunds`).

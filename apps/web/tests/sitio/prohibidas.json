@@ -351,18 +351,16 @@
     },
     {
       "n": 25,
-      "afirmacion": "Nombre de la agencia de Responsable A, de la marca piloto, de su sector o de sus productos; nombres de personas.",
+      "afirmacion": "Nombre de la agencia del cliente, de la marca piloto, de su sector o de sus productos; nombres de personas.",
       "regla": "prohibida",
       "patrones": [
-        "\\bclientex\\b",
-        "\\bdavid\\b",
         "\\bjavier\\b",
         "\\bc[aá]mara\\b",
         "\\bcelinda\\b",
         "innovativos",
         "\\blikida\\b"
       ],
-      "nota": "El contacto resuelto es el único dato personal permitido y se excluye por valor exacto."
+      "nota": "El contacto resuelto es el único dato personal permitido y se excluye por valor exacto. Los nombres reales del cliente piloto y de sus personas NO se listan aquí (repo público): los cubre la guarda tests/seguridad/datos-de-cliente.test.mjs con huellas y con el archivo externo de patrones."
     },
     {
       "n": 26,

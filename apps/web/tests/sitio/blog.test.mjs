@@ -32,7 +32,7 @@ const { fichas, aprobaciones, LANDING, ctx } = sitio;
 const fechas = JSON.parse(fs.readFileSync(path.join(WEB, 'config', 'sitio', 'fechas.json'), 'utf8'));
 const articulosRegistro = PAGINAS.filter((x) => x.tipo === 'articulo');
 const articulosConContenido = PAGINAS_INTERNAS.filter((x) => porId(x.id)?.tipo === 'articulo');
-/** Los que salen en el lanzamiento: a7 queda pendiente de revisión (Responsable A y un abogado), con su texto escrito. */
+/** Los que salen en el lanzamiento: a7 queda pendiente de revisión (el responsable del cliente y un abogado), con su texto escrito. */
 const articulosPublicados = articulosConContenido.filter((x) => x.estado === 'publicable');
 const ID_FUERA = 'a7';
 const RE_CORREO = /[\w.+-]+@[\w-]+\.[\w.-]+/;
@@ -116,7 +116,7 @@ describe('estado de publicación de un artículo', () => {
   test('a7 queda pendiente de revisión con su motivo, aunque su texto esté completo', () => {
     const a7 = articulosConContenido.find((x) => x.id === ID_FUERA);
     assert.equal(a7.estado, 'pendiente-de-revision');
-    assert.match(a7.pendiente, /revisión de Responsable A y de un abogado/);
+    assert.match(a7.pendiente, /revisión del responsable del cliente y de un abogado/);
     assert.equal(estado(a7).publicable, false);
   });
 });
@@ -137,7 +137,7 @@ describe('artículos con y sin contenido', () => {
         assert.equal(ficha.publicable, false);
         assert.equal(ficha.indexable, false);
         assert.equal(ficha.arbol, null);
-        assert.match(ficha.motivos.join(), /revisión de Responsable A y de un abogado/);
+        assert.match(ficha.motivos.join(), /revisión del responsable del cliente y de un abogado/);
       } else {
         assert.equal(ficha.publicable, false, reg.id);
         assert.equal(ficha.indexable, false);

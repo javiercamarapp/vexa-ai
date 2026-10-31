@@ -39,5 +39,5 @@ El adaptador (`packages/platform/src/db.ts`) mapea **cualquier** error de base n
 |---|---|
 | Escritura en produccion (cierre de imports, migraciones, rollback, cron) | Javier (script `!`) |
 | Gasto fuera de tope, Spend Management, facturacion | Javier |
-| Acceso de Responsable A (invitacion `pending`, vence 22-oct 19:12Z) | Javier reenvia; Responsable A acepta y confirma correo |
+| Acceso del responsable del cliente (invitacion `pending`, vence 22-oct 19:12Z) | Javier reenvia; el responsable del cliente acepta y confirma correo |
 | Sospecha de fuga | Seguir seccion «Sospecha de fuga» de `02-RUNBOOK-Y-ACCESOS.md` |

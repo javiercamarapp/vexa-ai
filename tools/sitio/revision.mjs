@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Hoja de revisión legible para Responsable A y para el abogado (T11).
+// Hoja de revisión legible para el responsable del cliente y para el abogado (T11).
 // Lista, con su texto en español y en inglés, todo lo que hoy no se publica o se publica con su condición:
 // textos que esperan una aprobación, verificaciones del producto sin cumplir, marcadores sin resolver y páginas pendientes.
 // Solo lee el contenido. Con --aprobar o --condicion escribe apps/web/src/content/sitio/aprobaciones.json, y solo debe usarse
@@ -21,7 +21,7 @@ const { LANDING, CONDICIONES, PORTADA } = await import(path.join(CONTENIDO, 'lan
 const { PAGINAS_INTERNAS } = await import(path.join(CONTENIDO, 'paginas/index.ts'));
 const M = await import(path.join(raiz, 'apps/web/src/lib/sitio/marcadores.mjs'));
 
-const REVISORES = { responsable_a: 'Responsable A', abogado: 'Abogado' };
+const REVISORES = { responsable: 'Responsable del cliente', abogado: 'Abogado' };
 
 /** Sección de la portada que consume una clave, para decir dónde aparece un texto. */
 function dondeAparece(ruta) {
@@ -95,7 +95,7 @@ export function aMarkdown(d) {
   const L = [];
   L.push('# Hoja de revisión del sitio de Rovaq AI');
   L.push('');
-  L.push(`Generada el ${d.generado}. Para Responsable A y para el abogado. Cada texto de abajo no se publica todavía, o se publica con su condición al lado.`);
+  L.push(`Generada el ${d.generado}. Para el responsable del cliente y para el abogado. Cada texto de abajo no se publica todavía, o se publica con su condición al lado.`);
   L.push('Una aprobación queda atada al texto exacto, en español y en inglés: si el texto cambia, vuelve a pendiente y hay que aprobarlo de nuevo.');
   L.push('');
   L.push(`- Hojas de contenido revisadas: ${d.totales.hojas}`);
@@ -137,7 +137,7 @@ export function aMarkdown(d) {
   if (conRevisor.length === 0) L.push('Ninguno.', '');
   L.push('## 2. Campos bloqueados por un dato que falta');
   L.push('');
-  L.push('Se publican en cuanto se resuelva el marcador. No requieren que Responsable A ni el abogado los lean antes; requieren un dato de Javier.');
+  L.push('Se publican en cuanto se resuelva el marcador. No requieren que el responsable del cliente ni el abogado los lean antes; requieren un dato de Javier.');
   L.push('');
   if (conMarcador.length === 0) L.push('Ninguno.');
   for (const h of conMarcador) L.push(`- ${h.ruta} (${h.dondeAparece}): ${h.motivos.join('; ')}. Texto: ${h.es}`);
@@ -242,7 +242,7 @@ async function principal() {
   if (a.aprobar) {
     const hoja = hojaPorRutaGlobal(a.aprobar);
     if (!hoja || !M.esHoja(hoja)) throw new Error(`No existe la hoja ${a.aprobar}`);
-    if (!['responsable_a', 'abogado'].includes(a.revisor)) throw new Error('--revisor debe ser responsable_a o abogado');
+    if (!['responsable', 'abogado'].includes(a.revisor)) throw new Error('--revisor debe ser responsable o abogado');
     if (!(hoja.req ?? []).includes(a.revisor)) throw new Error(`${a.aprobar} no pide la aprobación de ${a.revisor}; pide: ${(hoja.req ?? []).join(', ') || 'ninguna'}`);
     const nuevo = M.aprobar(leerAprobaciones(), a.aprobar, a.revisor, hoja, { fecha: a.fecha, nota: a.nota === 'true' ? '' : a.nota });
     fs.writeFileSync(RUTA_APROBACIONES, `${JSON.stringify(nuevo, null, 2)}\n`);

@@ -117,13 +117,13 @@ export const ARTICULO_A6: Articulo = articulo({
 });
 
 // a7. El más delicado. Solo PUBLICO de LANDING.seguridad (hay, noHay), y el texto de retención.
-// Fuera a propósito (para revisión de Responsable A): conexiones de solo lectura (MATIZ 9), versión redactada de las conversaciones (m 11, requiere Responsable A y abogado),
+// Fuera a propósito (para revisión del responsable del cliente): conexiones de solo lectura (MATIZ 9), versión redactada de las conversaciones (m 11, requiere el responsable del cliente y abogado),
 // IA detrás de banderas (MATIZ 3), fecha de revisión y buzón de seguridad (marcadores sin resolver).
 export const ARTICULO_A7: Articulo = articulo({
   id: 'a7',
-  // FUERA DEL LANZAMIENTO (T32-Y, decisión de Javier): las afirmaciones de seguridad esperan la revisión de Responsable A y de un abogado. El texto queda escrito.
+  // FUERA DEL LANZAMIENTO (T32-Y, decisión de Javier): las afirmaciones de seguridad esperan la revisión del responsable del cliente y de un abogado. El texto queda escrito.
   estado: 'pendiente-de-revision',
-  pendiente: 'Las afirmaciones de seguridad esperan la revisión de Responsable A y de un abogado.',
+  pendiente: 'Las afirmaciones de seguridad esperan la revisión del responsable del cliente y de un abogado.',
   pub: FECHA_CONTENIDO,
   etiqueta: b('Seguridad', 'Security'),
   seo: {

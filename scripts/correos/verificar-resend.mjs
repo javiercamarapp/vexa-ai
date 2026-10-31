@@ -76,7 +76,7 @@ export async function comprobarDns({dominios, raiz, dig}) {
     add(spf?.some(x => /^v=spf1\b.*include:amazonses\.com/.test(x)) ? 'OK' : 'FALLA', `DNS ${d}: SPF send.${d} ${spf?.length ? 'presente' : 'no existe'}`);
     const dmarcSub = await dig('TXT', `_dmarc.${d}`);
     const cname = await dig('CNAME', `rsend.${d}`);
-    add(cname?.length ? 'OK' : 'AVISO', `DNS ${d}: CNAME rsend.${d} ${cname?.length ? 'presente' : 'ausente (lo entrego Resend en DNS-PARA-RESPONSABLE_A; confirmar en el panel si es requerido)'}`);
+    add(cname?.length ? 'OK' : 'AVISO', `DNS ${d}: CNAME rsend.${d} ${cname?.length ? 'presente' : 'ausente (lo entrego Resend en DNS-PARA-RESPONSABLE-CLIENTE; confirmar en el panel si es requerido)'}`);
     add(dmarcSub?.some(x => /^v=DMARC1/i.test(x)) ? 'OK' : 'AVISO', `DNS ${d}: DMARC propio _dmarc.${d} ${dmarcSub?.length ? 'presente' : 'ausente (hereda el de la raiz)'}`);
   }
   const dm = await dig('TXT', `_dmarc.${raiz}`);

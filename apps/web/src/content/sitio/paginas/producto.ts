@@ -127,7 +127,7 @@ export const PRODUCTO_HOY: Pagina = pantalla({
 export const PRODUCTO_FUGA: Pagina = pantalla({
   id: 'producto/fuga-de-reembolsos',
   estado: 'pendiente-de-revision',
-  pendiente: 'Revisión de Responsable A. Condición 8: los marketplaces entran por exporte con ayuda del equipo; si hubiera autoservicio de exportes, se actualiza la frase.',
+  pendiente: 'Revisión del responsable del cliente. Condición 8: los marketplaces entran por exporte con ayuda del equipo; si hubiera autoservicio de exportes, se actualiza la frase.',
   seo: {
     titulo: b('Fuga de reembolsos | Dónde se concentra el dinero devuelto', 'Refund Leakage | Where Returned Money Concentrates'),
     descripcion: b(
@@ -179,7 +179,7 @@ export const PRODUCTO_FUGA: Pagina = pantalla({
 export const PRODUCTO_PROBLEMAS: Pagina = pantalla({
   id: 'producto/problemas',
   estado: 'pendiente-de-revision',
-  pendiente: 'Condición 7: exposición solo con vínculos de problema a pedido confirmados; problem_conversations tiene 0 filas al 2026-10-29. Revisión de Responsable A.',
+  pendiente: 'Condición 7: exposición solo con vínculos de problema a pedido confirmados; problem_conversations tiene 0 filas al 2026-10-29. Revisión del responsable del cliente.',
   seo: {
     titulo: b('Problemas | Lo que dicen tus clientes, con evidencia', 'Problems | What Your Customers Say, With Evidence | Rovaq AI'),
     descripcion: b(

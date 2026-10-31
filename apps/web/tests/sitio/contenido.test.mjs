@@ -121,7 +121,7 @@ describe('afirmaciones prohibidas (K8)', () => {
     22: ['Reclama tus reembolsos automáticamente.', 'It claims your refunds automatically.'],
     23: ['Nuestros clientes confían en nosotros.', 'Trusted by our customers.'],
     24: ['Lee los testimonios de clientes.', 'Read the customer testimonials.'],
-    25: ['Lo usa Clientex.', 'Used by Clientex.'],
+    25: ['Lo usa Likida.', 'Used by Likida.'],
     26: ['Planes desde $99 al mes.', 'Plans starting at $99 per month.'],
     27: ['Tenemos certificación SOC 2.', 'We hold SOC 2 certification.'],
     28: ['Cumplimiento total con GDPR.', 'Full GDPR compliance.'],
@@ -374,7 +374,7 @@ describe('aprobaciones por campo atadas al hash del texto', () => {
       const hoja = hojaEn(LANDING, ruta) ?? (ruta.startsWith('paginas.') ? undefined : undefined);
       assert.ok(hoja, `aprobación sobre una ruta que ya no existe: ${ruta}`);
       for (const [revisor, reg] of Object.entries(porRevisor)) {
-        assert.ok(['responsable_a', 'abogado'].includes(revisor));
+        assert.ok(['responsable', 'abogado'].includes(revisor));
         assert.equal(reg.hash, hashTexto(hoja), `la aprobación de ${revisor} sobre ${ruta} está vencida`);
       }
     }
@@ -391,12 +391,12 @@ describe('aprobaciones por campo atadas al hash del texto', () => {
     const copia = structuredClone(LANDING);
     const ruta = 'limites.items[7]';
     const hoja = hojaEn(copia, ruta);
-    let ap = aprobar(aprobacionesVacias(), ruta, 'responsable_a', hoja, { fecha: '2026-11-01' });
+    let ap = aprobar(aprobacionesVacias(), ruta, 'responsable', hoja, { fecha: '2026-11-01' });
     let e = estadoPublicacion(copia, { aprobaciones: ap, ctx: CTX }).find((x) => x.ruta === ruta);
     assert.equal(e.publicable, false, 'falta el abogado');
     ap = aprobar(ap, ruta, 'abogado', hoja, { fecha: '2026-11-02' });
     e = estadoPublicacion(copia, { aprobaciones: ap, ctx: CTX }).find((x) => x.ruta === ruta);
-    assert.equal(e.publicable, true, 'con Responsable A y abogado se publica');
+    assert.equal(e.publicable, true, 'con el responsable del cliente y abogado se publica');
     assert.equal(publicar(copia, { aprobaciones: ap, ctx: CTX }).arbol.limites.items.length, 11);
     // Cambiar el texto, en cualquiera de los dos idiomas, vuelve a pendiente.
     for (const lang of IDIOMAS) {
@@ -412,7 +412,7 @@ describe('aprobaciones por campo atadas al hash del texto', () => {
 
   test('una aprobación no se hereda entre campos: la de una ruta no vale para otra', () => {
     const copia = structuredClone(LANDING);
-    let ap = aprobar(aprobacionesVacias(), 'faq.items[8].a', 'responsable_a', hojaEn(copia, 'faq.items[8].a'));
+    let ap = aprobar(aprobacionesVacias(), 'faq.items[8].a', 'responsable', hojaEn(copia, 'faq.items[8].a'));
     ap = aprobar(ap, 'faq.items[8].a', 'abogado', hojaEn(copia, 'faq.items[8].a'));
     const estados = estadoPublicacion(copia, { aprobaciones: ap, ctx: CTX });
     assert.equal(estados.find((e) => e.ruta === 'faq.items[8].a').publicable, true);
@@ -551,7 +551,7 @@ describe('reglas de contenido de la portada', () => {
     assert.equal(LANDING.hero.titulo.es, 'Sabe cuánto dinero se te va, y por qué.');
     assert.match(LANDING.hero.limite.es, /ingreso bruto, nunca margen/i);
     assert.equal(LANDING.puente.tituloAlterno.es, 'Cada problema, con su ingreso expuesto y su evidencia.');
-    assert.deepEqual(LANDING.puente.titulo.req, ['responsable_a']);
+    assert.deepEqual(LANDING.puente.titulo.req, ['responsable']);
     assert.equal(LANDING.puente.titulo.alterno, 'puente.tituloAlterno');
   });
 
@@ -698,12 +698,12 @@ describe('páginas internas', () => {
 
   test('Acerca va sin nombres de personas, sin clientes, sin domicilio y sin tracción', () => {
     const acerca = hojas(PAGINAS_INTERNAS.find((p) => p.id === 'acerca')).map((h) => `${h.hoja.es} ${h.hoja.en}`).join(' ');
-    assert.ok(!/javier|responsable_a|clientex|cliente\b.*conf[ií]an|domicilio|fundador|founder|calle|street/i.test(acerca));
+    assert.ok(!/javier|cliente\b.*conf[ií]an|domicilio|fundador|founder|calle|street/i.test(acerca));
   });
 });
 
 // ------------------------------------------------------------------ 9. hoja de revisión
-describe('hoja de revisión para Responsable A y el abogado', () => {
+describe('hoja de revisión para el responsable del cliente y el abogado', () => {
   test('lista los textos que esperan una decisión, con español, inglés, condición, revisor y huella', () => {
     const d = datosDeRevision({ aprobaciones: APROBACIONES, ctx: CTX });
     const rutas = d.pendientes.map((h) => h.ruta);
@@ -717,7 +717,7 @@ describe('hoja de revisión para Responsable A y el abogado', () => {
     const md = aMarkdown(d);
     assert.match(md, /Lo que otros llaman insight/);
     assert.match(md, /What others call an insight/);
-    assert.match(md, /Quién revisa: Responsable A y Abogado/);
+    assert.match(md, /Quién revisa: Responsable del cliente y Abogado/);
     assert.match(md, /Decisión: \[ \] Aprobado/);
     assert.ok(md.includes(hashTexto(LANDING.faq.items[8].a).slice(0, 16)));
     const html = aHtml(d);
@@ -727,7 +727,7 @@ describe('hoja de revisión para Responsable A y el abogado', () => {
 
   test('una aprobación completa saca el texto de la hoja', () => {
     let ap = aprobacionesVacias();
-    for (const ruta of ['faq.items[8].q', 'faq.items[8].a', 'limites.items[7]']) for (const r of ['responsable_a', 'abogado']) ap = aprobar(ap, ruta, r, hojaEn(LANDING, ruta));
+    for (const ruta of ['faq.items[8].q', 'faq.items[8].a', 'limites.items[7]']) for (const r of ['responsable', 'abogado']) ap = aprobar(ap, ruta, r, hojaEn(LANDING, ruta));
     const rutas = datosDeRevision({ aprobaciones: ap, ctx: CTX }).pendientes.map((h) => h.ruta);
     assert.ok(!rutas.includes('faq.items[8].a') && !rutas.includes('limites.items[7]'));
     assert.ok(rutas.includes('puente.titulo'));

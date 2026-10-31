@@ -10,7 +10,7 @@ const ROTULO = b('Datos de ejemplo. No son de un cliente.', 'Example data. Not f
 export const CASOS_INDICE: Pagina = {
   id: 'casos-de-uso',
   estado: 'pendiente-de-revision',
-  pendiente: 'Revisión de Responsable A de la tarjeta de ventana de 24 horas (condición 9: HubSpot acreditado y cobertura limitada a lo que su API expone).',
+  pendiente: 'Revisión del responsable del cliente de la tarjeta de ventana de 24 horas (condición 9: HubSpot acreditado y cobertura limitada a lo que su API expone).',
   seo: {
     titulo: b('Casos de uso por puesto y por situación | Rovaq AI', 'Use Cases for Every Role and Every Situation | Rovaq AI'),
     descripcion: b(
@@ -45,12 +45,12 @@ export const CASOS_INDICE: Pagina = {
           t: b('Ventana de 24 horas', 'The 24-hour window'),
           d: m(
             9,
-            'Revisión de Responsable A. Solo HubSpot, en solo lectura, con cobertura limitada a lo que su API expone.',
+            'Revisión del responsable del cliente. Solo HubSpot, en solo lectura, con cobertura limitada a lo que su API expone.',
             b(
               'Mira a qué hora llegan las conversaciones de HubSpot y cuántos hilos están en riesgo de pasar de 24 horas sin respuesta de agente.',
               'See when HubSpot conversations arrive and how many threads are at risk of passing 24 hours without an agent reply.',
             ),
-            { req: ['responsable_a'] },
+            { req: ['responsable'] },
           ),
         },
         {

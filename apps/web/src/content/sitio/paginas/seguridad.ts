@@ -1,5 +1,5 @@
 // Seguridad y privacidad (T11). Fuente: landing/producto/03-SEGURIDAD-CONFIANZA.md sección 5 y la portada.
-// Pendiente de revisión de Responsable A y de un abogado. El contacto de seguridad y la fecha usan marcadores que no se resuelven todavía,
+// Pendiente de revisión del responsable del cliente y de un abogado. El contacto de seguridad y la fecha usan marcadores que no se resuelven todavía,
 // así que esas hojas no se publican. Sin certificaciones, sin cifras de tablas ni de pruebas, sin auditoría interna.
 import type { Pagina } from '../tipos.ts';
 import { b, m } from '../ayudas.ts';
@@ -8,7 +8,7 @@ import { LANDING } from '../landing.ts';
 export const SEGURIDAD: Pagina = {
   id: 'seguridad-y-privacidad',
   estado: 'pendiente-de-revision',
-  pendiente: 'Revisión de Responsable A y de un abogado. Condiciones 1 y 12: falta un buzón de seguridad que reciba correo y la fecha de revisión. La verificación de producción de las cabeceras reales sigue abierta.',
+  pendiente: 'Revisión del responsable del cliente y de un abogado. Condiciones 1 y 12: falta un buzón de seguridad que reciba correo y la fecha de revisión. La verificación de producción de las cabeceras reales sigue abierta.',
   seo: {
     titulo: b('Seguridad y privacidad | Prácticas existentes y brechas', 'Security and Privacy | Existing Practices and Declared Gaps'),
     descripcion: b(
@@ -36,12 +36,12 @@ export const SEGURIDAD: Pagina = {
       titulo: b('Datos personales', 'Personal data'),
       texto: m(
         11,
-        'Misma materia que la pregunta de datos personales con IA del FAQ y la fila de anonimización de los límites: revisión de Responsable A y de un abogado.',
+        'Misma materia que la pregunta de datos personales con IA del FAQ y la fila de anonimización de los límites: revisión del responsable del cliente y de un abogado.',
         b(
           'Las conversaciones se guardan con una versión redactada, separada de la original. Redactar no equivale a anonimizar, y por eso no decimos que tus datos estén anonimizados.',
           'Conversations are stored with a redacted version, separate from the original. Redaction is not anonymization, and that is why we do not say your data is anonymized.',
         ),
-        { req: ['responsable_a', 'abogado'] },
+        { req: ['responsable', 'abogado'] },
       ),
     },
     {

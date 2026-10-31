@@ -7,7 +7,7 @@ import { LANDING } from '../landing.ts';
 export const INTEGRACIONES: Pagina = {
   id: 'integraciones',
   estado: 'pendiente-de-revision',
-  pendiente: 'Revisión de Responsable A. Condiciones 5, 8 y 9: corridas exitosas del cron de HubSpot, exportes de marketplaces con ayuda del equipo y HubSpot acreditado sobre una muestra.',
+  pendiente: 'Revisión del responsable del cliente. Condiciones 5, 8 y 9: corridas exitosas del cron de HubSpot, exportes de marketplaces con ayuda del equipo y HubSpot acreditado sobre una muestra.',
   seo: {
     titulo: b('Integraciones | Qué se conecta hoy y qué viene después', 'Integrations | What Connects Today and What Comes Next'),
     descripcion: b(
@@ -41,7 +41,7 @@ export const INTEGRACIONES: Pagina = {
 export const HOJA_DE_RUTA: Pagina = {
   id: 'hoja-de-ruta',
   estado: 'pendiente-de-revision',
-  pendiente: 'Revisión de Responsable A. Lista de dirección, no una promesa de entrega; se omiten a propósito fechas, Zendesk y el triple análisis.',
+  pendiente: 'Revisión del responsable del cliente. Lista de dirección, no una promesa de entrega; se omiten a propósito fechas, Zendesk y el triple análisis.',
   seo: {
     titulo: b('Hoja de ruta | Hacia dónde va Rovaq AI, sin fechas', 'Roadmap | Where Rovaq AI Is Heading, Without Dates'),
     descripcion: b(

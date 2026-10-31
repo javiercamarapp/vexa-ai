@@ -9,7 +9,7 @@ export interface Bi {
 }
 
 /** Quién debe aprobar un texto antes de publicarse. */
-export type Revisor = 'responsable_a' | 'abogado';
+export type Revisor = 'responsable' | 'abogado';
 
 /**
  * Condición de una afirmación MATIZ (P-D sección 5).

@@ -43,6 +43,7 @@ import {trFEn} from './d-tr-f';
 import {trGEn} from './d-tr-g';
 import {trHEn} from './d-tr-h';
 import {trIEn} from './d-tr-i';
+import {trJEn} from './d-tr-j';
 export const en: Record<Clave, string> = {
   'comun.cerrar': 'Close', 'comun.reintentar': 'Try again', 'comun.cargando': 'Loading…', 'comun.sinDato': 'No data',
   'idioma.etiqueta': 'Language', 'idioma.es': 'Español', 'idioma.en': 'English', 'idioma.cambiar': 'Switch language to {idioma}',
@@ -187,6 +188,7 @@ export const en: Record<Clave, string> = {
   ...trGEn,
   ...trHEn,
   ...trIEn,
+  ...trJEn,
   ...setupEn,
   ...tourEn,
   ...landingEn,

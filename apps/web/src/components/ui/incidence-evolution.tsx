@@ -19,7 +19,7 @@ const accept=(j:unknown)=>{const d=(j as {data?:MonthlyIncidencesView})?.data;re
 export function IncidenceEvolution({problemId}:{problemId:string}){
  const t=useT(),loc=useLocaleIntl(),idioma=useIdioma(),r=useJson<MonthlyIncidencesView>('/api/trends/incidences?problem='+encodeURIComponent(problemId),accept);
  const v=r.data,ok=!!v&&v.status==='ok';
- const insights=useMemo(()=>insightsProblemaSerie(v),[v]);
+ const insights=useMemo(()=>insightsProblemaSerie(v,new Date(),t),[v,t]);
  const data=useMemo<ColumnDatum[]>(()=>ok?v!.series.map(p=>({key:p.month,label:mesAbrev(p.month,idioma),long:monthLong(p.month,loc),value:p.count,display:t(p.count===1?'tr.ui.incUna':'tr.ui.incVarias',{n:nf.format(p.count)})})):[],[ok,v,t,loc,idioma]);
  const timeout=v?.status==='timeout',reason=timeout?t('tr.ui.evolTimeout'):t('tr.ui.evolVacio');
  return <section className="card" aria-label={t('tr.ui.evolAria')}>

@@ -6,7 +6,8 @@ import {esMesCompleto,completitud} from '../../../../../packages/metrics/complet
 import {etiquetaCategoria} from './categorias.mjs';
 import {porcentaje,variacionDecimas} from '../formato/es-mx.mjs';
 import {separarRuidoCategorias} from './ruido.mjs';
-import {LOCALES} from '../formato/idioma.mjs';
+import {LOCALES,localeDe} from '../formato/idioma.mjs';
+import {idiomaDe} from './trad.mjs';
 const MAX=3;
 const entero=s=>typeof s==='string'&&/^-?\d+$/.test(s);
 const nfEs=new Intl.NumberFormat(LOCALES.es);
@@ -16,10 +17,10 @@ const X=(ctx,clave,es,vars)=>ctx?.t?ctx.t(clave,vars):es;
 const LOC=ctx=>ctx?.loc??LOCALES.es;
 const Y=ctx=>ctx?.t?' '+ctx.t('prob.y')+' ':' y ';
 /** Variación porcentual exacta con un decimal (BigInt). null si no hay base honesta (anterior ≤ 0). */
-export function variacion(actual,anterior){
+export function variacion(actual,anterior,idioma){
  const d=variacionDecimas(actual,anterior);if(d===null)return null;
- if(d===0&&BigInt(actual)!==BigInt(anterior))return {dir:BigInt(actual)>BigInt(anterior)?'sube':'baja',texto:'0.1 %',pequena:true};
- return {dir:d>0?'sube':d<0?'baja':'igual',texto:porcentaje(Math.abs(d)/10)};
+ if(d===0&&BigInt(actual)!==BigInt(anterior))return {dir:BigInt(actual)>BigInt(anterior)?'sube':'baja',texto:idioma==='en'?'0.1%':'0.1 %',pequena:true};
+ return {dir:d>0?'sube':d<0?'baja':'igual',texto:porcentaje(Math.abs(d)/10,{idioma})};
 }
 /** Dos últimos meses COMPLETOS de una serie. Completo = anterior al mes en curso y, si se conoce `completitud.dataThrough`
  *  (último dato cargado), con datos hasta el último día del mes (criterio único en packages/metrics/complete-months.mjs). */
@@ -118,26 +119,29 @@ export function insightsProblemas({items=[],moneda=null,t=null}={}){
  return out.slice(0,MAX);
 }
 
-const mesCorto=m=>new Intl.DateTimeFormat(LOCALES.es,{month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
-/** Evolución mensual de incidencias de UN problema agrupado (máx. 3): total y mes pico, cambio entre meses completos y cobertura de fechas. */
-export function insightsProblemaSerie(vista,ahora=new Date()){
- const fuente='Incidencias de las corridas vinculadas al problema, por mes de su conversación';
- if(!vista)return [{id:'evolucion',vacio:true,razon:'La evolución mensual no está disponible ahora; reintenta.',fuente}];
- if(vista.status==='timeout')return [{id:'evolucion',vacio:true,razon:'La consulta superó el tiempo permitido. Reintenta en unos segundos.',fuente}];
- if(vista.status==='empty'||!vista.total)return [{id:'evolucion',vacio:true,razon:'Este problema aún no tiene incidencias con conversación fechada.',fuente}];
- const serie=vista.series??[],enVentana=serie.reduce((n,p)=>n+p.count,0),out=[];
- const cobFechas=[`Ventana de ${vista.window?.months??12} meses.`];
- if(vista.outsideWindow)cobFechas.push(`${nfEs.format(vista.outsideWindow)} incidencias quedan fuera de la ventana.`);
- if(vista.undated)cobFechas.push(`${nfEs.format(vista.undated)} sin fecha de conversación.`);
+const mesCortoDe=(m,loc)=>new Intl.DateTimeFormat(loc,{month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
+/** Evolución mensual de incidencias de UN problema agrupado (máx. 3): total y mes pico, cambio entre meses completos y cobertura de fechas.
+ *  `t` (traductor de useT) pasa el texto, los meses y los porcentajes al idioma activo; sin él, el español original. */
+export function insightsProblemaSerie(vista,ahora=new Date(),t=null){
+ const ctx=t?{t}:null,idioma=idiomaDe(t),loc=localeDe(idioma);
+ const nf=new Intl.NumberFormat(loc),mc=m=>mesCortoDe(m,loc),ml=m=>mesLargo(m,loc);
+ const fuente=X(ctx,'tr.lg.serie.fuente','Incidencias de las corridas vinculadas al problema, por mes de su conversación');
+ if(!vista)return [{id:'evolucion',vacio:true,razon:X(ctx,'tr.lg.serie.noDisp','La evolución mensual no está disponible ahora; reintenta.'),fuente}];
+ if(vista.status==='timeout')return [{id:'evolucion',vacio:true,razon:X(ctx,'res.ins.timeout','La consulta superó el tiempo permitido. Reintenta en unos segundos.'),fuente}];
+ if(vista.status==='empty'||!vista.total)return [{id:'evolucion',vacio:true,razon:X(ctx,'tr.lg.serie.sinFecha','Este problema aún no tiene incidencias con conversación fechada.'),fuente}];
+ const serie=vista.series??[],enVentana=serie.reduce((n,p)=>n+p.count,0),out=[],meses=vista.window?.months??12;
+ const cobFechas=[X(ctx,'tr.lg.serie.ventana',`Ventana de ${meses} meses.`,{n:meses})];
+ if(vista.outsideWindow)cobFechas.push(X(ctx,'tr.lg.serie.fuera',`${nf.format(vista.outsideWindow)} incidencias quedan fuera de la ventana.`,{n:nf.format(vista.outsideWindow)}));
+ if(vista.undated)cobFechas.push(X(ctx,'tr.lg.serie.sinFechaN',`${nf.format(vista.undated)} sin fecha de conversación.`,{n:nf.format(vista.undated)}));
  if(enVentana>0){
   const pico=serie.reduce((b,p)=>!b||p.count>b.count?p:b,null);
-  out.push({id:'pico',texto:`En los últimos ${vista.window?.months??12} meses hay **${nfEs.format(enVentana)}** ${enVentana===1?'incidencia':'incidencias'} vinculadas a este problema; el mes con más fue **${mesCorto(pico.month)}** con **${nfEs.format(pico.count)}**.`,fuente,cobertura:cobFechas.join(' '),clase:'inferred'});
- }else out.push({id:'pico',vacio:true,razon:`Hay ${nfEs.format(vista.total)} incidencias, pero ninguna dentro de la ventana de ${vista.window?.months??12} meses.`,fuente});
+  out.push({id:'pico',texto:ctx?t(enVentana===1?'tr.lg.serie.pico1':'tr.lg.serie.picoN',{meses,n:nf.format(enVentana),mes:mc(pico.month),pico:nf.format(pico.count)}):`En los últimos ${meses} meses hay **${nf.format(enVentana)}** ${enVentana===1?'incidencia':'incidencias'} vinculadas a este problema; el mes con más fue **${mc(pico.month)}** con **${nf.format(pico.count)}**.`,fuente,cobertura:cobFechas.join(' '),clase:'inferred'});
+ }else out.push({id:'pico',vacio:true,razon:X(ctx,'tr.lg.serie.picoNinguna',`Hay ${nf.format(vista.total)} incidencias, pero ninguna dentro de la ventana de ${meses} meses.`,{total:nf.format(vista.total),meses}),fuente});
  const par=dosMesesCompletos(serie,ahora,vista.completeness??null);
- if(par){const [a,b]=par,v=variacion(String(b.count),String(a.count));
-  out.push(v?{id:'cambio',texto:`Las incidencias ${frase(v,'subieron','bajaron','se mantuvieron')} de **${nfEs.format(a.count)}** en ${mesLargo(a.month)} a **${nfEs.format(b.count)}** en ${mesLargo(b.month)} (${etiquetaVar(v)}).`,fuente,cobertura:'Compara dos meses completos; el mes en curso se excluye. Es una asociación temporal, no una causa.',clase:'inferred'}
-   :{id:'cambio',vacio:true,razon:`${mesLargo(a.month)} no tiene incidencias: no hay base honesta para calcular un porcentaje.`,fuente});}
- else out.push({id:'cambio',vacio:true,razon:'Hacen falta al menos dos meses completos para comparar.',fuente});
- if(vista.linkedRuns!==null&&vista.linkedRuns!==undefined)out.push({id:'corridas',texto:`El problema agrupa **${nfEs.format(vista.linkedRuns)}** ${vista.linkedRuns===1?'corrida de extracción':'corridas de extracción'}; en total suman **${nfEs.format(vista.total)}** incidencias.`,fuente:'Vínculos problema-corrida (agrupación por IA)',cobertura:'Una corrida puede traer incidencias de varias categorías; el conteo no es el número de clientes afectados.',clase:'inferred'});
+ if(par){const [a,b]=par,v=variacion(String(b.count),String(a.count),idioma);
+  out.push(v?{id:'cambio',texto:ctx?t('tr.lg.serie.cambio',{verbo:t('tr.lg.serie.v.'+v.dir),a:nf.format(a.count),mesA:ml(a.month),b:nf.format(b.count),mesB:ml(b.month),var:etiquetaVar(v,ctx)}):`Las incidencias ${frase(v,'subieron','bajaron','se mantuvieron')} de **${nf.format(a.count)}** en ${ml(a.month)} a **${nf.format(b.count)}** en ${ml(b.month)} (${etiquetaVar(v)}).`,fuente,cobertura:X(ctx,'tr.lg.serie.cobCambio','Compara dos meses completos; el mes en curso se excluye. Es una asociación temporal, no una causa.'),clase:'inferred'}
+   :{id:'cambio',vacio:true,razon:X(ctx,'tr.lg.serie.cambioSinBase',`${ml(a.month)} no tiene incidencias: no hay base honesta para calcular un porcentaje.`,{mes:ml(a.month)}),fuente});}
+ else out.push({id:'cambio',vacio:true,razon:X(ctx,'tr.lg.serie.dosMeses','Hacen falta al menos dos meses completos para comparar.'),fuente});
+ if(vista.linkedRuns!==null&&vista.linkedRuns!==undefined)out.push({id:'corridas',texto:ctx?t(vista.linkedRuns===1?'tr.lg.serie.corridas1':'tr.lg.serie.corridasN',{n:nf.format(vista.linkedRuns),total:nf.format(vista.total)}):`El problema agrupa **${nf.format(vista.linkedRuns)}** ${vista.linkedRuns===1?'corrida de extracción':'corridas de extracción'}; en total suman **${nf.format(vista.total)}** incidencias.`,fuente:X(ctx,'tr.lg.serie.fuenteCorr','Vínculos problema-corrida (agrupación por IA)'),cobertura:X(ctx,'tr.lg.serie.cobCorr','Una corrida puede traer incidencias de varias categorías; el conteo no es el número de clientes afectados.'),clase:'inferred'});
  return out.slice(0,MAX);
 }

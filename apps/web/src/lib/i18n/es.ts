@@ -42,6 +42,7 @@ import {trFEs} from './d-tr-f';
 import {trGEs} from './d-tr-g';
 import {trHEs} from './d-tr-h';
 import {trIEs} from './d-tr-i';
+import {trJEs} from './d-tr-j';
 export const es = {
   // Compartido
   'comun.cerrar': 'Cerrar', 'comun.reintentar': 'Volver a intentar', 'comun.cargando': 'Cargando…', 'comun.sinDato': 'Sin dato',
@@ -196,6 +197,7 @@ export const es = {
   ...trGEs,
   ...trHEs,
   ...trIEs,
+  ...trJEs,
   ...setupEs,
   ...tourEs,
   ...landingEs,

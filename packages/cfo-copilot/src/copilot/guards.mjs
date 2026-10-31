@@ -14,11 +14,11 @@ const INJECTION = [
 const RAW_TEXT_REQUEST = [/(correo|email|tel[eé]fono|direcci[oó]n)s?\s+de\s+(los\s+)?(clientes|usuarios|compradores)/i, /(mensajes?|conversaciones?|textos?)\s+(literal(es)?|crud[oa]s?|original(es)?)\s+de\s+(los\s+)?(clientes|compradores)/i, /(copia|pega|transcribe)\w*\s+(el\s+)?(mensaje|ticket|conversaci[oó]n)/i, /(contenido|cuerpo)\s+de\s+(los\s+)?(mensajes|tickets)/i, /\b(pii|datos\s+personales)\b/i];
 const CROSS_TENANT = [/(de|en)\s+(todas?\s+)?(las\s+)?otras?\s+(organizaciones|empresas|cuentas)/i, /otro\s+(tenant|cliente|inquilino)/i, /\btenant[_\s-]?id\b/i];
 /** Clasifica una pregunta SIN bloquear por palabras sueltas: solo lo que pide romper reglas. */
-export function classifyQuestion(text, {scope}) {
-  const q = String(text ?? '');
-  if (INJECTION.some(r => r.test(q))) return {risk: 'injection', reply: 'No puedo cambiar mis reglas ni mostrar mis instrucciones. Puedo responder con las cifras ya calculadas: dime qué quieres revisar.'};
-  if (RAW_TEXT_REQUEST.some(r => r.test(q))) return {risk: 'raw_text', reply: 'No tengo acceso a mensajes, correos ni datos personales de clientes, y no los muestro. Solo trabajo con cifras agregadas y su procedencia.'};
-  if (scope === 'tenant' && CROSS_TENANT.some(r => r.test(q))) return {risk: 'cross_tenant', reply: 'Solo veo los datos de tu organización. No puedo consultar otras.'};
+export function classifyQuestion(text, {scope, idioma = 'es'}) {
+  const q = String(text ?? ''), en = idioma === 'en';
+  if (INJECTION.some(r => r.test(q))) return {risk: 'injection', reply: en ? "I can't change my rules or show my instructions. I can answer with the figures already calculated: tell me what you want to review." : 'No puedo cambiar mis reglas ni mostrar mis instrucciones. Puedo responder con las cifras ya calculadas: dime qué quieres revisar.'};
+  if (RAW_TEXT_REQUEST.some(r => r.test(q))) return {risk: 'raw_text', reply: en ? "I don't have access to customers' messages, emails or personal data, and I do not show them. I only work with aggregated figures and their provenance." : 'No tengo acceso a mensajes, correos ni datos personales de clientes, y no los muestro. Solo trabajo con cifras agregadas y su procedencia.'};
+  if (scope === 'tenant' && CROSS_TENANT.some(r => r.test(q))) return {risk: 'cross_tenant', reply: en ? 'I only see your organization\'s data. I can\'t query others.' : 'Solo veo los datos de tu organización. No puedo consultar otras.'};
   return {risk: 'ok'};
 }
 

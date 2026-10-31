@@ -32,6 +32,6 @@ export async function POST(request: NextRequest) {
     const data = {async report(tenantId: string) { if (tenantId !== access.tenantId) throw new Error('tenant_mismatch'); const res = await (memo ??= loadReport(access, idiomaDePeticion(request))); return res.status === 'ok' ? {status: 'ok', report: res.report} : {status: res.status}; }};
     // CCO (preguntas A a F): la misma lectura de solo lectura que /api/cco, bajo la sesión y la RLS del usuario; una vez por turno. Sin base (fixtures) no hay datos.
     const cco = {async cco(tenantId: string) { if (tenantId !== access.tenantId) throw new Error('tenant_mismatch'); if (!access.database) return {status: 'empty'}; try { return {status: 'ok', cco: await (memoCco ??= createCcoRepository({database: access.database}).get())}; } catch { return {status: 'timeout'}; } }};
-    return finish(await copilotTurn(copilotFor(access), principalOf(access), request, {data: {...data, ...cco}}));
+    return finish(await copilotTurn(copilotFor(access), principalOf(access), request, {data: {...data, ...cco}, idioma: idiomaDePeticion(request)}));
   } catch (e) { return finish(copilotError(e)); }
 }

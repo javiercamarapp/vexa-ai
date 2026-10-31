@@ -194,11 +194,10 @@ function archivosPaquete(dir: string, acc: string[] = []): string[] {
   }
   return acc;
 }
-/** Tope de español sin par inglés en paquetes (archivo → máximo). Los pares L(es,en) / E / par no cuentan. Lo que sigue aquí es deuda documentada: copiloto de CFO (cfo-tools, cco-tools, platform-tools), lectura de IA de puntos de dolor, fuga de reembolsos, y las claves en español de las preguntas del agente. */
+/** Tope de español sin par inglés en paquetes (archivo → máximo). Los pares L(es,en) / E / par no cuentan. Lo que sigue aquí es deuda documentada: copiloto de plataforma (platform-tools), lectura de IA de puntos de dolor, fuga de reembolsos, y las claves en español de las preguntas del agente. */
 const TOPE_PAQUETES: Record<string, number> = {
  'agent-datos/agent.mjs': 3,
  'agent-datos/contract.mjs': 4,
- 'agent-datos/export.mjs': 4,
  'agent-datos/meses.mjs': 2,
  'agent-datos/model.mjs': 4,
  'agent-datos/port-queries.mjs': 1,
@@ -206,15 +205,15 @@ const TOPE_PAQUETES: Record<string, number> = {
  'agent-datos/synthetic.mjs': 13,
  'agent-datos/tools-cco.mjs': 33,
  'agent-datos/tools.mjs': 38,
- 'briefs/build.mjs': 16,
+ 'briefs/build.mjs': 8,
  'cfo-copilot/src/cfo-export.mjs': 1,
  'cfo-copilot/src/cfo-model.mjs': 15,
  'cfo-copilot/src/cfo-repository.mjs': 1,
- 'cfo-copilot/src/copilot/cco-tools.mjs': 45,
- 'cfo-copilot/src/copilot/cfo-tools.mjs': 54,
+ 'cfo-copilot/src/copilot/cco-tools.mjs': 21,
+ 'cfo-copilot/src/copilot/cfo-tools.mjs': 46,
  'cfo-copilot/src/copilot/guards.mjs': 3,
  'cfo-copilot/src/copilot/platform-tools.mjs': 38,
- 'cfo-copilot/src/copilot/runtime.mjs': 8,
+ 'cfo-copilot/src/copilot/runtime.mjs': 7,
  'cfo-copilot/src/copilot/simulated-model.mjs': 1,
  'cfo-copilot/src/fixtures.mjs': 1,
  'cfo-copilot/src/platform-fixtures.mjs': 9,

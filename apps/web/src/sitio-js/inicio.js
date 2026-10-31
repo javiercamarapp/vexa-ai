@@ -82,7 +82,7 @@ let AIRE = 24; // (medir() lo baja a 20 en el móvil) 16 px de margen mínimo m�
 const PULSO = [[230, 0.1], [150, 0.22], [90, 0.45], [40, 0.9]]; // largo en px y opacidad de cada capa del pulso
 const ICONO_DE = [0, 1, 2, 3, 4, 0, 1]; // ícono de la nota de cada banda
 const LOOPS = [4]; // bandas (base 0) con rizo: solo una; con la triple son 2 lazos en toda la página a 1440
-const TRIPLES = [3]; // bandas que cruzan tres veces (ida, vuelta e ida): una sola; el resto son S simples de distinta forma
+const TRIPLES = []; // sin cruces triples (ida, vuelta e ida): a 1440 se leían como lazos repetidos y barrían todo el ancho bajo la barra; queda un solo rizo (LOOPS)
 const COLA = 72; // px de carril libre al final de cada banda en escritorio: con la sección anclada bajo la cabecera fija el barrido no pasa por debajo de ella
 const RAMPA = 3, PASO_RAMPA = 26; // escalones y largo de cada uno al engrosar o afinar el trazo
 

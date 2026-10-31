@@ -794,6 +794,12 @@
 
 /* Modo fijado, solo escritorio ancho con movimiento permitido y JavaScript */
 @media (prefers-reduced-motion: no-preference) and (min-width: 1101px) and (scripting: enabled) {
+  /* T20: la escena sube sobre el relleno vacío del final de la sección de valor (96 px) y la banda de cruce (150 px) y el contenido del paso se centra más arriba:
+     el vacío visible antes de «Paso 1» baja de unos 350 px a 160 px o menos sin tocar la altura de la pista ni el hilo (inicio.js trata la escena como contenido) */
+  html[data-js] .s-escena {
+    margin-top: -140px;
+  }
+
   html[data-js] .s-escena__pista {
     height: 172vh;
     padding-block: 0;
@@ -807,7 +813,12 @@
     align-items: center;
     column-gap: var(--s-e64);
     height: 100svh;
-    padding-block: var(--s-e80) var(--s-e48);
+    padding-block: var(--s-e80) 300px;
+  }
+
+  /* La banda de cruce entre valor y pasos mide 70 px en vez de 150: con la escena 140 px más arriba deja 66 px libres, justo lo que pide un cruce del hilo */
+  .s-banda[data-banda="2"] {
+    height: 70px;
   }
 
   html[data-js] .s-paso {

@@ -228,10 +228,13 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
   /* Pasos 2 y 3: lienzo ancho con desplazamiento lateral (scroll-snap) para que el texto de la captura mida 9 px o más en vez de 4 a 5 px */
   .s-pv[data-n="2"],
   .s-pv[data-n="3"] { overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
-  .s-pv[data-n="2"] .s-pv__lienzo { width: 520px; max-width: none; scroll-snap-align: start; }
-  .s-pv[data-n="3"] .s-pv__lienzo { width: 590px; max-width: none; scroll-snap-align: start; }
+  .s-pv[data-n="2"] .s-pv__lienzo { width: 600px; max-width: none; scroll-snap-align: start; }
+  /* Paso 3: la capa de anotaciones (que ocupaba la mitad inferior) no existe en móvil; se recorta el vacío de abajo para no alargar la página */
+  .s-pv[data-n="3"] .s-pv__lienzo { width: 680px; max-width: none; height: 160px; overflow: hidden; scroll-snap-align: start; }
+  .s-ventana--paso .s-ventana__barra { display: none; }
+  .s-ventana--paso .s-ventana__cuerpo { border-radius: var(--s-r-tarjeta) var(--s-r-tarjeta) 0 0; }
   .s-escena__fijo { gap: 0; }
-  .s-paso { gap: var(--s-e16); padding-block: var(--s-e16); }
+  .s-paso { gap: var(--s-e12); padding-block: var(--s-e12); }
   .s-paso__texto { gap: var(--s-e8); }
   .s-paso__texto .s-lead { font-size: 16px; line-height: 1.5; }
   .s-ventana--paso .s-ventana__barra { min-height: 32px; }
@@ -260,7 +263,9 @@ html[data-js] .s-pantalla .s-pantalla__img { clip-path: none; animation: none; }
   .s-hechos > * { padding: var(--s-e12) var(--s-e12); }
   .s-lista > li { padding-block: var(--s-e8); font-size: 14px; }
   .s-mt-96 { margin-top: var(--s-e40); }
-  .s-integ-grupos { gap: var(--s-e16) var(--s-e32); margin-bottom: var(--s-e32); }
+  .s-integ-grupos { gap: var(--s-e12) var(--s-e24); margin-bottom: var(--s-e24); }
+  .s-integ-grupo { gap: var(--s-e8); }
+  .s-integ-lista { gap: var(--s-e8); }
   .s-chip--integracion { min-height: 36px; padding-inline: var(--s-e12); }
   .s-faq__cabeza.s-mt-96 { margin-top: var(--s-e24); }
   .s-acordeon__boton { min-height: 56px; font-size: 17px; }

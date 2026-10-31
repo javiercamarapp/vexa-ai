@@ -1495,6 +1495,18 @@ html:not([data-js]) .s-hilo-zona::before {
   pointer-events: none;
 }
 
+/* T49: capa del hilo con máscara. inicio.js escribe --s-corte (px desde el borde superior de la zona): hasta ahí, la barra de vidrio y 14 px de aire; los 28 px siguientes
+   desvanecen el trazo, los nodos y las notas. Así el hilo nunca pasa por debajo de la barra ni la roza al salir. Sin JavaScript el contenedor está vacío. */
+html[data-js] .s-hilo-zona > [data-hilo] {
+  --s-corte: -60px;
+  position: absolute;
+  inset: 0;
+  z-index: var(--s-z-hilo);
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent var(--s-corte), #000 calc(var(--s-corte) + 28px));
+  mask-image: linear-gradient(to bottom, transparent var(--s-corte), #000 calc(var(--s-corte) + 28px));
+}
+
 .s-hilo {
   position: absolute;
   inset: 0;

@@ -81,6 +81,7 @@ const ICONOS = [
 let AIRE = 24; // (medir() lo baja a 20 en el móvil) 16 px de margen mínimo más medio núcleo de banda (3.75 a 1440, 2.1 a 390) y holgura; el móvil usa menos aire para cruzar por los huecos naturales (~88 px) sin alargar la página
 const PULSO = [[230, 0.1], [150, 0.22], [90, 0.45], [40, 0.9]]; // largo en px y opacidad de cada capa del pulso
 const ICONO_DE = [0, 1, 2, 3, 4, 0, 1]; // ícono de la nota de cada banda
+const CORTE_AIRE = 14; // px entre el borde inferior de la barra y el primer pixel visible del hilo
 const LOOPS = [1, 4]; // bandas (base 0) con rizo: solo dos en toda la página (hilo-carril exige 10 cruces a 1440 y cada rizo suma uno)
 const TRIPLES = [3]; // una sola banda cruza tres veces (ida, vuelta e ida), sin rizo
 const COLA = 72; // px de carril libre al final de cada banda en escritorio: con la sección anclada bajo la cabecera fija el barrido no pasa por debajo de ella
@@ -327,9 +328,22 @@ function construirHilo(RM, notas) {
   if (D.fonts && D.fonts.ready) D.fonts.ready.then(medir);
   medir();
 
+  // T49: la barra de vidrio es fija y el hilo es de la página: sin esto el trazo pasa por debajo de ella y la roza al salir. La máscara de .s-hilo-zona > [data-hilo]
+  // (inicio.css) deja el hilo, sus nodos y sus notas invisibles hasta 14 px bajo la barra y los desvanece en los 28 px siguientes; --s-corte está en coordenadas de la zona.
+  const barra = $('.s-cabecera__barra');
+  let corteUlt = NaN;
+  function cortar() {
+    const c = Math.round((barra ? barra.getBoundingClientRect().bottom : 0) + CORTE_AIRE - zona.getBoundingClientRect().top);
+    const v = c > 0 ? c : -60; // la barra no alcanza la zona: sin recorte (el gradiente ya es opaco desde su borde superior)
+    if (v === corteUlt) return;
+    corteUlt = v;
+    cont.style.setProperty('--s-corte', v + 'px');
+  }
+
   return {
     medir,
     cuadro(y, vh) {
+      cortar();
       if (RM || !vivo || !H) return;
       const cab = Math.min(H, Math.max(0, 0.6 * vh - zona.getBoundingClientRect().top));
       if (Math.abs(cab - ultimo) < 0.5) return;

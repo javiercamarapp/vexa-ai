@@ -16,11 +16,11 @@ test('señales: ordenadas por gravedad, con motivo; la ficha de ejemplo pide ate
   assert.ok(s.length >= 2); assert.deepEqual(s.map(x => x.level), [...s.map(x => x.level)].sort((a, b) => ({bad: 0, warn: 1, info: 2} as Record<string, number>)[a] - ({bad: 0, warn: 1, info: 2} as Record<string, number>)[b]));
   assert.ok(s.some(x => /Zendesk no se está actualizando/.test(x.text))); assert.equal(overallLevel(s), 'warn');
 });
-test('señales críticas: sin dueño, atascados, reconexión y tope de IA superado', () => {
+test('señales críticas: sin administrador del espacio, atascados, reconexión y tope de IA superado', () => {
   const d = detail({members: {owner: 0, analyst: 1, operator: 0, viewer: 0, total: 1}, jobs: {...detail().jobs, stuck: 2}, ai: {window: '2026-10', spentMicro: '120000000', limitMicro: '100000000', uncertain: 1},
     connections: [{source: 'hubspot', status: 'reconnect_required', health: 'reconnect_required', lastSuccess: null, errorCode: 'RECONNECT_REQUIRED'}]});
   const t = signals(d, NOW).map(x => x.text).join(' | ');
-  for (const re of [/ningún dueño/, /atascado/, /HubSpot necesita reconectarse/, /por encima del tope/, /incierto/]) assert.match(t, re);
+  for (const re of [/ningún administrador del espacio/, /atascado/, /HubSpot necesita reconectarse/, /por encima del tope/, /incierto/]) assert.match(t, re);
   assert.equal(overallLevel(signals(d, NOW)), 'bad');
 });
 test('sin señales = ok; un corte publicado quita el aviso informativo', () => {

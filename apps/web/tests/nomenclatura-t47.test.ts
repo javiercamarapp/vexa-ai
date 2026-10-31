@@ -3,11 +3,12 @@
 //  - Acciones / Actions: el área (menú, título, onboarding); «intervención / intervention» es el registro individual dentro del área.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {es} from '../src/lib/i18n/es';
-import {en} from '../src/lib/i18n/en';
+import {es as esDic} from '../src/lib/i18n/es';
+import {en as enDic} from '../src/lib/i18n/en';
 import {MENU,tituloDePantalla} from '../src/lib/workspace/menu.mjs';
 import {claveItem,claveTitulo,claveGrupo} from '../src/lib/i18n/menu';
 
+const es=esDic as Record<string,string>,en=enDic as Record<string,string>;
 const D={es,en} as Record<'es'|'en',Record<string,string>>;
 const TERM={es:{avisos:/\bavisos?\b/i,mal:/\bnotificaci[oó]n(es)?\b|\balertas?\b/i,acciones:/\bacciones\b/i,malAcc:/\bintervenci[oó]n(es)?\b/i},
  en:{avisos:/\bnotifications?\b/i,mal:/\balerts?\b|\bnotices?\b/i,acciones:/\bactions\b/i,malAcc:/\binterventions?\b/i}};
@@ -51,7 +52,7 @@ test('acciones: grupo del menú, título de pantalla, pestaña, guía y onboardi
   assert.match(v,TERM[l].acciones,`${l} ${k}: «${v}»`);
   assert.doesNotMatch(v,TERM[l].malAcc,`${l} ${k}: «${v}» usa «intervención» como nombre del área`);
  }
- const g=MENU.find(e=>e.tipo==='grupo'&&e.clave==='acciones') as {etiqueta:string;items:{href:string;titulo?:string}[]};
+ const g=MENU.find(e=>e.tipo==='grupo'&&e.clave==='acciones') as unknown as {etiqueta:string};
  assert.equal(g.etiqueta,es[claveGrupo('acciones')]);
  assert.equal(tituloDePantalla('/interventions'),es[claveTitulo('/interventions')]);
  assert.equal(tituloDePantalla('/interventions'),g.etiqueta);

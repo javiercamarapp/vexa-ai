@@ -4,6 +4,7 @@ import {monthMetrics, GLOSSARY, reportRows} from '../cfo-model.mjs';
 import {monthLabel} from '../format.mjs';
 import {CopilotError} from './runtime.mjs';
 import {sanitizeText} from './guards.mjs';
+import {CCO_TOOLS} from './cco-tools.mjs';
 
 const ROLES = ['owner', 'analyst'];
 const CURRENCY = {type: 'enum', values: ['USD', 'CAD', 'MXN']};
@@ -99,6 +100,7 @@ export const CFO_TOOLS = [
       const row = reportRows(report).find(r => r.id === args.id);
       return row ? {summary: `${row.label}${row.scope ? ' (' + row.scope + ')' : ''}: ${row.value}. Cómo se calculó: ${row.how}`, figures: [{id: row.id, label: row.label, display: row.value, kind: row.kind, scope: row.scope, coverage: {label: row.coverage}}], citations: [CITE.glosario]} : {noData: true, summary: 'No encuentro esa cifra en el informe actual.', figures: [], citations: [CITE.glosario]};
     }},
+  ...CCO_TOOLS,
 ];
 
 export const CFO_SHORTCUTS = {
@@ -107,6 +109,7 @@ export const CFO_SHORTCUTS = {
     {title: 'Resultados', questions: ['¿Cómo cerró el último mes por moneda?', '¿Cómo vamos contra el mes anterior?', '¿Cuál es la proyección de ingresos?']},
     {title: 'Canales y calidad', questions: ['¿Qué canal pesa más en los pedidos?', '¿Cuántos reembolsos no traen importe?', '¿Cuánto cuesta la mala calidad de datos?']},
     {title: 'Riesgos', questions: ['¿Hay alertas activas?', '¿Qué problemas exponen más ingresos?']},
+    {title: 'CCO', questions: ['¿Cómo rinde cada SKU en Amazon?', '¿Qué SKU llevan 3 meses sin venta?', '¿Cómo se comparan las modalidades de venta de Amazon y Walmart?', '¿Desde qué bodega sale cada SKU en Amazon y Walmart?']},
   ],
   direct: {
     '¿Cómo cerró el último mes por moneda?': {tool: 'resumen_mes', args: {}},
@@ -117,5 +120,9 @@ export const CFO_SHORTCUTS = {
     '¿Cuánto cuesta la mala calidad de datos?': {tool: 'calidad_datos', args: {}},
     '¿Hay alertas activas?': {tool: 'alertas', args: {}},
     '¿Qué problemas exponen más ingresos?': {tool: 'exposicion_problemas', args: {}},
+    '¿Cómo rinde cada SKU en Amazon?': {tool: 'cco_rendimiento_sku', args: {canal: 'amazon'}},
+    '¿Qué SKU llevan 3 meses sin venta?': {tool: 'cco_sin_venta', args: {meses: '3'}},
+    '¿Cómo se comparan las modalidades de venta de Amazon y Walmart?': {tool: 'cco_modalidad_venta', args: {}},
+    '¿Desde qué bodega sale cada SKU en Amazon y Walmart?': {tool: 'cco_modalidad_envio', args: {vista: 'sku'}},
   },
 };

@@ -10,10 +10,11 @@ test('el encabezado y el pie global se ocultan con carga de página completa y d
   assert.match(css,/html\[data-arranque\] #arranque-logo\s*\{\s*display:flex/);
 });
 test('el CSS crítico en línea oculta encabezado y pie y centra la carga antes de que llegue el CSS externo (visita fría en /)',()=>{
-  const critico=layout.slice(layout.indexOf('ARRANQUE_CSS_CRITICO = `'),layout.indexOf('export default function RootLayout'));
+  const critico=layout.slice(layout.indexOf('ARRANQUE_CSS_CRITICO = `'),layout.indexOf('`;',layout.indexOf('ARRANQUE_CSS_CRITICO = `')));
+  assert.ok(critico.length>300&&critico.includes('#arranque-logo'),'se recortó el bloque de CSS crítico completo (la función del layout es async: no se corta por «export default function»)');
   assert.match(critico,/body:has\(\.rovaq-cargando:not\(\.rovaq-cargando-compacto\)\) :is\(\.site-header,\.site-footer,\.skip-link\)\{display:none!important\}/);
   // Pantallas de acceso (login, enlace del correo, espacio de trabajo): el encabezado del sitio no se ve aunque la hoja externa llegue tarde.
-  assert.match(critico,/body:has\(:is\(\.login,\.access-selection,\.workspace-shell\)\) :is\(\.site-header,\.site-footer,\.skip-link\)\{display:none!important\}/);
+  assert.match(critico,/body:has\(:is\(\.login,\.access-selection,\.access-invitacion,\.workspace-shell\)\) :is\(\.site-header,\.site-footer,\.skip-link\)\{display:none!important\}/);
   assert.match(critico,/body:has\(\.access-selection\) \.rovaq-cargando\{min-height:100dvh;[^}]*align-items:center;justify-content:center/);
   assert.match(critico,/\.rovaq-cargando:not\(\.rovaq-cargando-compacto\)\{min-height:100dvh;[^}]*align-items:center;justify-content:center/);
 });
@@ -64,4 +65,20 @@ test('el logo de arranque respeta prefers-reduced-motion (reusa rovaq-respira)',
 test('el ajuste de cifras del celular vuelve a medir al soltar el arranque (data-arranque no es mutación de hijos)',()=>{
   const mc=f('components/ui/movil-contenido.tsx');
   assert.match(mc,/observe\(document\.documentElement,\{attributes:true,attributeFilter:\['data-arranque'\]\}\)/);
+});
+
+test('la invitación a un equipo (/auth/invitations/[id]) oculta encabezado, pie y skip-link como login y acceso, sin esconderlos en las páginas de error o 404 (su encabezado es de diseño)',async()=>{
+  const {createElement}=await import('react');
+  const {renderToStaticMarkup}=await import('react-dom/server');
+  const {TeamInvitation}=await import('../src/components/team-invitation.tsx');
+  const html=renderToStaticMarkup(createElement(TeamInvitation,{id:'x'}));
+  const clases=html.match(/^<section class="([^"]+)"/)?.[1].split(/\s+/)??[];
+  // Comportamiento: la lista que oculta el encabezado en el CSS crítico y en la hoja externa debe contener alguna clase que la invitación realmente pinta.
+  const ocultan=(cssTxt)=>[...cssTxt.matchAll(/body:has\(:is\(([^)]*)\)\) :is\(\.site-header[^)]*\.skip-link\)\s*\{\s*display:none/g)].flatMap(m=>m[1].split(',').map(x=>x.trim().replace(/^\./,'')));
+  const criticoTxt=layout.slice(layout.indexOf('ARRANQUE_CSS_CRITICO = `'),layout.indexOf('`;',layout.indexOf('ARRANQUE_CSS_CRITICO = `')));
+  assert.ok(clases.some(c=>ocultan(criticoTxt).includes(c)),'CSS crítico: la invitación pinta '+clases.join(' ')+' y ninguna está en la lista');
+  assert.match(css,/body:has\(\.access-invitacion\) :is\(\.site-header,\.site-footer,\.skip-link\)\s*\{\s*display:none/);
+  // Las pantallas de error y 404 usan .access-flow a secas y conservan su encabezado.
+  assert.ok(!ocultan(criticoTxt).includes('access-flow'),'.access-flow a secas no oculta el encabezado');
+  assert.doesNotMatch(css,/body:has\(\.access-flow\) :is\(\.site-header,\.site-footer,\.skip-link\)\s*\{\s*display:none/);
 });

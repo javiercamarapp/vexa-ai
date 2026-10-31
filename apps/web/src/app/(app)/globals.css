@@ -71,7 +71,7 @@ main { max-width:76rem; margin:auto; padding:clamp(48px,8vw,112px) clamp(20px,5v
 .action-form textarea { min-height:96px; }
 .page-next { display:inline-flex; align-items:center; min-height:44px; padding:12px; }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-body:has(.login) .site-header,body:has(.login) .site-footer,body:has(.workspace-shell) .site-header,body:has(.workspace-shell) .site-footer { display:none; }
+body:has(.login) .site-header,body:has(.login) .site-footer,body:has(.workspace-shell) .site-header,body:has(.workspace-shell) .site-footer,body:has(.access-invitacion) :is(.site-header,.site-footer,.skip-link) { display:none; }
 main:has(.login),main:has(.workspace-shell) { max-width:none; padding:0; margin:0; }
 .login { min-height:100dvh; background:var(--background); color:var(--ink); font-family:var(--font-ui); letter-spacing:0; }
 .login-column { min-height:100dvh; padding:28px 24px; display:flex; flex-direction:column; }

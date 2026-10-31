@@ -5,10 +5,11 @@ import {PAGINAS, idDeRuta, porId, rutaDe} from '../../../content/sitio/registro.
 import type {IdiomaSitio} from '../../../content/sitio/registro.mjs';
 import {LANDING} from '../../../content/sitio/landing';
 import {PAGINA_POR_ID} from '../../../content/sitio/paginas/index';
-import type {Pagina, Bi} from '../../../content/sitio/tipos';
+import type {Pagina, Bi, Articulo} from '../../../content/sitio/tipos';
 import aprobaciones from '../../../content/sitio/aprobaciones.json';
 import {construirMailto, contextoPorDefecto, estadoPagina, proyectarArbol, publicar} from '../../../lib/sitio/marcadores.mjs';
 import type {Aprobaciones} from '../../../lib/sitio/marcadores.mjs';
+import {etiquetaDe, minutosDeLectura} from '../../../lib/sitio/articulos.mjs';
 
 export type Lang = IdiomaSitio;
 export const IDIOMAS_VALIDOS: readonly Lang[] = ['es', 'en'];
@@ -35,7 +36,7 @@ for (const p of PAGINAS) {
   if (p.id === 'inicio') { ESTADOS.set(p.id, {publicable: true, motivos: []}); continue; }
   const contenido = PAGINA_DE_REGISTRO.get(p.id);
   if (!contenido) { ESTADOS.set(p.id, {publicable: false, motivos: ['sin contenido escrito']}); continue; }
-  const e = estadoPagina(contenido, {aprobaciones: APROB, ctx: CTX});
+  const e = estadoPagina(contenido, {aprobaciones: APROB, ctx: CTX, tipo: p.tipo});
   ESTADOS.set(p.id, {publicable: e.publicable, motivos: e.motivos});
 }
 
@@ -169,3 +170,34 @@ export type PaginaPublicada = {
   cta?: HojaPub;
   rotulo?: HojaPub;
 };
+
+export type FichaArticulo = {id: string; href: string; titulo: string; resumen: string; pub: string; minutos: number; etiqueta: string | null};
+
+/** Artículos publicables, del más reciente al más antiguo (desempata el id). Un artículo sin contenido o no publicable no aparece. */
+export function articulosPublicados(lang: Lang): FichaArticulo[] {
+  return PAGINAS.filter((p) => p.tipo === 'articulo' && esPublicable(p.id))
+    .map((p) => {
+      const a = PAGINA_DE_REGISTRO.get(p.id) as Articulo;
+      return {id: p.id, href: hrefDe(p.id, lang), titulo: a.h1[lang], resumen: a.resumen[lang], pub: a.pub, minutos: minutosDeLectura(a.bloques, lang), etiqueta: etiquetaDe(a, lang)};
+    })
+    .sort((x, y) => y.pub.localeCompare(x.pub) || x.id.localeCompare(y.id));
+}
+
+export type EnlaceRelacionado = {id: string; titulo: string; href: string; tipo: string};
+
+/**
+ * Enlaces de «Relacionados» de un artículo: solo ids que existen en el registro y se publican, y nunca el propio artículo.
+ * El título de un artículo es su h1; el de una página de producto o de casos de uso, su h1 publicado. Un id desconocido rompe el build.
+ */
+export function relacionadosDe(articulo: Articulo, lang: Lang): EnlaceRelacionado[] {
+  const salida: EnlaceRelacionado[] = [];
+  for (const id of articulo.relacionados) {
+    const reg = porId(id);
+    if (!reg) throw new Error(`RELACIONADO_SIN_REGISTRO: ${articulo.id} -> ${id}`);
+    if (id === articulo.id || !esPublicable(id)) continue;
+    const p = PAGINA_DE_REGISTRO.get(id);
+    if (!p) continue;
+    salida.push({id, titulo: p.h1[lang], href: hrefDe(id, lang), tipo: reg.tipo});
+  }
+  return salida;
+}

@@ -1,11 +1,14 @@
 // Despachador del sitio (T7). Resuelve la ruta con el registro K2 (idDeRuta) y rinde la página interna con el shell y el renderizador de bloques.
 // Estático: generateStaticParams cubre las 33 páginas internas del registro por idioma (la portada es page.tsx) más un centinela __404.
+// Los artículos del blog (tipo articulo del registro) se rinden con CuerpoArticulo; el resto, con CuerpoPagina.
 // Regla (spec 5): una página sin contenido escrito o no publicable (estadoPagina de T11) devuelve el 404 propio del sitio, idéntico al de una
 // ruta desconocida, sin revelar que existe. La nota de revisión vive en CuerpoPagina para la revisión interna; aquí no se emite.
 import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
-import {PAGINAS, idDeRuta} from '../../../../../content/sitio/registro.mjs';
+import {PAGINAS, idDeRuta, porId} from '../../../../../content/sitio/registro.mjs';
 import {CuerpoPagina} from '../../../../../components/sitio/cuerpo';
+import {CuerpoArticulo} from '../../../../../components/sitio/articulo';
+import type {Articulo} from '../../../../../content/sitio/tipos';
 import {MarcoSitio} from '../../../../../components/sitio/shell/marco';
 import {esLang, esPublicable, paginaDe} from '../../../../../components/sitio/shell/datos';
 import type {Lang} from '../../../../../components/sitio/shell/datos';
@@ -53,7 +56,8 @@ export async function generateMetadata({params}: {params: Promise<{lang: string;
   const id = resolver(lang, ruta);
   const pagina = id ? paginaDe(id) : undefined;
   if (!id || !pagina || !esLang(lang)) return {};
-  return metadatosPagina({id, lang, titulo: pagina.seo.titulo[lang], descripcion: pagina.seo.descripcion[lang]});
+  const art = porId(id)?.tipo === 'articulo' ? (pagina as Articulo) : null;
+  return metadatosPagina({id, lang, titulo: pagina.seo.titulo[lang], descripcion: pagina.seo.descripcion[lang], ...(art ? {publicado: art.pub, modificado: art.mod ?? art.pub} : {})});
 }
 
 export default async function PaginaInterna({params}: {params: Promise<{lang: string; ruta: string[]}>}) {
@@ -67,7 +71,7 @@ export default async function PaginaInterna({params}: {params: Promise<{lang: st
     <>
       <JsonLd id={id} lang={lang} />
       <MarcoSitio lang={lang} id={id}>
-        <CuerpoPagina pagina={pagina} lang={lang} />
+        {porId(id)?.tipo === 'articulo' ? <CuerpoArticulo pagina={pagina as Articulo} lang={lang} /> : <CuerpoPagina pagina={pagina} lang={lang} />}
       </MarcoSitio>
     </>
   );

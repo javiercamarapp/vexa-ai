@@ -2,15 +2,17 @@
 // una hoja no publicable ya viene omitida, los marcadores resueltos y los alternos aplicados. Marcado con las clases s-* de T6 y las
 // pocas piezas de páginas internas de shell/paginas.css.
 //
-// Bloques: texto, lista, limites, tarjetas, principios, enlaces, matriz, preguntas, cifras y sellos.
+// Bloques: texto, lista, limites, tarjetas, principios, enlaces, matriz, preguntas, cifras, sellos y articulos (índice del blog, derivado del registro).
 // Una hoja MATIZ lleva data-nivel="matiz" y data-condicion con su n; su condición escrita viaja dentro del propio texto (n de 1 a 13) o,
 // para n = 0, en las hojas acompañantes que publicar() ya garantiza publicables. Un bloque desconocido rompe el build: nada se descarta en silencio.
 import type {ReactNode} from 'react';
-import {cierre, hrefAcceso, hrefMailto, paginaPublicada, rutaPublicable} from './shell/datos';
+import {articulosPublicados, cierre, hrefAcceso, hrefMailto, paginaPublicada, rutaPublicable} from './shell/datos';
 import type {HojaPub, Lang, PaginaPublicada} from './shell/datos';
 import type {Pagina} from '../../content/sitio/tipos';
 import {VentanaCaptura} from './secciones/captura';
 import {medidas} from '../../lib/sitio/activos';
+import {fechaLegible, rotuloLectura} from '../../lib/sitio/articulos.mjs';
+import {rutaRss} from '../../lib/sitio/metadatos.mjs';
 
 type Obj = Record<string, unknown>;
 const esHoja = (x: unknown): x is HojaPub => typeof x === 'object' && x !== null && typeof (x as HojaPub).es === 'string' && typeof (x as HojaPub).en === 'string';
@@ -176,6 +178,37 @@ function Bloque({b, lang}: {b: Obj; lang: Lang}): ReactNode {
           </div>
         </>
       );
+    case 'articulos': {
+      // Índice del blog: solo artículos publicables, del más reciente al más antiguo. Sale del registro, no de una lista escrita a mano.
+      const lista = articulosPublicados(lang);
+      return (
+        <>
+          <Titulo b={b} lang={lang} />
+          {lista.length === 0 ? (
+            <p className="s-cuerpo">{txt(b.vacio, lang)}</p>
+          ) : (
+            <ol className="s-art-indice">
+              {lista.map((a) => (
+                <li className="s-art-indice__item" key={a.id}>
+                  <p className="s-mono-min">
+                    <time dateTime={a.pub}>{fechaLegible(a.pub, lang)}</time>
+                    {` · ${rotuloLectura(a.minutos, lang)}`}
+                    {a.etiqueta ? ` · ${a.etiqueta}` : ''}
+                  </p>
+                  <h3 className="s-h3-serif s-art-indice__titulo">
+                    <a className="s-enlace" href={a.href}>{a.titulo}</a>
+                  </h3>
+                  <p className="s-cuerpo">{a.resumen}</p>
+                </li>
+              ))}
+            </ol>
+          )}
+          <p className="s-pequeno">
+            <a className="s-enlace" href={rutaRss(lang)} type="application/rss+xml">{lang === 'es' ? 'Suscribirse por RSS' : 'Subscribe by RSS'}</a>
+          </p>
+        </>
+      );
+    }
     default:
       throw new Error(`BLOQUE_DESCONOCIDO: ${String(tipo)}`);
   }
@@ -191,6 +224,33 @@ const CAPTURA_DE_PAGINA: Record<string, {nombre: string; clave?: string; ruta: '
   'producto/confianza-de-los-datos': {nombre: 'conexiones', ruta: 'm6'},
   'producto/fuentes-e-importaciones': {nombre: 'conexiones', ruta: 'm6'},
 };
+
+/** Botón primario del sitio: texto y flecha en círculo. */
+export function BotonSitio({href, texto}: {href: string; texto: string}) {
+  return (
+    <a className="s-boton" href={href}>
+      {texto}
+      <span className="s-boton__circulo">
+        <span className="s-flecha" aria-hidden="true" />
+      </span>
+    </a>
+  );
+}
+
+/** Cierre oscuro de las páginas internas: título, texto, botón y precio ya publicados. */
+export function SeccionCierre({lang, texto}: {lang: Lang; texto: string}) {
+  const c = cierre(lang);
+  return (
+    <section className="s-seccion s-cierre" data-tema="oscuro">
+      <div className="s-contenedor s-cierre__contenido">
+        <h2 className="s-h2">{c.titulo}</h2>
+        <p className="s-cierre__texto">{c.texto}</p>
+        <BotonSitio href={hrefAcceso(lang)} texto={texto} />
+        <p className="s-cierre__precio s-mono-min">{c.precio}</p>
+      </div>
+    </section>
+  );
+}
 
 type Props = {
   pagina: Pagina;
@@ -211,19 +271,11 @@ export function CuerpoPagina({pagina, lang, publicable = true, motivos = []}: Pr
     </div>
   ));
   const etiquetaNota = lang === 'es' ? 'Pendiente de revisión' : 'Pending review';
-  const c = cierre(lang);
   const esAcceso = pagina.id === 'solicitar-acceso';
   const captura = CAPTURA_DE_PAGINA[pagina.id];
   const botonHref = esAcceso ? (hrefMailto(lang) ?? hrefAcceso(lang)) : hrefAcceso(lang);
   const textoBoton = p.cta ? txt(p.cta, lang) : lang === 'es' ? 'Solicitar acceso' : 'Request access';
-  const Boton = (
-    <a className="s-boton" href={botonHref}>
-      {textoBoton}
-      <span className="s-boton__circulo">
-        <span className="s-flecha" aria-hidden="true" />
-      </span>
-    </a>
-  );
+  const Boton = <BotonSitio href={botonHref} texto={textoBoton} />;
   return (
     <>
       <section className="s-seccion s-pag-cabeza" data-tema="oscuro">
@@ -250,16 +302,7 @@ export function CuerpoPagina({pagina, lang, publicable = true, motivos = []}: Pr
           {p.rotulo ? <p className="s-rotulo-ejemplo">{txt(p.rotulo, lang)}</p> : null}
         </div>
       </section>
-      {esAcceso ? null : (
-        <section className="s-seccion s-cierre" data-tema="oscuro">
-          <div className="s-contenedor s-cierre__contenido">
-            <h2 className="s-h2">{c.titulo}</h2>
-            <p className="s-cierre__texto">{c.texto}</p>
-            {Boton}
-            <p className="s-cierre__precio s-mono-min">{c.precio}</p>
-          </div>
-        </section>
-      )}
+      {esAcceso || pagina.id === 'estado' ? null : <SeccionCierre lang={lang} texto={textoBoton} />}
     </>
   );
 }

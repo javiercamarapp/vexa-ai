@@ -32,8 +32,8 @@ export function manifestMd(): ManifestMd {
 }
 
 /** Misma firma que la versión provisional de T7: título, descripción y estado vienen de quien conoce la página. */
-export function metadatosPagina({id, lang, titulo, descripcion, indexable = true}: {id: string; lang: IdiomaSitio; titulo: string; descripcion: string; indexable?: boolean}): Metadata {
-  return metadatosSitio({id, lang, titulo, descripcion, indexable, espejo: rutaEspejo(id, lang, manifestMd())});
+export function metadatosPagina({id, lang, titulo, descripcion, indexable = true, publicado = null, modificado = null}: {id: string; lang: IdiomaSitio; titulo: string; descripcion: string; indexable?: boolean; publicado?: string | null; modificado?: string | null}): Metadata {
+  return metadatosSitio({id, lang, titulo, descripcion, indexable, espejo: rutaEspejo(id, lang, manifestMd()), publicado, modificado});
 }
 
 /** Texto del script ld+json de una página, ya serializado y con < escapado. */

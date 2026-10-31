@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ACTIVE_ORG, AccessError, SUPPORT_MARK, config as authConfig, identity, PRIVATE_HEADERS, resolveSession } from './lib/auth';
 import { supportMarkActive, supportVerdict } from './lib/support-guard';
-import { failure, localRedirect, requestAuth } from './lib/auth-http';
+import { failure, idiomaDelMiddleware, localRedirect, MENSAJES_ACCESO, requestAuth } from './lib/auth-http';
 import { decidirHost, rutaConAutenticacion } from './lib/host-routing.mjs';
 import { registrar } from './lib/security/registro';
 import { evaluarLimite } from './lib/security/limite-servidor';
@@ -24,7 +24,7 @@ export async function middleware(request:NextRequest) {
     const exceso=evaluarLimite(request,path,request.nextUrl.search);
     if(exceso){
       void registrar({kind:'rate_limited',route:path,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent'),detail:{class:exceso.clase,scope:exceso.por}});
-      return NextResponse.json({error:{code:'rate_limited',message:'Demasiadas solicitudes. Intenta de nuevo en unos segundos.',retryable:true}},{status:429,headers:{...PRIVATE_HEADERS,'Retry-After':String(exceso.reintentarEn)}});
+      return NextResponse.json({error:{code:'rate_limited',message:MENSAJES_ACCESO[idiomaDelMiddleware(request)].limite,retryable:true}},{status:429,headers:{...PRIVATE_HEADERS,'Retry-After':String(exceso.reintentarEn)}});
     }
     // Host primero (decisión pura y probada en host-routing.mjs). Con las reglas por host de next.config (Fase A) rovaq.ai y www.rovaq.ai ya no llegan aquí: el matcher los excluye.
     // Lo que sigue sirve a app.rovaq.ai y a los hosts antiguos, y es también el respaldo (Fase B) si rovaq.ai volviera a pasar por el middleware.
@@ -57,7 +57,7 @@ export async function middleware(request:NextRequest) {
     if(supportMarkActive(request.cookies.get(SUPPORT_MARK)?.value)&&(path.startsWith('/api/')||path==='/'||protectedPathPrefix(path))){
       const verdict=supportVerdict(request.method,path,request.nextUrl.search);
       if(!verdict.ok){void registrar({kind:'support_blocked',route:path,method:request.method,ipRaw:request.headers.get('x-forwarded-for'),ua:request.headers.get('user-agent'),detail:{code:verdict.code}});}
-      if(!verdict.ok)return NextResponse.json({error:{code:verdict.code,message:'Modo soporte: solo lectura.',retryable:false}},{status:403,headers:PRIVATE_HEADERS});
+      if(!verdict.ok)return NextResponse.json({error:{code:verdict.code,message:MENSAJES_ACCESO[idiomaDelMiddleware(request)].soporte,retryable:false}},{status:403,headers:PRIVATE_HEADERS});
     }
     if(path.startsWith('/api/'))return NextResponse.next({request:{headers:request.headers}});
     const platformRoute=path==='/platform'||path.startsWith('/platform/');

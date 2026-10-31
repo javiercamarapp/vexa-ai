@@ -1,6 +1,5 @@
 // Artículos a6 a a8 del blog. Los redacta un agente en este archivo (y solo en este); a2 a a5 viven en blog-a.ts y a1 en blog.ts.
-// Para publicar uno: añadir aquí la llamada articulo({...}) con id 'a6' ... 'a8' (el id fija la ruta en el registro K2). Mientras no exista,
-// la ruta devuelve el 404 propio del sitio y el artículo no aparece en el índice, en el RSS, en el sitemap ni en los espejos.
+// Un artículo con estado pendiente-de-revision (hoy a7) devuelve el 404 propio del sitio y no aparece en el índice, el RSS, el sitemap ni los espejos.
 // Guía de forma: ver ARTICULO_A1 en blog.ts. La fecha de publicación es FECHA_CONTENIDO. Rótulos de viñeta con **texto**. Constructores: p, h2, h3, ul, pasos, cita, noAfirmamos y articulo, de ../ayudas.ts.
 import type { Articulo } from '../tipos.ts';
 import { articulo, b, cita, h2, h3, noAfirmamos, p, pasos, ul } from '../ayudas.ts';
@@ -51,7 +50,7 @@ export const ARTICULO_A6: Articulo = articulo({
       'There are at least three reasons why the count misleads:',
     ),
     ul(
-      ['**El lenguaje del cliente no es el de tu catálogo.** Dos personas describen el mismo defecto con palabras distintas y una misma palabra sirve para asuntos que no se parecen. Sin una agrupación cuidadosa, el conteo reparte un problema entre varias filas o junta varios en una.', '**The customer language is not the language of your catalog.** Two people describe the same defect with different words, and one word can cover matters that are not alike. Without careful grouping, the count splits one problem across several rows or merges several into one.'],
+      ['**El lenguaje del cliente no es el de tu catálogo.** Dos personas describen el mismo defecto con palabras distintas y una misma palabra sirve para asuntos que no se parecen. Sin una agrupación cuidadosa, el conteo reparte un problema entre varias filas o junta varios en una.', '**Customers do not describe things the way your catalog does.** Two people describe the same defect with different words, and one word can cover matters that are not alike. Without careful grouping, the count splits one problem across several rows or merges several into one.'],
       ['**La frecuencia no es el costo.** Un motivo muy mencionado y de bajo impacto puede quedar por encima de uno raro y caro si lo único que miras es el volumen.', '**Frequency is not cost.** A heavily mentioned reason with low impact can rank above a rare and expensive one if all you look at is volume.'],
       ['**Lo que más se escribe es lo que más se facilita escribir.** Los canales y los formularios condicionan de qué se queja la gente y cómo, de modo que parte del patrón viene de la herramienta y no del cliente.', '**What gets written most is what is easiest to write.** Channels and forms shape what people complain about and how, so part of the pattern comes from the tool and not from the customer.'],
     ),
@@ -83,8 +82,8 @@ export const ARTICULO_A6: Articulo = articulo({
     ),
     h3('Lo que no se sabe no vale cero', 'What is not known is not zero'),
     p(
-      'En esta pantalla la regla tiene una consecuencia concreta: lo que no se sabe dice Sin dato y nunca cero, y si una fuente no respondió, esos puntos salen como No disponible ahora. Un motivo sin una liga confiable con el dinero no es un motivo barato, es un motivo sin medir. Por qué la diferencia importa tanto se explica en {{a2|el artículo sobre procedencia}}; aquí basta revisar primero la {{confianza-de-los-datos|confianza de los datos}} y leer cada número con su fuente y su fecha de corte.',
-      'On this screen the rule has a concrete consequence: what is not known says No data and never zero, and if a source did not respond, those points show as Not available now. A reason with no reliable link to the money is not a cheap reason, it is an unmeasured one. Why the difference matters so much is explained in {{a2|the article on provenance}}; here it is enough to check {{confianza-de-los-datos|data trust}} first and read each number with its source and cut-off date.',
+      'En esta pantalla, si una fuente no respondió, esos puntos salen como No disponible ahora. Un motivo sin una liga confiable con el dinero no es un motivo barato, es un motivo sin medir. Por qué la diferencia importa tanto se explica en {{a2|el artículo sobre procedencia}}; aquí basta revisar primero la {{confianza-de-los-datos|confianza de los datos}} y leer cada número con su fuente y su fecha de corte.',
+      'On this screen, if a source did not respond, those points show as Not available now. A reason with no reliable link to the money is not a cheap reason, it is an unmeasured one. Why the difference matters so much is explained in {{a2|the article on provenance}}; here it is enough to check {{confianza-de-los-datos|data trust}} first and read each number with its source and cut-off date.',
     ),
     h2('Exportar sin datos personales', 'Export without personal data'),
     p(
@@ -117,11 +116,14 @@ export const ARTICULO_A6: Articulo = articulo({
   ],
 });
 
-// a7. El más delicado. Solo PUBLICO de LANDING.seguridad (hay, noHay), el texto de retención y la hoja de ruta de seguridad.ts.
+// a7. El más delicado. Solo PUBLICO de LANDING.seguridad (hay, noHay), y el texto de retención.
 // Fuera a propósito (para revisión de Responsable A): conexiones de solo lectura (MATIZ 9), versión redactada de las conversaciones (m 11, requiere Responsable A y abogado),
 // IA detrás de banderas (MATIZ 3), fecha de revisión y buzón de seguridad (marcadores sin resolver).
 export const ARTICULO_A7: Articulo = articulo({
   id: 'a7',
+  // FUERA DEL LANZAMIENTO (T32-Y, decisión de Javier): las afirmaciones de seguridad esperan la revisión de Responsable A y de un abogado. El texto queda escrito.
+  estado: 'pendiente-de-revision',
+  pendiente: 'Las afirmaciones de seguridad esperan la revisión de Responsable A y de un abogado.',
   pub: FECHA_CONTENIDO,
   etiqueta: b('Seguridad', 'Security'),
   seo: {
@@ -183,7 +185,7 @@ export const ARTICULO_A7: Articulo = articulo({
     ul(
       ['No tenemos certificación SOC 2 ni ISO 27001, y no afirmamos cumplimiento de GDPR.', 'We do not hold SOC 2 or ISO 27001 certification, and we do not claim GDPR compliance.'],
       ['No se ha hecho una prueba de penetración externa.', 'No external penetration test has been performed.'],
-      ['La verificación en dos pasos para propietarios está planeada. Hoy no se exige.', 'Two-step verification for owners is planned. It is not required today.'],
+      ['La verificación en dos pasos para administradores del espacio todavía no existe. Hoy no se exige.', 'Two-step verification for workspace administrators does not exist yet. It is not required today.'],
       ['No ofrecemos inicio de sesión único ni una vista de auditoría para el cliente.', 'We do not offer single sign-on or a customer-facing audit view.'],
       ['Hay respaldos diarios de nuestro proveedor, sin recuperación a un punto en el tiempo, y no ofrecemos compromisos de disponibilidad.', 'There are daily provider backups, without point-in-time recovery, and we make no availability commitments.'],
     ),
@@ -205,14 +207,14 @@ export const ARTICULO_A7: Articulo = articulo({
     ),
     h2('Por qué publicamos las brechas', 'Why we publish the gaps'),
     p(
-      'Hay cuatro razones, y ninguna es de imagen.',
-      'There are four reasons, and none is about image.',
+      'Hay cuatro razones.',
+      'There are four reasons.',
     ),
     ul(
       ['Un comprador necesita dimensionar el riesgo antes de firmar. Ocultar una brecha solo traslada el descubrimiento a un momento peor.', 'A buyer needs to size the risk before signing. Hiding a gap only moves the discovery to a worse moment.'],
       ['Una afirmación sin límites no se puede comprobar. Un límite sí: cualquiera puede verificar que existe o que no.', 'A claim without limits cannot be checked. A limit can: anyone can verify whether it exists or not.'],
-      ['Nos disciplina. Cada frase de la primera lista tiene que sobrevivir a la lectura de la segunda, y eso desalienta el adjetivo fácil.', 'It disciplines us. Every sentence in the first list has to survive reading the second, and that discourages the easy adjective.'],
-      ['Permite una conversación adulta. Si un requisito del comprador depende de algo que hoy no tenemos, la respuesta correcta es decirlo, no argumentar.', 'It allows an adult conversation. If a buyer requirement depends on something we do not have today, the right answer is to say so, not to argue.'],
+      ['Nos mantiene precisos. Cada frase de la primera lista tiene que sobrevivir a la lectura de la segunda, y eso desalienta el adjetivo fácil.', 'It keeps us precise. Every sentence in the first list has to survive reading the second, and that discourages the easy adjective.'],
+      ['Permite una conversación directa. Si un requisito del comprador depende de algo que hoy no tenemos, la respuesta correcta es decirlo, no argumentar.', 'It allows a direct conversation. If a buyer requirement depends on something we do not have today, the right answer is to say so, not to argue.'],
     ),
     p(
       'Tampoco afirmamos que lo que existe sea suficiente para cada negocio. Una brecha que a un equipo le es indiferente puede ser decisiva para otro, por ejemplo cuando una política interna exige algo que hoy no tenemos. En ese caso la decisión corresponde a quien compra, y nuestro trabajo es darle la información exacta para tomarla.',
@@ -263,7 +265,7 @@ export const ARTICULO_A8: Articulo = articulo({
     titulo: b('Una recomendación debe poder discutirse | Rovaq AI', 'A Recommendation Must Be Open to Debate | Rovaq AI'),
     descripcion: b(
       'Una sugerencia sin evidencia se ignora. Con evidencia, responsable y registro del resultado se vuelve hábito del equipo: propuesta, decisión y resultado.',
-      'A suggestion without evidence gets ignored. With evidence, an owner and a recorded outcome it becomes a team habit: proposal, decision and outcome.',
+      'A suggestion without evidence gets ignored. With evidence, a responsible person and a recorded outcome it becomes a team habit: proposal, decision, result.',
     ),
   },
   h1: b(
@@ -282,7 +284,7 @@ export const ARTICULO_A8: Articulo = articulo({
   bloques: [
     p(
       'En muchos equipos las recomendaciones mueren de la misma manera: alguien las escribe en un documento o las dice en una reunión, nadie las discute con datos y a las pocas semanas ya no se sabe quién iba a hacer qué. La sugerencia no era mala; simplemente no tenía forma de ser discutida.',
-      'In many teams recommendations die the same way: someone writes them in a document or says them in a meeting, nobody debates them with data and a few weeks later nobody remembers who was going to do what. The suggestion was not bad; it simply had no way of being debated.',
+      'In many teams, recommendations die the same way: someone writes them in a document or says them in a meeting, nobody debates them with data and a few weeks later nobody remembers who was going to do what. The suggestion was not bad; it simply had no way of being debated.',
     ),
     p(
       'Una recomendación solo se vuelve útil cuando se puede cuestionar: cuando trae su evidencia a la vista, tiene una persona que decide y deja un registro de lo que pasó después. Con eso, una sugerencia deja de ser una opinión y pasa a ser un hábito del equipo.',
@@ -291,7 +293,7 @@ export const ARTICULO_A8: Articulo = articulo({
     h2('Sin evidencia se ignora', 'Without evidence it is ignored'),
     p(
       'Una recomendación sin respaldo obliga a quien la recibe a elegir entre confiar en quien la escribió o desconfiar. Ninguna de las dos posturas es una discusión. Confiar sin ver es delegar a ciegas, y desconfiar sin ver es descartar sin criterio. En los dos casos el costo lo paga el negocio.',
-      'A recommendation without support forces the reader to choose between trusting whoever wrote it or distrusting it. Neither stance is a discussion. Trusting without seeing is delegating blindly, and distrusting without seeing is dismissing without criteria. In both cases the business pays the cost.',
+      'A recommendation without support forces the reader to choose between trusting whoever wrote it or distrusting it. Neither stance is a discussion. Trusting without seeing is delegating blindly, and distrusting without seeing is dismissing without judgment. In both cases the business pays the cost.',
     ),
     p(
       'Con evidencia cambia la conversación. Si la propuesta dice qué observó, de dónde viene cada cifra, por qué se sugiere esa acción y qué se espera lograr, quien decide puede estar en desacuerdo con algo específico: la fuente, el periodo, el supuesto o la expectativa. Ese desacuerdo es justo lo que una recomendación debería provocar.',
@@ -330,8 +332,8 @@ export const ARTICULO_A8: Articulo = articulo({
       'Asking for the reason is not red tape. A dismissed proposal with a stated reason teaches the team which criteria carry weight, and keeps the same idea from starting from zero each time someone proposes it.',
     ),
     p(
-      'También importa quién puede hacer qué. Proponer pueden el propietario, el analista y el operador; aprobar, solo el propietario; ejecutar, el propietario y el operador. Separar proponer de aprobar permite que cualquiera con una buena observación la ponga sobre la mesa sin que eso la convierta en una orden.',
-      'Who can do what also matters. The owner, the analyst and the operator can propose; only the owner can approve; the owner and the operator can carry out. Separating proposing from approving lets anyone with a good observation put it on the table without that turning it into an order.',
+      'También importa quién puede hacer qué. Quién propone, quién aprueba y quién ejecuta depende del puesto, como explica {{a4|el artículo sobre puestos}}. Separar proponer de aprobar permite que cualquiera con una buena observación la ponga sobre la mesa sin que eso la convierta en una orden.',
+      'Who can do what also matters. Who proposes, who approves and who carries out depends on the role, as {{a4|the article on roles}} explains. Separating proposing from approving lets anyone with a good observation put it on the table without that turning it into an order.',
     ),
     h2('Registrar el resultado', 'Record the outcome'),
     p(
@@ -348,7 +350,7 @@ export const ARTICULO_A8: Articulo = articulo({
     ),
     p(
       'Conviene ser claros sobre lo que aquí se cuenta. Describimos lo que el producto permite hacer, no resultados obtenidos con él.',
-      'It is worth being clear about what is told here. We describe what the product allows you to do, not results obtained with it.',
+      'A word on scope: we describe what the product allows you to do, not results obtained with it.',
     ),
     h2('Cómo llevarlo a tu equipo', 'How to bring it to your team'),
     p(

@@ -36,7 +36,7 @@ export function TarjetaRecorrido({t,innerRef,tipo,titulo,cuerpo,ilu,n,total,grup
    {!cierre&&<button type="button" className="onb-btn-sec" onClick={omitir}>{t('onb.ui.omitir')}</button>}
    {n>1&&<button type="button" className="onb-btn-sec" onClick={anterior}>{t('onb.ui.anterior')}</button>}
    {cierre&&mostrarSetup&&irSetup&&<button type="button" className="onb-btn-sec" onClick={irSetup}>{t('onb.tour.cierre.setup')}</button>}
-   <button type="button" className="onb-btn" data-onb-primario onClick={primario}>{cierre?t('onb.ui.terminar'):tipo==='ir'?t('onb.tour.llevame'):t('onb.ui.siguiente')}</button>
+   <button type="button" className="onb-btn" data-onb-primario onClick={primario}>{cierre?t('onb.ui.terminar'):t('onb.ui.siguiente')}</button>
   </div>
   {/* «Paso n de N» se anuncia una sola vez por paso: la línea visible de arriba está oculta a lectores de pantalla. */}
   <p className="sr-only" role="status">{t('onb.ui.avisoPasos',{n:n,total:total,titulo:titulo})}</p>

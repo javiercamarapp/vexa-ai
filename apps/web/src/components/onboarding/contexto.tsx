@@ -17,7 +17,7 @@ export interface Controlador {
  registrarBoton:(el:HTMLButtonElement|null)=>void;enfocarBoton:()=>void;
  alternarMenu:()=>void;cerrarMenu:()=>void;
  modo:ModoTour;hayModoCorto:boolean;pasosCorto:number;pasosCompleto:number;
- abrirSetup:()=>void;iniciar:(modo:'inicio'|'retomar',recorrido?:ModoTour)=>void;irAPantalla:(href:string)=>void;despachar:(e:EventoRecorrido)=>void;siguiente:()=>void;llevame:()=>void;terminarEIrASetup:()=>void;
+ abrirSetup:()=>void;iniciar:(modo:'inicio'|'retomar',recorrido?:ModoTour)=>void;irAPantalla:(href:string)=>void;despachar:(e:EventoRecorrido)=>void;siguiente:()=>void;llevame:()=>void;viajeAutomatico:()=>boolean;terminarEIrASetup:()=>void;
  omitir:()=>void;noVolver:()=>void;saltarInvitacion:()=>void;mostrarChecklist:()=>void;ocultarChecklist:()=>void;
 }
 const Contexto=createContext<Controlador|null>(null);
@@ -50,8 +50,10 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  const guardar=useCallback((parche:Partial<EstadoLocal>)=>{setLocal(previo=>clave?actualizarEstado(almacenDelNavegador(),clave,{...previo,...parche}):{...previo,...parche});},[clave]);
  // Todo cambio del recorrido nace de una acción de la persona (o de que llegue a la pantalla a la que se le mandó): aquí se aplica y se guarda el paso.
  // Si el paso cae en otra pantalla distinta de la actual (volver atrás, retomar, saltar), se la lleva; un paso «ir» no navega: te dice qué apretar.
+ // `viaje` marca que el paso actual lo alcanzó una acción de la persona en esta visita (no un recorrido restaurado al recargar): solo entonces un paso «ir» la lleva solo.
+ const viaje=useRef(false);
  const aplicar=useCallback((sig:EstadoRecorrido,navegar:boolean,lista:PasoTour[]=pasos)=>{
-  setRec(sig);
+  viaje.current=true;setRec(sig);
   if(sig.abierto){const p=lista[sig.indice];if(p){guardar({paso:p.id,visto:true,activo:true});if(navegar&&p.tipo!=='ir'&&p.pantalla&&!enPantalla(pathname,p.pantalla))router.push(p.pantalla);}}
   else if(sig.terminado)guardar({paso:null,visto:true,omitido:false,activo:false});
   else guardar({activo:false});
@@ -77,7 +79,7 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
   setMenuAbierto(false);guardar({omitido:false});aplicar(reducir(rec,{tipo:'abrir',indice:g.desde},pasos.length,pasos,pathname),false);
  },[aplicar,guardar,pantallas,pasos,pathname,rec]);
  const abrirSetup=useCallback(()=>{setMenuAbierto(false);router.push('/setup');},[router]);
- // «Llévame»: hace el clic real en el elemento (así viaja con el alcance del menú); si no está a la vista, navega directo. En los dos casos el paso «ir» queda completo.
+ // Viaje de un paso «ir» (lo dispara solo la guía tras señalar el elemento, o «Siguiente» / la flecha derecha): hace el clic real en el elemento (así viaja con el alcance del menú); si no está a la vista, navega directo. En los dos casos el paso «ir» queda completo.
  const llevame=useCallback(()=>{
   const p=rec.abierto?pasos[rec.indice]:null;
   if(!p||p.tipo!=='ir'||!p.href)return;
@@ -111,6 +113,6 @@ export function OnboardingRaiz({datos,children}:{datos:DatosOnboarding;children:
  },[abierto,siguiente,despachar]);
  const invitacionVisible=listo&&tieneRecorrido&&!rec.abierto&&!local.visto&&!local.omitido&&!local.descartado;
  const valor:Controlador={datos,pista,listo,local,tieneRecorrido,pasos,modo,hayModoCorto,pasosCorto:corto.length,pasosCompleto:completo.length,pantallas,tieneChecklist,rec,paso,menuAbierto,invitacionVisible,soporteTerminado,ruta:pathname,registrarBoton:setBoton,enfocarBoton:()=>boton?.focus(),
-  alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),abrirSetup,iniciar,irAPantalla,despachar,siguiente,llevame,terminarEIrASetup,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
+  alternarMenu:()=>setMenuAbierto(v=>!v),cerrarMenu:()=>setMenuAbierto(false),abrirSetup,iniciar,irAPantalla,despachar,siguiente,llevame,viajeAutomatico:()=>viaje.current,terminarEIrASetup,omitir,noVolver,saltarInvitacion,mostrarChecklist,ocultarChecklist};
  return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

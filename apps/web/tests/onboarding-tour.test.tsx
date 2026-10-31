@@ -166,13 +166,13 @@ test('estado: el paso y «activo» se guardan y se leen; Esc/Omitir/Terminar lo 
 const T={es:traductor('es'),en:traductor('en')};
 const baseTarjeta={ilu:'nodos',n:7,total:80,grupoN:3,grupoTotal:24,ruta:{nombres:['Hoy','Pregúntale','CFO','Problemas'],actual:2},anterior:noop,omitir:noop,primario:noop};
 for(const idioma of ['es','en'] as const){
-  test(`tarjeta (${idioma}): paso «ir» = dialog no modal con «${idioma==='es'?'Llévame':'Take me there'}» como primario, un solo anuncio, ruta con pantalla actual, sin style=`,()=>{
+  test(`tarjeta (${idioma}): paso «ir» = dialog no modal con «Siguiente» como primario (nunca «Llévame»), un solo anuncio, ruta con pantalla actual, sin style=`,()=>{
     const t=T[idioma],dic=idioma==='es'?ESP:ING;
     const html=renderToStaticMarkup(<TarjetaRecorrido t={t} tipo="ir" titulo={t('onb.tour.ir.titulo',{pantalla:'Problemas'})} cuerpo={t('onb.tour.ir.cuerpo',{nombre:'Problemas'})} {...baseTarjeta}/>);
     assert.match(html,/role="dialog"/);assert.doesNotMatch(html,/aria-modal|\bstyle=|tabindex/i);
     assert.equal((html.match(/role="status"/g)??[]).length,1,'«Paso n de N» se anuncia una vez');assert.doesNotMatch(html,/aria-live/);
     assert.match(html,/class="onb-cab" aria-hidden="true"/);
-    assert.match(html,new RegExp(`data-onb-primario[^>]*>${dic['onb.tour.llevame']}<`));assert.doesNotMatch(html,new RegExp(`>${dic['onb.ui.siguiente']}<`));
+    assert.match(html,new RegExp(`data-onb-primario[^>]*>${dic['onb.ui.siguiente']}<`));assert.doesNotMatch(html,/Llévame|Take me there/);
     assert.match(html,/<progress[^>]*max="80"[^>]*value="7"/);assert.match(html,/<ol class="onb-ruta" aria-label=/);
     assert.equal((html.match(/aria-current="step"/g)??[]).length,1);assert.match(html,/<li[^>]*data-actual[^>]*>CFO</);
     assert.ok(html.includes(dic['onb.ui.omitir'])&&html.includes(dic['onb.ui.anterior']));
@@ -264,7 +264,7 @@ test('claves del recorrido por pantallas: existen en es y en con las mismas {var
   for(const k of CLAVES_PANTALLAS)assert.ok((CLAVES_UI as readonly string[]).includes(k),k);
   for(const h of Object.keys(PANTALLAS)){assert.ok(ESP[`onb.pant.${slugDe(h)}.desc`]);}
   assert.equal(variables(ESP['onb.tour.ir.titulo']),'pantalla');assert.equal(variables(ESP['onb.tour.ir.cuerpo']),'nombre');assert.equal(variables(ESP['onb.tour.clic']),'nombre');assert.equal(variables(ESP['onb.tour.cierre.resumen']),'lista,n');
-  assert.match(ESP['onb.tour.clic'],/^Haz clic aquí/);assert.match(ING['onb.tour.clic'],/^Click here/);assert.equal(ESP['onb.tour.llevame'],'Llévame');assert.equal(ING['onb.tour.llevame'],'Take me there');
+  assert.match(ESP['onb.tour.clic'],/^Haz clic aquí/);assert.match(ING['onb.tour.clic'],/^Click here/);assert.equal(ESP['onb.tour.llevame'],undefined);assert.equal(ING['onb.tour.llevame'],undefined);
 });
 test('textos por pantalla: no prometen escrituras al lector ni dinero al operador; el cierre lleva a Configuración',()=>{
   const texto=(pista:(typeof ROLES_PISTA)[number])=>construirTour(pista).map(p=>[p.titulo,p.cuerpo]).flat().filter(Boolean).map(k=>ESP[k!]).join(' ');

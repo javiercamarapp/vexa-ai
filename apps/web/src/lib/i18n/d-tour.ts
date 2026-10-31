@@ -2,7 +2,7 @@
 // Regla (igual que d-onb.ts): ninguna cifra escrita a mano ni afirmaciones de seguridad/cumplimiento. Lo que lleve un número entra por {variable}.
 // Los textos de pantalla son los mismos para todos los roles que la ven: no prometen acciones; las que dependen de la capacidad del rol salen en un paso «accion» que solo existe si el rol la tiene.
 export const tourEs = {
-  'onb.tour.llevame': 'Llévame', 'onb.tour.ir.titulo': 'Ve a {pantalla}', 'onb.tour.ir.cuerpo': 'Haz clic en «{nombre}» en el menú. Si prefieres, pulsa Llévame y lo hago por ti.',
+  'onb.tour.ir.titulo': 'Vamos a {pantalla}', 'onb.tour.ir.cuerpo': 'Te señalo «{nombre}» en el menú y te llevo ahí en un momento. Si prefieres, haz clic tú.',
   'onb.tour.clic': 'Haz clic aquí: {nombre}', 'onb.tour.aqui': 'Aquí: {nombre}', 'onb.tour.pantalla': 'Pantalla {n} de {total}', 'onb.tour.rutaAria': 'Ruta del recorrido', 'onb.tour.progresoAria': 'Avance del recorrido',
   'onb.tour.entrada': 'Ahora: {pantalla}', 'onb.tour.noEncontrado': 'No veo este elemento en la pantalla ahora; sigue la explicación de aquí.',
   'onb.tour.cierre.titulo': 'Recorrido completo', 'onb.tour.cierre.cuerpo': 'Ya conoces cada pantalla de tu rol. Cuando quieras repetirlo o saltar a una pantalla, abre Guía.',
@@ -74,7 +74,7 @@ export const tourEs = {
   'onb.pant.platform-auditoria.claveT': 'El registro', 'onb.pant.platform-auditoria.claveC': 'Cada acción queda con su autor y su momento; las alertas abiertas aparecen primero.',
 } as const;
 export const tourEn: Record<keyof typeof tourEs, string> = {
-  'onb.tour.llevame': 'Take me there', 'onb.tour.ir.titulo': 'Go to {pantalla}', 'onb.tour.ir.cuerpo': 'Click “{nombre}” in the menu. Or press Take me there and I will do it for you.',
+  'onb.tour.ir.titulo': 'Next: {pantalla}', 'onb.tour.ir.cuerpo': 'I will point at “{nombre}” in the menu and take you there in a moment. Or click it yourself.',
   'onb.tour.clic': 'Click here: {nombre}', 'onb.tour.aqui': 'Here: {nombre}', 'onb.tour.pantalla': 'Screen {n} of {total}', 'onb.tour.rutaAria': 'Tour route', 'onb.tour.progresoAria': 'Tour progress',
   'onb.tour.entrada': 'Now: {pantalla}', 'onb.tour.noEncontrado': 'I cannot see this element on the screen right now; follow the explanation here.',
   'onb.tour.cierre.titulo': 'Tour complete', 'onb.tour.cierre.cuerpo': 'You now know every screen your role has. Open Guide whenever you want to repeat it or jump to a screen.',

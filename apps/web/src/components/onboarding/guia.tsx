@@ -58,6 +58,15 @@ export function GuiaPaneles(){
   const alClic=()=>despachar({tipo:'clic'});
   el.addEventListener('click',alClic,true);return()=>el.removeEventListener('click',alClic,true);
  },[el,tipo,despachar]);
+ // 3b) Un paso «ir» alcanzado por una acción de la persona (Siguiente, flecha derecha, Empezar) no se queda esperando otro botón: se señala el elemento
+ // y, tras un instante, la guía lo pulsa sola y la lleva a la pantalla. Si el elemento no existe (menú plegado), navega directo. Un recorrido restaurado al recargar no viaja solo.
+ const llevame=c?.llevame,viajeAutomatico=c?.viajeAutomatico,llevarRef=useRef(llevame),viajeRef=useRef(viajeAutomatico);
+ useEffect(()=>{llevarRef.current=llevame;viajeRef.current=viajeAutomatico;});
+ useEffect(()=>{
+  if(tipo!=='ir'||el===undefined||!viajeRef.current?.())return;
+  const id=setTimeout(()=>llevarRef.current?.(),el?(reducirMovimiento()?400:1100):0);
+  return()=>clearTimeout(id);
+ },[el,tipo,pasoId]);
  // 4) Seguir al elemento (scroll, tamaño, animaciones): recorte, anillo y etiqueta por CSSOM. Si desaparece (cambio de pantalla) se vuelve a buscar.
  useEffect(()=>{
   const capaEl=capa.current;if(!capaEl)return;

@@ -5,6 +5,7 @@ import {forDownloadAuditado as forDownload} from '../security/descargas';
 import {serverPool} from '../imports/server';
 import {ACTIVE_ORG,AccessError,assertOrigin,config,identity,PRIVATE_HEADERS,resolveSession} from '../auth';
 import {requestAuth} from '../auth-http';
+import {idiomaDePeticion} from '../i18n/errores-api';
 import {conMemoria,olvidarSiDegradada} from '../lectura-memo.mjs';
 import {createPainPointsRepository} from '../../../../../packages/workspace-service/pain-points.mjs';
 import {createPainEvidenceRepository} from '../../../../../packages/workspace-service/pain-points-evidencia.mjs';
@@ -37,8 +38,9 @@ export async function painPointsHandler(request:NextRequest){
  try{
   if([...request.nextUrl.searchParams.keys()].length)throw new AccessError(400,'unsupported_filter');
   const c=await contexto(request);finish=c.finish;
-  const clave=c.tenant+'|'+c.role+'|pain-points';
-  const data=olvidarSiDegradada(clave,await conMemoria(clave,TTL_MS,()=>createPainPointsRepository({database:c.database}).get()));
+  const idioma=idiomaDePeticion(request);
+  const clave=c.tenant+'|'+c.role+'|pain-points'+(idioma==='en'?'|en':'');
+  const data=olvidarSiDegradada(clave,await conMemoria(clave,TTL_MS,()=>createPainPointsRepository({database:c.database}).get({idioma})));
   return finish(NextResponse.json({data},{headers:{...PRIVATE_HEADERS,Vary:'Cookie'}}));
  }catch(error){return falla(error,finish,'pain_points');}
 }

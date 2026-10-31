@@ -30,4 +30,4 @@ export function armarPuntos(f: Record<string, unknown>): PuntoPP[];
 export function leerWalmartPendiente(s: unknown, o?: {timeoutMs?: number}): Promise<{n: number; known: number; minor: string; desde: string | null; hasta: string | null; refreshedAt: string | null; watermark: string | null} | null>;
 export function leerGarantia(s: unknown, o?: {timeoutMs?: number}): Promise<{total: number; hojas: Record<string, number>} | null>;
 export function leerRepetido(s: unknown, o?: {timeoutMs?: number}): Promise<false | null | {contactos: number; contactosDosOMas: number; pct: number | null; pctSinVincular: number | null; corte: string | null; refreshedAt: string | null}>;
-export function createPainPointsRepository(o: {database: unknown; now?: () => Date; budgets?: Record<string, number>}): {get(): Promise<PainVista>};
+export function createPainPointsRepository(o: {database: unknown; now?: () => Date; budgets?: Record<string, number>}): {get(o?: {idioma?: 'es' | 'en'}): Promise<PainVista>};

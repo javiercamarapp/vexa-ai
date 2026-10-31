@@ -6,7 +6,7 @@ import {canalDeFuente} from './fuga-reembolsos.mjs';
 import {readTrackerRefundStatus, readThreadResolution, readRefundBySkuMonth} from '../insights/reader.mjs';
 import {readOrderRevenueMonth} from '../insights/reader-brechas.mjs';
 import {attempt} from './summaries.mjs';
-import {TEMAS, CLASES, armarPuntos, ordenPuntos} from './pain-points-catalogo.mjs';
+import {TEMAS, CLASES, armarPuntos, ordenPuntos, temasDe} from './pain-points-catalogo.mjs';
 
 export {TEMAS, CLASES, armarPuntos};
 /** Presupuestos de tiempo (ms) por parte. Cada consulta nueva mide < 3 s en frío (ver apps/web/docs o el informe de la rama). */
@@ -55,7 +55,7 @@ export async function leerRepetido(s, {timeoutMs = PAIN_BUDGETS_MS.repetido} = {
 
 export function createPainPointsRepository({database, now = () => new Date(), budgets = PAIN_BUDGETS_MS}) {
   return {
-    async get() {
+    async get({idioma = 'es'} = {}) {
       const hoy = now();
       return database.transaction('read', async s => {
         const dl = k => Date.now() + budgets[k];
@@ -71,15 +71,15 @@ export function createPainPointsRepository({database, now = () => new Date(), bu
         const puntos = armarPuntos({
           tracker: tracker && {data: tracker, meta: tracker.meta}, walmart, reembolsos: reembolsos && {rows: reembolsos.rows, meta: reembolsos.meta}, ordenes: ordenes && {rows: ordenes.rows, meta: ordenes.meta},
           hilos, hilosMeta: hilosR?.meta ?? null, repetido, garantia,
-        });
+        }, idioma);
         const partes = {
           tracker: tracker ? 'ok' : 'unavailable', walmart: walmart ? 'ok' : 'unavailable', reembolsos: reembolsos ? 'ok' : 'unavailable', ordenes: ordenes ? 'ok' : 'unavailable',
           hilos: hilos ? 'ok' : 'unavailable', repetido: repetido === false ? 'not_computed' : repetido ? 'ok' : 'unavailable', garantia: garantia ? 'ok' : 'unavailable',
         };
         return {
-          version: PAIN_VERSION, generatedAt: hoy.toISOString(), currency: 'USD', exponent: 2, tipoDinero: 'bruto', temas: TEMAS, clases: CLASES,
+          version: PAIN_VERSION, generatedAt: hoy.toISOString(), currency: 'USD', exponent: 2, tipoDinero: 'bruto', temas: temasDe(idioma), clases: CLASES,
           puntos: [...puntos].sort(ordenPuntos), partes,
-          nota: 'Ingreso bruto, nunca margen. Los puntos que comparten dinero (por ejemplo un SKU y su canal) son cortes distintos del mismo reembolso: no se suman entre sí.',
+          nota: idioma === 'en' ? 'Gross revenue, never margin. Points that share money (for example a SKU and its channel) are different cuts of the same refund: they are not added to each other.' : 'Ingreso bruto, nunca margen. Los puntos que comparten dinero (por ejemplo un SKU y su canal) son cortes distintos del mismo reembolso: no se suman entre sí.',
         };
       });
     },

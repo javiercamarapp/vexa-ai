@@ -44,7 +44,7 @@ export function Cabecera({lang, id, tema = 'oscuro'}: Props) {
     <header className="s-cabecera" data-tema={tema}>
       <div className="s-cabecera__barra">
         <a className="s-cabecera__logo" href={hrefDe('inicio', lang)} aria-label={t.inicio}>
-          <LogoSitio tono="doble" etiqueta="" />
+          <LogoSitio tono="auto" etiqueta="" />
         </a>
         <nav className="s-cabecera__nav" aria-label={t.principal}>
           {grupos.map((g) => (

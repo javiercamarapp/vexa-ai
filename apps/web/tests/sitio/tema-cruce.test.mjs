@@ -82,3 +82,26 @@ test('Chrome: contraste mínimo de 3:1 en cada cuadro de cada cruce, hacia abajo
   assert.doesNotMatch(salida, /FALLA/);
   assert.match(salida, /RESUMEN vp 1440/);
 });
+
+// T22: el juez T21 midió el logo a 1.2-2.5:1 y la píldora activa de las pantallas a casi 1:1 durante el cruce.
+test('T22 CSS: el logo de la barra es una sola copia que sigue --s-tinta y la píldora de pantallas no lleva transición propia en el cruce', () => {
+  const cab = leer('src/components/sitio/shell/cabecera.tsx');
+  assert.match(cab, /<LogoSitio tono="auto" etiqueta="" \/>/, 'dos copias con opacidad cruzada dejan la marca a 1:1 en mitad del cruce');
+  assert.ok(!/tono="doble"/.test(cab));
+  const css = leer('src/styles/sitio/tokens.css');
+  assert.match(css, /html\[data-ambiente-anim\] :is\([^)]*\.s-pantallas__boton\) \{\s*transition: none;/);
+});
+
+test('T22 evaluar: las sondas del logo y de la píldora fallan por debajo de 3:1 y pasan con el logo siguiendo el tema', () => {
+  const m = (logo, pil) => [{t: 0, sondas: {'logo de la barra / barra': logo, 'píldora activa de pantallas: texto / fondo': pil}}];
+  const mal = T.evaluar(m(1.06, 1.0));
+  assert.equal(mal.fallas.length, 2, JSON.stringify(mal.fallas));
+  assert.deepEqual(T.evaluar(m(3.4, 3.1)).fallas, []);
+});
+
+test('T22 la sonda del arnés mide el logo (copias con su opacidad) y la píldora activa', () => {
+  const fuente = readFileSync(join(RAIZ, 'tools/sitio/cdp/tema-cruce.mjs'), 'utf8');
+  assert.match(fuente, /'logo de la barra \/ barra'/);
+  assert.match(fuente, /'píldora activa de pantallas: texto \/ fondo'/);
+  assert.match(fuente, /\.s-pantallas__boton\[aria-current="true"\]/);
+});

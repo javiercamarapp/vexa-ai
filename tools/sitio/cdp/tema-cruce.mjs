@@ -62,6 +62,10 @@ export function muestrearEnPagina(ms) {
   const rgba = (c) => { const m = c.match(/-?[\d.]+/g) || []; const f = (i) => parseFloat(m[i]); if (c.startsWith('color(')) return [0, 1, 2].map((i) => Math.round(f(i) * 255)).concat(m[3] == null ? 1 : f(3)); return [f(0), f(1), f(2), m[3] == null ? 1 : f(3)]; };
   const sobre = (fg, bg) => { const a = fg[3]; return [0, 1, 2].map((i) => fg[i] * a + bg[i] * (1 - a)); };
   const fondoBarra = (pag) => { const f = rgba(getComputedStyle(barra).backgroundColor); return sobre(f, pag); };
+  // T22: el logo de la barra (una o dos copias con su opacidad: se compone la tinta resultante sobre la barra) y la píldora activa del selector de pantallas.
+  const logos = barra ? [...barra.querySelectorAll('.s-cabecera__logo svg')] : [];
+  const pildora = document.querySelector('.s-pantallas__boton[aria-current="true"]');
+  const opacidadDe = (e) => { let o = 1; for (let n = e; n && n !== document.documentElement; n = n.parentElement) o *= parseFloat(getComputedStyle(n).opacity); return o; };
   return new Promise((res) => {
     const out = [], t0 = performance.now();
     const paso = (t) => {
@@ -85,6 +89,16 @@ export function muestrearEnPagina(ms) {
           const base = bg[3] > 0.5 ? sobre(bg, fb) : fb;
           s[`barra: ${e.className.split(' ')[0].replace('s-cabecera__', '')} «${(e.textContent || '').trim().slice(0, 10)}» / barra`] = con(rgba(cs.color).slice(0, 3), base);
         }
+      }
+      if (barra && logos.length) {
+        const fb = fondoBarra(fondo);
+        let tinta = fb;
+        for (const sv of logos) { const f = rgba(getComputedStyle(sv.querySelector('path')).fill); tinta = sobre([f[0], f[1], f[2], f[3] * opacidadDe(sv)], tinta); }
+        s['logo de la barra / barra'] = con(tinta, fb);
+      }
+      if (pildora) {
+        const cs = getComputedStyle(pildora), bg = rgba(cs.backgroundColor);
+        s['píldora activa de pantallas: texto / fondo'] = con(rgba(cs.color).slice(0, 3), bg[3] > 0 ? sobre(bg, fondo) : fondo);
       }
       out.push({t: t - t0, sondas: s, barra: lumBarra});
       if (t - t0 < ms) requestAnimationFrame(paso); else { caja.remove(); res(out); }

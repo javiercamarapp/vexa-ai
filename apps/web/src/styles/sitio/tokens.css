@@ -542,7 +542,7 @@ html[data-ambiente-anim] .s-cabecera__barra {
   transition-property: max-width, margin-top, padding;
 }
 
-html[data-ambiente-anim] :is(.s-cabecera *, .s-boton, .s-chip, .s-enlace, .s-enlace-flecha, .s-menu__enlace, .s-acordeon__boton) {
+html[data-ambiente-anim] :is(.s-cabecera *, .s-boton, .s-chip, .s-enlace, .s-enlace-flecha, .s-menu__enlace, .s-acordeon__boton, .s-pantallas__boton) {
   transition: none;
 }
 

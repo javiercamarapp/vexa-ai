@@ -11,25 +11,40 @@ import {cargarPlaywright} from './cdp/playwright.mjs';
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const FIXTURE = resolve(AQUI, '..', '..', 'apps', 'web', 'tests', 'ui', 'fixture-landing.mjs');
-const {respond, informeCfo} = await import(pathToFileURL(FIXTURE).href);
+const {respond, informeCfo, fijarIdioma} = await import(pathToFileURL(FIXTURE).href);
 const BASE = process.env.BASE ?? 'http://localhost:3822';
 const OUT = resolve(process.env.OUT ?? join(AQUI, '..', '..', '.capturas-producto'));
 const AHORA = '2026-11-04T14:00:00.000Z';
 const args = process.argv.slice(2);
-const lista = (args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--temas') ?? 'hoy,fuga,problemas,caso,evidencia,preguntale,cco,conexiones').split(',');
+const lista = (args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--temas' && args[i - 1] !== '--idioma') ?? 'hoy,fuga,problemas,caso,evidencia,preguntale,cco,conexiones').split(',');
 const temas = (args.includes('--temas') ? args[args.indexOf('--temas') + 1] : 'claro').split(',');
 const conRecortes = args.includes('--recortes');
-const PREGUNTA = '¿Qué marketplace concentra más reembolsos?';
+const IDIOMA = args.includes('--idioma') ? args[args.indexOf('--idioma') + 1] : 'es';
+if (!['es', 'en'].includes(IDIOMA)) throw new Error('--idioma es|en');
+fijarIdioma(IDIOMA);
+const PREGUNTA = IDIOMA === 'en' ? 'Which marketplace concentrates the most refunds?' : '¿Qué marketplace concentra más reembolsos?';
 const PID = '00000000-0000-4000-8000-000000000101';
-const PERIODO = '?date_start=2026-08-01&date_end=2026-11-01&timezone=UTC&date_basis=occurred_at&currency=USD&basis=net&exponent=2';
+// 90 días = el preajuste «90 días» de la barra de periodo con el reloj fijado en AHORA (mañana menos 90 días hasta mañana): la barra lo marca como activo.
+const PERIODO = '?date_start=2026-08-07&date_end=2026-11-05&timezone=UTC&date_basis=occurred_at&currency=USD&basis=gross&exponent=2';
 const RUTAS = {hoy: '/overview' + PERIODO, fuga: '/refunds', problemas: '/problems' + PERIODO, caso: '/problems/' + PID, preguntale: '/preguntale', cco: '/cco', conexiones: '/connections'};
 
 // Rotulado de la captura: el servicio exige claves internas amazon/walmart/bestbuy; lo visible es Marketplace A/B/C. Orden: lo más largo primero.
-const REEMPLAZOS = [[/Marketplace Amazon/g, 'Marketplace A'], [/Marketplace Walmart/g, 'Marketplace B'], [/Marketplace Best Buy/g, 'Marketplace C'], [/Amazon/g, 'Marketplace A'], [/Walmart/g, 'Marketplace B'], [/Best Buy/gi, 'Marketplace C'], [/Shopify/g, 'Marketplace'],
-  [/1 oct - 31 oct 2026/g, '1 ago - 31 oct 2026'],
-  [/Organización de demostración \((?:sintética|datos sintéticos)\)/g, 'Organización de ejemplo'], [/Organización de demostración/g, 'Organización de ejemplo'], [/Segunda empresa de demostración \(sintética\)/g, 'Segunda organización de ejemplo'],
-  [/Datos sintéticos de demostración/gi, 'Datos de ejemplo'], [/Tracker de Excel/g, 'Tracker (hoja de cálculo)'], [/Tracker \(Excel\)/g, 'Tracker (hoja de cálculo)'], [/\bExcel\b/g, 'hoja de cálculo'],
-  [/Pedir a Responsable A/g, 'Pedir al responsable de los datos'], [/Pedir a Responsable B/g, 'Pedir a quien exporta los reportes'], [/cumplido por piloto/gi, 'cumplido por el vendedor']];
+const REEMPLAZOS = [[/ sin monto \(Amazon\)/g, ' sin monto'], [/ (with no|without an) amount \(Amazon\)/g, ' $1 amount'], [/Marketplace Amazon/g, 'Marketplace A'], [/Marketplace Walmart/g, 'Marketplace B'], [/Marketplace Best Buy/g, 'Marketplace C'], [/Amazon/g, 'Marketplace A'], [/Walmart/g, 'Marketplace B'], [/Best Buy/gi, 'Marketplace C'], [/Shopify/g, 'Marketplace'],
+  [/1 oct - 31 oct 2026/g, '1 ago - 31 oct 2026'], [/7 ago\s*[-–]\s*4 nov 2026/g, '1 ago - 31 oct 2026'], [/Aug 7\s*[-–]\s*Nov 4,? 2026/g, 'Aug 1 - Oct 31, 2026'],
+  [/ sin monto \(Amazon\)/g, ' sin monto'], [/ (with no|without an) amount \(Amazon\)/g, ' $1 amount'],
+  [/^\s*1 de 1\s*$/g, '1'], [/^\s*1 of 1\s*$/g, '1'], [/Las 4 mayores categorías: 100 %|Top 4 categories: 100 ?%|The 4 largest categories: 100 ?%/g, ''],
+  ...(IDIOMA === 'en' ? [
+    [/Organización de demostración \((?:sintética|datos sintéticos)\)/g, 'Example organization'], [/Organización de demostración/g, 'Example organization'], [/Segunda empresa de demostración \(sintética\)/g, 'Second example organization'],
+    [/Synthetic demo data/gi, 'Example data'], [/Excel Tracker/g, 'Spreadsheet Tracker'], [/Tracker \(Excel\)/g, 'Tracker (spreadsheet)'], [/\bExcel\b/g, 'spreadsheet'],
+    [/envío: entrega no recibida/g, 'shipping: delivery not received'], [/Descripción automática/g, 'Automatic description'], [/Empaque insuficiente en el tramo final\./g, 'Insufficient packaging on the final leg.'], [/Hipótesis inicial a partir de reclamos/g, 'Initial hypothesis based on claims'],
+    [/Ask Responsable A/g, 'Ask the data owner'], [/Ask Responsable B/g, 'Ask whoever exports the reports'], [/Fulfilled by pilot/gi, 'Fulfilled by the seller'], [/USD · gross/gi, 'USD · Gross'],
+  ] : [
+    [/Organización de demostración \((?:sintética|datos sintéticos)\)/g, 'Organización de ejemplo'], [/Organización de demostración/g, 'Organización de ejemplo'], [/Segunda empresa de demostración \(sintética\)/g, 'Segunda organización de ejemplo'],
+    [/Datos sintéticos de demostración/gi, 'Datos de ejemplo'], [/Tracker de Excel/g, 'Tracker (hoja de cálculo)'], [/Tracker \(Excel\)/g, 'Tracker (hoja de cálculo)'], [/\bExcel\b/g, 'hoja de cálculo'],
+    [/Pedir a Responsable A/g, 'Pedir al responsable de los datos'], [/Pedir a Responsable B/g, 'Pedir a quien exporta los reportes'], [/cumplido por piloto/gi, 'cumplido por el vendedor'], [/USD\s*·\s*gross/gi, 'USD · Bruto'],
+  ]),
+  // Rótulos de ejes en español que el producto pinta aun con la interfaz en inglés (nombres cortos de mes).
+  ...(IDIOMA === 'en' ? Object.entries({ene: 'Jan', feb: 'Feb', mar: 'Mar', abr: 'Apr', may: 'May', jun: 'Jun', jul: 'Jul', ago: 'Aug', sep: 'Sep', oct: 'Oct', nov: 'Nov', dic: 'Dec'}).map(([k, v]) => [new RegExp('^\\s*' + k + '\\s*$', 'g'), v]) : [])];
 const CSS = `nextjs-portal,[data-nextjs-toast],[data-nextjs-dev-tools-button]{display:none!important}
 .bm:not([data-marca="hubspot"]):not([data-marca="csv"]){display:none!important}
 .bm-badge:has(.bm:not([data-marca="hubspot"]):not([data-marca="csv"])){display:none!important}
@@ -45,14 +60,26 @@ mkdirSync(join(OUT, 'recortes'), {recursive: true});
 const informe = [];
 
 async function sanear(page) {
-  await page.evaluate(({r}) => {
+  await page.evaluate(({r, i}) => {
     const reglas = r.map(([s, f]) => [new RegExp(s[0], s[1]), f]);
-    const aplica = t => reglas.reduce((x, [re, f]) => x.replace(re, f), t);
-    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    for (let n = w.nextNode(); n; n = w.nextNode()) { const v = aplica(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; }
+    const MES = i === 'en' ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] : ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    // Fecha y hora numéricas del producto (4/11/2026, 1:55:00 p.m. en es; 11/4/2026, 1:55:00 PM en en): ambiguas entre idiomas. Se dejan «4 nov 2026, 1:55 p. m.» / «Nov 4, 2026, 1:55 PM».
+    const fechas = x => x.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4}),? (\d{1,2}:\d{2}):\d{2}\s?([apAP])\.?\s?[mM]\.?/g, (m, a, b, y, h, ap) => { const d = i === 'en' ? b : a, mo = i === 'en' ? a : b; return i === 'en' ? `${MES[mo - 1]} ${d}, ${y}, ${h} ${ap.toUpperCase()}M` : `${d} ${MES[mo - 1]} ${y}, ${h} ${ap.toLowerCase()}. m.`; });
+    const aplica = t => fechas(reglas.reduce((x, [re, f]) => x.replace(re, f), t));
+    const pasar = () => { const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); for (let n = w.nextNode(); n; n = w.nextNode()) { const v = aplica(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; } };
+    pasar();
+    // React vuelve a pintar algunos rótulos (chips de periodo y base) tras el primer saneo: un observador los corrige al instante hasta tomar la captura.
+    if (!window.__saneo) { let t = 0; window.__saneo = new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => { window.__saneo.disconnect(); pasar(); window.__saneo.observe(document.body, {childList: true, subtree: true, characterData: true}); }, 30); }); window.__saneo.observe(document.body, {childList: true, subtree: true, characterData: true}); }
     document.querySelectorAll('[aria-label],[title],[alt],option').forEach(e => { for (const a of ['aria-label', 'title', 'alt']) { const v = e.getAttribute(a); if (v) { const x = aplica(v); if (x !== v) e.setAttribute(a, x); } } });
     document.querySelectorAll('span,div,b,strong').forEach(e => { if (e.childElementCount === 0 && e.textContent.trim() === 'OD') e.textContent = 'OE'; });
-  }, {r: REEMPLAZOS.map(([re, f]) => [[re.source, re.flags], f])});
+  }, {r: REEMPLAZOS.map(([re, f]) => [[re.source, re.flags], f]), i: IDIOMA});
+}
+/** Oculta la tarjeta (ancestro .card/section) cuyo encabezado coincide: lo que el producto cuenta como estado de cobertura en porcentaje no entra en la imagen de la landing. */
+async function ocultarTarjetas(page, patrones) {
+  await page.evaluate(({p}) => {
+    const res = p.map(x => new RegExp(x, 'i'));
+    for (const h of document.querySelectorAll('h2,h3,h4')) if (res.some(r => r.test(h.textContent))) { const c = h.closest('.card, section, article') ?? h.parentElement; if (c) c.style.display = 'none'; }
+  }, {p: patrones});
 }
 async function cerrarRuido(page) {
   for (const nombre of [/^Saltar$|^Skip$/, /^Ocultar lista$|^Hide list$/]) {
@@ -62,8 +89,8 @@ async function cerrarRuido(page) {
 }
 
 async function nuevoContexto(tema) {
-  const ctx = await browser.newContext({viewport: {width: 1440, height: 900}, deviceScaleFactor: 2, reducedMotion: 'reduce', locale: 'es-MX', timezoneId: 'UTC', colorScheme: tema === 'oscuro' ? 'dark' : 'light'});
-  await ctx.addCookies([{name: 'rovaq_lang', value: 'es', url: BASE}]);
+  const ctx = await browser.newContext({viewport: {width: 1440, height: 900}, deviceScaleFactor: 2, reducedMotion: 'reduce', locale: IDIOMA === 'en' ? 'en-US' : 'es-MX', timezoneId: 'UTC', colorScheme: tema === 'oscuro' ? 'dark' : 'light'});
+  await ctx.addCookies([{name: 'rovaq_lang', value: IDIOMA, url: BASE}]);
   await ctx.addInitScript(t => { try { localStorage.setItem('vexa-theme', t); } catch { /* opcional */ } }, tema === 'oscuro' ? 'dark' : 'light');
   await ctx.route(/\/(api\/|cfo\/data\/report)/, async route => {
     const r = route.request(), u = new URL(r.url());
@@ -124,11 +151,15 @@ for (const tema of temas) {
       await page.mouse.move(900, 500); await page.mouse.wheel(0, -3000); await page.waitForTimeout(800);
     }
     await page.waitForTimeout(800);
+    if (nombre === 'problemas') await ocultarTarjetas(page, ['^Estado de la cobertura$', '^Coverage status$']);
     await sanear(page); await page.waitForTimeout(600); await sanear(page);
+    if (nombre !== 'preguntale') await page.mouse.move(2, 2);
     if (nombre === 'evidencia') await page.getByText(/Lo que dicen los clientes|What customers say/).first().scrollIntoViewIfNeeded().catch(() => {});
     const archivo = `${nombre}-${tema}-1440@2x.png`;
     await page.screenshot({path: join(OUT, archivo)});
     const texto = (await page.locator('body').innerText()).slice(0, 20000), mal = texto.match(MARCAS_PROHIBIDAS);
+    const raros = texto.split('\n').filter(l => (IDIOMA === 'en' ? /[áéíóúñ¿¡]|\b(sin|con|del|los|las|una|para|por|hace|desde|entre|ejemplo)\b/i : /\b(the|and|with|from|for|your|of the|no data)\b/i).test(l)).slice(0, 8);
+    if (raros.length) console.log('   REVISAR idioma:', JSON.stringify(raros));
     informe.push({archivo, ms: Date.now() - t0, marcaProhibida: mal ? mal[0] : null, errores});
     console.log(archivo, Date.now() - t0, 'ms', mal ? 'MARCA: ' + mal[0] : 'sin marcas', errores.length ? 'errores: ' + errores.slice(0, 2).join(' | ') : '');
     if (conRecortes && nombre === 'fuga' && tema === 'claro') {

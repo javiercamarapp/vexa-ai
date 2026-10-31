@@ -21,20 +21,23 @@ export const EXPOSICION_SUBTOTAL = 21_600;
 /** Ingreso en juego de la recomendación sobre el SKU principal. Inferido. */
 export const INGRESO_EN_JUEGO = 8_200;
 export const SKU_PRINCIPAL = 'HM-210';
+/** Reembolsos de los diez SKU principales y su parte de REEMBOLSOS (67.9 %). */
 
-/** Reembolsos por SKU, de mayor a menor. Diez SKU inventados; suman REEMBOLSOS. */
+/** Los diez SKU con más reembolsos de un catálogo de 62, de mayor a menor. Diez SKU inventados; suman 24,450 USD, el 67.9 % de REEMBOLSOS: los otros 52 SKU (ninguno mayor que el décimo) suman el resto. */
 export const PARETO: readonly {sku: string; v: number}[] = [
-  {sku: 'HM-210', v: 9_800},
-  {sku: 'HM-160', v: 7_200},
-  {sku: 'HM-130', v: 5_400},
-  {sku: 'HM-190', v: 4_100},
-  {sku: 'HM-150', v: 2_900},
-  {sku: 'HM-120', v: 2_200},
-  {sku: 'HM-180', v: 1_700},
-  {sku: 'HM-140', v: 1_300},
-  {sku: 'HM-170', v: 900},
+  {sku: 'HM-210', v: 8_000},
+  {sku: 'HM-160', v: 4_800},
+  {sku: 'HM-130', v: 3_300},
+  {sku: 'HM-190', v: 2_400},
+  {sku: 'HM-150', v: 1_700},
+  {sku: 'HM-120', v: 1_300},
+  {sku: 'HM-180', v: 1_000},
+  {sku: 'HM-140', v: 800},
+  {sku: 'HM-170', v: 650},
   {sku: 'HM-200', v: 500},
 ];
+/** SKU con reembolsos en el catálogo de ejemplo (el ranking muestra los diez primeros). */
+export const SKU_TOTAL = 62;
 
 /** Reembolsos liquidados por canal y mes. Las filas suman el total del canal, las columnas el del mes y todo suma REEMBOLSOS. */
 export const CANALES: readonly {id: 'A' | 'B' | 'C'; meses: readonly [number, number, number]}[] = [
@@ -60,6 +63,7 @@ export const suma = (xs: readonly number[]): number => xs.reduce((a, b) => a + b
 export const totalCanal = (i: number): number => suma(CANALES[i].meses);
 export const totalMes = (j: number): number => suma(CANALES.map((c) => c.meses[j]));
 export const acumuladoPareto = (): number[] => { let a = 0; return PARETO.map((p) => (a += p.v)); };
+export const REEMBOLSOS_TOP10 = PARETO.reduce((a, p) => a + p.v, 0);
 export const fmt = (n: number): string => n.toLocaleString('en-US');
 export const usd = (n: number): string => `${fmt(n)} ${MONEDA}`;
 

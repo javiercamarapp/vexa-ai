@@ -19,6 +19,7 @@ import {Expediente,IntensidadCanales,Pareto,PanelCambios,PanelRepetido,PanelTrac
 import {endpointFuga,useFuga} from './use-fuga';
 import {colaVencidos,listaWalmart,paqueteEvidencia,proveniencia,type Archivo} from './fuga-archivos.mjs';
 import {fraseConcentracion,lineaCobertura,lineaVentanas,num,pct,periodoDelTitular,usd} from './fuga-modelo.mjs';
+import {SelectorIdiomaDocumento,rotulosDeDocumento,useIdiomaDocumento} from '../i18n/selector-idioma-documento';
 import '../dinero/dinero.css';
 import './fuga.css';
 
@@ -32,18 +33,18 @@ export function bajar(a:Archivo){
 export function FugaPantalla({organization,embebido=false}:{organization?:string;/** Dentro del copiloto de negocio: sin PageHeader del espacio de trabajo; el h1 es el titular de la pantalla. */embebido?:boolean}){
  const tx=useT(),idioma=useIdioma(),sp=useSearchParams(),f=useFuga(endpointFuga(sp?.toString()));
  const per=f.data?periodoDelTitular(f.data,idioma):null;
- const [sel,setSel]=useState<string>(''),[aviso,setAviso]=useState('');
+ const [sel,setSel]=useState<string>(''),[aviso,setAviso]=useState(''),[idiomaDoc,setIdiomaDoc]=useIdiomaDocumento();
  const v=f.data;
  const top:SkuFila[]=v&&v.skus.status==='ok'?v.skus.top:[];
  const skuSel=sel&&top.some(r=>r.sku===sel)?sel:top[0]?.sku??'';
  const paquete=(sku:string)=>{
-  if(!v)return;const p=paqueteEvidencia(v,sku);
+  if(!v)return;const p=paqueteEvidencia(v,sku,idiomaDoc,rotulosDeDocumento(idiomaDoc));
   if(!p){setAviso(tx('fuga.noPaquete'));return;}
   bajar(p.html);setTimeout(()=>bajar(p.csv),400);
   setAviso(tx('fuga.paqueteDesc',{sku,html:p.html.nombre,csv:p.csv.nombre}));
  };
- const lista=()=>{if(!v)return;const l=listaWalmart(v);bajar(l);setAviso(tx('fuga.listaDesc',{n:num(l.total),nombre:l.nombre}));};
- const cola=()=>{if(!v)return;const c=colaVencidos(v);bajar(c);setAviso(tx('fuga.colaDesc',{n:num(c.total),nombre:c.nombre}));};
+ const lista=()=>{if(!v)return;const l=listaWalmart(v,idiomaDoc);bajar(l);setAviso(tx('fuga.listaDesc',{n:num(l.total),nombre:l.nombre}));};
+ const cola=()=>{if(!v)return;const c=colaVencidos(v,idiomaDoc,rotulosDeDocumento(idiomaDoc));bajar(c);setAviso(tx('fuga.colaDesc',{n:num(c.total),nombre:c.nombre}));};
  const t=v?.titular.status==='ok'?v.titular:null,tr=v?.tracker.status==='ok'?v.tracker:null,cr=v?.contactoRepetido.status==='ok'?v.contactoRepetido:null;
  const big=(m:string)=>Number(BigInt(m)/100n);
  const negMonto=tr?(tr.montoPorEstado.vencido??0)+(tr.montoPorEstado.no_reembolsable??0)+(tr.montoPorEstado.rechazado??0):0;
@@ -54,7 +55,7 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
   {label:tx('fuga.kRepeticion'),c:7,value:cr?pct(cr.pctDosOMas):'—',note:cr?<><MiniPct c={7} p={cr.pctDosOMas} label={tx('fuga.contactosAria')}/><span>{tx('fuga.contactos90',{a:num(cr.contactosDosOMas90),b:num(cr.contactos)})}</span></>:tx('fuga.noCalculado')},
  ]:[];
  const titular=v&&t&&per?tx('fuga.titular',{usd:usd(t.usdBrutoMinor,{idioma}),periodo:per.etiqueta.charAt(0).toLowerCase()+per.etiqueta.slice(1),frase:fraseConcentracion(v,idioma)?'. '+fraseConcentracion(v,idioma):'.'}):null;
- const acciones=v&&<><Button variant="primary" icon={<Download/>} disabled={!skuSel} onClick={()=>paquete(skuSel)}>{tx('fuga.generarPaquete')}</Button>
+ const acciones=v&&<><SelectorIdiomaDocumento valor={idiomaDoc} onChange={setIdiomaDoc}/><Button variant="primary" icon={<Download/>} disabled={!skuSel} onClick={()=>paquete(skuSel)}>{tx('fuga.generarPaquete')}</Button>
   <Popover label={tx('fuga.masArchivos')} align="end" width={280} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">{tx('fuga.exportar')}</span></>}>
    <MenuList>
     <li><Button size="sm" icon={<Download/>} disabled={v.skus.status!=='ok'} onClick={lista}>{tx('fuga.skusWalmart')}</Button></li>

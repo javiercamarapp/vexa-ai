@@ -1,7 +1,7 @@
 // Archivos de «un clic» de Fuga de reembolsos. Se generan EN EL NAVEGADOR a partir de lo que la pantalla ya tiene; no se envía nada a ningún lado.
 // Sin PII por construcción: solo salen SKU, canal, mes, conteos, montos agregados y estados del Tracker de un catálogo cerrado (nunca nombres, correos, pedidos ni texto libre).
 import {rovaqLogoSvg} from '../../../../../packages/workspace-service/marca.mjs';
-import {NOMBRE, ESTADO_TXT, HOJA_TXT, usd, num, pct, mesLargo, dia} from './fuga-modelo.mjs';
+import {NOMBRE, ESTADO_TXT, HOJA_TXT, usd as usdBase, num as numBase, pct as pctBase, mesLargo as mesLargoBase, dia} from './fuga-modelo.mjs';
 
 /** Una celda de CSV: comillas dobles escapadas y, si empieza con = + - @ (fórmula en una hoja de cálculo), se antepone una comilla simple. Los números pasan tal cual. */
 export function celda(v) {
@@ -32,7 +32,18 @@ export function proveniencia(v, idioma = 'es') {
       : `Generado ${dia(v.generatedAt)} desde Rovaq. Observado = registrado en la fuente; no prueba causa ni responsabilidad.`,
   ];
 }
+/** Selector de variante por idioma: «es» es el texto histórico, byte a byte; cualquier otro valor distinto de «en» cae a «es». */
+const par = idioma => (es, en) => (idioma === 'en' ? en : es);
+const ESTADO_EN = Object.freeze({reembolsado: 'Refunded', vencido: 'Over 180 days', no_reembolsable: 'Not refundable', rechazado: 'Rejected', enviado: 'Submitted', otro: 'Other status', sin_estado: 'No status'});
+const HOJA_EN = Object.freeze({reembolsos: 'Refunds', garantiaHerramientas: 'Tool warranty', garantiaPartes: 'Parts warranty', etiquetas: 'Return labels'});
+const NOMBRE_EN = Object.freeze({...NOMBRE, tienda: 'Own store', otro: 'Other'});
+const nombreDe = idioma => (idioma === 'en' ? NOMBRE_EN : NOMBRE);
+const estadoDe = idioma => (idioma === 'en' ? ESTADO_EN : ESTADO_TXT);
+const hojaDe = idioma => (idioma === 'en' ? HOJA_EN : HOJA_TXT);
 export const NO_SE_SABE = ['La cantidad de unidades (el libro trae una fila por línea de pedido).', 'La causa del reembolso: el libro no trae motivo y la causa no está registrada.', 'Los tickets sin SKU: solo una pequeña parte tiene SKU, por el Tracker.', 'El vínculo reembolso-pedido de Walmart (los identificadores no coinciden).', 'Una tasa de reembolso del SKU: las ventanas no son iguales ni hay cantidad.'];
+/** Mismas cinco frases en inglés (una prueba las compara con tr.fuga.nss0..4 del diccionario). */
+export const NO_SE_SABE_EN = ['The number of units. The ledger has one row per order line.', 'The cause of the refund: the ledger carries no reason and the cause is not recorded.', 'Tickets without a SKU: only a small share has a SKU, through the Tracker.', 'The refund-to-order link for Walmart. The identifiers do not match.', 'A refund rate for the SKU: the windows are not equal and there is no quantity.'];
+export const noSeSabe = idioma => (idioma === 'en' ? NO_SE_SABE_EN : NO_SE_SABE);
 
 /** Datos del SKU para el paquete: todo sale de la vista ya cargada. */
 export function datosSku(v, sku) {
@@ -42,66 +53,84 @@ export function datosSku(v, sku) {
   return {fila, meses, tr};
 }
 
-/** [HTML, CSV] del «Paquete de evidencia para proveedor» de un SKU. */
-export function paqueteEvidencia(v, sku) {
+const ESTILO_PAQUETE = 'body{font:14px/1.55 system-ui,sans-serif;color:#0E0E10;max-width:860px;margin:32px auto;padding:0 20px}h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;margin:28px 0 8px}p{margin:6px 0}.m{color:#5a5a61;font-size:12.5px}table{border-collapse:collapse;width:100%;margin:6px 0;font-size:13px}th,td{border-bottom:1px solid #dcdde2;padding:6px 8px;text-align:left}th{font-size:12px;color:#5a5a61}td.n{font-variant-numeric:tabular-nums}.k{display:inline-block;border:1px solid #0E0E10;color:#0E0E10;background:#f1f1f2;border-radius:999px;padding:1px 9px;font-size:11.5px}ul{padding-left:20px}@media print{body{margin:12px}}';
+/**
+ * [HTML, CSV] del «Paquete de evidencia para proveedor» de un SKU. Documento PARA UN TERCERO: `idioma` ('es' | 'en', por omisión 'es' = texto histórico byte a byte) lo elige quien lo genera.
+ * `rotulos` ({motivo, submotivo}: funciones rótulo -> rótulo) traduce los motivos del Tracker, que son datos agrupados en español; sin ellas salen como vienen.
+ */
+export function paqueteEvidencia(v, sku, idioma = 'es', rotulos = {}) {
   const {fila, meses, tr} = datosSku(v, sku);
   if (!fila) return null;
+  const L = par(idioma), NOMBRE = nombreDe(idioma), ESTADO_TXT = estadoDe(idioma), HOJA_TXT = hojaDe(idioma), noSabe = noSeSabe(idioma), prov = proveniencia(v, idioma);
+  const mot = r => rotulos.motivo?.(r) ?? r, sub = r => rotulos.submotivo?.(r) ?? r;
+  const usd = (m, o = {}) => usdBase(m, {...o, idioma}), num = n => numBase(n, idioma), pct = p => pctBase(p, idioma), mesLargo = m => mesLargoBase(m, idioma);
+  const nd = L('n/d', 'n/a');
   const t1 = (cab, filas) => `<table><thead><tr>${cab.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${filas.map(f => `<tr>${f.map((c, i) => `<td${i ? ' class="n"' : ''}>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
-  const canales = fila.canales.map(c => [NOMBRE[c.canal] ?? c.canal, num(c.n), usd(c.usdBrutoMinor, {decimals: true}), usd(c.usdNetoMinor, {decimals: true}), c.lineas === null ? 'n/d' : num(c.lineas)]);
+  const canales = fila.canales.map(c => [NOMBRE[c.canal] ?? c.canal, num(c.n), usd(c.usdBrutoMinor, {decimals: true}), usd(c.usdNetoMinor, {decimals: true}), c.lineas === null ? nd : num(c.lineas)]);
   const porMes = meses.map(m => [mesLargo(m.mes), NOMBRE[m.canal] ?? m.canal, num(m.n), usd(m.usdBrutoMinor, {decimals: true})]);
   const hojas = tr ? Object.entries(tr.hojas).map(([h, n]) => [HOJA_TXT[h] ?? h, num(n)]) : [];
-  const motivos = tr ? Object.entries(tr.motivos).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k, num(n)]) : [];
-  const subm = tr ? Object.entries(tr.submotivos).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k, num(n)]) : [];
+  const motivos = tr ? Object.entries(tr.motivos).sort((a, b) => b[1] - a[1]).map(([k, n]) => [mot(k), num(n)]) : [];
+  const subm = tr ? Object.entries(tr.submotivos).sort((a, b) => b[1] - a[1]).map(([k, n]) => [sub(k), num(n)]) : [];
   const est = tr ? Object.entries(tr.estados).map(([k, n]) => [ESTADO_TXT[k] ?? k, num(n)]) : [];
-  const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Paquete de evidencia · ${esc(sku)}</title>
-<style>body{font:14px/1.55 system-ui,sans-serif;color:#0E0E10;max-width:860px;margin:32px auto;padding:0 20px}h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;margin:28px 0 8px}p{margin:6px 0}.m{color:#5a5a61;font-size:12.5px}table{border-collapse:collapse;width:100%;margin:6px 0;font-size:13px}th,td{border-bottom:1px solid #dcdde2;padding:6px 8px;text-align:left}th{font-size:12px;color:#5a5a61}td.n{font-variant-numeric:tabular-nums}.k{display:inline-block;border:1px solid #0E0E10;color:#0E0E10;background:#f1f1f2;border-radius:999px;padding:1px 9px;font-size:11.5px}ul{padding-left:20px}@media print{body{margin:12px}}</style></head><body>
+  const html = `<!doctype html><html lang="${L('es', 'en')}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${L('Paquete de evidencia', 'Evidence package')} · ${esc(sku)}</title>
+<style>${ESTILO_PAQUETE}</style></head><body>
 <header style="padding:14px 0 14px">${rovaqLogoSvg({ancho: 120})}</header>
-<h1>Paquete de evidencia · SKU ${esc(sku)}</h1><p class="m"><span class="k">Observado</span> ${esc(proveniencia(v)[3])}</p>
-<h2>Resumen</h2><p>${num(fila.n)} reembolsos por ${esc(usd(fila.usdBrutoMinor, {decimals: true}))} brutos (${esc(usd(fila.usdNetoMinor, {decimals: true}))} sin reembolsos cancelados). Posición ${fila.pos} entre los SKU del libro; ${pct(fila.acumPct)} acumulado del dinero devuelto hasta este SKU.</p>
-<h2>Por canal</h2>${t1(['Canal', 'Reembolsos', 'USD bruto', 'USD sin cancelados', 'Líneas vendidas en la ventana'], canales)}
-<h2>Reembolsos por mes y canal</h2>${porMes.length ? t1(['Mes', 'Canal', 'Reembolsos', 'USD bruto'], porMes) : '<p class="m">Sin detalle mensual para este SKU.</p>'}
-<h2>Tracker de Excel</h2>${tr ? t1(['Hoja', 'Filas'], hojas) + (motivos.length ? '<h2>Motivo de contacto</h2>' + t1(['Motivo', 'Filas'], motivos) : '') + (subm.length ? '<h2>Subrazón</h2>' + t1(['Subrazón', 'Filas'], subm) : '') + (est.length ? '<h2>Estado de los reembolsos solicitados</h2>' + t1(['Estado', 'Filas'], est) : '') : '<p class="m">Este SKU no aparece en el Tracker: solo hay reembolsos del libro y no hay motivo registrado.</p>'}
-<h2>Lo que este paquete no prueba</h2><ul>${NO_SE_SABE.map(x => `<li>${esc(x)}</li>`).join('')}</ul><p class="m">No prueba causa de defecto ni responsabilidad del proveedor: ordena la evidencia para negociar.</p>
-<h2>De dónde sale cada cifra</h2><ul>${proveniencia(v).map(x => `<li>${esc(x)}</li>`).join('')}</ul></body></html>`;
+<h1>${L('Paquete de evidencia · SKU', 'Evidence package · SKU')} ${esc(sku)}</h1><p class="m"><span class="k">${L('Observado', 'Observed')}</span> ${esc(prov[3])}</p>
+<h2>${L('Resumen', 'Summary')}</h2><p>${L(`${num(fila.n)} reembolsos por ${esc(usd(fila.usdBrutoMinor, {decimals: true}))} brutos (${esc(usd(fila.usdNetoMinor, {decimals: true}))} sin reembolsos cancelados). Posición ${fila.pos} entre los SKU del libro; ${pct(fila.acumPct)} acumulado del dinero devuelto hasta este SKU.`, `${num(fila.n)} refunds for ${esc(usd(fila.usdBrutoMinor, {decimals: true}))} gross (${esc(usd(fila.usdNetoMinor, {decimals: true}))} excluding canceled refunds). Rank ${fila.pos} among the SKUs in the ledger; ${pct(fila.acumPct)} cumulative of the money refunded up to this SKU.`)}</p>
+<h2>${L('Por canal', 'By channel')}</h2>${t1([L('Canal', 'Channel'), L('Reembolsos', 'Refunds'), L('USD bruto', 'USD gross'), L('USD sin cancelados', 'USD excluding canceled'), L('Líneas vendidas en la ventana', 'Lines sold in the window')], canales)}
+<h2>${L('Reembolsos por mes y canal', 'Refunds by month and channel')}</h2>${porMes.length ? t1([L('Mes', 'Month'), L('Canal', 'Channel'), L('Reembolsos', 'Refunds'), L('USD bruto', 'USD gross')], porMes) : `<p class="m">${L('Sin detalle mensual para este SKU.', 'No monthly detail for this SKU.')}</p>`}
+<h2>${L('Tracker de Excel', 'Excel Tracker')}</h2>${tr ? t1([L('Hoja', 'Sheet'), L('Filas', 'Rows')], hojas) + (motivos.length ? `<h2>${L('Motivo de contacto', 'Contact reason')}</h2>` + t1([L('Motivo', 'Reason'), L('Filas', 'Rows')], motivos) : '') + (subm.length ? `<h2>${L('Subrazón', 'Sub-reason')}</h2>` + t1([L('Subrazón', 'Sub-reason'), L('Filas', 'Rows')], subm) : '') + (est.length ? `<h2>${L('Estado de los reembolsos solicitados', 'Status of the requested refunds')}</h2>` + t1([L('Estado', 'Status'), L('Filas', 'Rows')], est) : '') : `<p class="m">${L('Este SKU no aparece en el Tracker: solo hay reembolsos del libro y no hay motivo registrado.', 'This SKU does not appear in the Tracker: there are only ledger refunds and no recorded reason.')}</p>`}
+<h2>${L('Lo que este paquete no prueba', 'What this package does not prove')}</h2><ul>${noSabe.map(x => `<li>${esc(x)}</li>`).join('')}</ul><p class="m">${L('No prueba causa de defecto ni responsabilidad del proveedor: ordena la evidencia para negociar.', 'It proves neither the cause of a defect nor the supplier’s responsibility: it organizes the evidence to negotiate.')}</p>
+<h2>${L('De dónde sale cada cifra', 'Where each figure comes from')}</h2><ul>${prov.map(x => `<li>${esc(x)}</li>`).join('')}</ul></body></html>`;
   const filas = [
-    ['resumen', 'sku', sku, ''], ['resumen', 'reembolsos', fila.n, 'libro'], ['resumen', 'usd_bruto', cents(fila.usdBrutoMinor), 'libro; todos los estados'], ['resumen', 'usd_sin_cancelados', cents(fila.usdNetoMinor), 'libro'],
-    ...fila.canales.map(c => ['canal', c.canal, c.n, `usd_bruto=${cents(c.usdBrutoMinor)}; lineas_ventana=${c.lineas ?? 'n/d'}`]),
-    ...meses.map(m => ['mes_canal', `${m.mes} ${m.canal}`, m.n, `usd_bruto=${cents(m.usdBrutoMinor)}`]),
-    ...(tr ? [...Object.entries(tr.hojas).map(([h, n]) => ['tracker_hoja', HOJA_TXT[h] ?? h, n, '']), ...Object.entries(tr.motivos).map(([k, n]) => ['tracker_motivo', k, n, '']), ...Object.entries(tr.submotivos).map(([k, n]) => ['tracker_subrazon', k, n, '']), ...Object.entries(tr.estados).map(([k, n]) => ['tracker_estado', ESTADO_TXT[k] ?? k, n, ''])] : [['tracker', 'sin_filas', 0, 'el SKU no aparece en el Tracker']]),
-    ...NO_SE_SABE.map(x => ['no_se_sabe', x, '', '']), ...proveniencia(v).map(x => ['fuente', x, '', '']),
+    [L('resumen', 'summary'), 'sku', sku, ''], [L('resumen', 'summary'), L('reembolsos', 'refunds'), fila.n, L('libro', 'ledger')], [L('resumen', 'summary'), L('usd_bruto', 'usd_gross'), cents(fila.usdBrutoMinor), L('libro; todos los estados', 'ledger; all statuses')], [L('resumen', 'summary'), L('usd_sin_cancelados', 'usd_excluding_canceled'), cents(fila.usdNetoMinor), L('libro', 'ledger')],
+    ...fila.canales.map(c => [L('canal', 'channel'), c.canal, c.n, `${L('usd_bruto', 'usd_gross')}=${cents(c.usdBrutoMinor)}; ${L('lineas_ventana', 'window_lines')}=${c.lineas ?? nd}`]),
+    ...meses.map(m => [L('mes_canal', 'month_channel'), `${m.mes} ${m.canal}`, m.n, `${L('usd_bruto', 'usd_gross')}=${cents(m.usdBrutoMinor)}`]),
+    ...(tr ? [...Object.entries(tr.hojas).map(([h, n]) => [L('tracker_hoja', 'tracker_sheet'), HOJA_TXT[h] ?? h, n, '']), ...Object.entries(tr.motivos).map(([k, n]) => [L('tracker_motivo', 'tracker_reason'), mot(k), n, '']), ...Object.entries(tr.submotivos).map(([k, n]) => [L('tracker_subrazon', 'tracker_subreason'), sub(k), n, '']), ...Object.entries(tr.estados).map(([k, n]) => [L('tracker_estado', 'tracker_status'), ESTADO_TXT[k] ?? k, n, ''])] : [['tracker', L('sin_filas', 'no_rows'), 0, L('el SKU no aparece en el Tracker', 'the SKU does not appear in the Tracker')]]),
+    ...noSabe.map(x => [L('no_se_sabe', 'not_known'), x, '', '']), ...prov.map(x => [L('fuente', 'source'), x, '', '']),
   ];
-  return {html: {nombre: `evidencia-${slug(sku)}-${hoy(v)}.html`, mime: 'text/html;charset=utf-8', contenido: html}, csv: {nombre: `evidencia-${slug(sku)}-${hoy(v)}.csv`, mime: 'text/csv;charset=utf-8', contenido: csv(filas, ['seccion', 'clave', 'valor', 'detalle'])}};
+  const nom = L(`evidencia-${slug(sku)}-${hoy(v)}`, `evidence-${slug(sku)}-${hoy(v)}`);
+  return {html: {nombre: `${nom}.html`, mime: 'text/html;charset=utf-8', contenido: html}, csv: {nombre: `${nom}.csv`, mime: 'text/csv;charset=utf-8', contenido: csv(filas, [L('seccion', 'section'), L('clave', 'key'), L('valor', 'value'), L('detalle', 'detail')])}};
 }
 
-/** CSV «Lista de SKUs a revisar con Walmart»: ordenada por USD reembolsado, con líneas de la ventana y la advertencia de intensidad. */
-export function listaWalmart(v) {
-  const lista = v.skus?.walmart ?? [];
-  const filas = lista.map((w, i) => [i + 1, w.sku, w.n, cents(w.usdBrutoMinor), cents(w.usdNetoMinor), w.lineas === null ? '' : w.lineas, w.lineas && w.n > w.lineas ? 'mas reembolsos que lineas en la ventana: revisar ventanas' : '', v.tracker?.bySku?.[w.sku] ? Object.values(v.tracker.bySku[w.sku].hojas).reduce((a, n) => a + n, 0) : 0]);
-  return {nombre: `skus-a-revisar-walmart-${hoy(v)}.csv`, mime: 'text/csv;charset=utf-8', contenido: csv(filas, ['posicion', 'sku', 'reembolsos_walmart', 'usd_bruto', 'usd_sin_cancelados', 'lineas_vendidas_ventana', 'senal', 'filas_tracker']) + '\r\n' + [`"Nota","Señal para investigar, no una tasa: las ventanas de Walmart (pedidos y reembolsos) no coinciden y el libro no trae cantidad. ${proveniencia(v)[3]}"`].join('\r\n') + '\r\n', total: lista.length};
+/** CSV «Lista de SKUs a revisar con Walmart»: ordenada por USD reembolsado, con líneas de la ventana y la advertencia de intensidad. `idioma` ('es' por omisión = texto histórico) lo elige quien lo genera. */
+export function listaWalmart(v, idioma = 'es') {
+  const L = par(idioma), lista = v.skus?.walmart ?? [], prov = proveniencia(v, idioma);
+  const filas = lista.map((w, i) => [i + 1, w.sku, w.n, cents(w.usdBrutoMinor), cents(w.usdNetoMinor), w.lineas === null ? '' : w.lineas, w.lineas && w.n > w.lineas ? L('mas reembolsos que lineas en la ventana: revisar ventanas', 'more refunds than lines in the window: check the windows') : '', v.tracker?.bySku?.[w.sku] ? Object.values(v.tracker.bySku[w.sku].hojas).reduce((a, n) => a + n, 0) : 0]);
+  const cabecera = L(['posicion', 'sku', 'reembolsos_walmart', 'usd_bruto', 'usd_sin_cancelados', 'lineas_vendidas_ventana', 'senal', 'filas_tracker'], ['rank', 'sku', 'walmart_refunds', 'usd_gross', 'usd_excluding_canceled', 'lines_sold_in_window', 'signal', 'tracker_rows']);
+  const nota = L(`"Nota","Señal para investigar, no una tasa: las ventanas de Walmart (pedidos y reembolsos) no coinciden y el libro no trae cantidad. ${prov[3]}"`, `"Note","A signal to investigate, not a rate: Walmart’s windows (orders and refunds) do not match and the ledger has no quantity. ${prov[3]}"`);
+  return {nombre: L(`skus-a-revisar-walmart-${hoy(v)}.csv`, `skus-to-review-walmart-${hoy(v)}.csv`), mime: 'text/csv;charset=utf-8', contenido: csv(filas, cabecera) + '\r\n' + [nota].join('\r\n') + '\r\n', total: lista.length};
 }
 
-/** CSV «Cola de reembolsos vencidos o negados» recalculada de las filas del Tracker. */
-export function colaVencidos(v) {
-  const cola = v.tracker?.cola ?? [];
-  const filas = cola.map(c => [c.fila, ESTADO_TXT[c.estado] ?? c.estado, c.sku ?? '', c.motivo ?? '', c.submotivo ?? '', c.retailer ? NOMBRE[c.retailer] ?? c.retailer : '', c.montoMinor === null ? '' : (c.montoMinor / 100).toFixed(2), c.fecha ?? '']);
-  return {nombre: `cola-reembolsos-negados-${hoy(v)}.csv`, mime: 'text/csv;charset=utf-8', contenido: csv(filas, ['fila_tracker', 'estado', 'sku', 'motivo', 'subrazon', 'canal', 'monto_supuesto_usd', 'fecha_solicitud']), total: cola.length};
+/** CSV «Cola de reembolsos vencidos o negados» recalculada de las filas del Tracker. `rotulos` ({motivo, submotivo}) traduce los motivos del Tracker; sin ellas salen como vienen. */
+export function colaVencidos(v, idioma = 'es', rotulos = {}) {
+  const L = par(idioma), NOMBRE = nombreDe(idioma), ESTADO_TXT = estadoDe(idioma), cola = v.tracker?.cola ?? [];
+  const mot = r => (r ? rotulos.motivo?.(r) ?? r : r), sub = r => (r ? rotulos.submotivo?.(r) ?? r : r);
+  const filas = cola.map(c => [c.fila, ESTADO_TXT[c.estado] ?? c.estado, c.sku ?? '', mot(c.motivo) ?? '', sub(c.submotivo) ?? '', c.retailer ? NOMBRE[c.retailer] ?? c.retailer : '', c.montoMinor === null ? '' : (c.montoMinor / 100).toFixed(2), c.fecha ?? '']);
+  const cabecera = L(['fila_tracker', 'estado', 'sku', 'motivo', 'subrazon', 'canal', 'monto_supuesto_usd', 'fecha_solicitud'], ['tracker_row', 'status', 'sku', 'reason', 'sub_reason', 'channel', 'assumed_amount_usd', 'request_date']);
+  return {nombre: L(`cola-reembolsos-negados-${hoy(v)}.csv`, `queue-denied-refunds-${hoy(v)}.csv`), mime: 'text/csv;charset=utf-8', contenido: csv(filas, cabecera), total: cola.length};
 }
 
 
-/** Borrador del mensaje para el proveedor/retailer: solo cifras observadas del libro y del Tracker, sin PII y sin atribuir causa. Un humano lo revisa y lo envía. */
-export function mensajeReclamo(v, sku) {
+/**
+ * Borrador del mensaje para el proveedor/retailer: solo cifras observadas del libro y del Tracker, sin PII y sin atribuir causa. Un humano lo revisa y lo envía.
+ * Es un documento PARA UN TERCERO: `idioma` ('es' por omisión) lo elige quien lo genera, no el de la interfaz.
+ */
+export function mensajeReclamo(v, sku, idioma = 'es') {
   const {fila, tr} = datosSku(v, sku);
   if (!fila) return null;
-  const canales = fila.canales.map(c => `${NOMBRE[c.canal] ?? c.canal}: ${num(c.n)} reembolsos por ${usd(c.usdBrutoMinor, {decimals: true})}`);
-  const asunto = `Revisión de reembolsos del SKU ${sku}`;
+  const L = par(idioma), NOMBRE = nombreDe(idioma), lg = idioma === 'en' ? 'en' : undefined;
+  const usd = m => usdBase(m, {decimals: true, idioma: lg}), num = n => numBase(n, lg);
+  const canales = fila.canales.map(c => `${NOMBRE[c.canal] ?? c.canal}: ${L(`${num(c.n)} reembolsos por ${usd(c.usdBrutoMinor)}`, `${num(c.n)} refunds for ${usd(c.usdBrutoMinor)}`)}`);
+  const asunto = L(`Revisión de reembolsos del SKU ${sku}`, `Review of refunds for SKU ${sku}`);
   const cuerpo = [
-    'Hola,', '',
-    `Estamos revisando los reembolsos del SKU ${sku}. En el libro registramos ${num(fila.n)} reembolsos por ${usd(fila.usdBrutoMinor, {decimals: true})} brutos (${usd(fila.usdNetoMinor, {decimals: true})} sin los cancelados), posición ${fila.pos} entre nuestros SKU.`,
-    ...(canales.length ? ['', 'Por canal:', ...canales.map(c => `• ${c}`)] : []),
-    ...(tr ? ['', `En nuestro seguimiento de solicitudes (Tracker) hay ${num(Object.values(tr.hojas).reduce((a, n) => a + n, 0))} filas relacionadas con este SKU.`] : []),
-    '', 'Adjuntamos el paquete de evidencia (resumen, detalle por canal y mes, y de dónde sale cada cifra). Te pedimos revisar estos casos y confirmarnos qué corresponde acreditar o corregir.',
-    '', 'Este paquete ordena la evidencia para conversar; no establece por sí mismo la causa del defecto ni la responsabilidad de ninguna de las partes.',
-    '', 'Gracias,',
+    L('Hola,', 'Hello,'), '',
+    L(`Estamos revisando los reembolsos del SKU ${sku}. En el libro registramos ${num(fila.n)} reembolsos por ${usd(fila.usdBrutoMinor)} brutos (${usd(fila.usdNetoMinor)} sin los cancelados), posición ${fila.pos} entre nuestros SKU.`, `We are reviewing the refunds for SKU ${sku}. The ledger records ${num(fila.n)} refunds for ${usd(fila.usdBrutoMinor)} gross (${usd(fila.usdNetoMinor)} excluding canceled ones), rank ${fila.pos} among our SKUs.`),
+    ...(canales.length ? ['', L('Por canal:', 'By channel:'), ...canales.map(c => `• ${c}`)] : []),
+    ...(tr ? ['', L(`En nuestro seguimiento de solicitudes (Tracker) hay ${num(Object.values(tr.hojas).reduce((a, n) => a + n, 0))} filas relacionadas con este SKU.`, `Our request tracking (Tracker) has ${num(Object.values(tr.hojas).reduce((a, n) => a + n, 0))} rows related to this SKU.`)] : []),
+    '', L('Adjuntamos el paquete de evidencia (resumen, detalle por canal y mes, y de dónde sale cada cifra). Te pedimos revisar estos casos y confirmarnos qué corresponde acreditar o corregir.', 'We attach the evidence package (summary, detail by channel and month, and where each figure comes from). Please review these cases and confirm what should be credited or corrected.'),
+    '', L('Este paquete ordena la evidencia para conversar; no establece por sí mismo la causa del defecto ni la responsabilidad de ninguna de las partes.', 'This package organizes the evidence for discussion; by itself it does not establish the cause of the defect or the responsibility of either party.'),
+    '', L('Gracias,', 'Thank you,'),
   ].join('\n');
   return {asunto, cuerpo};
 }

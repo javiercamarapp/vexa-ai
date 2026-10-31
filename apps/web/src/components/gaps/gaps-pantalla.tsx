@@ -52,10 +52,10 @@ export function GapsPantalla({organization}:{organization?:string}){
  const titular=v&&ok&&r?.status==='ok'&&ventas?t('brechas.titular',{ventas:corto(ventas),quedan:corto(Math.max(0,big(ok.activoMinor)-big(r.activoMinor))),pct:nf1.format(big(r.activoMinor)*100/Math.max(1,big(ok.activoMinor)))}):null;
  const exportar=v&&<Popover label={t('brechas.exportarArchivos')} align="end" width={260} triggerClassName="btn btn-secondary" trigger={<><Download/><span className="btn-label">{t('brechas.exportar')}</span></>}>
   <MenuList>
-   <li><Button size="sm" icon={<Download/>} disabled={!ok} onClick={()=>bajarArchivo(resumenHtml(v))}>{t('brechas.resumenHtml')}</Button></li>
-   <li><Button size="sm" icon={<Download/>} disabled={v.ranking.status!=='ok'} onClick={()=>bajarArchivo(csvIngresos(v))}>{t('brechas.ingresoSku')}</Button></li>
-   <li><Button size="sm" icon={<Download/>} disabled={v.intensidad.status!=='ok'} onClick={()=>bajarArchivo(csvIntensidad(v))}>{t('brechas.intensidadCsv')}</Button></li>
-   <li><Button size="sm" icon={<Download/>} disabled={v.recomendaciones.items.length===0} onClick={()=>bajarArchivo(csvRecomendaciones(v))}>{t('brechas.recsCsv')}</Button></li></MenuList></Popover>;
+   <li><Button size="sm" icon={<Download/>} disabled={!ok} onClick={()=>bajarArchivo(resumenHtml(v,idioma))}>{t('brechas.resumenHtml')}</Button></li>
+   <li><Button size="sm" icon={<Download/>} disabled={v.ranking.status!=='ok'} onClick={()=>bajarArchivo(csvIngresos(v,idioma))}>{t('brechas.ingresoSku')}</Button></li>
+   <li><Button size="sm" icon={<Download/>} disabled={v.intensidad.status!=='ok'} onClick={()=>bajarArchivo(csvIntensidad(v,idioma))}>{t('brechas.intensidadCsv')}</Button></li>
+   <li><Button size="sm" icon={<Download/>} disabled={v.recomendaciones.items.length===0} onClick={()=>bajarArchivo(csvRecomendaciones(v,idioma))}>{t('brechas.recsCsv')}</Button></li></MenuList></Popover>;
  if(!v&&g.busy)return <RovaqCargando mensaje=""/>;
  return <div className="dg-page">
   <PageHeader eyebrow={t('brechas.eyebrow')+(organization?t('brechas.sintetico'):'')} title={t('brechas.titulo')} description={t('brechas.desc')}

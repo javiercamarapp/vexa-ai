@@ -70,6 +70,7 @@ const EXCEPCIONES_TSX: Record<string, string> = {
 /** Tope de español canónico en módulos de datos de pantalla (archivo → máximo de hallazgos). Se genera con UPDATE_TOPES=1 TOPES_DIR=<carpeta> y solo debe bajar.
  *  T42: el detector ahora revisa también las plantillas con interpolación (backtick ... dólar-llave ... backtick), que antes se descartaban enteras; los topes se re-fijaron UNA vez con ese conteo
  *  (deuda que ya existía y estaba oculta: 64 módulos de pantalla y 90 de paquetes más, casi todo español base con su inglés en una tabla aparte o mensajes internos de contrato). Desde aquí solo bajan.
+ *  T48: bajan gaps-archivos 11->4, fuga-archivos 19->5 y recommendations/borradores 9->4 (los documentos para terceros ahora llevan su inglés como pares L(es, en) y el idioma lo elige quien los genera).
  *  Justificación de las subidas de T40: lib/copiloto/modos.mjs +15 (las preguntas de los chips en español son el IDENTIFICADOR de cada consulta directa; su inglés vive en PREGUNTA_EN),
  *  lib/history/historico.mjs +1 (rama inglesa nueva en el mismo módulo), y hoy-textos.mjs +1 / recomendaciones-vista.mjs +1 que ya estaban por encima del tope antes de este cambio. */
 const TOPE_MODULOS: Record<string, number> = {
@@ -79,14 +80,14 @@ const TOPE_MODULOS: Record<string, number> = {
  'components/confianza/confianza-modelo.mjs': 35,
  'components/copiloto/adaptador-cfo.mjs': 1,
  'components/copiloto/briefing-cfo.mjs': 14,
- 'components/gaps/gaps-archivos.mjs': 11,
+ 'components/gaps/gaps-archivos.mjs': 4,
  'components/gaps/gaps-modelo.mjs': 18,
  'components/hoy/hoy-textos.mjs': 48,
  'components/map/geo/generar-geo.mjs': 1,
  'components/map/mapa-modelo.mjs': 4,
  'components/pain-points/burbujas-modelo.mjs': 7,
  'components/pain-points/modelo.mjs': 3,
- 'components/refunds/fuga-archivos.mjs': 19,
+ 'components/refunds/fuga-archivos.mjs': 5,
  'components/refunds/fuga-modelo.mjs': 19,
  'components/workload/carga-modelo.mjs': 1,
  'components/workspace/cfo-model.mjs': 4,
@@ -249,7 +250,7 @@ const TOPE_PAQUETES: Record<string, number> = {
  'notifications/email-weekly.mjs': 14,
  'problems/causality.mjs': 2,
  'problems/repository.mjs': 1,
- 'recommendations/borradores.mjs': 9,
+ 'recommendations/borradores.mjs': 4,
  'recommendations/explorer.mjs': 3,
  'recommendations/flow.mjs': 1,
  'recommendations/flujo.mjs': 22,

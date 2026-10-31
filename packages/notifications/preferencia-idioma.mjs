@@ -6,7 +6,8 @@ import {idiomaDe} from './idioma.mjs';
 export const IDIOMA_DE_RESPALDO = 'es';
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 /** Una sola sentencia, solo lectura, solo idioma válido. El rol de servicio tiene select sobre (user_id, idioma) y nada más. */
-export const SQL_IDIOMAS = "SELECT user_id::text AS user_id, idioma FROM public.user_preferences WHERE user_id = ANY($1::uuid[]) AND idioma IN ('es','en')";
+const LISTA_IDIOMAS = ['es', 'en'].map(x => "'" + x + "'").join(',');
+export const SQL_IDIOMAS = `SELECT user_id::text AS user_id, idioma FROM public.user_preferences WHERE user_id = ANY($1::uuid[]) AND idioma IN (${LISTA_IDIOMAS})`;
 const limpiar = ids => [...new Set((ids ?? []).filter(x => typeof x === 'string' && UUID.test(x)).map(x => x.toLowerCase()))].slice(0, 500);
 export const mapaDeFilas = filas => { const m = new Map(); for (const f of filas ?? []) if (typeof f?.user_id === 'string' && (f.idioma === 'es' || f.idioma === 'en')) m.set(f.user_id.toLowerCase(), f.idioma); return m; };
 /** Lee los idiomas con el `database` del worker ({transaction(action, cb)}) en SU PROPIA transacción corta de lectura (un error aquí no contamina otra transacción). */

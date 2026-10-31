@@ -4,13 +4,13 @@
 // Método: en cada posición de scroll en la que el trazo (o una nota o un nodo) cae en la franja de la barra se toma la franja superior de la pantalla
 // (de 0 hasta el borde inferior de la barra más AIRE px) con el hilo visible y otra vez con el hilo oculto. Si los dos recortes difieren en un solo
 // píxel, el hilo se ve dentro de la barra (la píldora de vidrio lo trasluce) o pegado a su borde. Es una medida de lo que ve la persona, no de la geometría.
-// Uso: node barra-hilo.mjs --url http://127.0.0.1:PUERTO/ [--vp 1440,768,390] [--max 14] [--aire 10] [--tolerancia 0]
+// Uso: node barra-hilo.mjs --url http://127.0.0.1:PUERTO/ [--vp 1440,768,390] [--max 14] [--aire 10] [--tolerancia 0] [--esquema dark|light] [--movimiento reduced]
 import {leerArgs, lista} from './args.mjs';
 import {conSesion, dormir} from './navegador.mjs';
 import {decodificarPng} from './png.mjs';
 
 export const AIRE_MIN = 10; // px bajo la barra en los que el hilo no puede verse
-export const UMBRAL_CANAL = 6; // diferencia por canal (0 a 255) a partir de la cual un píxel cuenta como distinto
+export const UMBRAL_CANAL = 10; // diferencia por canal (0 a 255) a partir de la cual un píxel cuenta como distinto (un píxel suelto del borde de la pantalla difería 8 al ocultar la capa: tramado del compositor)
 
 /** Cuenta los píxeles que difieren entre dos PNG del mismo tamaño. */
 export function pixelesDistintos(pngA, pngB, umbral = UMBRAL_CANAL) {
@@ -67,7 +67,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const esquema = a.esquema || 'dark';
   let fallas = 0;
   for (const vp of lista(a.vp, ['1440', '768', '390'])) {
-    await conSesion({vp: Number(vp), esquema, sinCandado: true, esperaCarga: false, etiqueta: 'barra-hilo'}, async (s) => {
+    await conSesion({vp: Number(vp), esquema, movimiento: a.movimiento === 'reduced' ? 'reduce' : 'no-preference', sinCandado: true, esperaCarga: false, etiqueta: 'barra-hilo'}, async (s) => {
       await s.page.goto(url, {waitUntil: 'load'});
       await dormir(3000);
       const alto = await s.page.evaluate(() => document.documentElement.scrollHeight);

@@ -56,7 +56,9 @@ test('CSS: texto efectivo de 11 px o más en valor, paso 2 y paso 3 a 320, 360, 
 test('el marcado: la tira de valor y el paso 3 llevan sus marcas de parada vacías y el desplazamiento tiene nombre y foco', () => {
   const marcado = readFileSync(join(WEB, 'src/components/sitio/secciones/problema-valor.tsx'), 'utf8');
   assert.match(marcado, /\[1, 2, 3\]\.map\(\(i\) => <span className="s-snap" data-i=\{i\}[^>]*aria-hidden="true"/);
-  assert.match(marcado, /tabIndex: 0, role: 'group', 'aria-label'/);
+  assert.match(marcado, /'data-desplaza': '', tabIndex: 0, role: 'group', 'aria-label'/, 'foco desde el servidor: axe (scrollable-region-focusable) exige el foco mientras desborda y no debe depender de que llegue el JavaScript');
+  const inicio = readFileSync(join(WEB, 'src/sitio-js/inicio.js'), 'utf8');
+  assert.match(inicio, /\$\$\('\[data-desplaza\]'\)\.forEach[\s\S]*?scrollWidth > e\.clientWidth \+ 1 \? e\.setAttribute\('tabindex', '0'\) : e\.removeAttribute\('tabindex'\)/);
   const paso = readFileSync(join(WEB, 'src/components/sitio/secciones/ventana-paso.tsx'), 'utf8');
   assert.match(paso, /n === 3 \? \[1, 2\]\.map\(\(i\) => <span className="s-snap"/);
 });

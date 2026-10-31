@@ -55,7 +55,7 @@ export function Valor({lang, t}: {lang: Lang; t: TextosPortada}) {
           <div className="s-valor__ventana">
             {/* T49: en móvil la tira (cuatro tarjetas) se desplaza a los lados, una tarjeta por vez a tamaño legible; los tres puntos de parada son marcas vacías (solo móvil) */}
             <VentanaCaptura nombre="valor" clave="img/producto/valor" lang={lang} ruta="m1" tamanos="(max-width: 760px) 100vw, 780px" anchos={[medidas('img/producto/valor').ancho]}
-              cuerpo={{tabIndex: 0, role: 'group', 'aria-label': lang === 'es' ? 'Las cuatro tarjetas de cifras, se desplaza a los lados' : 'The four figure cards, scrolls sideways'}}>
+              cuerpo={{'data-desplaza': '', tabIndex: 0, role: 'group', 'aria-label': lang === 'es' ? 'Las cuatro tarjetas de cifras, se desplaza a los lados' : 'The four figure cards, scrolls sideways'}}>
               {[1, 2, 3].map((i) => <span className="s-snap" data-i={i} key={i} aria-hidden="true" />)}
             </VentanaCaptura>
           </div>

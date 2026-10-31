@@ -301,6 +301,11 @@
 .s-ov-top__barra { fill: var(--s-vp-barra-color); }
 .s-ov-top__v { font-variant-numeric: tabular-nums; text-align: right; }
 
+/* T49: de 701 a 879 px de ventana (tableta) el rótulo «80 %» de la captura medía 8.8 px (25 unidades de 2000 a 704 px); se agranda para quedar en 11 px o más */
+@container (max-width: 879px) {
+  .s-ov__eje { font-size: 32px; }
+}
+
 /* Entrada: una sola vez, sin bucles. Estado inicial de cada pieza en CSS: sin JavaScript no hay parpadeo y el estado final es el de reposo. */
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .s-ventana--producto {

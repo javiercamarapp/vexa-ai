@@ -42,7 +42,7 @@ export function Captura({nombre, tema, lang, tamanos, prioridad = false, clase, 
 }
 
 /** Ventana oscura de producto con la captura real y, encima, las anotaciones del llamador (hijos, posicionados dentro del cuerpo). */
-export function VentanaCaptura({nombre, clave, tema = 'oscuro', lang, ruta, tamanos, anchos, children, cuerpo}: {nombre: string; clave?: string; tema?: TemaCaptura; lang: 'es' | 'en'; ruta: 'm1' | 'm2' | 'm3' | 'm4' | 'm5' | 'm6'; tamanos: string; anchos?: number[]; children?: ReactNode; cuerpo?: HTMLAttributes<HTMLDivElement>}) {
+export function VentanaCaptura({nombre, clave, tema = 'oscuro', lang, ruta, tamanos, anchos, children, cuerpo}: {nombre: string; clave?: string; tema?: TemaCaptura; lang: 'es' | 'en'; ruta: 'm1' | 'm2' | 'm3' | 'm4' | 'm5' | 'm6'; tamanos: string; anchos?: number[]; children?: ReactNode; cuerpo?: HTMLAttributes<HTMLDivElement> & Record<`data-${string}`, string>}) {
   const t = T(lang);
   return (
     <figure className="s-ventana s-ventana--producto">

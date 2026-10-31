@@ -29,6 +29,13 @@ export default function iniciar({urls, RM, motor}) {
   const {tareas, despertar} = motor;
   const ancho = () => innerWidth;
 
+  // T49: regiones que se desplazan a los lados solo en móvil (tira de cifras): vienen con foco de teclado del servidor (axe lo exige mientras desbordan) y aquí lo pierden mientras no desbordan: en escritorio serían una parada sin función
+  $$('[data-desplaza]').forEach((e) => {
+    const a = () => (e.scrollWidth > e.clientWidth + 1 ? e.setAttribute('tabindex', '0') : e.removeAttribute('tabindex'));
+    a();
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(a).observe(e);
+  });
+
   /* ---------- escena de cuatro pasos (solo escritorio ancho) ---------- */
   const esc = $('[data-escena]');
   const pasos = esc ? $$('.s-paso', esc) : [];

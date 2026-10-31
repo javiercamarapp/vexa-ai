@@ -6,7 +6,7 @@
 import {leerArgs, lista} from './args.mjs';
 import {conSesion, dormir} from './navegador.mjs';
 
-export const MINIMOS = {1440: 12, 390: 11};
+export const MINIMOS = {1440: 12, 768: 11, 390: 11}; // T49: 768 estaba sin medir; el token --s-t-minimo baja a 11 px a 768 px o menos
 
 /** Corre dentro de la página: devuelve los textos visibles con tamaño efectivo menor que el mínimo. */
 export function medirEnPagina(min) {

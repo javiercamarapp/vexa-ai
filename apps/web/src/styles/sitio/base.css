@@ -537,7 +537,8 @@ html:not([data-ambiente]) [data-tema="claro"] .s-logo__negativo { opacity: 0; }
   transition: opacity 300ms ease-out, transform 300ms ease-out, visibility 0s linear 300ms;
 }
 
-.s-cabecera__item:focus-within > .s-menu,
+/* T49: con JavaScript el menú se abre por clic, Enter o flecha (data-abierto) y Esc lo cierra; :focus-within lo mantenía abierto tras Esc (WCAG 1.4.13), así que solo vale sin JavaScript */
+html:not([data-js]) .s-cabecera__item:focus-within > .s-menu,
 .s-cabecera__item[data-abierto] > .s-menu {
   opacity: 1;
   visibility: visible;

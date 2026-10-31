@@ -52,7 +52,7 @@ export const ARTICULO_A1: Articulo = articulo({
       'A single refund total does not say what to tackle first. Learn to read returned money by channel, product and month, and what an evidence package holds.',
     ),
   },
-  h1: b('Los reembolsos no son un costo fijo: son una fuga que se puede localizar', 'Refunds are not a fixed cost: they are a leak you can locate'),
+  h1: b('Los reembolsos no son un costo fijo: son una fuga localizable', 'Refunds are not a fixed cost: they are a leak you can locate'),
   subtitulo: b(
     'Un total único no dice qué atender primero. Según el canal, el producto y el mes, el dinero devuelto empieza a tener forma.',
     'A single total does not say what to tackle first. By channel, by product and by month, returned money starts to take shape.',
@@ -128,8 +128,8 @@ export const ARTICULO_A1: Articulo = articulo({
       ['Los supuestos con los que se estimó el alcance del reclamo, escritos por quien los eligió.', 'The assumptions used to size the claim, written down by whoever chose them.'],
     ),
     p(
-      'En Rovaq AI, la pantalla de fuga de reembolsos genera un paquete de evidencia por producto, en HTML y CSV, y una lista de productos para el proveedor. Todo se arma en tu navegador y la pantalla confirma que no se envió nada: tú revisas el paquete y tú presentas el reclamo.',
-      'In Rovaq AI, the refund leakage screen generates an evidence package per product, as HTML and CSV, and a list of products for the supplier. Everything is built in your browser and the screen confirms that nothing was sent: you review the package and you file the claim.',
+      'En Rovaq AI, la pantalla de fuga de reembolsos prepara un paquete de evidencia por producto. Tú lo revisas y tú presentas el reclamo; nada se envía solo.',
+      'In Rovaq AI, the refund leakage screen prepares an evidence package per product. You review it and you file the claim; nothing is sent on its own.',
     ),
     h2('Cómo empezar con lo que ya tienes', 'How to start with what you already have'),
     p(

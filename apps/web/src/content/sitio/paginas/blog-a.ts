@@ -208,4 +208,106 @@ export const ARTICULO_A3: Articulo = articulo({
   ],
 });
 
-export const ARTICULOS_A: readonly Articulo[] = [ARTICULO_A2, ARTICULO_A3];
+export const ARTICULO_A4: Articulo = articulo({
+  id: 'a4',
+  pub: '2026-11-03',
+  etiqueta: b('Puestos y permisos', 'Roles and permissions'),
+  seo: {
+    titulo: b('Un puesto, una vista: cada rol ve lo que le toca | Rovaq AI', 'One Role, One View: Each Role Sees What Fits | Rovaq AI'),
+    descripcion: b(
+      'Mostrar menos es seguridad y claridad. Cómo se reparten las vistas entre propietario, analista, operador y lector, con permisos decididos en el servidor.',
+      'Showing less is a security and clarity feature. How views are split among owner, analyst, operator and viewer, with access decided on the server.',
+    ),
+  },
+  h1: b('Un puesto, una vista: por qué cada rol ve solo lo que le toca', 'One role, one view: why each role sees only what belongs to it'),
+  subtitulo: b(
+    'Una herramienta con todo para todos parece generosa y rinde poco. Mostrar menos protege la información y ayuda a trabajar.',
+    'A tool with everything for everyone looks generous and delivers little. Showing less protects information and helps people work.',
+  ),
+  resumen: b(
+    'Una herramienta que muestra todo a todos es más difícil de usar y más difícil de proteger. Este artículo explica cómo se reparten las vistas entre propietario, analista, operador y lector en Rovaq AI, por qué los permisos mínimos ayudan a la claridad y qué significa que la autorización se decida en el servidor.',
+    'A tool that shows everything to everyone is harder to use and harder to protect. This article explains how views are split among owner, analyst, operator and viewer in Rovaq AI, why minimal permissions help clarity and what it means for authorization to be decided on the server.',
+  ),
+  relacionados: ['casos-de-uso', 'propietario', 'analista', 'operador', 'lector'],
+  bloques: [
+    p(
+      'Cuando un equipo adopta una herramienta nueva, la primera pregunta suele ser qué puede hacer. La segunda, que casi nunca se hace a tiempo, es quién debería poder hacer qué. Cuando esa segunda pregunta se pospone, el resultado es una aplicación donde todos ven todo: la persona que ejecuta una tarea tropieza con pantallas que no le conciernen y quien revisa el dinero convive con controles que no necesita.',
+      'When a team adopts a new tool, the first question is usually what it can do. The second, which is almost never asked in time, is who should be able to do what. When that second question is put off, the result is an application where everyone sees everything: the person carrying out a task stumbles over screens that do not concern them, and whoever reviews the money lives alongside controls they do not need.',
+    ),
+    p(
+      'Este artículo defiende lo contrario. Mostrar menos a cada persona no es una restricción incómoda sino una decisión de diseño con dos beneficios: la información está más protegida y el trabajo es más claro.',
+      'This article defends the opposite. Showing each person less is not an uncomfortable restriction but a design decision with two benefits: information is better protected and the work is clearer.',
+    ),
+    h2('Menos pantallas, más claridad', 'Fewer screens, more clarity'),
+    p(
+      'Una pantalla sobrante tiene un costo que no se ve en las demostraciones. Cada opción adicional es algo que hay que entender, ignorar o evitar tocar por error. Un operador que debe resolver acciones asignadas no gana nada con ver los reportes financieros de la empresa; en cambio, pierde tiempo buscando entre elementos que no son suyos.',
+      'A surplus screen has a cost that does not show in demonstrations. Every additional option is something to understand, ignore or avoid touching by mistake. An operator who has to resolve assigned actions gains nothing from seeing the company financial reports; instead, they lose time searching among items that are not theirs.',
+    ),
+    p(
+      'Por eso conviene pensar las vistas desde el trabajo y no desde el menú. La pregunta no es qué pantallas existen, sino qué necesita ver quien ocupa cada puesto para hacer bien lo suyo. Lo demás, no aparece.',
+      'That is why it helps to design views from the work and not from the menu. The question is not which screens exist, but what the person in each role needs to see to do their own job well. Everything else does not appear.',
+    ),
+    cita(
+      'Una vista bien pensada es la que le quita a cada persona todo lo que no necesita para su trabajo.',
+      'A well-designed view is one that removes from each person everything they do not need for their work.',
+    ),
+    h2('Cuatro roles con permisos mínimos', 'Four roles with minimal permissions'),
+    p(
+      'Rovaq AI trabaja con cuatro puestos. Cada uno recibe lo necesario para su función, y nada más.',
+      'Rovaq AI works with four roles. Each one receives what its function requires, and nothing more.',
+    ),
+    ul(
+      ['{{propietario|Propietario}}. Configura, decide y aprueba. Ve todas las pantallas y administra el equipo, los avisos y la retención de datos. Es quien da el visto bueno a las acciones que se proponen.', '{{propietario|Owner}}. Configures, decides and approves. Sees all screens and manages the team, the notices and data retention. It is the one who gives the go-ahead to the actions that are proposed.'],
+      ['{{analista|Analista}}. Investiga, prepara y propone. Ve el dinero, los problemas, los puntos de dolor y las importaciones, e importa archivos. Propone, pero no aprueba.', '{{analista|Analyst}}. Investigates, prepares and proposes. Sees the money, the problems, the pain points and the imports, and imports files. Proposes, but does not approve.'],
+      ['{{operador|Operador}}. Ejecuta las acciones que le asignan. Ve los problemas, las acciones asignadas y su evidencia, sin cifras de dinero.', '{{operador|Operator}}. Carries out the actions assigned to them. Sees the problems, the assigned actions and their evidence, without money figures.'],
+      ['{{lector|Lector}}. Consulta en solo lectura. Ve las pantallas que le corresponden, sin poder modificar datos, conexiones ni decisiones.', '{{lector|Viewer}}. Reads with read-only access. Sees the screens that apply to them, unable to modify data, connections or decisions.'],
+    ),
+    p(
+      'La separación entre quien propone y quien aprueba merece una mención aparte. Que el analista prepare un hallazgo y el propietario lo apruebe no es burocracia: es la forma de asegurar que una persona distinta mire la evidencia antes de que algo se ponga en marcha. Y que el operador ejecute sin ver cifras de dinero significa que quien hace el trabajo cotidiano no necesita acceso a lo que no usa.',
+      'The separation between whoever proposes and whoever approves deserves its own mention. That the analyst prepares a finding and the owner approves it is not bureaucracy: it is the way to make sure a different person looks at the evidence before anything is set in motion. And that the operator carries out work without seeing money figures means that whoever does the daily work does not need access to what they do not use.',
+    ),
+    p(
+      'Este reparto sigue un principio conocido como permisos mínimos: cada persona recibe solo el acceso que su función exige. Una cuenta con menos alcance expone menos si algo sale mal, ya sea un error, un descuido o una credencial que cae en manos equivocadas.',
+      'This split follows a principle known as least privilege: each person receives only the access their function requires. An account with less reach exposes less if something goes wrong, whether a mistake, an oversight or a credential that falls into the wrong hands.',
+    ),
+    h3('Un recorrido de ejemplo', 'A walk-through example'),
+    p(
+      'Imagina un hallazgo cualquiera: un producto concentra buena parte del dinero devuelto. El analista lo investiga, reúne la evidencia y propone una acción. El propietario ve la propuesta con su evidencia y decide si procede, si se ajusta o si se descarta. Si procede, el operador recibe la acción asignada y la ejecuta, con los problemas y la evidencia a la vista pero sin las cifras de dinero que no necesita. Y el lector, si el equipo tiene uno, puede seguir el avance sin riesgo de cambiar nada.',
+      'Imagine any finding: a product accounts for a good share of the returned money. The analyst investigates it, gathers the evidence and proposes an action. The owner sees the proposal with its evidence and decides whether to proceed, adjust or dismiss. If it proceeds, the operator receives the assigned action and carries it out, with the problems and the evidence in view but without the money figures they do not need. And the viewer, if the team has one, can follow the progress with no risk of changing anything.',
+    ),
+    p(
+      'Cada persona ve una parte distinta del mismo hecho y, sin embargo, nadie necesita una vista completa para cumplir su función. Esa es la prueba más sencilla de que el reparto está bien hecho: nadie echa de menos lo que no ve, porque no le hacía falta para trabajar.',
+      'Each person sees a different part of the same fact and yet nobody needs a complete view to fulfill their role. That is the simplest proof that the split is well made: nobody misses what they do not see, because they did not need it to work.',
+    ),
+    h2('Autorización en el servidor', 'Server-side authorization'),
+    p(
+      'Hay una diferencia importante entre ocultar y proteger. Muchas aplicaciones esconden de la interfaz las opciones que un usuario no debería usar, y con eso consideran resuelto el tema. Pero un elemento que no aparece en el menú sigue existiendo si alguien conoce la dirección de la pantalla o la forma de pedir el dato.',
+      'There is an important difference between hiding and protecting. Many applications hide from the interface the options a user should not use, and consider the matter settled. But an element that does not appear in the menu still exists if someone knows the address of the screen or the way to ask for the data.',
+    ),
+    p(
+      'En Rovaq AI la autorización se decide en el servidor. Ocultar un elemento del menú es una comodidad de lectura; no es lo que protege una pantalla. La decisión de si una persona puede ver un dato o realizar una acción se toma del lado que el usuario no controla, cada vez que se pide.',
+      'In Rovaq AI authorization is decided on the server. Hiding a menu item is a reading convenience; it is not what protects a screen. The decision of whether a person can see a piece of data or carry out an action is taken on the side the user does not control, every time it is requested.',
+    ),
+    h3('Qué preguntar al evaluar una herramienta', 'What to ask when evaluating a tool'),
+    p(
+      'Si estás comparando software para tu equipo, hay tres preguntas que revelan mucho sobre cómo trata los permisos:',
+      'If you are comparing software for your team, three questions reveal a lot about how it handles permissions:',
+    ),
+    pasos(
+      ['Qué ve cada puesto, por escrito. Una tabla clara de capacidades vale más que una frase general sobre seguridad.', 'What each role sees, in writing. A clear table of capabilities is worth more than a general sentence about security.'],
+      ['Quién aprueba. Si quien propone también puede aprobar, la revisión depende de la buena voluntad y no del diseño.', 'Who approves. If whoever proposes can also approve, review depends on goodwill and not on design.'],
+      ['Dónde se decide el acceso. Si solo se oculta en la interfaz, la protección es débil; si se decide en el servidor, resiste mejor.', 'Where access is decided. If it is only hidden in the interface, protection is weak; if it is decided on the server, it holds up better.'],
+    ),
+    p(
+      'Para ver cómo se aplica a cada función, puedes revisar la página de {{casos-de-uso|casos de uso}}, que describe qué ve y qué hace cada puesto. Y para saber cuánto fiarte de lo que cada rol lee, vale la pena recordar lo que explicamos sobre {{a2|la procedencia de cada número}}: ver menos no debería significar saber menos sobre el origen de lo que se ve.',
+      'To see how it applies to each function, you can review the {{casos-de-uso|use cases}} page, which describes what each role sees and does. And to know how far to trust what each role reads, it is worth recalling what we explained about {{a2|the provenance of every number}}: seeing less should not mean knowing less about the origin of what you do see.',
+    ),
+    noAfirmamos(
+      ['No afirmamos que los permisos mínimos eliminen todo riesgo. Reducen lo que cada cuenta puede exponer, pero no sustituyen otras prácticas de seguridad.', 'We do not claim that minimal permissions eliminate all risk. They reduce what each account can expose, but they do not replace other security practices.'],
+      ['No afirmamos qué datos personales de terceros ve el lector, porque esa parte sigue en revisión.', 'We do not state which personal data of third parties the viewer sees, because that part is still under review.'],
+      ['No tenemos certificaciones de seguridad ni de cumplimiento, y la verificación en dos pasos para propietarios está en nuestra hoja de ruta; hoy no se exige.', 'We hold no security or compliance certifications, and two-step verification for owners is on our roadmap; today it is not required.'],
+    ),
+  ],
+});
+
+export const ARTICULOS_A: readonly Articulo[] = [ARTICULO_A2, ARTICULO_A3, ARTICULO_A4];

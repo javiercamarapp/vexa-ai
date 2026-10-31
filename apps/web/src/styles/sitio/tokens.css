@@ -332,7 +332,7 @@ html:not([data-ambiente]) [data-tema="claro"] {
 
 @media (max-width: 480px) {
   :root {
-    --s-pad-x: 26px;
+    --s-pad-x: 29px;
     --s-gap: 16px;
     --s-t-eyebrow: var(--s-t-minimo);
     --s-t-mock: var(--s-t-minimo);

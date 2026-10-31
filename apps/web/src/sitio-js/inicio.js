@@ -81,8 +81,9 @@ const ICONOS = [
 let AIRE = 24; // (medir() lo baja a 20 en el móvil) 16 px de margen mínimo más medio núcleo de banda (3.75 a 1440, 2.1 a 390) y holgura; el móvil usa menos aire para cruzar por los huecos naturales (~88 px) sin alargar la página
 const PULSO = [[230, 0.1], [150, 0.22], [90, 0.45], [40, 0.9]]; // largo en px y opacidad de cada capa del pulso
 const ICONO_DE = [0, 1, 2, 3, 4, 0, 1]; // ícono de la nota de cada banda
-const LOOPS = [1, 3, 5]; // bandas (base 0) con rizo
-const TRIPLES = [0, 4]; // bandas que cruzan tres veces (ida, vuelta e ida)
+const LOOPS = [1, 4]; // bandas (base 0) con rizo: solo dos, para que el lazo no se repita
+const TRIPLES = [3]; // bandas que cruzan tres veces (ida, vuelta e ida): una sola; el resto son S simples de distinta forma
+const COLA = 72; // px de carril libre al final de cada banda en escritorio: con la sección anclada bajo la cabecera fija el barrido no pasa por debajo de ella
 const RAMPA = 3, PASO_RAMPA = 26; // escalones y largo de cada uno al engrosar o afinar el trazo
 
 const f1 = (n) => n.toFixed(1);
@@ -113,11 +114,16 @@ function huecos(zona, H, min) {
 }
 
 /** Puntos de la S grande de una banda, de (xa, y0) a (xb, y1): tres vaivenes de ±30 % de la altura y, si `rizo`, un rizo suave en el centro. */
-function puntosBanda(xa, y0, xb, y1, rizo, ancho, triple) {
+function puntosBanda(xa, y0, xb, y1, rizo, ancho, triple, v) {
   const h = y1 - y0, X = (u) => xa + (xb - xa) * u, dir = xb > xa ? 1 : -1;
   if (triple) return [[xa, y0], [X(0.55), y0 + 0.2 * h], [X(0.97), y0 + 0.38 * h], [X(0.45), y0 + 0.58 * h], [X(0.03), y0 + 0.74 * h], [X(0.6), y0 + 0.9 * h], [xb, y1]];
   const sup = y0 + 0.2 * h, inf = y0 + 0.8 * h;
-  if (!rizo || ancho < 700) return [[xa, y0], [X(0.18), inf], [X(0.48), sup], [X(0.78), inf - 0.04 * h], [xb, y1]];
+  if (!rizo || ancho < 700) {
+    // Tres formas de S simple, por banda: la base, su espejo y una diagonal amplia (el barrido no se repite igual)
+    if (v % 3 === 1) return [[xa, y0], [X(0.22), sup], [X(0.52), inf], [X(0.8), sup + 0.04 * h], [xb, y1]];
+    if (v % 3 === 2) return [[xa, y0], [X(0.35), y0 + 0.3 * h], [X(0.65), y0 + 0.7 * h], [xb, y1]];
+    return [[xa, y0], [X(0.18), inf], [X(0.48), sup], [X(0.78), inf - 0.04 * h], [xb, y1]];
+  }
   const b = Math.min(44, 0.16 * h), a = 0.55 * b, cx = X(0.5), cy = y0 + 0.4 * h, rz = [];
   for (let t = -Math.PI; t <= Math.PI + 0.01; t += Math.PI / 9) rz.push([cx + dir * (a * t - b * Math.sin(t)) * 1, cy - b * Math.cos(t) * -1 * -1]);
   return [[xa, y0], [X(0.16), inf], ...rz, [X(0.8), inf - 0.04 * h], [xb, y1]];
@@ -150,10 +156,12 @@ function construirHilo(RM, notas) {
     // Carril dentro del margen: con margen amplio (1440) ondula en toda la franja libre; con margen estrecho (390) es recto
     const xmin = 4 + w0 / 2, xmax = margen - 18 - wb / 2;
     const recto = xmax - xmin < 12;
-    const centro = recto ? Math.min(xmax, xmin + 2) : (xmin + xmax) / 2, amp = recto ? 0 : ((xmax - xmin) / 2) * 0.9;
+    const movil0 = innerWidth <= 768;
+    // En móvil el riel recto queda a 10 px del borde (no pegado a él); el margen de 29 px deja 16 px libres entre su núcleo y el texto
+    const centro = recto ? (movil0 ? 10 : Math.min(xmax, xmin + 2)) : (xmin + xmax) / 2, amp = recto ? 0 : ((xmax - xmin) / 2) * 0.9;
     const lado = (s, k) => { const x = centro + (k % 2 ? amp : -amp); return s ? W - x : x; };
     const movil = innerWidth <= 768, corrida = movil ? 500 : 380, paso = 260;
-    AIRE = movil ? 20 : 24;
+    AIRE = movil ? 18.5 : 24;
     const libres = huecos(zona, H, movil ? 2 * AIRE + 4 : 2 * AIRE + 16);
     // Bandas: el hueco libre que contiene el centro de cada .s-banda visible
     const bs = $$('[data-banda]', zona).filter((b) => b.offsetHeight).map((b) => { let y = 0, n = b; for (; n && n !== zona; n = n.offsetParent) y += n.offsetTop; return y + b.offsetHeight / 2; });
@@ -183,13 +191,13 @@ function construirHilo(RM, notas) {
       if (banda < 0 && (cy - ult < corrida || cy > H - 200 || bs.some((by) => Math.abs(by - cy) < corrida * 0.55))) continue;
       if (banda >= 0 && cy - ult < 120) continue;
       if (banda >= 0) {
-        const y0 = a + 8, y1 = b - 8;
+        const y0 = a + 8, cola = movil || b - a - 16 - COLA < 110 ? 0 : COLA, y1 = b - 8 - cola;
         ondas(y0);
         if (cur[1] < y0 - 1) sCurva(cur[0], y0);
         const xa = cur[0];
         s ^= 1; k++;
         const xb = lado(s, k);
-        catmull(puntosBanda(xa, y0, xb, y1, LOOPS.includes(banda) && !movil, W, TRIPLES.includes(banda) && !movil));
+        catmull(puntosBanda(xa, y0, xb, y1, LOOPS.includes(banda) && !movil, W, TRIPLES.includes(banda) && !movil, banda));
         entradas.push({a, b, y0, y1, xa, xb, banda: nb++});
         ult = y1;
       } else {

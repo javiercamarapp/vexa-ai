@@ -102,12 +102,16 @@ test('hilo serpenteante con bandas de cruce: núcleo 3.5 px (7.5 en bandas) a 14
   assert.match(css, /\.s-hilo__nota \{[\s\S]*rotate: var\(--r, -3deg\)/, 'píldora ladeada');
   assert.match(INICIO, /function huecos\(/);
   assert.match(INICIO, /function puntosBanda\(/);
-  assert.match(INICIO, /const LOOPS = \[1, 3, 5\]/, 'tres bandas con rizo');
-  assert.match(INICIO, /const TRIPLES = \[0, 4\]/, 'dos bandas con triple cruce');
+  const loops = INICIO.match(/const LOOPS = \[([\d, ]*)\]/), triples = INICIO.match(/const TRIPLES = \[([\d, ]*)\]/);
+  assert.ok(loops && loops[1].split(',').length <= 3, 'no más de tres bandas con rizo (el lazo no se repite)');
+  assert.ok(triples && triples[1].split(',').length <= 1, 'a lo sumo una banda con triple cruce');
+  assert.match(INICIO, /const COLA = 72/, 'carril libre al final de cada banda en escritorio (nada cruza bajo la cabecera fija con la sección anclada)');
+  assert.match(INICIO, /v % 3 === 1[\s\S]*v % 3 === 2/, 'las S simples varían de forma por banda');
   assert.match(INICIO, /const RAMPA = 3, PASO_RAMPA = 26/, 'el trazo se engruesa en tres escalones');
   assert.match(INICIO, /new ResizeObserver\(medir\)/);
   assert.match(INICIO, /let AIRE = 24;/);
-  assert.match(INICIO, /AIRE = movil \? 20 : 24;/, "el móvil usa 20 px de aire para cruzar por los huecos naturales");
+  assert.match(INICIO, /AIRE = movil \? 18\.5 : 24;/, "el móvil usa 18.5 px de aire (16 de margen más medio núcleo de 2.1)");
+  assert.match(INICIO, /movil0 \? 10 :/, 'el riel móvil queda a 10 px del borde, no pegado a él');
   assert.match(INICIO, /const PULSO = \[\[230, 0\.1\], \[150, 0\.22\], \[90, 0\.45\], \[40, 0\.9\]\]/);
   assert.match(INICIO, /if \(RM \|\| !vivo \|\| !H\) return/, 'con movimiento reducido el hilo queda dibujado y sin pulso');
   assert.match(INICIO, /href: '#s-hilo-d'/, 'todas las capas comparten el mismo path vía <use>');
@@ -136,12 +140,12 @@ test('Chrome: la portada no pide nube, pts ni Lenis, no hay canvas y el CSP no r
   });
 });
 
-test('Chrome: movimiento reducido: ninguna animación ni transición de más de 150 ms y estado final del héroe', {skip: vivo ? false : motivo}, async () => {
+test('Chrome: movimiento reducido: cero animaciones y cero transiciones en curso y estado final del héroe', {skip: vivo ? false : motivo}, async () => {
   await sesion({vp: 1440, movimiento: 'reduce', etiqueta: 'mov-reducido'}, async (s) => {
     await s.page.goto(URL_VIVA, {waitUntil: 'load'});
     await dormir(5000);
-    const largas = await s.page.evaluate(() => document.getAnimations().filter((a) => a.effect?.getTiming().duration > 150).length);
-    assert.equal(largas, 0, 'sin animaciones largas');
+    const en = await s.page.evaluate(() => document.getAnimations().map((a) => `${a.constructor.name}:${a.animationName || a.transitionProperty}:${a.effect?.target?.className?.baseVal ?? a.effect?.target?.className}`));
+    assert.deepEqual(en, [], 'document.getAnimations() debe estar vacío con movimiento reducido');
     assert.equal(await s.page.evaluate(() => document.querySelector('[data-cuenta]').textContent), '36,000');
   });
 });
@@ -151,4 +155,41 @@ test('Chrome: el trazo serpenteante cruza de lado a lado y no toca texto, imáge
   const salida = execFileSync(process.execPath, [join(RAIZ, 'tools/sitio/cdp/hilo-carril.mjs'), '--url', URL_VIVA, '--vp', '1440,390', '--margen', '16'], {encoding: 'utf8', timeout: 300000});
   assert.match(salida, /OK +vp 1440: grosor 3\.5 px \(7\.5 en bandas\), (1[0-9]|[2-9]\d) cruces/);
   assert.match(salida, /OK +vp 390/);
+});
+
+test('Chrome: la altura de la página con movimiento reducido es la misma que con movimiento (± 2 %) a 1440 y a 390; sin JavaScript no pasa de 9 % más', {skip: vivo ? false : motivo}, async () => {
+  const alto = async (vp, opc) => {
+    let h = 0;
+    await sesion({vp, etiqueta: 'mov-altura', ...opc}, async (s) => {
+      await s.page.goto(URL_VIVA, {waitUntil: 'load'});
+      await dormir(2500);
+      h = await s.page.evaluate(() => document.documentElement.scrollHeight);
+    });
+    return h;
+  };
+  for (const vp of [1440, 390]) {
+    const normal = await alto(vp, {});
+    const reducido = await alto(vp, {movimiento: 'reduce'});
+    assert.ok(Math.abs(reducido - normal) / normal <= 0.02, `${vp}: reducido ${reducido} contra ${normal}`);
+  }
+  const normal = await alto(1440, {});
+  const sinJs = await alto(1440, {js: false});
+  assert.ok((sinJs - normal) / normal <= 0.09, `sin JS ${sinJs} contra ${normal}: solo los paneles de puestos y las respuestas de preguntas frecuentes pueden quedar abiertos`);
+});
+
+test('Chrome: héroe: la ventana asoma 380 px a 1440 por 900 y 300 px a 390 por 844, y la tarjeta de la cifra no cubre la ruta, la organización ni la captura', {skip: vivo ? false : motivo}, async () => {
+  for (const [vp, minimo] of [[1440, 380], [390, 300]]) {
+    await sesion({vp, etiqueta: 'mov-heroe'}, async (s) => {
+      await s.page.goto(URL_VIVA, {waitUntil: 'load'});
+      await dormir(6000);
+      const r = await s.page.evaluate(() => {
+        const g = (q) => { const e = document.querySelector(q); const b = e.getBoundingClientRect(); return {x0: b.left, x1: b.right, y0: b.top, y1: b.bottom}; };
+        const v = g('.s-hero .s-ventana--producto');
+        return {peek: Math.min(innerHeight, v.y1) - Math.max(0, v.y0), card: g('.s-hero .s-ov-cifra'), ruta: g('.s-hero .s-mock-ruta'), org: g('.s-hero .s-mock-org'), cuerpo: g('.s-hero .s-ventana__cuerpo')};
+      });
+      assert.ok(r.peek >= minimo, `${vp}: la ventana asoma ${r.peek} px (mínimo ${minimo})`);
+      const toca = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+      for (const k of ['ruta', 'org', 'cuerpo']) assert.ok(!toca(r.card, r[k]), `${vp}: la tarjeta toca ${k}`);
+    });
+  }
 });

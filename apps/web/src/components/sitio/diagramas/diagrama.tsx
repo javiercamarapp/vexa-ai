@@ -48,9 +48,10 @@ function Grupo({cx, cy, r, pulsos = [0]}: {cx: number; cy: number; r: number; pu
   );
 }
 
-function Envoltura({id, ancho, alto, titulo, desc, children, extra = ''}: {id: string; ancho: number; alto: number; titulo: string; desc: string; children: ReactNode; extra?: string}) {
+// y0 recorta el aire de arriba: los diagramas del problema dibujan entre y 28 y 144 de 160, y la caja sobrante sumaba 36 px muertos por columna.
+function Envoltura({id, ancho, alto, y0 = 0, titulo, desc, children, extra = ''}: {id: string; ancho: number; alto: number; y0?: number; titulo: string; desc: string; children: ReactNode; extra?: string}) {
   return (
-    <svg className={`s-red s-diag${extra ? ` ${extra}` : ''}`} viewBox={`0 0 ${ancho} ${alto}`} role="img" aria-labelledby={`s-diag-${id}-t s-diag-${id}-d`} data-diagrama={id.replace(/-(n|a)$/, '')}>
+    <svg className={`s-red s-diag${extra ? ` ${extra}` : ''}`} viewBox={`0 ${y0} ${ancho} ${alto}`} role="img" aria-labelledby={`s-diag-${id}-t s-diag-${id}-d`} data-diagrama={id.replace(/-(n|a)$/, '')}>
       <title id={`s-diag-${id}-t`}>{titulo}</title>
       <desc id={`s-diag-${id}-d`}>{desc}</desc>
       {children}
@@ -58,12 +59,12 @@ function Envoltura({id, ancho, alto, titulo, desc, children, extra = ''}: {id: s
   );
 }
 
-// ---------- Problema, cuatro columnas de 244 por 160 ----------
+// ---------- Problema, cuatro columnas de 244 por 124 (recorte de 24 a 148 del dibujo original de 244 por 160) ----------
 function Problema1({lang}: P) {
   const t = textosProblema(lang).columnas[0];
   const grupos: [number, number, string][] = [[42, 62, rotulo('soporte', lang)], [122, 86, rotulo('pedidos', lang)], [202, 62, rotulo('hojas', lang)]];
   return (
-    <Envoltura id="problema-1" ancho={244} alto={160} titulo={t.t} desc={t.alt}>
+    <Envoltura id="problema-1" ancho={244} alto={124} y0={24} titulo={t.t} desc={t.alt}>
       <Linea x1={82} y1={28} x2={82} y2={132} f="punteada" />
       <Linea x1={162} y1={28} x2={162} y2={132} f="punteada" />
       {grupos.map(([x, y, n]) => (
@@ -84,7 +85,7 @@ function Problema1({lang}: P) {
 function Problema2({lang}: P) {
   const t = textosProblema(lang).columnas[1];
   return (
-    <Envoltura id="problema-2" ancho={244} alto={160} titulo={t.t} desc={t.alt}>
+    <Envoltura id="problema-2" ancho={244} alto={124} y0={24} titulo={t.t} desc={t.alt}>
       <Linea x1={30} y1={64} x2={80} y2={64} />
       <Linea x1={80} y1={64} x2={112} y2={64} />
       <Linea x1={132} y1={64} x2={164} y2={64} />
@@ -104,7 +105,7 @@ function Problema2({lang}: P) {
 function Problema3({lang}: P) {
   const t = textosProblema(lang).columnas[2];
   return (
-    <Envoltura id="problema-3" ancho={244} alto={160} titulo={t.t} desc={t.alt}>
+    <Envoltura id="problema-3" ancho={244} alto={124} y0={24} titulo={t.t} desc={t.alt}>
       <Linea x1={24} y1={86} x2={220} y2={86} />
       {[48, 72, 96, 120, 144, 168, 192].map((x) => (
         <Linea key={x} x1={x} y1={83} x2={x} y2={89} />
@@ -124,7 +125,7 @@ function Problema4({lang}: P) {
   const t = textosProblema(lang).columnas[3];
   const ys = [34, 66, 98, 130];
   return (
-    <Envoltura id="problema-4" ancho={244} alto={160} titulo={t.t} desc={t.alt}>
+    <Envoltura id="problema-4" ancho={244} alto={124} y0={24} titulo={t.t} desc={t.alt}>
       {ys.map((y) => (
         <Linea key={y} x1={30} y1={y} x2={118} y2={74} f="tenue" />
       ))}

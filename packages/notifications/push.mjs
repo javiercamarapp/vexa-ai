@@ -2,6 +2,7 @@ import https from 'node:https';
 import {createHash} from 'node:crypto';
 import {check,uuid,strict} from './contracts.mjs';
 import {textoPush} from './idioma.mjs';
+import {idiomasDePersonas} from './preferencia-idioma.mjs';
 const hosts=new Set(['fcm.googleapis.com','updates.push.services.mozilla.com','web.push.apple.com']);
 const key=(v,n)=>typeof v==='string'&&/^[A-Za-z0-9_-]+$/.test(v)&&Buffer.from(v,'base64url').length===n&&Buffer.from(v,'base64url').toString('base64url')===v;
 export function copyPushSubscription(input){
@@ -80,7 +81,7 @@ export function createPushTransport({database,sdk,vapid,timeoutMs=5000,request}=
  const sender=createWebPushSender({sdk,vapid,timeoutMs,request});
  const operation=p=>database.transaction('import',s=>call(s,'push_worker',p));
  return Object.freeze({configured:sender.configured,
- async resolveRecipient(identity){const saved=structuredClone(identity);check(uuid(saved.tenantId)&&uuid(saved.userId)&&saved.channel==='push');const ids=await operation({...saved,op:'resolve'});return {...saved,consent:Array.isArray(ids)&&ids.length>0,subscriptionIds:ids};},
+ async resolveRecipient(identity){const saved=structuredClone(identity);check(uuid(saved.tenantId)&&uuid(saved.userId)&&saved.channel==='push');const ids=await operation({...saved,op:'resolve'});const idioma=(await idiomasDePersonas(database,[saved.userId])).get(saved.userId.toLowerCase());return {...saved,consent:Array.isArray(ids)&&ids.length>0,subscriptionIds:ids,...(idioma?{idioma}:{})};},
  async send({recipient,idempotencyKey,signal,idioma,message}){
   let r;try{r=structuredClone(recipient);}catch{return {kind:'blocked'};}
   if(!sender.configured()||!r||r.channel!=='push'||r.consent!==true||!uuid(r.tenantId)||!uuid(r.userId)||!Array.isArray(r.subscriptionIds)||!r.subscriptionIds.length||r.subscriptionIds.some(x=>!uuid(x))||! /^[0-9a-f]{64}$/.test(idempotencyKey))return {kind:'blocked'};

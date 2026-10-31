@@ -49,11 +49,11 @@ export function proveedorSimulado({respuestas = {}, costo = 100_000, lanzar = {}
 }
 export const ctrl = (usd) => ({sinDato: false, tipo: 'bruto', currency: 'USD', exponent: 2, minor: String(usd), supuesta: false});
 /** Vista de puntos real (armarPuntos) con datos mínimos para que haya P1, P2, P5... */
-export function vistaSimulada() {
+export function vistaSimulada(idioma = 'es') {
   const puntos = armarPuntos({
     tracker: {data: {byStatus: {vencido: {n: 10, nAmount: 8, amountMinor: '120000'}, rechazado: {n: 5, nAmount: 5, amountMinor: '30000'}}, total: 300}, meta: {sourceWatermark: '2026-10-20T00:00:00.000Z', refreshedAt: '2026-10-21T00:00:00.000Z'}},
     walmart: {n: 12, known: 12, minor: '456700', desde: '2026-08', hasta: '2026-10', refreshedAt: '2026-10-21T00:00:00.000Z', watermark: '2026-10-20T00:00:00.000Z'},
     reembolsos: null, ordenes: null, hilos: null, repetido: false, garantia: null, hilosMeta: null,
-  });
+  }, idioma);
   return {version: 'pain-points-v1', generatedAt: '2026-10-24T12:00:00.000Z', currency: 'USD', exponent: 2, tipoDinero: 'bruto', temas: [], clases: {}, puntos: [...puntos].sort(ordenPuntos), partes: {}, nota: ''};
 }

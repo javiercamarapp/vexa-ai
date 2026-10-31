@@ -1,5 +1,6 @@
 import {createHash} from 'node:crypto';
 import {Resend} from 'resend';
+import {SQL_IDIOMAS,mapaDeFilas} from './preferencia-idioma.mjs';
 const validId=v=>typeof v==='string'&&/^[A-Za-z0-9_-]{1,200}$/.test(v);
 const events=new Set(['email.sent','email.delivered','email.delivery_delayed','email.bounced','email.complained','email.failed','email.suppressed']);
 export function createReceiptRepository({pool}){
@@ -13,7 +14,17 @@ export function createReceiptRepository({pool}){
   await query('COMMIT');return result.rows[0]?.result;
  }catch{if(client){try{await client.query({text:'ROLLBACK',query_timeout:6000});}catch{destroy=true;}}throw Error('EMAIL_STORAGE_UNAVAILABLE');}finally{client?.release(destroy);}}
 
+ /** Idioma preferido de la persona (user_preferences), en su propia transacción corta con el rol del servicio de correo. Mejor esfuerzo: cualquier fallo = null (el aviso sale en español). */
+ async function idiomaDe({userId}){let client,destroy=false;try{
+  client=await acquire();
+  const query=(text,values)=>client.query({text,values,query_timeout:6000});
+  await query('BEGIN');await query("SET LOCAL statement_timeout = '3s'");await query('SET LOCAL ROLE vexa_email_service');
+  const m=mapaDeFilas((await query(SQL_IDIOMAS,[[String(userId).toLowerCase()]])).rows);
+  await query('COMMIT');return m.get(String(userId).toLowerCase())??null;
+ }catch{if(client){try{await client.query({text:'ROLLBACK',query_timeout:6000});}catch{destroy=true;}}return null;}finally{client?.release(destroy);}}
+
  return Object.freeze({
+ idioma:idiomaDe,
  resolveRecipient:({tenantId,userId})=>call('notification_email_recipient',[tenantId,userId]),
  prepare:({idempotencyKey,tenantId,userId,provider})=>call('notification_email_prepare',[idempotencyKey,tenantId,userId,provider]),
  prepareWeekly:({idempotencyKey,tenantId,userId,provider})=>call('notification_weekly_email_prepare',[idempotencyKey,tenantId,userId,provider]),

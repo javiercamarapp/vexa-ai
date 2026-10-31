@@ -9,6 +9,7 @@ import {idiomaDe} from '../notifications/idioma.mjs';
 import {renderWeeklyReport} from '../notifications/email-weekly.mjs';
 import {unsubscribeHeaders} from '../notifications/email-template.mjs';
 import {firmarBaja, urlBaja} from '../notifications/baja-semanal.mjs';
+import {idiomasDePersonas} from '../notifications/preferencia-idioma.mjs';
 
 export const UMBRAL_CRECE = 0.10;
 const big = v => BigInt(String(v ?? '0').split('.')[0] || '0');
@@ -126,7 +127,7 @@ const clave = (tenant, semana, user) => createHash('sha256').update(`weekly|${te
  * Servicio del reporte semanal de UNA organización. `database` es el del ACTOR DE SISTEMA (usuario del worker, miembro del tenant; acciones read e import). `entregar` solo se usa si `enviarActivo`.
  * @param {object} o
  * @param {string} o.tenantId organización del reporte (la misma de la sesión del actor de sistema)
- * @param {() => Promise<object>} o.vista lectura de los puntos (PainVista)
+ * @param {(idioma?: 'es'|'en') => Promise<object>} o.vista lectura de los puntos (PainVista); recibe el idioma del destinatario para que nombres y motivos salgan en ese idioma
  * @param {object} o.store almacén de corridas de IA (solo buscarRun/ultimoRun: NUNCA dispara IA)
  * @param {Function|null} [o.entregar] ({tenantId,userId,subject,html,text,headers,idempotencyKey}) => {ok,providerId?,motivo?}
  */
@@ -141,16 +142,21 @@ export function createWeeklyService({database, tenantId, vista, store, entregar 
     async ejecutar() {
       const hoy = now(), semana = iso(lunesDe(hoy));
       if (typeof secret !== 'string' || secret.length < 32) throw new WorkspaceError('weekly_unsubscribe_unconfigured', 503);
-      const v = await vista();
+      const v = await vista('es'); // base para comparar con el reporte anterior y elegir lo que se muestra (los ids no cambian con el idioma)
+      const porIdioma = new Map([['es', v]]);
+      const vistaEn = async lang => { if (!porIdioma.has(lang)) porIdioma.set(lang, await vista(lang)); return porIdioma.get(lang); };
       const anterior = await database.transaction('read', async s => (await s.query('SELECT snapshot FROM public.weekly_report_outbox WHERE tenant_id=$1 AND week_start<$2::date ORDER BY week_start DESC, created_at DESC LIMIT 1', [s.tenantId, semana])).rows[0]?.snapshot ?? null);
       const corridas = await corridasDe(v);
       const destinatarios = await database.transaction('import', s => fn(s, 'weekly_recipients', [s.tenantId], ['uuid']));
+      // Idioma de cada persona (user_preferences). Un worker no tiene Accept-Language: sin fila (o sin la tabla) el respaldo es el idioma del servicio, «es» por omisión.
+      const preferencias = await idiomasDePersonas(database, destinatarios.map(d => d.userId));
       const r = {semana, destinatarios: destinatarios.length, registrados: 0, yaExistian: 0, bajas: 0, enviados: 0, suprimidos: 0, fallidos: 0, enviarActivo: Boolean(enviarActivo && entregar), primera: false, nuevos: 0, crecen: 0};
       for (const d of destinatarios) {
         const token = firmarBaja({secret, tenantId, userId: d.userId, now: hoy});
-        const urls = {informe: new URL('/pain-points', appOrigin).href, metodo: new URL('/confianza', appOrigin).href, preferencias: new URL('/settings/notifications', appOrigin).href, baja: urlBaja(appOrigin, token, idiomaDe(d.idioma ?? idioma) === 'en' ? 'en' : undefined)};
-        // Idioma: el de la persona si algún día el destinatario lo trae (`d.idioma`), si no el del servicio; por omisión «es».
-        const b = construirInformeSemanal({vista: v, anterior, corridas, espacio: nombreEspacio, rol: ROL_TXT[d.role] ?? 'Analista', hoy, appOrigin, urls, idioma: d.idioma ?? idioma});
+        // Idioma: el que trae el destinatario, si no su preferencia guardada, si no el del servicio («es» por omisión: el producto atiende a México).
+        const lang = idiomaDe(d.idioma ?? preferencias.get(String(d.userId).toLowerCase()) ?? idioma);
+        const urls = {informe: new URL('/pain-points', appOrigin).href, metodo: new URL('/confianza', appOrigin).href, preferencias: new URL('/settings/notifications', appOrigin).href, baja: urlBaja(appOrigin, token, lang)}; // el enlace de baja lleva SIEMPRE el idioma del correo: la página de baja no depende del navegador de quien la abre
+        const b = construirInformeSemanal({vista: await vistaEn(lang), anterior, corridas, espacio: lang === 'en' && nombreEspacio === 'tu espacio' ? 'your workspace' : nombreEspacio, rol: ROL_TXT[d.role] ?? 'Analista', hoy, appOrigin, urls, idioma: lang});
         const mail = renderWeeklyReport(b.input);
         r.primera = b.resumen.primera; r.nuevos = b.resumen.nuevos; r.crecen = b.resumen.crecen;
         const rec = await database.transaction('import', s => fn(s, 'weekly_report_record', [s.tenantId, JSON.stringify({weekStart: semana, userId: d.userId, subject: mail.subject, html: mail.html, text: mail.text, snapshot: b.foto})], ['uuid', 'jsonb']));

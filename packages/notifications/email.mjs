@@ -5,6 +5,7 @@ import pg from 'pg';
 import {databasePoolOptions} from '../jobs/durable/pg-options.mjs';
 import {createReceiptRepository} from './receipts.mjs';
 import {renderEmail as renderTemplate} from './email-template.mjs';
+import {idiomaDe} from './idioma.mjs';
 export {renderEmail} from './email-template.mjs';
 export {renderWeeklyReport} from './email-weekly.mjs';
 const mailbox=v=>typeof v==='string'&&v.length<=254&&/^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(v);
@@ -27,7 +28,9 @@ export function createEmailTransport({mode,apiKey,from,replyTo,appOrigin,unsubsc
    if(current.providerId)return{kind:'accepted',providerId:current.providerId};
    if(input.signal?.aborted)return{kind:'blocked'};
    // Weekly content comes from the authorized, persisted report, never a caller's body.
-   let message={subject:template.subject,html:template.html,text:template.text,headers:template.headers};
+   // Idioma de la persona (preferencia guardada; sin ella, español: un worker no tiene Accept-Language y el producto atiende a México).
+   const plantilla=idiomaDe(r.idioma)==='en'?renderTemplate({type:'digest.available',appOrigin,ctaUrl:new URL('/notifications',appOrigin).href,...(unsubscribeUrl?{unsubscribeUrl}:{}),idioma:'en'}):template;
+   let message={subject:plantilla.subject,html:plantilla.html,text:plantilla.text,headers:plantilla.headers};
    if(weekly){
     const {subject,html,text}=current;
     if(typeof subject!=='string'||!subject||subject.length>998||/[\r\n]/.test(subject)||typeof html!=='string'||!html||html.length>1000000||typeof text!=='string'||!text||text.length>1000000)return{kind:'blocked'};
@@ -49,7 +52,7 @@ export function createEmailTransport({mode,apiKey,from,replyTo,appOrigin,unsubsc
    return{kind:'accepted',providerId};
   }catch{return{kind:'uncertain'};}
  }
- return Object.freeze({configured,resolveRecipient:identity=>repository.resolveRecipient(structuredClone(identity)),send:input=>deliver(input),sendWeekly:input=>deliver(input,true)});
+ return Object.freeze({configured,resolveRecipient:async identity=>{const owned=structuredClone(identity);const r=await repository.resolveRecipient(owned);if(!r||typeof repository.idioma!=='function')return r;let idioma=null;try{idioma=await repository.idioma({tenantId:owned.tenantId,userId:owned.userId});}catch{idioma=null;}return idioma==='es'||idioma==='en'?{...r,idioma}:r;},send:input=>deliver(input),sendWeekly:input=>deliver(input,true)});
 }
 /** Each attempt owns its socket. Abort destroys only that socket, including during connect. */
 export function createMailpitSender({port}){

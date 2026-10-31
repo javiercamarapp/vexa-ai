@@ -30,7 +30,7 @@ export async function ejecutarSemanal({deadlineAt}:{deadlineAt:number}){
    const db=worker.database;
    let nombre:string|null=null;
    try{nombre=limpiarTexto((await db.transaction('read',(s:{tenantId:string;query:(t:string,v:unknown[])=>Promise<{rows:{name:string}[]}>})=>s.query('SELECT name FROM public.organizations WHERE id=$1',[s.tenantId]))).rows[0]?.name,40);}catch{nombre=null;}
-   const svc=createWeeklyService({database:db,tenantId:tenant,vista:()=>createPainPointsRepository({database:db}).get(),store:createPainAiStore({database:db}),entregar,enviarActivo:Boolean(entregar),
+   const svc=createWeeklyService({database:db,tenantId:tenant,vista:(idioma?:'es'|'en')=>createPainPointsRepository({database:db}).get({idioma:idioma==='en'?'en':'es'}),store:createPainAiStore({database:db}),entregar,enviarActivo:Boolean(entregar),
     secret:process.env.VEXA_UNSUBSCRIBE_SECRET,appOrigin:process.env.VEXA_APP_ORIGIN??'',nombreEspacio:nombre??'tu espacio'});
    resultados.push({tenant,...await svc.ejecutar()});
   }finally{await worker.close();}

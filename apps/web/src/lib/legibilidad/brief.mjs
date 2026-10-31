@@ -2,7 +2,7 @@
 // prioridades, «Qué hacer» y «Qué vigilar»: todo sale de las prioridades (top3) y de la selección registrada en el documento.
 // Honestidad: desconocido no es 0; un subtotal conocido se rotula «no es el total»; sin registros elegibles es «Sin cobertura».
 import {etiquetaCategoria} from './categorias.mjs';
-import {idiomaDe} from './trad.mjs';
+import {idiomaDe,X} from './trad.mjs';
 const entero=v=>typeof v==='string'&&/^-?\d+$/.test(v);
 /** Cómo se muestra una cifra del brief. tipo: exacta | subtotal | sin_cobertura | desconocida. `valor` es el importe o null. */
 export function cifraBrief(metric){
@@ -35,10 +35,10 @@ export function resumenVigilar(doc){
  return {total,listados,omitidos:total!==null?Math.max(0,total-listados):null};
 }
 /** A6: la cifra del brief es la de SU momento (la selección guardada), no un conteo en vivo: se rotula «al guardarse el brief, <fecha>» y remite a Problemas, que cuenta con la definición única (critico.mjs). */
-export function fraseVigilar(vig,fechaCorte,fraseGrupos){
- const al=fechaCorte?`Al guardarse este brief (${fechaCorte})`:'Al guardarse este brief';
- if(vig.total===null)return `${al} se listan ${fraseGrupos(vig.listados)}.`;
- return `${al} había ${fraseGrupos(vig.total)} (sin contar las notificaciones automáticas ocultas, mismo criterio que Problemas); este brief detalla los ${vig.listados} con más citas. Problemas recalcula con los datos de hoy y puede mostrar otra cifra.`;
+export function fraseVigilar(vig,fechaCorte,fraseGrupos,t=null){
+ const al=fechaCorte?X(t,'tr.crit.vigFecha',`Al guardarse este brief (${fechaCorte})`,{fecha:fechaCorte}):X(t,'tr.crit.vigSinFecha','Al guardarse este brief');
+ if(vig.total===null)return X(t,'tr.crit.vigListados',`${al} se listan ${fraseGrupos(vig.listados)}.`,{al,grupos:fraseGrupos(vig.listados)});
+ return X(t,'tr.crit.vigTotal',`${al} había ${fraseGrupos(vig.total)} (sin contar las notificaciones automáticas ocultas, mismo criterio que Problemas); este brief detalla los ${vig.listados} con más citas. Problemas recalcula con los datos de hoy y puede mostrar otra cifra.`,{al,grupos:fraseGrupos(vig.total),listados:vig.listados});
 }
 /** Problemas críticos que NO están ya entre las prioridades (se muestran como lista breve, sin repetir tarjetas). */
 export function criticosAparte(doc){

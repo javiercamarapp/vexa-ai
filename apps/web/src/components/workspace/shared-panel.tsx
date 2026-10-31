@@ -23,7 +23,7 @@ import {SkeletonStats,SkeletonChart,SkeletonCards} from '../ui/skeletons';
 import {WaitStatus} from '../ui/wait-status';
 import {ESPERA} from '../../lib/legibilidad/espera.mjs';
 import {lineaProblemas} from '../../lib/legibilidad/guias.mjs';
-import {DEFINICION,fraseCriticos} from '../../../../../packages/workspace-service/critico.mjs';
+import {avisoDeMeta,fraseCriticosT} from '../../lib/legibilidad/criticos.mjs';
 import Link from './navigation-lifecycle';
 import {pedirConReintento,mensajeDeError,esErrorDeRed} from '../../lib/workspace/reintento.mjs';
 import {claveCache,guardarCache,leerCache,invalidarCache} from '../../lib/workspace/cache.mjs';
@@ -105,8 +105,8 @@ export function SharedWorkspacePanel({resource,initialQuery}:{resource:'metrics'
  // El desplazamiento lo restaura RestaurarVista (shell) para todas las pantallas.
  const clave=bundle?.meta.scope_hash?'vexa:criticos:'+bundle.meta.scope_hash:null,[ultimo,setUltimo]=useState<{groups:number;signals:number|null}|null>(null);
  useEffect(()=>{if(!clave)return;let nuevo:{groups:number;signals:number|null}|null=null;try{if(bundle?.meta.critical_counts)sessionStorage.setItem(clave,JSON.stringify(bundle.meta.critical_counts));else{const v=sessionStorage.getItem(clave);nuevo=v?JSON.parse(v):null;}}catch{nuevo=null;}void Promise.resolve().then(()=>setUltimo(nuevo));},[clave,bundle?.meta.critical_counts]);
- const notice=bundle?.meta.critical_notice&&<Notice tone="warn" title={t('panel.critico')} actions={bundle.meta.catalog?<a className="row-link-inline" href="#senales-criticas">{t('panel.verCuales')}</a>:undefined}><span title={DEFINICION.senal+' '+DEFINICION.grupo}>{bundle.meta.critical_notice}</span></Notice>;
- const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<Notice tone="info" title={ultimo?t('panel.criticoUltima'):t('panel.criticoPendiente')} actions={ultimo?undefined:<Button size="sm" onClick={update}>{t('panel.recalcular')}</Button>}>{ultimo?<>{t('panel.criticoUltimaFrase',{frase:fraseCriticos({grupos:ultimo.groups,senales:ultimo.signals})})} </>:<>{t('panel.criticoNoCalculadas')} </>}{isOverview&&<>{t('panel.consultalas')} <Link href={'/problems'+(pinned.size?'?'+pinned.toString():'')} className="row-link-inline">{t('nav.item.problems')}</Link>.</>}</Notice>;
+ const notice=bundle?.meta.critical_notice&&<Notice tone="warn" title={t('panel.critico')} actions={bundle.meta.catalog?<a className="row-link-inline" href="#senales-criticas">{t('panel.verCuales')}</a>:undefined}><span title={t('prob.defSenal')+' '+t('prob.defGrupo')}>{avisoDeMeta(t,bundle.meta)}</span></Notice>;
+ const criticalPending=!bundle?.meta.critical_notice&&bundle?.meta.critical_notice_state==='unavailable'&&<Notice tone="info" title={ultimo?t('panel.criticoUltima'):t('panel.criticoPendiente')} actions={ultimo?undefined:<Button size="sm" onClick={update}>{t('panel.recalcular')}</Button>}>{ultimo?<>{t('panel.criticoUltimaFrase',{frase:fraseCriticosT(t,{grupos:ultimo.groups,senales:ultimo.signals})})} </>:<>{t('panel.criticoNoCalculadas')} </>}{isOverview&&<>{t('panel.consultalas')} <Link href={'/problems'+(pinned.size?'?'+pinned.toString():'')} className="row-link-inline">{t('nav.item.problems')}</Link>.</>}</Notice>;
  if(busy&&!bundle&&!error&&!missing)return <RovaqCargando mensaje=""/>;
  return <section className="stack" aria-label={isOverview?t('panel.aria.resumen'):t('panel.aria.problemas')}>
   {!isOverview&&<PageHeader nivel={1} eyebrow={t('panel.eyebrowProblemas')} title={t('panel.tituloProblemas')} guide={isOverview?'resumen':'problemas'} linea={isOverview?undefined:lineaProblemas(bundle?bundle.items.some(i=>i.metrics.some(m=>m.kind==='exposure'&&m.amount_minor!==null&&/^-?\d+$/.test(m.amount_minor))):null,t)} actions={actions}/>}

@@ -47,20 +47,20 @@ export const serieVentas=(ing:Ing|null)=>ing?ing.meses.filter(m=>calidadMes(m)==
 
 // ---------- Ingreso por mes y canal (columnas apiladas con color por canal)
 export function GraficoMeses({ing}:{ing:Ing}){
- const t=useT();
+ const t=useT(),idioma=useIdioma();
  const max=Math.max(1,...ing.meses.map(m=>big(m.totalMinor)));
  const canales=[...new Set(ing.meses.flatMap(m=>Object.keys(m.canales)))].sort((a,b)=>cc(a)-cc(b));
- const resumen=ing.meses.map(m=>`${mesLargo(m.mes)} ${usd(m.totalMinor)}`).join(', ');
+ const resumen=ing.meses.map(m=>`${mesLargo(m.mes,idioma)} ${usd(m.totalMinor)}`).join(', ');
  return <div className="dg-fill">
   <Leyenda items={[...canales.map(c=>({label:NOMBRE[c]??c,c:cc(c),integracion:c})),{label:t('tr.brecha.mesParcialHueco'),hatch:true}]}/>
   <div className="dg-meses" style={{gridTemplateColumns:`repeat(${ing.meses.length},minmax(0,1fr))`}} role="img" aria-label={t('tr.brecha.mesesAria',{resumen})}>
    {ing.meses.map(m=><div key={m.mes} className="dg-mes" data-q={calidadMes(m)}>
     <span className="dg-mes-v">{corto(big(m.totalMinor))}</span>
     <span className="dg-mes-a">{canales.filter(c=>m.canales[c]).map(c=><i key={c} title={`${NOMBRE[c]??c}: ${usd(m.canales[c].activoMinor)}`} style={{height:`${Math.max(1,big(m.canales[c].activoMinor)*100/max)}%`,background:color(cc(c)-1)}}/>)}</span>
-    <span className="dg-mes-m">{mesCorto(m.mes).split(' ')[0]}<small>{mesCorto(m.mes).split(' ')[1]}</small></span></div>)}
+    <span className="dg-mes-m">{mesCorto(m.mes,idioma).split(' ')[0]}<small>{mesCorto(m.mes,idioma).split(' ')[1]}</small></span></div>)}
   </div>
   <div className="sr-only mv-alt"><table><caption>{t('brechas.cIngresoMes')}</caption><thead><tr><th>{t('fuga.thMes')}</th>{canales.map(c=><th key={c}>{NOMBRE[c]??c}</th>)}<th>{t('tr.brecha.total')}</th></tr></thead>
-   <tbody>{ing.meses.map(m=><tr key={m.mes}><th scope="row">{mesLargo(m.mes)}</th>{canales.map(c=><td key={c}>{m.canales[c]?usd(m.canales[c].activoMinor):t('brechas.sinDato')}</td>)}<td>{usd(m.totalMinor)}</td></tr>)}</tbody></table></div>
+   <tbody>{ing.meses.map(m=><tr key={m.mes}><th scope="row">{mesLargo(m.mes,idioma)}</th>{canales.map(c=><td key={c}>{m.canales[c]?usd(m.canales[c].activoMinor):t('brechas.sinDato')}</td>)}<td>{usd(m.totalMinor)}</td></tr>)}</tbody></table></div>
  </div>;
 }
 

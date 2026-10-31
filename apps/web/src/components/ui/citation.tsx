@@ -6,6 +6,7 @@ import {useT} from '../i18n/proveedor';
 import type {Clave} from '../../lib/i18n';
 import type {OriginView} from '../../../../../packages/workspace-service/provenance.mjs';
 import {enmascararTerceros} from '../../../../../packages/workspace-service/enmascarar-terceros.mjs';
+import {marcasEnIdioma} from '../../lib/legibilidad/marcas.mjs';
 import {Button} from './button';
 import {IdChip} from './id-chip';
 import {fetchCupo} from '../../lib/workspace/cupo.mjs';
@@ -20,7 +21,7 @@ export function Citation({quote,role,messageRevisionId,category,source,times}:Ci
   catch(e){setError(e instanceof Error&&e.message==='404'?'tr.ui.cit404':'tr.ui.citErr');}finally{setBusy(false);}
  }
  return <figure className="citation">
-  <blockquote>{enmascararTerceros(quote)}</blockquote>
+  <blockquote>{marcasEnIdioma(enmascararTerceros(quote),t)}</blockquote>
   <figcaption><span className="chip">{roles[role]?t(roles[role]):role}</span>{category&&<span className="chip">{etiquetaCategoria(category,t)}</span>}{source&&<span className="chip"><ConMarca marca={source}>{source}</ConMarca></span>}{times!==undefined&&times>1&&<span className="chip" title={t('tr.ui.citVeces',{n:times})}>×{times}</span>}<Button size="sm" aria-expanded={open} aria-controls={panel} loading={busy} onClick={()=>void toggle()}>{open?t('tr.ui.citOcultar'):t('tr.ui.citVer')}</Button></figcaption>
   <div id={panel} hidden={!open} className="origin" aria-live="polite">
    {error&&<p className="state state-error" role="alert">{t(error)}</p>}

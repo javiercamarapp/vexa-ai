@@ -98,7 +98,7 @@ const TOPE_MODULOS: Record<string, number> = {
  'lib/history/historico.mjs': 17,
  'lib/imports/connection-options.ts': 1,
  'lib/jobs/progreso.mjs': 5,
- 'lib/legibilidad/brief.mjs': 4,
+ 'lib/legibilidad/brief.mjs': 2,
  'lib/legibilidad/caida.mjs': 2,
  'lib/legibilidad/categorias.mjs': 37,
  'lib/legibilidad/dinero.mjs': 2,

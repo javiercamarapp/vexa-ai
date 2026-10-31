@@ -45,8 +45,9 @@ export function frasesMesContraMes(v) {
 }
 export const mesesExcluidos = v => (v?.ingresos?.status === 'ok' ? v.ingresos.calidad.filter(q => q.calidad !== 'completo').map(q => `${NOMBRE[q.canal] ?? q.canal} ${mesLargo(q.mes)} (${q.calidad === 'parcial' ? 'mes parcial' : 'posible hueco de exportación'})`) : []);
 /** Texto del avance del análisis del histórico. */
-export function textoAvance(f) {
-  const p = f?.progreso; if (!p) return 'El avance no está disponible ahora.';
-  if (p.objetivo === null || p.avancePct === null) return `${num(p.v2)} conversaciones analizadas con el análisis nuevo.`;
-  return `${num(p.v2)} de ${num(p.objetivo)} conversaciones del histórico analizadas (${pct(p.avancePct)}).`;
+export function textoAvance(f, idioma = 'es') {
+  const p = f?.progreso, en = idioma === 'en';
+  if (!p) return en ? 'Progress is not available right now.' : 'El avance no está disponible ahora.';
+  if (p.objetivo === null || p.avancePct === null) return en ? `${num(p.v2)} conversations analyzed with the new analysis.` : `${num(p.v2)} conversaciones analizadas con el análisis nuevo.`;
+  return en ? `${num(p.v2)} of ${num(p.objetivo)} history conversations analyzed (${pct(p.avancePct)}).` : `${num(p.v2)} de ${num(p.objetivo)} conversaciones del histórico analizadas (${pct(p.avancePct)}).`;
 }

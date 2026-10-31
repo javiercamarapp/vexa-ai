@@ -3,6 +3,7 @@ import {useRef,useState,type ReactNode} from 'react';
 import type {Recommendation} from '../../../../../packages/recommendations/index.mjs';
 import {validarAprobacion,validarAjuste,validarDescarte,validarResultado,RESULTADOS,PRIORIDADES,MIN_COMENTARIO,type Problema} from '../../../../../packages/recommendations/flujo.mjs';
 import {useT} from '../i18n/proveedor';
+import type {Clave} from '../../lib/i18n';
 import type {Traductor} from '../../lib/i18n';
 import {Drawer} from '../ui/overlay';
 import {Button} from '../ui/button';
@@ -17,7 +18,7 @@ type Comun={open:boolean;onClose:()=>void;item:Recommendation;miembros:Miembro[]
 const hoyMas=(dias:number)=>new Date(Date.now()+dias*86400000).toISOString().slice(0,10);
 /** Una clave de idempotencia por intención: se conserva si la operación falla (se reintenta con la MISMA clave) y se renueva cuando el contenido cambia. */
 function useClave(huella:string){const ref=useRef<{h:string;k:string}|null>(null);return ()=>{if(ref.current?.h!==huella)ref.current={h:huella,k:crypto.randomUUID()};return ref.current.k;};}
-function Faltan({errores}:{errores:Problema[]}){const t=useT();return errores.length?<p className={css.faltan} role="status" id="faltan-lista">{t('tr.recs.paraContinuar',{lista:errores.map(e=>e.mensaje).join(' ')})}</p>:null;}
+function Faltan({errores}:{errores:Problema[]}){const t=useT();return errores.length?<p className={css.faltan} role="status" id="faltan-lista">{t('tr.recs.paraContinuar',{lista:errores.map(e=>e.codigo?t(e.codigo as Clave,{min:MIN_COMENTARIO}):e.mensaje).join(' ')})}</p>:null;}
 function Campo({id,etiqueta,ayuda,children}:{id:string;etiqueta:string;ayuda?:string;children:ReactNode}){return <div className="field"><label htmlFor={id}>{etiqueta}</label>{children}{ayuda&&<small className={css.ayuda}>{ayuda}</small>}</div>;}
 const ETAPAS=['tr.recs.eAprobar','tr.recs.eBorradores','tr.recs.eEnCurso','tr.recs.eResultado'] as const;
 /** Cabecera fija del flujo: dónde está esta recomendación en el proceso y qué acción se decide (el pie solo trae la decisión). */

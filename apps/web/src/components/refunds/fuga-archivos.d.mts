@@ -4,7 +4,7 @@ export type Archivo = {nombre: string; mime: string; contenido: string};
 export function celda(v: unknown): string;
 export function csv(filas: unknown[][], encabezado: string[]): string;
 export function esc(s: unknown): string;
-export function proveniencia(v: FugaVista): string[];
+export function proveniencia(v: FugaVista, idioma?: string): string[];
 import type {SkuFila, SkuTracker} from '../../../../../packages/workspace-service/fuga-reembolsos.mjs';
 export function datosSku(v: FugaVista, sku: string): {fila: SkuFila | null; meses: {sku: string; canal: string; mes: string; n: number; usdBrutoMinor: string}[]; tr: SkuTracker | null};
 export function paqueteEvidencia(v: FugaVista, sku: string): {html: Archivo; csv: Archivo} | null;

@@ -10,5 +10,5 @@ export function fraseConcentracionIngreso(v: BrechasVista | null): string | null
 export function fraseConcentracionReembolsos(v: BrechasVista | null): string | null;
 export function frasesMesContraMes(v: BrechasVista | null): string[];
 export const mesesExcluidos: (v: BrechasVista | null) => string[];
-export function textoAvance(f: {progreso: BrechasVista['familias']['progreso']} | null | undefined): string;
+export function textoAvance(f: {progreso: BrechasVista['familias']['progreso']} | null | undefined, idioma?: string): string;
 export type {FilaFamilia};

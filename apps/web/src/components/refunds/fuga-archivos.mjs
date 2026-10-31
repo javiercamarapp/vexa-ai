@@ -18,12 +18,18 @@ const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^
 const hoy = v => (v?.generatedAt ?? new Date().toISOString()).slice(0, 10);
 
 /** Fuentes y cobertura que acompañan a cada archivo. */
-export function proveniencia(v) {
+/** Líneas «de dónde sale cada cifra». Sin idioma: español (los documentos y CSV conservan su texto); la pantalla pasa el idioma activo. */
+export function proveniencia(v, idioma = 'es') {
+  const en = idioma === 'en';
   return [
-    'Fuente de reembolsos y pedidos: libro económico cargado en Rovaq (Amazon y Walmart; fecha efectiva en UTC). Solo USD; otras monedas no se suman.',
-    'Fuente del motivo y estado: Tracker de Excel del cliente (hojas Reembolsos, Garantía de herramientas, Garantía de partes y Etiquetas; última revisión de cada fila; los espejos WTR/WPR no se suman). Monto del Tracker: moneda no declarada, se supone USD.',
-    `Ventanas de exportación: ${v.todasParciales ? 'ninguna está marcada como completa' : 'hay ventanas parciales'}. Las líneas vendidas cubren solo la ventana de pedidos de cada canal; no hay cantidad por línea.`,
-    `Generado ${dia(v.generatedAt)} desde Rovaq. Observado = registrado en la fuente; no prueba causa ni responsabilidad.`,
+    en ? 'Source of refunds and orders: economic ledger loaded into Rovaq (Amazon and Walmart; effective date in UTC). USD only; other currencies are not added.'
+      : 'Fuente de reembolsos y pedidos: libro económico cargado en Rovaq (Amazon y Walmart; fecha efectiva en UTC). Solo USD; otras monedas no se suman.',
+    en ? 'Source of reason and status: the customer’s Excel Tracker (Refunds, Tool warranty, Parts warranty and Labels sheets; latest revision of each row; the WTR/WPR mirrors are not added). Tracker amount: no currency declared, USD is assumed.'
+      : 'Fuente del motivo y estado: Tracker de Excel del cliente (hojas Reembolsos, Garantía de herramientas, Garantía de partes y Etiquetas; última revisión de cada fila; los espejos WTR/WPR no se suman). Monto del Tracker: moneda no declarada, se supone USD.',
+    en ? `Export windows: ${v.todasParciales ? 'none is marked as complete' : 'some windows are partial'}. Lines sold cover only each channel’s order window; there is no quantity per line.`
+      : `Ventanas de exportación: ${v.todasParciales ? 'ninguna está marcada como completa' : 'hay ventanas parciales'}. Las líneas vendidas cubren solo la ventana de pedidos de cada canal; no hay cantidad por línea.`,
+    en ? `Generated ${dia(v.generatedAt, idioma)} from Rovaq. Observed = recorded in the source; it proves neither cause nor responsibility.`
+      : `Generado ${dia(v.generatedAt)} desde Rovaq. Observado = registrado en la fuente; no prueba causa ni responsabilidad.`,
   ];
 }
 export const NO_SE_SABE = ['La cantidad de unidades (el libro trae una fila por línea de pedido).', 'La causa del reembolso: el libro no trae motivo y la causa no está registrada.', 'Los tickets sin SKU: solo una pequeña parte tiene SKU, por el Tracker.', 'El vínculo reembolso-pedido de Walmart (los identificadores no coinciden).', 'Una tasa de reembolso del SKU: las ventanas no son iguales ni hay cantidad.'];

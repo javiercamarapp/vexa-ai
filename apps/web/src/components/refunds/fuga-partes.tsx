@@ -84,7 +84,7 @@ const orden=(o:Record<string,number>)=>Object.entries(o).sort((a,b)=>b[1]-a[1]);
 
 // ---- S5: expediente del SKU ----
 export function Expediente({v,sku,lineasOk,onPaquete}:{v:FugaVista;sku:string;lineasOk:boolean;onPaquete:(sku:string)=>void}){
- const tx=useT();
+ const tx=useT(),idioma=useIdioma();
  const {fila,meses,tr}=datosSku(v,sku);
  if(!fila)return null;
  const trackerEstado=v.tracker.status;
@@ -106,7 +106,7 @@ export function Expediente({v,sku,lineasOk,onPaquete}:{v:FugaVista;sku:string;li
    <Lista titulo={tx('fuga.queNoSabe')} tono="no" items={noSeSabeTxt(tx).slice(0,4)}/>
   </div>
   {meses.length>0&&<details className="fg-mini"><summary>{tx('fuga.reembMes')}</summary><table aria-label={tx('fuga.reembMes')}><thead><tr><th scope="col">{tx('fuga.thMes')}</th><th scope="col">{tx('fuga.thCanal')}</th><th scope="col" className="fg-r">{tx('fuga.thReemb')}</th><th scope="col" className="fg-r">{tx('fuga.thUsdBruto')}</th></tr></thead>
-   <tbody>{meses.map(m=><tr key={m.mes+m.canal}><td>{mesCorto(m.mes)}</td><td>{NOMBRE[m.canal]??m.canal}</td><td className="fg-r">{num(m.n)}</td><td className="fg-r">{usd(m.usdBrutoMinor)}</td></tr>)}</tbody></table></details>}
+   <tbody>{meses.map(m=><tr key={m.mes+m.canal}><td>{mesCorto(m.mes,idioma)}</td><td>{NOMBRE[m.canal]??m.canal}</td><td className="fg-r">{num(m.n)}</td><td className="fg-r">{usd(m.usdBrutoMinor)}</td></tr>)}</tbody></table></details>}
  </div>;
 }
 

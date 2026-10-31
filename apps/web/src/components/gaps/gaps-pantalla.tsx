@@ -1,5 +1,5 @@
 'use client';
-import {useT} from '../i18n/proveedor';
+import {useIdioma,useT} from '../i18n/proveedor';
 import {formatoNum} from '../../lib/formato/idioma.mjs';
 const nf1=formatoNum({maximumFractionDigits:1});
 import {ConMarca} from '../ui/brand-mark';
@@ -31,7 +31,7 @@ const corto=(n:number)=>n>=1_000_000?`US$${(n/1_000_000).toFixed(2)}M`:n>=1000?`
 
 /** Pantalla «Brechas de ingreso»: titular, KPI en color, puente de ventas a ingreso retenido, dónde gano / pierdo / podría ganar, tabla «Cierra esta brecha» y ventas vs quejas. Siempre ingreso bruto, nunca margen. */
 export function GapsPantalla({organization}:{organization?:string}){
- const t=useT(),g=useGaps(),v=g.data;
+ const t=useT(),idioma=useIdioma(),g=useGaps(),v=g.data;
  const [per,setPer]=useState<'1'|'3'|'6'|'12'|'todo'>('todo'),[off,setOff]=useState<string[]>([]);
  const [aviso,setAviso]=useState(''),[supuesto,setSupuesto]=useState<Supuesto|null>(null);
  const irA=(id:string)=>{const el=document.getElementById('rec-'+id)??document.getElementById('gp-brecha');el?.scrollIntoView({behavior:'smooth',block:'center'});};
@@ -89,7 +89,7 @@ export function GapsPantalla({organization}:{organization?:string}){
     <Card title={t('brechas.cRecuperar')} description={t('brechas.cRecuperarD')} actions={<KindBadge kind="estimated"/>}><EstimadorBrecha recs={v.recomendaciones.items} onSupuestos={setSupuesto}/></Card>
     <Card title={t('brechas.cComo')} description={t('brechas.consultaDel',{fecha:v.generatedAt.slice(0,10)})}>
      <ul style={{margin:0,paddingLeft:18,fontSize:13,lineHeight:1.55,color:'var(--ui-secondary)'}}>
-      {proveniencia(v).map((x,i)=><li key={i}>{x}</li>)}
+      {proveniencia(v,idioma).map((x,i)=><li key={i}>{x}</li>)}
       <li>{t('brechas.mesCompleto')}</li>
       <li>{t('brechas.noCalcula')}</li></ul>
      <p className="dg-nota" role="status" aria-live="polite"><Icon name="info" size={12}/> {aviso||t('brechas.avisoArchivos')}</p></Card>

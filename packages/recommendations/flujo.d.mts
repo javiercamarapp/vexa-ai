@@ -4,7 +4,7 @@ export type Prioridad = 'critical' | 'high' | 'normal';
 export type Resultado = 'yes' | 'no' | 'partial';
 export type FlowEvent = {id: string; kind: FlowKind; recommendationVersion: number; actorId: string; ownerId: string | null; dueDate: string | null; priority: Prioridad | null; outcome: Resultado | null; note: string | null; comment: string | null; interventionId: string | null; comparison: Comparacion | null; createdAt: string};
 export type Comparacion = {antesMinor: string; despuesMinor: string; deltaMinor: string; moneda: string; exponente: number; completa: boolean; razones: string[]; publicacionAntes: string | null; publicacionDespues: string | null; rotulo: string};
-export type Problema = {campo: string; mensaje: string};
+export type Problema = {campo: string; mensaje: string; codigo?: string};
 export type FilaLinea = {clave: string; tipo: string; titulo: string; cuando: string; quien: string; detalle: string | null; version: number};
 export const ROLES_QUE_DECIDEN: readonly string[];
 export const PRIORIDADES: readonly Prioridad[];

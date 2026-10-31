@@ -40,7 +40,7 @@ export function Pareto({v,onReintentar}:{v:FugaVista;onReintentar:()=>void}){
 
 // ---- Intensidad por canal (columnas finas por canal)
 export function IntensidadCanales({v,onReintentar}:{v:FugaVista;onReintentar:()=>void}){
- const t=useT(),i=v.intensidad;
+ const t=useT(),idioma=useIdioma(),i=v.intensidad;
  if(i.status!=='ok')return <NoDisponible texto={t('tr.fuga.intensNoDisp')} onRetry={onReintentar}/>;
  const canales=Object.entries(i.canales);
  const todos=canales.flatMap(([,b])=>b.meses).filter(m=>!m.ultimo&&m.calidad!=='posible_hueco'&&m.intensidadPct!==null);
@@ -51,12 +51,12 @@ export function IntensidadCanales({v,onReintentar}:{v:FugaVista;onReintentar:()=
   {canales.map(([c,b])=>{const meses=b.meses.filter(m=>!m.ultimo);
    return <div key={c} style={{marginBottom:10,flex:'1 1 auto',display:'flex',flexDirection:'column'}}><p className="dg-lab" style={{margin:'0 0 4px'}}><b><ConMarca marca={c}>{NOMBRE[c]??c}</ConMarca></b></p>
     {!meses.length?<Vacio>{t('tr.fuga.sinMeses')}</Vacio>:
-    <div className="dg-meses" style={{height:'auto',minHeight:120,flex:'1 1 auto',gridTemplateColumns:`repeat(${meses.length},minmax(0,1fr))`}} role="img" aria-label={t('tr.fuga.intensMensualAria',{canal:NOMBRE[c]??c,lista:meses.map(m=>`${mesCorto(m.mes)} ${m.intensidadPct===null?t('brechas.sinDato'):pct(m.intensidadPct)}`).join(', ')})}>
-     {meses.map(m=><div key={m.mes} className="dg-mes" style={{gridTemplateRows:'14px 1fr 16px'}} data-q={m.calidad} title={t('tr.fuga.mesTitulo',{mes:mesCorto(m.mes),n:num(m.reembolsos),l:num(m.lineas),v:m.intensidadPct===null?t('brechas.sinDato'):pct(m.intensidadPct),extra:m.calidad==='parcial'?t('tr.fuga.extraParcial'):m.calidad==='posible_hueco'?t('tr.fuga.extraHueco'):''})}>
+    <div className="dg-meses" style={{height:'auto',minHeight:120,flex:'1 1 auto',gridTemplateColumns:`repeat(${meses.length},minmax(0,1fr))`}} role="img" aria-label={t('tr.fuga.intensMensualAria',{canal:NOMBRE[c]??c,lista:meses.map(m=>`${mesCorto(m.mes,idioma)} ${m.intensidadPct===null?t('brechas.sinDato'):pct(m.intensidadPct)}`).join(', ')})}>
+     {meses.map(m=><div key={m.mes} className="dg-mes" style={{gridTemplateRows:'14px 1fr 16px'}} data-q={m.calidad} title={t('tr.fuga.mesTitulo',{mes:mesCorto(m.mes,idioma),n:num(m.reembolsos),l:num(m.lineas),v:m.intensidadPct===null?t('brechas.sinDato'):pct(m.intensidadPct),extra:m.calidad==='parcial'?t('tr.fuga.extraParcial'):m.calidad==='posible_hueco'?t('tr.fuga.extraHueco'):''})}>
       <span className="dg-mes-v">{m.calidad==='posible_hueco'?'?':''}</span>
       <span className="dg-mes-a">{m.calidad!=='posible_hueco'&&m.intensidadPct!==null&&<i style={{height:Math.max(3,m.intensidadPct*100/max)+'%',background:color(cc(c)-1)}}/>}</span>
-      <span className="dg-mes-m" style={{paddingTop:0}}>{mesCorto(m.mes).slice(0,3)}<small className="mv-valor">{m.calidad==='posible_hueco'||m.intensidadPct===null?t('tr.fuga.sd'):Math.round(m.intensidadPct)+'%'}</small></span></div>)}</div>}</div>;})}
-  <p className="dg-nota">{w&&w.conPct!==null?t('tr.fuga.notaWalmart',{a:Math.round(w.conPct),l:100,pct:pct(w.sinPct),c:num(w.cancelados)}):''}{a?t('tr.fuga.notaAmazon',{a:Math.round(a.intensidadPct as number),mes:mesCorto(a.mes)}):''}{t('tr.fuga.notaFinal')}</p></div>;
+      <span className="dg-mes-m" style={{paddingTop:0}}>{mesCorto(m.mes,idioma).slice(0,3)}<small className="mv-valor">{m.calidad==='posible_hueco'||m.intensidadPct===null?t('tr.fuga.sd'):Math.round(m.intensidadPct)+'%'}</small></span></div>)}</div>}</div>;})}
+  <p className="dg-nota">{w&&w.conPct!==null?t('tr.fuga.notaWalmart',{a:Math.round(w.conPct),l:100,pct:pct(w.sinPct),c:num(w.cancelados)}):''}{a?t('tr.fuga.notaAmazon',{a:Math.round(a.intensidadPct as number),mes:mesCorto(a.mes,idioma)}):''}{t('tr.fuga.notaFinal')}</p></div>;
 }
 
 // ---- Tabla top 10 con selector de expediente
@@ -81,7 +81,7 @@ export function TablaTop({v,sel,onSel,onPaquete}:{v:FugaVista;sel:string;onSel:(
 // ---- Expediente: qué se sabe | qué no se sabe
 const orden=(o:Record<string,number>)=>Object.entries(o).sort((a,b)=>b[1]-a[1]);
 export function Expediente({v,sku,onPaquete}:{v:FugaVista;sku:string;onPaquete:(s:string)=>void}){
- const t=useT(),{fila,meses,tr}=datosSku(v,sku);
+ const t=useT(),idioma=useIdioma(),{fila,meses,tr}=datosSku(v,sku);
  if(!fila)return <Vacio>{t('tr.fuga.eligeSku')}</Vacio>;
  const lineasOk=v.skus.status==='ok'&&v.skus.lineasStatus==='ok';
  const sabe:ReactNode[]=[
@@ -101,7 +101,7 @@ export function Expediente({v,sku,onPaquete}:{v:FugaVista;sku:string;onPaquete:(
    <div className="dg-caja" data-t="no"><h3>{t('fuga.queNoSabe')}</h3><ul>{noSeSabeTxt(t).slice(0,5).map((x,i)=><li key={i}>{x}</li>)}</ul></div>
   </div>
   {meses.length>0&&<div style={{marginTop:12}}><p className="dg-lab" style={{margin:'0 0 4px'}}><b>{t('fuga.reembMes')}</b></p>
-   <ListaBarras c={2} vw max={maxM} label={t('tr.fuga.reembDeSku',{sku})} items={meses.slice(-6).map(m=>({key:m.mes+m.canal,c:cc(m.canal),etiqueta:`${mesCorto(m.mes)} · ${NOMBRE[m.canal]??m.canal}`,valor:big(m.usdBrutoMinor),texto:usd(m.usdBrutoMinor),sub2:t('tr.fuga.nReembolsos',{n:num(m.n)})}))}/></div>}
+   <ListaBarras c={2} vw max={maxM} label={t('tr.fuga.reembDeSku',{sku})} items={meses.slice(-6).map(m=>({key:m.mes+m.canal,c:cc(m.canal),etiqueta:`${mesCorto(m.mes,idioma)} · ${NOMBRE[m.canal]??m.canal}`,valor:big(m.usdBrutoMinor),texto:usd(m.usdBrutoMinor),sub2:t('tr.fuga.nReembolsos',{n:num(m.n)})}))}/></div>}
   <div style={{marginTop:'auto',paddingTop:12}}><Button variant="primary" size="sm" icon={<Download/>} onClick={()=>onPaquete(sku)}>{t('fuga.paqueteProv')}</Button></div>
  </div>;
 }

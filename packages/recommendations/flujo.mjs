@@ -27,31 +27,31 @@ export function fechaValida(v, ahora = new Date()) {
   return d.getTime() - ahora.getTime() <= 731 * 86400000;
 }
 
-/** Errores de validación en español; lista vacía = válido. Cada campo obligatorio dice qué falta. */
+/** Errores de validación; lista vacía = válido. Cada campo obligatorio dice qué falta. `mensaje` es el español de siempre; `codigo` es la clave estable (tr.val.*) con la que la pantalla lo traduce. */
 export function validarAprobacion(i, ahora = new Date()) {
   const e = [];
-  if (!uuid(i?.ownerId)) e.push({campo: 'ownerId', mensaje: 'Elige una persona responsable.'});
-  if (!fechaValida(i?.dueDate, ahora)) e.push({campo: 'dueDate', mensaje: 'Indica una fecha de compromiso desde hoy.'});
-  if (i?.comment !== undefined && i.comment !== '' && !texto(i.comment, 1, 2000)) e.push({campo: 'comment', mensaje: 'El comentario no puede superar 2,000 caracteres.'});
+  if (!uuid(i?.ownerId)) e.push({campo: 'ownerId', codigo: 'tr.val.aprobOwner', mensaje: 'Elige una persona responsable.'});
+  if (!fechaValida(i?.dueDate, ahora)) e.push({campo: 'dueDate', codigo: 'tr.val.aprobFecha', mensaje: 'Indica una fecha de compromiso desde hoy.'});
+  if (i?.comment !== undefined && i.comment !== '' && !texto(i.comment, 1, 2000)) e.push({campo: 'comment', codigo: 'tr.val.aprobComentario', mensaje: 'El comentario no puede superar 2,000 caracteres.'});
   return e;
 }
 export function validarAjuste(i) {
   const e = [];
-  if (!texto(i?.action, 20, 2000)) e.push({campo: 'action', mensaje: 'La acción necesita entre 20 y 2,000 caracteres.'});
-  if (!texto(i?.rationale, 20, 4000)) e.push({campo: 'rationale', mensaje: 'La razón necesita entre 20 y 4,000 caracteres.'});
-  if (!Array.isArray(i?.preconditions) || i.preconditions.length < 1 || i.preconditions.length > 10 || !i.preconditions.every(p => texto(p, 10, 500))) e.push({campo: 'preconditions', mensaje: 'Indica de 1 a 10 supuestos, de al menos 10 caracteres cada uno.'});
-  if (i?.ownerId !== null && i?.ownerId !== undefined && !uuid(i.ownerId)) e.push({campo: 'ownerId', mensaje: 'El responsable no es válido.'});
-  if (i?.priority !== undefined && i.priority !== null && !PRIORIDADES.includes(i.priority)) e.push({campo: 'priority', mensaje: 'La prioridad no es válida.'});
-  if (!texto(i?.comment, MIN_COMENTARIO, 2000)) e.push({campo: 'comment', mensaje: `El comentario es obligatorio (mínimo ${MIN_COMENTARIO} caracteres): explica qué cambias y por qué.`});
+  if (!texto(i?.action, 20, 2000)) e.push({campo: 'action', codigo: 'tr.val.ajusteAccion', mensaje: 'La acción necesita entre 20 y 2,000 caracteres.'});
+  if (!texto(i?.rationale, 20, 4000)) e.push({campo: 'rationale', codigo: 'tr.val.ajusteRazon', mensaje: 'La razón necesita entre 20 y 4,000 caracteres.'});
+  if (!Array.isArray(i?.preconditions) || i.preconditions.length < 1 || i.preconditions.length > 10 || !i.preconditions.every(p => texto(p, 10, 500))) e.push({campo: 'preconditions', codigo: 'tr.val.ajusteSupuestos', mensaje: 'Indica de 1 a 10 supuestos, de al menos 10 caracteres cada uno.'});
+  if (i?.ownerId !== null && i?.ownerId !== undefined && !uuid(i.ownerId)) e.push({campo: 'ownerId', codigo: 'tr.val.ajusteOwner', mensaje: 'El responsable no es válido.'});
+  if (i?.priority !== undefined && i.priority !== null && !PRIORIDADES.includes(i.priority)) e.push({campo: 'priority', codigo: 'tr.val.ajustePrioridad', mensaje: 'La prioridad no es válida.'});
+  if (!texto(i?.comment, MIN_COMENTARIO, 2000)) e.push({campo: 'comment', codigo: 'tr.val.ajusteComentario', mensaje: `El comentario es obligatorio (mínimo ${MIN_COMENTARIO} caracteres): explica qué cambias y por qué.`});
   return e;
 }
 export function validarDescarte(i) {
-  return texto(i?.reason, MIN_COMENTARIO, 2000) ? [] : [{campo: 'reason', mensaje: `El motivo es obligatorio (mínimo ${MIN_COMENTARIO} caracteres).`}];
+  return texto(i?.reason, MIN_COMENTARIO, 2000) ? [] : [{campo: 'reason', codigo: 'tr.val.descarteMotivo', mensaje: `El motivo es obligatorio (mínimo ${MIN_COMENTARIO} caracteres).`}];
 }
 export function validarResultado(i) {
   const e = [];
-  if (!RESULTADOS.includes(i?.outcome)) e.push({campo: 'outcome', mensaje: 'Elige si se resolvió: sí, no o en parte.'});
-  if (!texto(i?.note, MIN_COMENTARIO, 2000)) e.push({campo: 'note', mensaje: `La nota es obligatoria (mínimo ${MIN_COMENTARIO} caracteres): qué pasó y cómo lo sabes.`});
+  if (!RESULTADOS.includes(i?.outcome)) e.push({campo: 'outcome', codigo: 'tr.val.resultadoElige', mensaje: 'Elige si se resolvió: sí, no o en parte.'});
+  if (!texto(i?.note, MIN_COMENTARIO, 2000)) e.push({campo: 'note', codigo: 'tr.val.resultadoNota', mensaje: `La nota es obligatoria (mínimo ${MIN_COMENTARIO} caracteres): qué pasó y cómo lo sabes.`});
   return e;
 }
 

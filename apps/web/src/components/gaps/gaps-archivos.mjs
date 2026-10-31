@@ -6,13 +6,18 @@ import {NOMBRE, usd, num, pct, dia, variacion, TIPO_REC} from './gaps-modelo.mjs
 const cents = m => (m === null || m === undefined ? '' : (Number(BigInt(String(m).split('.')[0])) / 100).toFixed(2));
 const hoy = v => (v?.generatedAt ?? new Date().toISOString()).slice(0, 10);
 /** Fuentes y cobertura que acompañan a cada archivo. */
-export function proveniencia(v) {
-  const i = v.ingresos?.status === 'ok' ? v.ingresos : null;
+/** Líneas «de dónde sale cada cifra». Sin idioma: español (los documentos y CSV conservan su texto); la pantalla pasa el idioma activo. */
+export function proveniencia(v, idioma = 'es') {
+  const i = v.ingresos?.status === 'ok' ? v.ingresos : null, en = idioma === 'en';
   return [
-    'Ingreso: libro de pedidos de Rovaq (Amazon, Walmart, Best Buy y Shopify), última revisión de cada línea, en USD, sin cancelados. Es INGRESO BRUTO: no hay costo ni margen por producto.',
-    'Reembolsos: libro de reembolsos (última revisión). «Sin cancelados» quita los cancelados. CAD y MXN nunca se suman.',
-    `Ventanas de exportación parciales${i ? ` (${i.canales.map(c => `${NOMBRE[c.canal] ?? c.canal} desde ${dia(c.desde)}`).join(', ')})` : ''}. Intensidad = reembolsos del mes entre ingreso del mismo mes, mismo SKU y canal; no es tasa por cohorte.`,
-    `Generado ${dia(v.generatedAt)} desde Rovaq. Observado = registrado en la fuente. Las recomendaciones son reglas sobre datos observados, no pruebas de causa.`,
+    en ? 'Revenue: Rovaq order ledger (Amazon, Walmart, Best Buy and Shopify), latest revision of each line, in USD, excluding canceled. It is GROSS REVENUE: there is no cost or margin per product.'
+      : 'Ingreso: libro de pedidos de Rovaq (Amazon, Walmart, Best Buy y Shopify), última revisión de cada línea, en USD, sin cancelados. Es INGRESO BRUTO: no hay costo ni margen por producto.',
+    en ? 'Refunds: refund ledger (latest revision). “Excluding canceled” removes canceled ones. CAD and MXN are never added.'
+      : 'Reembolsos: libro de reembolsos (última revisión). «Sin cancelados» quita los cancelados. CAD y MXN nunca se suman.',
+    en ? `Partial export windows${i ? ` (${i.canales.map(c => `${NOMBRE[c.canal] ?? c.canal} since ${dia(c.desde, idioma)}`).join(', ')})` : ''}. Intensity = refunds of the month divided by revenue of the same month, same SKU and channel; it is not a cohort rate.`
+      : `Ventanas de exportación parciales${i ? ` (${i.canales.map(c => `${NOMBRE[c.canal] ?? c.canal} desde ${dia(c.desde)}`).join(', ')})` : ''}. Intensidad = reembolsos del mes entre ingreso del mismo mes, mismo SKU y canal; no es tasa por cohorte.`,
+    en ? `Generated ${dia(v.generatedAt, idioma)} from Rovaq. Observed = recorded in the source. Recommendations are rules over observed data, not proof of cause.`
+      : `Generado ${dia(v.generatedAt)} desde Rovaq. Observado = registrado en la fuente. Las recomendaciones son reglas sobre datos observados, no pruebas de causa.`,
   ];
 }
 /** CSV del ranking de ingreso por SKU. */

@@ -90,11 +90,87 @@ test('las pantallas de fuga y mapa traducen los rótulos al pintar', () => {
 
 test('Hoy en inglés: sin los calcos que T41 señaló (carry an amount, does not declare, not the whole ledger, does not mean zero)', async () => {
   const {textos} = await import('../src/components/hoy/hoy-textos.mjs');
-  const x = textos('en') as Record<string, any>, plano = JSON.stringify(x, (_k, v) => (typeof v === 'function' ? v('A', 'B') : v));
+  const x = textos('en'), plano = JSON.stringify(x, (_k, v) => (typeof v === 'function' ? v('A', 'B') : v));
   assert.equal(x.atorado.cobertura(3, 10), '3 of 10 requests have an amount.');
   assert.ok(x.atorado.noSabemos.includes('The Tracker amount has no currency: USD is assumed.'));
   assert.ok(x.reembolsos.noSabemos.includes('Export windows are partial: the ledger does not cover the same period for every channel.'));
   assert.equal(x.ingresoNoDisp, 'Not available right now. That is not the same as zero.');
   for (const calco of [/carry an amount/, /does not declare/, /not the whole ledger/, /It does not mean zero/]) assert.doesNotMatch(plano, calco);
   assert.match(JSON.stringify(textos('es'), (_k, v) => (typeof v === 'function' ? v('A', 'B') : v)), /Todavía no hay datos suficientes/);
+});
+
+test('meses de Fuga y Brechas: cada llamada a mesCorto/mesLargo lleva el idioma activo (antes salían «ene», «oct» bajo en)', async () => {
+  const {mesCorto, mesLargo} = await import('../src/components/refunds/fuga-modelo.mjs');
+  assert.equal(mesCorto('2026-01', 'en'), 'Jan 26'); assert.equal(mesCorto('2026-01', 'es'), 'ene 26'); assert.equal(mesLargo('2026-10', 'en'), 'Oct 2026');
+  for (const rel of ['src/components/gaps/gaps-bloques.tsx', 'src/components/refunds/fuga-bloques.tsx', 'src/components/refunds/fuga-intensidad.tsx', 'src/components/refunds/fuga-partes.tsx']) {
+    const fuente = leer(rel), llamadas = fuente.match(/\bmes(?:Corto|Largo)\((?:[^()]|\([^()]*\))*\)/g) ?? [];
+    assert.ok(llamadas.length > 0, rel);
+    for (const l of llamadas) assert.match(l, /,idioma\)$/, rel + ': ' + l);
+  }
+});
+
+test('Fuga y Brechas: «de dónde sale cada cifra» y el avance del histórico salen en inglés; los documentos conservan el español', async () => {
+  const {proveniencia: pFuga} = await import('../src/components/refunds/fuga-archivos.mjs');
+  const {proveniencia: pBrechas} = await import('../src/components/gaps/gaps-archivos.mjs');
+  const {textoAvance} = await import('../src/components/gaps/gaps-modelo.mjs');
+  const vf = {todasParciales: true, generatedAt: '2026-10-19T03:00:00.000Z'} as never;
+  const vb = {generatedAt: '2026-10-19T03:00:00.000Z', ingresos: {status: 'ok', canales: [{canal: 'amazon', desde: '2025-11-03'}]}} as never;
+  for (const l of [...pFuga(vf, 'en'), ...pBrechas(vb, 'en')]) assert.ok(!ACENTOS.test(l) && !/\b(libro|desde|ventanas|ingreso|fuente)\b/i.test(l), 'español bajo en: ' + l);
+  assert.match(pFuga(vf, 'en')[2], /^Export windows: none is marked as complete\./);
+  assert.match(pBrechas(vb, 'en')[2], /\(Amazon since /);
+  assert.match(pFuga(vf)[0], /^Fuente de reembolsos y pedidos/); assert.equal(pFuga(vf)[2], pFuga(vf, 'es')[2]);
+  assert.match(pBrechas(vb)[0], /^Ingreso: libro de pedidos/);
+  const f = {progreso: {v2: 1200, objetivo: 5000, avancePct: 24}} as never;
+  assert.match(textoAvance(f, 'en'), /^1,200 of 5,000 history conversations analyzed \(/); assert.match(textoAvance(f), /^1,200 de 5,000 conversaciones del histórico analizadas/);
+  assert.equal(textoAvance(null, 'en'), 'Progress is not available right now.'); assert.equal(textoAvance(null), 'El avance no está disponible ahora.');
+  assert.match(leer('src/components/refunds/fuga-pantalla.tsx'), /proveniencia\(v,idioma\)/); assert.match(leer('src/components/gaps/gaps-pantalla.tsx'), /proveniencia\(v,idioma\)/);
+  assert.match(leer('src/components/gaps/gaps-familias.tsx'), /textoAvance\(f,idioma\)/);
+});
+
+test('críticos: el aviso, la frase y la fecha del brief se arman con las cuentas en el idioma activo; sin traductor, el texto del paquete', async () => {
+  const {avisoDeMeta, avisoCriticosT, fraseCriticosT} = await import('../src/lib/legibilidad/criticos.mjs');
+  const {fraseVigilar} = await import('../src/lib/legibilidad/brief.mjs');
+  const {avisoCriticos, fraseCriticos} = await import('../../../packages/workspace-service/critico.mjs');
+  const meta = {critical_notice: avisoCriticos({grupos: 53, senales: 120}), critical_counts: {groups: 53, signals: 120}};
+  assert.equal(avisoDeMeta(es, meta), meta.critical_notice, 'en español: idéntico al del paquete');
+  assert.equal(avisoDeMeta(null, meta), meta.critical_notice);
+  assert.equal(avisoDeMeta(en, meta), '53 problem groups with critical review (120 critical signals, pieces of evidence). They are always counted: they do not depend on the filters or the amount.');
+  assert.equal(avisoDeMeta(en, {critical_notice: 'Texto viejo'}), 'Texto viejo', 'respuesta sin cuentas: se conserva');
+  assert.equal(fraseCriticosT(en, {grupos: 1}), '1 problem group with critical review'); assert.equal(fraseCriticosT(es, {grupos: 1, senales: 1}), fraseCriticos({grupos: 1, senales: 1}));
+  assert.equal(avisoCriticosT(en, {grupos: 2}), '2 problem groups with critical review. They are always counted: they do not depend on the filters or the amount.');
+  const g = (n: number) => fraseCriticosT(en, {grupos: n});
+  const vig = fraseVigilar({total: 5, listados: 3}, 'Oct 5, 2026', g, en);
+  assert.equal(vig, 'When this brief was saved (Oct 5, 2026) there were 5 problem groups with critical review (not counting the hidden automatic notifications, same criterion as Problems); this brief details the 3 with the most quotes. Problems recalculates with today’s data and may show a different figure.');
+  assert.ok(!ACENTOS.test(vig)); assert.match(fraseVigilar({total: null, listados: 2}, null, g, en), /^When this brief was saved, the brief lists 2 problem groups/);
+  assert.match(fraseVigilar({total: 5, listados: 3}, '5 oct 2026', (n) => fraseCriticos({grupos: n})), /^Al guardarse este brief \(5 oct 2026\) había 5 grupos de problemas con revisión crítica/);
+  const panel = leer('src/components/workspace/shared-panel.tsx'), brief = leer('src/components/briefs/panel.tsx');
+  assert.match(panel, /avisoDeMeta\(t,bundle\.meta\)/); assert.doesNotMatch(panel, /DEFINICION|\{bundle\.meta\.critical_notice\}/);
+  assert.match(brief, /fraseCriticosT\(tx,/); assert.doesNotMatch(brief, /DEFINICION\.grupo/);
+});
+
+test('validación del flujo de acciones: cada error lleva su código y la pantalla lo traduce; el mensaje en español y los campos no cambian', async () => {
+  const {validarAprobacion, validarAjuste, validarDescarte, validarResultado, MIN_COMENTARIO} = await import('../../../packages/recommendations/flujo.mjs');
+  const todos = [...validarAprobacion({ownerId: 'x', dueDate: '1999-01-01', comment: 'a'.repeat(2001)}), ...validarAjuste({ownerId: 'x', priority: 'urgente'}), ...validarDescarte({reason: ''}), ...validarResultado({outcome: 'maybe', note: 'x'})];
+  assert.deepEqual(todos.map((e: {campo: string}) => e.campo), ['ownerId', 'dueDate', 'comment', 'action', 'rationale', 'preconditions', 'ownerId', 'priority', 'comment', 'reason', 'outcome', 'note']);
+  assert.equal(new Set(todos.map((e) => e.codigo)).size, 12, 'un código distinto por error');
+  for (const e of todos as Array<{codigo: string; mensaje: string}>) {
+    assert.match(e.codigo, /^tr\.val\./);
+    assert.equal(es(e.codigo as never, {min: MIN_COMENTARIO}), e.mensaje, 'el español de la clave es el mensaje del paquete');
+    const ing = en(e.codigo as never, {min: MIN_COMENTARIO});
+    assert.ok(!ACENTOS.test(ing) && ing !== e.mensaje, e.codigo + ': ' + ing);
+  }
+  assert.equal(en('tr.val.descarteMotivo' as never, {min: 20}), 'The reason is required (at least 20 characters).');
+  assert.match(leer('src/components/recommendations/flujo-acciones.tsx'), /e\.codigo\?t\(e\.codigo as Clave,\{min:MIN_COMENTARIO\}\):e\.mensaje/);
+});
+
+test('citas: los marcadores de datos de terceros se rotulan en el idioma activo; sin traductor, los del paquete', async () => {
+  const {marcasEnIdioma} = await import('../src/lib/legibilidad/marcas.mjs');
+  const {enmascararTerceros} = await import('../../../packages/workspace-service/enmascarar-terceros.mjs');
+  const texto = enmascararTerceros('Hello,\nMy name is John Smith and I live at 123 Main Street, Austin, TX 78701. Please refund. [PII]');
+  assert.match(texto, /\[nombre\]|\[dirección\]/);
+  const ing = marcasEnIdioma(texto, en);
+  assert.doesNotMatch(ing, /\[nombre\]|\[dirección\]|\[dato personal oculto\]/); assert.match(ing, /\[address\]|\[name\]/); assert.match(ing, /\[personal data hidden\]/);
+  assert.equal(marcasEnIdioma(texto, es), texto); assert.equal(marcasEnIdioma(texto), texto);
+  assert.equal(marcasEnIdioma('Sin marcas aquí.', en), 'Sin marcas aquí.', 'el resto de la cita no se toca');
+  assert.match(leer('src/components/ui/citation.tsx'), /marcasEnIdioma\(enmascararTerceros\(quote\),t\)/);
 });

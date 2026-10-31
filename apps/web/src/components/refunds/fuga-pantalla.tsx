@@ -91,7 +91,7 @@ export function FugaPantalla({organization,embebido=false}:{organization?:string
      {per?.acumuladoOmitido&&<li>{tx('fuga.acumOmitido')} <a href="/refunds">{tx('fuga.verTodoLibro')}</a></li>}
      <li>{lineaCobertura(v,idioma)}</li>
      <li>{lineaVentanas(v,idioma)}</li>
-     {proveniencia(v).map((x,i)=><li key={i}>{x}</li>)}
+     {proveniencia(v,idioma).map((x,i)=><li key={i}>{x}</li>)}
      <li>{tx('fuga.dineroDevuelto')}</li>
      <li>{tx('fuga.noCalcula')}</li></ul>
     <p className="dg-nota" role="status" aria-live="polite">{aviso}</p></Card>

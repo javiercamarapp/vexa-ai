@@ -375,6 +375,23 @@ describe('S8 Seguridad y límites', () => {
 });
 
 // ------------------------------------------------------------------ 10. S9: acordeón accesible
+describe('Sello expandido de la cifra', () => {
+  for (const lang of IDIOMAS) {
+    test(`${lang}: el rótulo del campo no se repite dentro de su valor`, () => {
+      const h = seccion(portada(lang), 'valor');
+      const sello = /data-sello-de="ingreso-bruto">([\s\S]*?)<\/div>/.exec(h)?.[1] ?? '';
+      const campos = [...sello.matchAll(/<span>([^<]+)<\/span>/g)].map((m) => DECODIFICA(m[1]));
+      assert.equal(campos.length, 4, sello);
+      for (const c of campos) {
+        const [rotulo, valor] = c.split(': ');
+        if (valor) assert.ok(!valor.toLowerCase().includes(rotulo.toLowerCase()), `rótulo repetido: ${c}`);
+      }
+      assert.doesNotMatch(sello, /(Actualizado|Updated): (Actualizado|Updated)/);
+      assert.doesNotMatch(sello, /(Corte|Cut-off): (Corte|Example cut-off)/);
+    });
+  }
+});
+
 describe('S9 Integraciones y preguntas', () => {
   for (const lang of IDIOMAS) {
     test(`${lang}: diagrama de integraciones, chips y listas de hoy y hoja de ruta`, () => {

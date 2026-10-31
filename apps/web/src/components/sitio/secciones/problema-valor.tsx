@@ -36,6 +36,9 @@ export function Problema({lang, t}: {lang: Lang; t: TextosPortada}) {
   );
 }
 
+/** «Clase: Observado», pero «Corte de ejemplo» y «Actualizado hace unos minutos» ya nombran su campo: no se repite el rótulo. */
+export const etiquetaDelSello = (campo: string, valor: string): string => (valor.toLowerCase().includes(campo.toLowerCase()) ? valor : `${campo}: ${valor}`);
+
 export function Valor({lang, t}: {lang: Lang; t: TextosPortada}) {
   const {valor, clases} = t;
   // El sello expandido de la cifra Ingreso bruto: clase, fuente, corte y antigüedad, con los rótulos de clases.campos.
@@ -57,7 +60,7 @@ export function Valor({lang, t}: {lang: Lang; t: TextosPortada}) {
             <div className="s-valor__sello s-sello-expandido" data-sello-de="ingreso-bruto">
               <b>{clases.items[0].nombre}</b>
               {partes
-                ? partes.map((x, i) => <span key={i}>{clases.campos[i]}: {x}</span>)
+                ? partes.map((x, i) => <span key={i}>{etiquetaDelSello(clases.campos[i], x)}</span>)
                 : <span>{sinPuntoFinal(clases.items[0].sello)}</span>}
             </div>
           </div>

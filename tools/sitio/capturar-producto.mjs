@@ -167,7 +167,9 @@ for (const tema of temas) {
     if (nombre === 'evidencia') await page.getByText(/Lo que dicen los clientes|What customers say/).first().scrollIntoViewIfNeeded().catch(() => {});
     const archivo = `${nombre}-${tema}-1440@2x.png`;
     await page.screenshot({path: join(OUT, archivo)});
-    const texto = (await page.locator('body').innerText()).slice(0, 20000), mal = texto.match(MARCAS_PROHIBIDAS);
+    const texto = (await page.locator('body').innerText()).slice(0, 20000);
+    mkdirSync(join(OUT, 'textos'), {recursive: true}); const atrib = await page.evaluate(() => [...document.querySelectorAll('[title],[aria-label],[data-tooltip]')].map(e => ['title', 'aria-label', 'data-tooltip'].map(a => e.getAttribute(a)).filter(Boolean).join(' | ')).join('\n')); writeFileSync(join(OUT, 'textos', archivo.replace('.png', '.txt')), texto + '\n--- atributos ---\n' + atrib);
+    const mal = texto.match(MARCAS_PROHIBIDAS);
     const malos = [...texto.matchAll(/\b100(?:[.,]0)? ?%|Cobertura completa|Complete coverage|\bNeto\b|· Net\b|\b(\d[\d,.]*) (?:de|of) \1\b|últimos 12 meses|last 12 months(?! ·)/gi)].map(m => m[0]);
     if (malos.length) console.log('   AFIRMACION DUDOSA:', JSON.stringify([...new Set(malos)]));
     const raros = texto.split('\n').filter(l => (IDIOMA === 'en' ? /[áéíóúñ¿¡]|\b(sin|con|del|los|las|una|para|por|hace|desde|entre|ejemplo)\b/i : /\b(the|and|with|from|for|your|of the|no data)\b/i).test(l)).slice(0, 8);

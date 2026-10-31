@@ -38,9 +38,23 @@ export function VentanaFuga({lang}: {lang: Lang}) {
           <span className="s-ov-cifra__sub">{`${fmt(INGRESO_BRUTO)} USD ${ui.captura.ingreso}`}</span>
           <span className="s-sello s-sello--observado s-ov-cifra__sello"><span className="s-sello__icono" aria-hidden="true" />{obs}</span>
       </p>
+      {/* T49: composición del héroe en móvil (la captura no se pide ni se ve): la cifra y el ranking de los cuatro SKU mayores, con los mismos números de mocks/datos.ts. Oculta en escritorio. */}
+      <ol className="s-ov-top" aria-label={ui.captura.barras}>
+        {filas.slice(0, 4).map((f) => (
+          <li key={f.sku}>
+            <span className="s-ov-top__sku">{f.sku}</span>
+            <svg className="s-ov-top__pista" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <rect className="s-ov-top__fondo" width={100} height={8} rx={4} />
+              <rect className="s-ov-top__barra" width={Math.max(8, (f.v / MAX) * 100)} height={8} rx={4} />
+            </svg>
+            <span className="s-ov-top__v">{usd(f.v)}</span>
+          </li>
+        ))}
+      </ol>
       <div className="s-ventana__cuerpo">
         <div className="s-ventana__lienzo">
-        <Captura nombre="fuga" tema="oscuro" lang={lang} tamanos="(max-width: 700px) 170vw, (max-width: 1100px) 100vw, 1040px" anchos={[960, 1440, 2880]} prioridad clase="s-ventana__img" />
+        {/* T49: hasta 764 px (ventana de 700 px o menos) el cuerpo está oculto (inicio.css) y la captura no se pide; el héroe móvil lleva su propia composición (.s-ov-top) */}
+        <Captura nombre="fuga" tema="oscuro" lang={lang} tamanos="(max-width: 700px) 170vw, (max-width: 1100px) 100vw, 1040px" anchos={[960, 1440, 2880]} prioridad clase="s-ventana__img" desdeAncho={765} />
         <svg className="s-ov" viewBox="0 0 2000 1250" preserveAspectRatio="none" role="group" aria-label={ui.captura.barras} focusable="false">
           {filas.map((f, i) => (
             <g className="s-ov__fila" key={f.sku} data-i={i} tabIndex={0} role="img" aria-label={`${f.sku}, ${usd(f.v)}, ${obs}`}>

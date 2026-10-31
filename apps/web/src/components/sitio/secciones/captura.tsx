@@ -12,7 +12,11 @@ export const claveCaptura = (nombre: string, tema: TemaCaptura): string => `img/
 /** En inglés la misma clave vive bajo producto/en/: img/producto/hoy pasa a img/producto/en/hoy. */
 export const claveIdioma = (clave: string, lang: 'es' | 'en'): string => (lang === 'en' ? clave.replace('img/producto/', 'img/producto/en/') : clave);
 
-export function Captura({nombre, tema, lang, tamanos, prioridad = false, clase, anchos, clave: claveFija}: {nombre: string; tema?: TemaCaptura; lang: 'es' | 'en'; tamanos: string; prioridad?: boolean; clase?: string; anchos?: number[]; clave?: string}) {
+/** Un píxel transparente en línea: la fuente de las capturas que no deben pedirse en móvil (img-src permite data:, no hay petición de red). */
+export const PIXEL_VACIO = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+/** `desdeAncho`: ancho de pantalla (px) desde el que se ve la captura; por debajo, el navegador elige la primera fuente (el píxel vacío) y no descarga nada. Un `display: none` no lo evita: la imagen se descargaba aunque estuviera oculta. */
+export function Captura({nombre, tema, lang, tamanos, prioridad = false, clase, anchos, clave: claveFija, desdeAncho}: {nombre: string; tema?: TemaCaptura; lang: 'es' | 'en'; tamanos: string; prioridad?: boolean; clase?: string; anchos?: number[]; clave?: string; desdeAncho?: number}) {
   const clave = claveIdioma(claveFija ?? claveCaptura(nombre, tema ?? 'oscuro'), lang);
   const {ancho, alto} = medidas(clave);
   const lista = anchos ?? [960, 1440];
@@ -21,6 +25,7 @@ export function Captura({nombre, tema, lang, tamanos, prioridad = false, clase, 
   const webp = srcset((a) => url(clave, {ancho: a}));
   return (
     <picture>
+      {desdeAncho ? <source media={`(max-width: ${desdeAncho - 1}px)`} srcSet={PIXEL_VACIO} /> : null}
       {avif ? <source type="image/avif" srcSet={avif} sizes={tamanos} /> : null}
       <source type="image/webp" srcSet={webp} sizes={tamanos} />
       <img

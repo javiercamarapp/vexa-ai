@@ -271,7 +271,35 @@
     order: 3;
   }
   .s-ov__eje { display: none; }
+
+  /* T49: ranking de los cuatro SKU mayores bajo la cifra (en escritorio no existe: ahí está la captura) */
+  .s-ventana--producto .s-ov-top { display: grid; }
 }
+
+.s-ov-top {
+  display: none;
+  gap: var(--s-e12);
+  margin: 0;
+  padding: var(--s-e4) var(--s-e16) var(--s-e16);
+  list-style: none;
+  order: 4;
+}
+
+.s-ov-top li {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--s-e12);
+  color: var(--s-vp-texto);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.s-ov-top__sku { font-family: var(--s-f-mono); font-size: 12px; letter-spacing: .02em; color: var(--s-vp-apagado); }
+.s-ov-top__pista { display: block; width: 100%; height: 8px; }
+.s-ov-top__fondo { fill: var(--s-vp-pista); }
+.s-ov-top__barra { fill: var(--s-vp-barra-color); }
+.s-ov-top__v { font-variant-numeric: tabular-nums; text-align: right; }
 
 /* Entrada: una sola vez, sin bucles. Estado inicial de cada pieza en CSS: sin JavaScript no hay parpadeo y el estado final es el de reposo. */
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {

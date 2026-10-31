@@ -148,6 +148,16 @@ test('limpiarEstadoOnboarding quita solo las claves onb.* (al cerrar sesión)', 
   assert.equal(limpiarEstadoOnboarding(a), 0);
 });
 
+// (e0) sin claves muertas: cada clave de interfaz del onboarding la usa algún componente o módulo (no basta con estar declarada en CLAVES_UI)
+test('onb.ui/tour/check/setup/tercero: ninguna clave de interfaz está definida sin que algún código la use', () => {
+  const lee = (d: string): string[] => fs.readdirSync(new URL('../' + d + '/', import.meta.url), { withFileTypes: true }).flatMap((e) => e.isDirectory() ? lee(d + '/' + e.name) : /\.(tsx?|mjs)$/.test(e.name) ? [fs.readFileSync(new URL('../' + d + '/' + e.name, import.meta.url), 'utf8')] : []);
+  const codigo = [...lee('src/components/onboarding'), ...lee('src/lib/onboarding'), ...lee('src/app')].join('\n');
+  // Las que se arman con una plantilla (estado del paso, bloqueo, pantalla, pista) se comprueban por su prefijo.
+  const dinamicas = /^onb\.(check\.estado\.|pant\.|(propietario|analista|operador|lector|plataforma|soporte)\.)/;
+  const muertas = Object.keys(ESP).filter((k) => /^onb\.(ui|tour|check|setup|tercero)\./.test(k) && !dinamicas.test(k) && !codigo.includes("'" + k + "'"));
+  assert.deepEqual(muertas, [], 'claves definidas que nadie usa');
+  for (const pista of PISTAS) assert.equal('onb.' + pista + '.nombre' in ESP, false, pista + '.nombre estaba sin uso y se eliminó');
+});
 // (e) i18n
 test('onb.*: todas las claves del catálogo existen en es y en, con las mismas {variables}; no hay claves huérfanas', () => {
   const usadas = new Set<string>([...CLAVES_UI, ...PISTAS.flatMap((p) => clavesDePista(p))]);

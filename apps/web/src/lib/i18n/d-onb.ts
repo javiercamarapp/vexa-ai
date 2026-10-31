@@ -3,12 +3,11 @@
 export const onbEs = {
   'onb.ui.guia': 'Guía', 'onb.ui.omitir': 'Omitir recorrido', 'onb.ui.siguiente': 'Siguiente', 'onb.ui.anterior': 'Anterior', 'onb.ui.terminar': 'Terminar',
   'onb.ui.paso': 'Paso {n} de {total}', 'onb.ui.reabrir': 'Repetir el recorrido', 'onb.ui.esperando': 'Esperando a: {quien}',
-  'onb.ui.sinPasos': 'No hay un recorrido para esta vista.',
-  'onb.ui.superadminSinOrg': 'Tu cuenta es de administración de plataforma y no pertenece a ninguna organización. Entra a la consola de plataforma para trabajar.',
+    'onb.ui.superadminSinOrg': 'Tu cuenta es de administración de plataforma y no pertenece a ninguna organización. Entra a la consola de plataforma para trabajar.',
   // Interfaz del recorrido (F2)
-  'onb.ui.cerrar': 'Cerrar', 'onb.ui.empezar': 'Empezar recorrido', 'onb.ui.saltar': 'Saltar', 'onb.ui.retomar': 'Retomar donde lo dejé', 'onb.ui.noVolver': 'No volver a mostrar',
+  'onb.ui.empezar': 'Empezar recorrido', 'onb.ui.saltar': 'Saltar', 'onb.ui.retomar': 'Retomar donde lo dejé', 'onb.ui.noVolver': 'No volver a mostrar',
   'onb.ui.invitacionTitulo': 'Conoce Rovaq', 'onb.ui.invitacionCuerpo': 'Un recorrido por lo que puedes hacer aquí. Puedes saltarlo y abrirlo luego desde Guía.',
-  'onb.ui.recorrido': 'Recorrido guiado', 'onb.ui.menuGuia': 'Opciones de la guía', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Mostrar la lista de primeros pasos',
+  'onb.ui.menuGuia': 'Opciones de la guía', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Mostrar la lista de primeros pasos',
   'onb.ui.avisoPasos': 'Paso {n} de {total}: {titulo}',
   'onb.ui.invitacionElige': 'Elige un recorrido por lo que tu rol puede hacer aquí: el corto solo muestra lo esencial. Puedes saltarlo y abrirlo luego desde Guía.',
   'onb.ui.recorridoCorto': 'Recorrido corto ({n} pasos)', 'onb.ui.recorridoCompleto': 'Recorrido completo ({n} pasos)',
@@ -20,7 +19,6 @@ export const onbEs = {
   'onb.check.bloq.sinDatos': 'Primero necesitas datos: una conexión activa o un historial importado.', 'onb.check.bloq.sinIntervencion': 'Primero necesitas una intervención asignada a ti.',
   'onb.tercero.crm': 'el equipo de Rovaq (conexión del CRM)', 'onb.tercero.propietario': 'el propietario de la organización',
   // Propietario
-  'onb.propietario.nombre': 'Recorrido del propietario',
   'onb.propietario.hoy.titulo': 'Hoy: tus cifras principales', 'onb.propietario.hoy.cuerpo': 'Ingreso, reembolsos, dinero atorado y respuestas con demora, cada una con su periodo. Si aún no se relacionan todos los pedidos con sus clientes, la cifra lo dice en lugar de aparentar estar completa.',
   'onb.propietario.datos.titulo': 'Datos: fuentes e importaciones', 'onb.propietario.datos.cuerpo': 'Aquí ves qué está conectado y qué se importó. Conectar el CRM lo hace el equipo de Rovaq con el acceso que tú autorices: copia la hoja para soporte y lo preparamos juntos.',
   'onb.propietario.confianza.titulo': 'Confianza y cobertura', 'onb.propietario.confianza.cuerpo': 'Qué datos están cargados, cuáles faltan y cómo se calculó cada cifra.',
@@ -31,7 +29,6 @@ export const onbEs = {
   'onb.propietario.equipo.titulo': 'Invitar a tu equipo', 'onb.propietario.equipo.cuerpo': 'Invita a analistas, operadores y lectores. Se marca como hecho cuando al menos otra persona tiene acceso a la organización.',
   'onb.propietario.retencion.titulo': 'Revisar la retención', 'onb.propietario.retencion.cuerpo': 'Define cuánto tiempo se conservan los datos y cómo se borran cuando lo pidas.',
   // Analista
-  'onb.analista.nombre': 'Recorrido del analista',
   'onb.analista.hoy.titulo': 'Hoy y cómo leer cada cifra', 'onb.analista.hoy.cuerpo': 'Cada cifra trae su periodo y su nivel de confianza. Empieza aquí para saber qué tan firme es lo que ves.',
   'onb.analista.problemas.titulo': 'Problemas con evidencia completa', 'onb.analista.problemas.cuerpo': 'Abre una ficha y revisa la evidencia detrás de cada hallazgo; después pasa a los puntos de dolor.',
   'onb.analista.dinero.titulo': 'Dinero: CFO y brechas', 'onb.analista.dinero.cuerpo': 'Lee las cifras con sus avisos: mientras falten pedidos por relacionar con clientes, son parciales y así se muestran.',
@@ -40,7 +37,6 @@ export const onbEs = {
   'onb.analista.corte.titulo': 'Cortes publicados', 'onb.analista.corte.cuerpo': 'Preparar y publicar un corte lo hace el propietario. Mientras tanto puedes revisar los cortes ya publicados y las cifras que salen de ellos.',
   'onb.analista.informe.titulo': 'Exportar un informe', 'onb.analista.informe.cuerpo': 'Desde Hoy puedes exportar un informe para compartirlo.',
   // Operador
-  'onb.operador.nombre': 'Recorrido del operador',
   'onb.operador.hoy.titulo': 'Hoy: lo que hay abierto', 'onb.operador.hoy.cuerpo': 'Aquí ves tus intervenciones asignadas, dónde revisar recomendaciones y los problemas abiertos. Las cifras de dinero son para propietarios y analistas.',
   'onb.operador.problemas.titulo': 'Problemas y cómo leer una ficha', 'onb.operador.problemas.cuerpo': 'Cada ficha explica qué pasó y de dónde sale. Úsala para decidir qué atender primero.',
   'onb.operador.acciones.titulo': 'Acciones en curso', 'onb.operador.acciones.cuerpo': 'Trabaja las intervenciones que te asignaron, muévelas de etapa y registra su resultado. Aprobar y asignar le corresponde al propietario.',
@@ -49,19 +45,16 @@ export const onbEs = {
   'onb.operador.avisos.titulo': 'Tus avisos', 'onb.operador.avisos.cuerpo': 'Elige qué avisos recibes y por qué canal, por ejemplo cuando te asignen una intervención. Son tuyos: no cambian los de nadie más.',
   'onb.operador.resultado.titulo': 'Registrar un resultado', 'onb.operador.resultado.cuerpo': 'Cuando cierres una intervención que te asignaron, anota qué pasó para medir si funcionó.',
   // Lector
-  'onb.lector.nombre': 'Recorrido del lector',
   'onb.lector.hoy.titulo': 'Hoy: problemas y evidencia', 'onb.lector.hoy.cuerpo': 'Hoy te muestra los problemas abiertos y cuánta evidencia hay detrás de cada uno. Tu acceso es de lectura: puedes mirar, no cambiar nada. Las cifras de dinero son de propietarios y analistas.',
   'onb.lector.problemas.titulo': 'Problemas y su evidencia', 'onb.lector.problemas.cuerpo': 'Abre un problema para leer su evidencia. Los datos personales de terceros aparecen enmascarados.',
   'onb.lector.confianza.titulo': 'Cuánto fiarte de cada cifra', 'onb.lector.confianza.cuerpo': 'Confianza explica qué tan completos están los datos y cuánto fiarte de lo que ves.',
   'onb.lector.avisos.titulo': 'Tus avisos', 'onb.lector.avisos.cuerpo': 'Elige qué avisos recibes y por qué canal. Tus preferencias son solo tuyas.',
   // Plataforma
-  'onb.plataforma.nombre': 'Recorrido de administración de plataforma',
   'onb.plataforma.resumen.titulo': 'Resumen', 'onb.plataforma.resumen.cuerpo': 'El estado de cada organización de un vistazo.',
   'onb.plataforma.organizaciones.titulo': 'Organizaciones', 'onb.plataforma.organizaciones.cuerpo': 'Para entrar como una organización (Ver como) debes indicar un motivo y una duración. La sesión es de solo lectura y queda registrada.',
   'onb.plataforma.costos.titulo': 'Costos de IA', 'onb.plataforma.costos.cuerpo': 'Revisa los topes de gasto y los trabajos pendientes antes de que afecten a un cliente.',
   'onb.plataforma.auditoria.titulo': 'Auditoría', 'onb.plataforma.auditoria.cuerpo': 'Consulta quién hizo qué y qué alertas siguen abiertas.',
   // Soporte
-  'onb.soporte.nombre': 'Sesión de soporte',
   'onb.soporte.aviso.titulo': 'Estás viendo como {organizacion}', 'onb.soporte.terminada.titulo': 'La sesión de soporte terminó', 'onb.soporte.terminada.cuerpo': 'Lo que ves ahora ya no es la vista del cliente. Si necesitas volver a verla, inicia otra sesión de soporte desde la consola.',
   'onb.soporte.aviso.cuerpo': 'Solo lectura: no puedes exportar ni editar, y todo queda registrado. Algunas pantallas no están disponibles en este modo. Usa Salir para volver a la consola.',
 } as const;
@@ -69,12 +62,11 @@ export const onbEs = {
 export const onbEn = {
   'onb.ui.guia': 'Guide', 'onb.ui.omitir': 'Skip tour', 'onb.ui.siguiente': 'Next', 'onb.ui.anterior': 'Back', 'onb.ui.terminar': 'Finish',
   'onb.ui.paso': 'Step {n} of {total}', 'onb.ui.reabrir': 'Repeat the tour', 'onb.ui.esperando': 'Waiting on: {quien}',
-  'onb.ui.sinPasos': 'There is no tour for this view.',
-  'onb.ui.superadminSinOrg': 'Your account is a platform administrator and does not belong to any organization. Open the platform console to get to work.',
+    'onb.ui.superadminSinOrg': 'Your account is a platform administrator and does not belong to any organization. Open the platform console to get to work.',
   // Tour interface (F2)
-  'onb.ui.cerrar': 'Close', 'onb.ui.empezar': 'Start tour', 'onb.ui.saltar': 'Skip', 'onb.ui.retomar': 'Resume where I left off', 'onb.ui.noVolver': "Don't show again",
+  'onb.ui.empezar': 'Start tour', 'onb.ui.saltar': 'Skip', 'onb.ui.retomar': 'Resume where I left off', 'onb.ui.noVolver': "Don't show again",
   'onb.ui.invitacionTitulo': 'Get to know Rovaq', 'onb.ui.invitacionCuerpo': 'A tour of what you can do here. You can skip it and open it later from Guide.',
-  'onb.ui.recorrido': 'Guided tour', 'onb.ui.menuGuia': 'Guide options', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Show the getting started list',
+  'onb.ui.menuGuia': 'Guide options', 'onb.ui.rolOrg': '{organizacion} · {rol}', 'onb.ui.mostrarChecklist': 'Show the getting started list',
   'onb.ui.avisoPasos': 'Step {n} of {total}: {titulo}',
   'onb.ui.invitacionElige': 'Choose a tour of what your role can do here: the short one only shows the essentials. You can skip it and open it later from Guide.',
   'onb.ui.recorridoCorto': 'Short tour ({n} steps)', 'onb.ui.recorridoCompleto': 'Full tour ({n} steps)',
@@ -86,7 +78,6 @@ export const onbEn = {
   'onb.check.bloq.sinDatos': 'You need data first: an active connection or an imported history.', 'onb.check.bloq.sinIntervencion': 'You first need an intervention assigned to you.',
   'onb.tercero.crm': 'the Rovaq team (CRM connection)', 'onb.tercero.propietario': 'the organization owner',
   // Owner
-  'onb.propietario.nombre': 'Owner tour',
   'onb.propietario.hoy.titulo': 'Today: your main numbers', 'onb.propietario.hoy.cuerpo': 'Revenue, refunds, stuck money and delayed replies, each with its period. If not every order is matched to its customer yet, the number says so instead of looking complete.',
   'onb.propietario.datos.titulo': 'Data: sources and imports', 'onb.propietario.datos.cuerpo': 'See what is connected and what was imported. The Rovaq team connects the CRM with the access you authorize: copy the support sheet and we set it up together.',
   'onb.propietario.confianza.titulo': 'Trust and coverage', 'onb.propietario.confianza.cuerpo': 'Which data is loaded, what is missing and how each number was calculated.',
@@ -97,7 +88,6 @@ export const onbEn = {
   'onb.propietario.equipo.titulo': 'Invite your team', 'onb.propietario.equipo.cuerpo': 'Invite analysts, operators and viewers. It is marked as done once at least one other person has access to the organization.',
   'onb.propietario.retencion.titulo': 'Review retention', 'onb.propietario.retencion.cuerpo': 'Set how long data is kept and how it is erased when you ask.',
   // Analyst
-  'onb.analista.nombre': 'Analyst tour',
   'onb.analista.hoy.titulo': 'Today and how to read each number', 'onb.analista.hoy.cuerpo': 'Each number carries its period and confidence level. Start here to see how firm what you read is.',
   'onb.analista.problemas.titulo': 'Problems with full evidence', 'onb.analista.problemas.cuerpo': 'Open a card and review the evidence behind each finding, then move on to pain points.',
   'onb.analista.dinero.titulo': 'Money: CFO and gaps', 'onb.analista.dinero.cuerpo': 'Read the numbers with their notices: while orders are still unmatched to customers they are partial and shown that way.',
@@ -106,7 +96,6 @@ export const onbEn = {
   'onb.analista.corte.titulo': 'Published cuts', 'onb.analista.corte.cuerpo': 'The owner prepares and publishes cuts. Meanwhile you can review the cuts already published and the figures they feed.',
   'onb.analista.informe.titulo': 'Export a report', 'onb.analista.informe.cuerpo': 'From Today you can export a report to share.',
   // Operator
-  'onb.operador.nombre': 'Operator tour',
   'onb.operador.hoy.titulo': 'Today: what is open', 'onb.operador.hoy.cuerpo': 'Here you see the interventions assigned to you, where to review recommendations and the open problems. Money figures are for owners and analysts.',
   'onb.operador.problemas.titulo': 'Problems and how to read a card', 'onb.operador.problemas.cuerpo': 'Each card explains what happened and where it comes from. Use it to decide what to handle first.',
   'onb.operador.acciones.titulo': 'Actions in progress', 'onb.operador.acciones.cuerpo': 'Work the interventions assigned to you, move them along and record their result. Approving and assigning belongs to the owner.',
@@ -115,19 +104,16 @@ export const onbEn = {
   'onb.operador.avisos.titulo': 'Your alerts', 'onb.operador.avisos.cuerpo': 'Choose which alerts you get and through which channel, for example when an intervention is assigned to you. They are yours: they do not change anyone else\'s.',
   'onb.operador.resultado.titulo': 'Record a result', 'onb.operador.resultado.cuerpo': 'When you close an intervention assigned to you, note what happened so we can tell whether it worked.',
   // Viewer
-  'onb.lector.nombre': 'Viewer tour',
   'onb.lector.hoy.titulo': 'Today: problems and evidence', 'onb.lector.hoy.cuerpo': 'Today shows the open problems and how much evidence stands behind each one. Your access is read-only: you can look, not change anything. Money figures are for owners and analysts.',
   'onb.lector.problemas.titulo': 'Problems and their evidence', 'onb.lector.problemas.cuerpo': 'Open a problem to read its evidence. Third-party personal data appears masked.',
   'onb.lector.confianza.titulo': 'How much to trust each number', 'onb.lector.confianza.cuerpo': 'Trust explains how complete the data is and how far to rely on what you see.',
   'onb.lector.avisos.titulo': 'Your alerts', 'onb.lector.avisos.cuerpo': 'Choose which alerts you get and through which channel. Your preferences are yours alone.',
   // Platform
-  'onb.plataforma.nombre': 'Platform administration tour',
   'onb.plataforma.resumen.titulo': 'Overview', 'onb.plataforma.resumen.cuerpo': 'The state of every organization at a glance.',
   'onb.plataforma.organizaciones.titulo': 'Organizations', 'onb.plataforma.organizaciones.cuerpo': 'To enter as an organization (View as) you must give a reason and a duration. The session is read-only and is recorded.',
   'onb.plataforma.costos.titulo': 'AI costs', 'onb.plataforma.costos.cuerpo': 'Check spending caps and pending jobs before they affect a customer.',
   'onb.plataforma.auditoria.titulo': 'Audit', 'onb.plataforma.auditoria.cuerpo': 'See who did what and which alerts are still open.',
   // Support
-  'onb.soporte.nombre': 'Support session',
   'onb.soporte.aviso.titulo': 'You are viewing as {organizacion}', 'onb.soporte.terminada.titulo': 'The support session has ended', 'onb.soporte.terminada.cuerpo': 'What you see now is no longer the customer view. To see it again, start another support session from the console.',
   'onb.soporte.aviso.cuerpo': 'Read-only: you cannot export or edit, and everything is recorded. Some screens are not available in this mode. Use Exit to return to the console.',
 } as const;

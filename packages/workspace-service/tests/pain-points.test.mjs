@@ -1,5 +1,5 @@
 // «Puntos de dolor» (L1 y L3): servicio de lectura y evidencia contra una base SIMULADA (sin Postgres): forma, monedas separadas, desconocido ≠ 0, sin PII, presupuesto de tiempo,
-// total verificable, paginación y CSV. Datos 100 % sintéticos con las cifras ancla de RESPONSABLE_A-PRODUCTO-DATOS (98 de 276 negados, 637 pendientes de Walmart, etc.).
+// total verificable, paginación y CSV. Datos 100 % sintéticos con las cifras ancla de PRODUCTO-DATOS-CLIENTE (98 de 276 negados, 637 pendientes de Walmart, etc.).
 //   node --test packages/workspace-service/tests/pain-points.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';

@@ -35,7 +35,7 @@ test('el adaptador real cumple el puerto: consulta la base donde está conectado
   assert.deepEqual(await port.evidence({ problemId: 'x', limit: 1 }), { status: 'empty', reason: 'not_connected', method: 'evidence' });
   for (const m of ['problems', 'problemIncidents', 'categoryMonthly', 'exposure', 'ledgerBySource']) await assert.rejects(() => port[m]({ month: '2026-09', months: 3, kind: 'refund', limit: 3 }), /no db in unit tests/, `${m} ya consulta la base`);
   const a = parseAssociations(cov.sources.find((s) => s.key === 'associations')); assert.deepEqual([a.total, a.resolved, a.pending, a.activeLinks, a.sampled], [117720, 15190, 102530, 72720, true]);
-  const t = parseTracker(cov.sources.find((s) => s.key === 'excel')); assert.deepEqual([t.version, t.versions, t.rows, t.sheetsClosed, t.sheetsTotal], ['v07b', 4, 13228, 64, 64]);
+  const t = parseTracker(cov.sources.find((s) => s.key === 'excel')); assert.deepEqual([t.version, t.versions, t.rows, t.sheetsClosed, t.sheetsTotal], ['v07b', 4, 13000, 64, 64]);
   assert.equal(parseTracker({ loaded: false }).status, 'empty'); assert.equal(parseAssociations({ loaded: true, detail: ['otra cosa'] }).status, 'empty');
   assert.throws(() => assertPort({ coverage() {} }), /port_incomplete/);
 });

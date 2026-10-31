@@ -209,11 +209,11 @@ test('CSS de /setup: objetivos táctiles de 40 px, foco visible de 3 px, móvil 
 
 // ---- Indicador de conciliación: honesto
 test('conciliación: PILOTO (85 mil pedidos del libro, 0 enlaces) → «0 de N pedidos ligados» con su base; nunca un porcentaje',()=>{
-  const c=indicadorConciliacion({pedidos:85357,resumen:'ready',refreshedAt:'2026-10-27T10:00:00Z',ligadas:false});
-  assert.deepEqual({tipo:c.tipo,ligados:c.ligados,total:c.total},{tipo:'base',ligados:0,total:85357});
+  const c=indicadorConciliacion({pedidos:85000,resumen:'ready',refreshedAt:'2026-10-27T10:00:00Z',ligadas:false});
+  assert.deepEqual({tipo:c.tipo,ligados:c.ligados,total:c.total},{tipo:'base',ligados:0,total:85000});
   for(const idioma of ['es','en'] as const){
     const html=renderToStaticMarkup(<IndicadorConciliacion t={traductor(idioma)} c={c} fecha="27 oct 2026" formato={n=>new Intl.NumberFormat(idioma==='es'?'es-MX':'en-US').format(n)}/>);
-    assert.ok(html.includes(idioma==='es'?'0 de 85,357 pedidos relacionados con un cliente':'0 of 85,357 orders matched to a customer'),html);
+    assert.ok(html.includes(idioma==='es'?'0 de 85,000 pedidos relacionados con un cliente':'0 of 85,000 orders matched to a customer'),html);
     assert.doesNotMatch(html,/%/);assert.ok(html.includes(traductor(idioma)('onb.setup.conc.pendiente')));
   }
 });

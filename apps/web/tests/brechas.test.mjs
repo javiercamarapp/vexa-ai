@@ -98,7 +98,7 @@ test('contrato recomendacionDeBrecha: puro, borrador en estado proposed, supuest
 test('familias: pendiente sin análisis (con avance leído), nunca mezcla familias sin mapa, tasa por 100 líneas con su cobertura', () => {
   const p = vistaSintetica({variante: 'pendiente'});
   assert.equal(p.familias.status, 'pendiente'); assert.equal(p.familias.progreso.v2, 0); assert.equal(p.familias.progreso.avancePct, 0); assert.deepEqual(p.familias.filas, []);
-  assert.equal(M.textoAvance(p.familias), '0 de 94,025 conversaciones del histórico analizadas (0.0 %).');
+  assert.equal(M.textoAvance(p.familias), '0 de 94,000 conversaciones del histórico analizadas (0.0 %).');
   const f = vistaSintetica().familias;
   assert.equal(f.status, 'parcial'); assert.ok(f.filas.every(x => x.familia.startsWith('cod:')) && f.categorias.every(x => x.familia.startsWith('cat:')));
   const milo = f.filas.find(x => x.familia === 'cod:MILO'); assert.equal(milo.por100, Math.round((milo.conversaciones * 1000) / milo.lineas) / 10);

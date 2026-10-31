@@ -55,7 +55,7 @@ test('QA3-002: sin desglose de HubSpot se dice «no disponible» en lugar de rec
  assert.match(e.lineas[0],/7,930 de 16,491 filas leídas están incorporadas; el desglose del resto no está disponible ahora/);assert.doesNotMatch(e.lineas.join(' '),/rechazad/i);
 });
 test('QA3-002: los KPI de Importaciones suman todas las cargas, separan metadatos de defectos y no cuentan lo desglosado como falla',()=>{
- const a=agregadoImportaciones([csvSrc,hubspotSrc(),{...csvSrc,key:'ledger',imports:0,incorporated:85383,rejected:0}]);
+ const a=agregadoImportaciones([csvSrc,hubspotSrc(),{...csvSrc,key:'ledger',imports:0,incorporated:85000,rejected:0}]);
  assert.deepEqual({...a,porFuente:undefined},{cargas:74,incorporadas:490066,rechazadas:64+161,soloMetadatos:8400,pendientes:0,sinDesglose:0,fuentes:2,porFuente:undefined});
  const b=agregadoImportaciones([hubspotSrc({rejectionBreakdown:rejectionBreakdown({total:16491,incorporated:7930,rejected:8561,codes:null})})]);
  {const suma=a.porFuente.reduce((n,f)=>n+f.incorporadas,0);assert.equal(suma,a.incorporadas,'el total de Importaciones es la suma de las tarjetas por fuente de Fuentes (A6)');assert.match(desgloseImportaciones(a.porFuente),/ \+ /);assert.ok(a.porFuente.every(f=>['hubspot','csv','zendesk'].includes(f.key)),'el libro económico no entra en Importaciones');}
@@ -104,7 +104,7 @@ import {esCuentaTecnica,visibles,puedeRevocar,rolEs,ROLES,ROL_ES} from '../team/
 const miembro=(id,role,email='x@y.com',status='active')=>({id,role,email,status});
 test('QA3-005: las cuentas técnicas (.invalid / worker-) no se muestran y las personas sí',()=>{
  assert.equal(esCuentaTecnica('worker-5b000ff068@vexa.invalid'),true);assert.equal(esCuentaTecnica('worker-abc@empresa.com'),true);assert.equal(esCuentaTecnica('bot@sistema.INVALID'),true);
- assert.equal(esCuentaTecnica('javier@empresax.com'),false);assert.equal(esCuentaTecnica('network-worker@x.com'),false);
+ assert.equal(esCuentaTecnica('admin@proveedor-ejemplo.example'),false);assert.equal(esCuentaTecnica('network-worker@x.com'),false);
  assert.deepEqual(visibles([miembro('1','owner','a@b.com'),miembro('2','analyst','worker-1@vexa.invalid')]).map(i=>i.id),['1']);
 });
 test('QA3-005: los roles se traducen y los valores internos no cambian',()=>{

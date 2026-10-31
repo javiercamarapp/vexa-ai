@@ -79,7 +79,7 @@ export function leerQuejas(ordenes) {
 
 export function entradasSinteticas({variante = ''} = {}) {
   const base = {availability: 'ready', meta: {refreshedAt: '2026-10-23T17:20:02Z', sourceWatermark: '2026-10-19T06:32:20Z'}};
-  if (variante === 'vacio') return {ordenes: {...base, rows: []}, reembolsos: {...base, rows: []}, tracker: {availability: 'absent'}, quejas: {availability: 'absent'}, pares: {availability: 'absent'}, progreso: {availability: 'ready', v2: 0, objetivo: 94025, avancePct: 0, conFamilias: 0, conversacionesCargadas: 104024}};
+  if (variante === 'vacio') return {ordenes: {...base, rows: []}, reembolsos: {...base, rows: []}, tracker: {availability: 'absent'}, quejas: {availability: 'absent'}, pares: {availability: 'absent'}, progreso: {availability: 'ready', v2: 0, objetivo: 94000, avancePct: 0, conFamilias: 0, conversacionesCargadas: 104024}};
   const ordenes = leerOrdenes(), reembolsos = leerReembolsos(ordenes);
   const pendiente = variante === 'pendiente';
   return {
@@ -87,7 +87,7 @@ export function entradasSinteticas({variante = ''} = {}) {
     tracker: variante === 'sintracker' ? {availability: 'unavailable'} : leerTracker(),
     quejas: pendiente ? {availability: 'absent'} : leerQuejas(ordenes),
     pares: pendiente ? {availability: 'absent'} : {availability: 'ready', pairs: [{a: 'cod:KORA', b: 'cat:bateria', n: 84}, {a: 'cod:NOVA', b: 'cat:cargador', n: 52}, {a: 'cod:MILO', b: 'cat:cuchilla', n: 41}, {a: 'cat:aceite_combustible', b: 'cat:cortacesped', n: 90}, {a: 'cod:PIKA', b: 'cat:bujia', n: 12}]},
-    progreso: pendiente ? {availability: 'ready', v2: 0, objetivo: 94025, avancePct: 0, conFamilias: 0, conversacionesCargadas: 104024} : {availability: 'ready', v2: 58300, objetivo: 94025, avancePct: 62, conFamilias: 36700, conversacionesCargadas: 104024},
+    progreso: pendiente ? {availability: 'ready', v2: 0, objetivo: 94000, avancePct: 0, conFamilias: 0, conversacionesCargadas: 104024} : {availability: 'ready', v2: 58300, objetivo: 94000, avancePct: 62, conFamilias: 36700, conversacionesCargadas: 104024},
   };
 }
 export const vistaSintetica = (o = {}) => armarVista({...entradasSinteticas(o), ahora: new Date('2026-10-23T20:00:00Z')});

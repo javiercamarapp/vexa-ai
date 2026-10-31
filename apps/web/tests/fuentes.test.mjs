@@ -16,7 +16,7 @@ test('rango de serie: primer y último mes con registros; sin registros no hay r
 });
 test('tarjetas: una fuente sin cargar es «sin_cargar» y no hereda fechas; el libro lleva su fecha de corte y rango', () => {
   const cob = {sources: [
-    {key: 'ledger', label: 'x', loaded: true, status: 'ok', class: 'observed', imports: 0, openImports: 0, total: 85383, incorporated: 85383, rejected: 0, pending: 0, lastUpdate: null, detail: []},
+    {key: 'ledger', label: 'x', loaded: true, status: 'ok', class: 'observed', imports: 0, openImports: 0, total: 85000, incorporated: 85000, rejected: 0, pending: 0, lastUpdate: null, detail: []},
     {key: 'zendesk', label: 'Zendesk', loaded: false, status: 'empty', class: 'observed', imports: 0, openImports: 0, total: 0, incorporated: 0, rejected: 0, pending: 0, lastUpdate: null, detail: []}]};
   const tr = {ledger: {status: 'ok', series: [{month: '2025-11', orders: {count: 5}, refunds: {count: 0}}, {month: '2026-10', orders: {count: 2}, refunds: {count: 0}}], completeness: {dataThrough: '2026-10-05'}}, conversations: {status: 'ok', series: [{month: '2026-01', count: 9}], completeness: {dataThrough: '2026-10-18'}}};
   const [l, z] = tarjetasFuentes(cob, tr);

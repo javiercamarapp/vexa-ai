@@ -21,7 +21,7 @@ export function siguientePaso(item){
  if(tipos.has('approved'))return 'Revisar los borradores de la acción, enviarlos por tu cuenta y marcar en curso.';
  if(item.flow?.available&&item.canMutate)return 'Decidir: Proceder, Ajustar o Descartar.';
  if(item.drafts?.length>0)return 'Revisar el borrador de intervención y aprobar su plan.';
- if(!item.canMutate)return 'Consulta: un analista, operador o propietario debe decidir.';
+ if(!item.canMutate)return 'Consulta: un analista, operador o administrador del espacio debe decidir.';
  return item.ownerId?'Crear una intervención borrador a partir de esta recomendación.':'Asignar un responsable y crear una intervención borrador.';
 }
 export const responsable=item=>item?.ownerId?'Asignado':'Sin asignar';

@@ -16,17 +16,17 @@ test('Importaciones: el bloque de carga solo lo pinta quien tiene la capacidad i
   assert.match(src,/\{puedeImportar&&<div className="pc-card"><fieldset className=\{'import-upload '\+styles\.upload\}/,'«Nueva carga» solo con la capacidad');
   assert.match(src,/\{!puedeImportar&&<p className="ac-nota" role="note">\{t\('rol\.imp\.soloLectura'\)\}<\/p>\}/);
   assert.match(src,/!hasWork&&!puedeImportar&&<EmptyState[^>]*rol\.imp\.vacioTituloSinCarga/);
-  for(const d of [ESP,ING]){for(const k of ['rol.imp.soloLectura','rol.imp.vacioSinCarga'])assert.match(d[k],/propietario|owner/i,k);}
+  for(const d of [ESP,ING]){for(const k of ['rol.imp.soloLectura','rol.imp.vacioSinCarga'])assert.match(d[k],/administrador del espacio|workspace administrator/i,k);}
 });
 test('el vacío de Importaciones del analista (no puede crear la conexión) lo dice; el propietario conserva sus tres pasos',()=>{
   assert.match(leer('src/components/import-preview.tsx'),/body=\{canConfigure\?t\('conx\.i\.vacioBody'\):t\('rol\.imp\.vacioAnalista'\)\}/);
-  assert.match(ESP['rol.imp.vacioAnalista'],/propietario/);assert.match(ING['rol.imp.vacioAnalista'],/owner/);
+  assert.match(ESP['rol.imp.vacioAnalista'],/administrador del espacio/);assert.match(ING['rol.imp.vacioAnalista'],/workspace administrator/);
 });
 test('textos de vacío: ninguno ordena «Carga/Importa/Sube» a un rol sin permiso; dicen que lo hace el propietario (o un analista)',()=>{
   const claves=['estado.vacioCuerpo','ag.sinInfoCuerpo','brechas.sinPedidos','cfo.vacioCuerpo','econ.libroVacioB','cop.vacioCuerpo','fuga.sinLibro','fuga.sinFilasTracker'];
   for(const k of claves){
     assert.doesNotMatch(ESP[k],/(^|[.:] )(Carga|Importa|Sube)\b/,'es:'+k);assert.doesNotMatch(ESP[k],/\b(carga|importa|sube) (tus|una|el|los)\b/i,'es:'+k);
-    assert.doesNotMatch(ING[k],/(^|[.:] )(Load|Upload|Import)\b/,'en:'+k);assert.match(ESP[k],/propietario/,'es:'+k);assert.match(ING[k],/owner/,'en:'+k);
+    assert.doesNotMatch(ING[k],/(^|[.:] )(Load|Upload|Import)\b/,'en:'+k);assert.match(ESP[k],/administrador del espacio/,'es:'+k);assert.match(ING[k],/workspace administrator/,'en:'+k);
   }
 });
 test('Cortes publicados: preparar, cargar pedidos, clasificar y asociar es del propietario (el servidor exige snapshot_owner_required); el analista ve un aviso en vez de la sección',()=>{
@@ -36,7 +36,7 @@ test('Cortes publicados: preparar, cargar pedidos, clasificar y asociar es del p
   const vista=leer('src/components/datos/economia-resumen.tsx');
   assert.match(vista,/\{puedePreparar&&<Preparar>/);assert.match(vista,/!puedePreparar&&soloPropietario&&<p className="ac-nota"[^>]*>\{tr\('rol\.econ\.soloProp'\)\}/);
   assert.match(leer('../../packages/metrics/snapshots.mjs'),/check\(s\.role==='owner','snapshot_owner_required',403\)/,'el servidor sigue exigiendo propietario');
-  assert.match(ESP['rol.econ.soloProp'],/lo hace el propietario/);assert.match(ING['rol.econ.soloProp'],/done by the owner/);
+  assert.match(ESP['rol.econ.soloProp'],/lo hace el administrador del espacio/);assert.match(ING['rol.econ.soloProp'],/done by the workspace administrator/);
 });
 test('Zendesk ya no es el valor por defecto: HubSpot lo es, y Zendesk se ofrece como fuera de alcance por ahora, sin prometer fechas',()=>{
   const src=leer('src/components/connection-settings.tsx');

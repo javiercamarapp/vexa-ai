@@ -45,7 +45,7 @@ const PROHIBIDOS: Record<string, string[]> = {
   'src/components/interventions/panel.tsx': ['Plan de medición', 'Guardar plan', 'Avanzar intervención', 'Reasignar intervención', 'Cancelar intervención', 'Comparación antes y después', 'Reembolsos observados'],
   'src/components/evidence-panel.tsx': ['Evidencia del análisis', 'Citas por hallazgo', 'Menciones respaldadas', 'Volver a análisis'],
   'src/components/extraction-panel.tsx': ['Solicitar análisis', 'Límites y conciliación', 'Conciliar costo', 'Reservas pendientes de conciliación', 'Requieren atención'],
-  'src/components/association-panel.tsx': ['Vínculos entre conversaciones y clientes', 'Evidencia de origen', 'Decisión del propietario', 'Aprobar lote de origen revisado'],
+  'src/components/association-panel.tsx': ['Vínculos entre conversaciones y clientes', 'Evidencia de origen', 'Decisión del administrador del espacio', 'Aprobar lote de origen revisado'],
   'src/components/candidates-panel.tsx': ['Candidatos de extracción', 'Confirmación humana', 'Historial y rollback', 'Registrar recibo del custodio'],
   'src/components/evaluation-panel.tsx': ['Evaluación histórica', 'Nueva cohorte', 'Motivos de exclusión', 'Guardar comentario versionado'],
   'src/components/migration-comparison.tsx': ['Comparación de migración', 'Congelar corte', 'Cobertura por canal', 'Delta comparable'],

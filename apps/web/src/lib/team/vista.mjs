@@ -1,6 +1,6 @@
 // Presentación del equipo para el cliente: sin cuentas técnicas del sistema, roles en español (el valor interno no cambia) y sin ofrecer «Revocar» donde el servicio lo rechazaría.
 export const ROLES=Object.freeze(['owner','analyst','operator','viewer']);
-export const ROL_ES=Object.freeze({owner:'Propietario',analyst:'Analista',operator:'Operador',viewer:'Lector'});
+export const ROL_ES=Object.freeze({owner:'Administrador del espacio',analyst:'Analista',operator:'Operador',viewer:'Lectura'});
 export const ESTADO_ES=Object.freeze({active:'Activo',revoked:'Revocado',pending:'Pendiente',expired:'Vencida',cancelled:'Cancelada',accepted:'Aceptada'});
 export const rolEs=(rol)=>ROL_ES[rol]??'Rol desconocido';
 export const estadoEs=(estado)=>ESTADO_ES[estado]??estado;

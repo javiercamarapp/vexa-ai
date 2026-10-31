@@ -19,7 +19,7 @@ test('roles: CFO y reembolsos solo para propietario y analista; el general para 
   for (const clave of ['cfo', 'refunds']) { assert.equal(puedeUsarModo(MODOS[clave], 'owner'), true); assert.equal(puedeUsarModo(MODOS[clave], 'analyst'), true); for (const r of ['operator', 'viewer', '', undefined]) assert.equal(puedeUsarModo(MODOS[clave], r), false, clave + r); }
   for (const r of ['owner', 'analyst', 'operator', 'viewer']) assert.equal(puedeUsarModo(MODOS.general, r), true);
   assert.equal(puedeUsarModo(null, 'owner'), false);
-  assert.equal(textoSoloPara(MODOS.cfo), 'Esta área es solo para propietarios y analistas');
+  assert.equal(textoSoloPara(MODOS.cfo), 'Esta área es solo para administradores del espacio y analistas');
 });
 test('cada ruta de un modo con menú existe en el menú y el ítem de CFO se llama «CFO»', () => {
   const items = MENU.flatMap(e => e.tipo === 'grupo' ? e.items : [e]);

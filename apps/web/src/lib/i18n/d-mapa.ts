@@ -1,6 +1,6 @@
 // Textos de interfaz (mapa): clave -> español / inglés. es.ts y en.ts los incorporan; test:i18n exige las mismas claves y {variables}.
 export const mapaEs = {
-  'vista.errAcceso': 'Tu rol no tiene acceso a este panel. Lo ven propietarios y analistas.',
+  'vista.errAcceso': 'Tu rol no tiene acceso a este panel. Lo ven administradores del espacio y analistas.',
   'vista.errRed': 'No disponible ahora. No significa que no haya casos: reintenta en un momento.',
   'vista.sinAcceso': 'Tu rol no tiene acceso a este panel',
   'vista.noDisponible': 'No disponible ahora',
@@ -76,7 +76,7 @@ export const mapaEs = {
   'mapa.sinDatoRegion': '{nombre}: sin dato (menos de 5 casos o sin lectura)',
 } as const;
 export const mapaEn: Record<keyof typeof mapaEs, string> = {
-  'vista.errAcceso': 'Your role does not have access to this panel. Owners and analysts can see it.',
+  'vista.errAcceso': 'Your role does not have access to this panel. Workspace administrators and analysts can see it.',
   'vista.errRed': 'Not available right now. This does not mean there are no cases: try again in a moment.',
   'vista.sinAcceso': 'Your role does not have access to this panel',
   'vista.noDisponible': 'Not available right now',

@@ -4,8 +4,8 @@ export const FILTROS_VINCULO=Object.freeze([{value:'',label:'Todos'},{value:'pen
 const MOTIVOS=Object.freeze({
  UNIQUE_EXPLICIT_BRIDGE:'Vinculado con certeza: el ticket cita de forma explícita un único contacto.',
  ENDPOINT_UNRESOLVED:'Sin identificar: todavía no se encuentra el cliente o la conversación a la que apunta.',
- EVIDENCE_CONFLICT:'La evidencia se contradice: necesita la revisión del propietario.',
- OWNER_DECISION:'Decidido por el propietario tras revisar la evidencia.',
+ EVIDENCE_CONFLICT:'La evidencia se contradice: necesita la revisión del administrador del espacio.',
+ OWNER_DECISION:'Decidido por el administrador del espacio tras revisar la evidencia.',
  SOURCE_RETAINED:'El archivo de origen está retenido y no se puede volver a comprobar.',
  RETENTION_POLICY_REQUIRED:'Falta una política de retención para poder decidir.',
  RETENTION_SCOPE_LIMIT:'Queda fuera del alcance de retención configurado.'});
@@ -23,7 +23,7 @@ export function detalleAsociaciones(texto){
 export function estadoProcesamiento({lotes,lista}){
  const puedeAutorizar=Boolean(lista);
  if(lotes===0)return lista
-  ?{tone:'info',titulo:'Aún no se ha procesado el histórico.',texto:'Cuando el propietario lo autorice, las conversaciones históricas se analizarán por lotes y aparecerán aquí.',puedeAutorizar}
+  ?{tone:'info',titulo:'Aún no se ha procesado el histórico.',texto:'Cuando el administrador del espacio lo autorice, las conversaciones históricas se analizarán por lotes y aparecerán aquí.',puedeAutorizar}
   :{tone:'info',titulo:'El análisis del histórico todavía no está activado en este espacio.',texto:'No afecta a los vínculos entre tickets y clientes de abajo, que ya están cargados.',puedeAutorizar};
  return lista
   ?{tone:'ok',titulo:'El procesamiento del histórico está disponible.',texto:'Los lotes avanzan por su cuenta; aquí ves su avance.',puedeAutorizar}

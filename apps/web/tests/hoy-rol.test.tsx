@@ -55,5 +55,5 @@ test('aceptarIntervenciones: solo las abiertas cuyo responsable es la persona (e
 test('textos del Hoy por rol: mismas claves en es y en, sin prometer escritura ni cifras de dinero',()=>{
   const claves=Object.keys(es).filter(k=>k.startsWith('hoy.rol.'));assert.ok(claves.length>=15);
   for(const k of claves){assert.ok(k in en,k);assert.ok(!/\d/.test(es[k as keyof typeof es]),k);}
-  assert.match(es['hoy.rol.sinIntervenciones'],/propietario/);assert.match(en['hoy.rol.sinIntervenciones'],/owner/);
+  assert.match(es['hoy.rol.sinIntervenciones'],/administrador del espacio/);assert.match(en['hoy.rol.sinIntervenciones'],/workspace administrator/);
 });

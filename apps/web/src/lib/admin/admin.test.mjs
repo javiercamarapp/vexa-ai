@@ -108,7 +108,7 @@ test('QA3-005: las cuentas técnicas (.invalid / worker-) no se muestran y las p
  assert.deepEqual(visibles([miembro('1','owner','a@b.com'),miembro('2','analyst','worker-1@vexa.invalid')]).map(i=>i.id),['1']);
 });
 test('QA3-005: los roles se traducen y los valores internos no cambian',()=>{
- assert.deepEqual(ROLES,['owner','analyst','operator','viewer']);assert.deepEqual(ROLES.map(rolEs),['Propietario','Analista','Operador','Lector']);assert.equal(rolEs('otro'),'Rol desconocido');assert.equal(Object.keys(ROL_ES).length,4);
+ assert.deepEqual(ROLES,['owner','analyst','operator','viewer']);assert.deepEqual(ROLES.map(rolEs),['Administrador del espacio','Analista','Operador','Lectura']);assert.equal(rolEs('otro'),'Rol desconocido');assert.equal(Object.keys(ROL_ES).length,4);
 });
 test('QA3-005: no se ofrece Revocar sobre uno mismo ni sobre el último propietario; sí sobre otros',()=>{
  const items=[miembro('yo','owner'),miembro('ana','analyst'),miembro('otro','owner')];

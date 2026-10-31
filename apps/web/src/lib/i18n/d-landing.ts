@@ -112,13 +112,13 @@ const L = {
 
   // Puestos
   'landing.cuentas.titulo': ['Cada puesto ve lo que le corresponde.', 'Each role sees what belongs to it.'],
-  'landing.cuentas.1.t': ['Propietario', 'Owner'],
+  'landing.cuentas.1.t': ['Administrador del espacio', 'Workspace administrator'],
   'landing.cuentas.1.d': ['Configura, decide y aprueba. Administra equipo, avisos y retención.', 'Configures, decides and approves. Manages team, notices and retention.'],
   'landing.cuentas.2.t': ['Analista', 'Analyst'],
   'landing.cuentas.2.d': ['Investiga, prepara y propone. Ve dinero e importa archivos.', 'Investigates, prepares and proposes. Sees money and imports files.'],
   'landing.cuentas.3.t': ['Operador', 'Operator'],
   'landing.cuentas.3.d': ['Ejecuta las acciones que le asignan. Ve problemas y acciones, sin cifras de dinero.', 'Carries out the actions assigned to them. Sees problems and actions, without money figures.'],
-  'landing.cuentas.4.t': ['Lector', 'Viewer'],
+  'landing.cuentas.4.t': ['Lectura', 'Read-only'],
   'landing.cuentas.4.d': ['Consulta en solo lectura, sin riesgo de cambiar nada.', 'Reads with read-only access, with no risk of changing anything.'],
   'landing.cuentas.nota': ['La autorización se decide en el servidor. Ocultar un elemento del menú no protege una pantalla.', 'Authorization is decided on the server. Hiding a menu item does not protect a screen.'],
 
@@ -136,7 +136,7 @@ const L = {
   'landing.seg.ruta.t': ['Lo que todavía no existe', 'What does not exist yet'],
   'landing.seg.no.1': ['No tenemos certificación SOC 2 ni ISO 27001, y no afirmamos cumplimiento de GDPR.', 'We do not hold SOC 2 or ISO 27001 certification, and we do not claim GDPR compliance.'],
   'landing.seg.no.2': ['No se ha hecho una prueba de penetración externa.', 'No external penetration test has been performed.'],
-  'landing.seg.no.3': ['La verificación en dos pasos de propietarios está en nuestra hoja de ruta. Hoy no se exige.', 'Two-step verification for owners is on our roadmap. It is not required today.'],
+  'landing.seg.no.3': ['La verificación en dos pasos de administradores del espacio está en nuestra hoja de ruta. Hoy no se exige.', 'Two-step verification for workspace administrators is on our roadmap. It is not required today.'],
   'landing.seg.no.4': ['No ofrecemos inicio de sesión único ni una vista de auditoría para el cliente.', 'We do not offer single sign-on or a customer-facing audit view.'],
   'landing.seg.no.5': ['Hay respaldos diarios de nuestro proveedor, sin recuperación a un punto en el tiempo, y no ofrecemos compromisos de disponibilidad.', 'There are daily provider backups, without point-in-time recovery, and we make no availability commitments.'],
 
@@ -149,7 +149,7 @@ const L = {
   'landing.int.excel.d': ['Carga de archivos con vista previa y validación antes de ingerir. Los exportes de marketplaces se cargan con ayuda de nuestro equipo.', 'File upload with preview and validation before ingesting. Marketplace exports are loaded with help from our team.'],
   'landing.int.ruta.1': ['Conectores directos con Amazon, Walmart y Shopify. Hoy se cargan sus exportes.', 'Direct connectors for Amazon, Walmart and Shopify. Today their exports are loaded.'],
   'landing.int.ruta.2': ['Mapa de problemas completo por dirección de envío, que requiere esos conectores.', 'A full problem map by shipping address, which requires those connectors.'],
-  'landing.int.ruta.3': ['Verificación en dos pasos para propietarios.', 'Two-step verification for owners.'],
+  'landing.int.ruta.3': ['Verificación en dos pasos para administradores del espacio.', 'Two-step verification for workspace administrators.'],
 
   // Lo que Rovaq no hace
   'landing.no.titulo': ['Lo que Rovaq no hace.', 'What Rovaq does not do.'],
@@ -179,7 +179,7 @@ const L = {
   'landing.faq.6.q': ['¿Rovaq reclama los reembolsos por mí?', 'Does Rovaq claim refunds for me?'],
   'landing.faq.6.a': ['No. Arma un paquete de evidencia agregada y un borrador de mensaje. Tú los revisas y presentas el reclamo. Nada se envía solo y no se promete ningún monto recuperado.', 'No. It assembles a package of aggregated evidence and a draft message. You review them and file the claim. Nothing is sent on its own and no recovered amount is promised.'],
   'landing.faq.7.q': ['¿Qué tan seguro es y qué certificaciones tienen?', 'How secure is it and what certifications do you hold?'],
-  'landing.faq.7.a': ['Hay aislamiento por organización en la base de datos, cuatro roles, conexiones de lectura y registro de operaciones de administración. No tenemos SOC 2 ni ISO 27001, no hemos hecho una prueba de penetración externa y la verificación en dos pasos de propietarios está en hoja de ruta.', 'There is isolation per organization in the database, four roles, read connections and a record of administration operations. We hold no SOC 2 or ISO 27001, we have not run an external penetration test and two-step verification for owners is on the roadmap.'],
+  'landing.faq.7.a': ['Hay aislamiento por organización en la base de datos, cuatro roles, conexiones de lectura y registro de operaciones de administración. No tenemos SOC 2 ni ISO 27001, no hemos hecho una prueba de penetración externa y la verificación en dos pasos de administradores del espacio está en hoja de ruta.', 'There is isolation per organization in the database, four roles, read connections and a record of administration operations. We hold no SOC 2 or ISO 27001, we have not run an external penetration test and two-step verification for workspace administrators is on the roadmap.'],
   'landing.faq.8.q': ['¿Cómo pido acceso y cuánto cuesta?', 'How do I request access and what does it cost?'],
   'landing.faq.8.a': ['Escríbenos a {correo} con tu rol y las herramientas que usas. Revisamos tu caso y te decimos qué se puede cargar o conectar hoy. El precio todavía no está publicado.', 'Write to us at {correo} with your role and the tools you use. We review your case and tell you what can be loaded or connected today. Pricing is not published yet.'],
 

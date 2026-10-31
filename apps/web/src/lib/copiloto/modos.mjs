@@ -49,7 +49,7 @@ export const modoPorRuta = pathname => Object.values(MODOS).find(m => m.ruta ===
 export const puedeUsarModo = (modo, role) => !!modo && Array.isArray(modo.rolesPermitidos) && modo.rolesPermitidos.includes(role);
 /** «Esta área es solo para propietarios y analistas» (o la lista que corresponda al modo). */
 export function textoSoloPara(modo) {
-  const N = {owner: 'propietarios', analyst: 'analistas', operator: 'operadores', viewer: 'lectores'};
+  const N = {owner: 'administradores del espacio', analyst: 'analistas', operator: 'operadores', viewer: 'personas con rol de Lectura'};
   const lista = modo.rolesPermitidos.map(r => N[r] ?? r);
   return 'Esta área es solo para ' + (lista.length > 1 ? lista.slice(0, -1).join(', ') + ' y ' + lista.at(-1) : lista[0]);
 }

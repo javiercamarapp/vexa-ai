@@ -16,7 +16,7 @@ import css from './flujo.module.css';
 
 export type FlowItem=Recommendation & {flow?:{available:boolean;role:string;events:FlowEvent[];etapa:Etapa;interventionId:string|null};priorityBase?:string};
 export type Miembro={id:string;role:string};
-export const ROL_TXT:Record<string,string>={owner:'Propietario',analyst:'Analista',operator:'Operador',viewer:'Lector'};
+export const ROL_TXT:Record<string,string>={owner:'Administrador del espacio',analyst:'Analista',operator:'Operador',viewer:'Lectura'};
 const fechaTxt=(v:string|null|undefined,idioma:Idioma)=>{if(!v)return '';return fechaCorta(v,idioma)??v;};
 const horaTxt=(v:string,idioma:Idioma)=>{const h=fechaHora(v,idioma);return h?h+' UTC':v;};
 /** Los miembros solo traen id y rol (no nombres ni correos): se muestra el rol y los últimos 4 caracteres del id. */

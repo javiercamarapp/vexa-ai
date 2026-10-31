@@ -87,7 +87,7 @@ export const es = {
   'base.net': 'Neto', 'base.marketplace_line_price': 'Precio de línea de marketplace',
   // Estados de datos
   'estado.cargandoDatos': 'Cargando datos autorizados', 'estado.errorTitulo': 'No pudimos cargar esta vista', 'estado.referencia': 'Referencia:',
-  'estado.vacioTitulo': 'Sin resultados para este alcance', 'estado.vacioCuerpo': 'La consulta terminó correctamente. Ajusta el periodo o los filtros. Si todavía no hay datos, pide al propietario de tu organización que los cargue.',
+  'estado.vacioTitulo': 'Sin resultados para este alcance', 'estado.vacioCuerpo': 'La consulta terminó correctamente. Ajusta el periodo o los filtros. Si todavía no hay datos, pide al administrador del espacio que los cargue.',
   'estado.parcial': 'Datos parciales: no equivalen al total', 'estado.desactualizado': 'Datos desactualizados: revisa el corte', 'estado.listo': 'Corte disponible',
   'estado.corte': 'Corte:', 'estado.sinCorte': 'Sin corte publicado',
   'estado.identidad': 'Configura el acceso Supabase y verifica el servicio de identidad para abrir el espacio de trabajo.',
@@ -108,9 +108,9 @@ export const es = {
   // Puntos de dolor
   'pp.eyebrow': 'Insights', 'pp.sinteticos': ' · datos sintéticos de demostración', 'pp.titulo': 'Puntos de dolor', 'pp.desc': 'Dónde se pierde dinero y por qué, con evidencia hasta la fila.',
   'pp.descLarga': 'Dónde se pierde dinero y por qué, con evidencia hasta la fila. Tamaño = dinero devuelto en USD bruto; lo que no se sabe dice «Sin dato», nunca 0.',
-  'pp.sinAcceso': 'Tu rol no tiene acceso a este panel', 'pp.sinAccesoCuerpo': 'Solo lo ven los propietarios y analistas de la organización; pide acceso a un propietario.', 'pp.volverResumen': 'Volver al resumen',
+  'pp.sinAcceso': 'Tu rol no tiene acceso a este panel', 'pp.sinAccesoCuerpo': 'Solo lo ven los administradores del espacio y analistas de la organización; pide acceso a quien administra tu espacio.', 'pp.volverResumen': 'Volver al resumen',
   'pp.exportarEvidencia': 'Exportar evidencia', 'pp.exportar': 'Exportar', 'pp.csvPorPunto': 'CSV por punto de dolor', 'pp.errorTitulo': 'No se pudo calcular los puntos de dolor',
-  'pp.errorRol': 'Tu rol no tiene acceso a este panel. Lo ven propietarios y analistas.', 'pp.parcialTitulo': 'Datos parciales',
+  'pp.errorRol': 'Tu rol no tiene acceso a este panel. Lo ven administradores del espacio y analistas.', 'pp.parcialTitulo': 'Datos parciales',
   'pp.parcialCuerpo': 'Una parte de las fuentes no respondió a tiempo: sus puntos salen como «No disponible ahora», no como cero. Se reintenta sola.',
   'pp.filtros': 'Filtros de puntos de dolor', 'pp.tema': 'Tema', 'pp.todos': 'Todos', 'pp.corte': 'Corte {fecha}', 'pp.indicadores': 'Indicadores de puntos de dolor',
   'pp.mapa': 'Mapa de burbujas', 'pp.mapaDesc': 'Cada burbuja es un punto de dolor', 'pp.medida': 'Medida del tamaño', 'pp.dinero': 'Dinero', 'pp.volumen': 'Volumen',

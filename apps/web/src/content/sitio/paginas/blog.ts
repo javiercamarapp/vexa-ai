@@ -1,9 +1,11 @@
 // Blog de Rovaq AI (T24): el índice (id blog) y el artículo a1, que sirve de ejemplar de forma y de tono para los demás.
 // Fuente: SEO 02-PLAN-POR-URL-DETALLE filas 26 y 27. El índice no lista nada a mano: sale del registro y muestra solo los artículos publicables.
 // Reglas: autor siempre la organización, ninguna cifra inventada, ningún cliente, ninguna certificación, y solo lo que P-D marca como PUBLICO
-// o MATIZ con su condición. Enlaces internos dentro del texto con {{id|texto}}; se enlazan solo las páginas que se publican.
+// o MATIZ con su condición. Enlaces internos dentro del texto con {{id|texto}}; se enlazan solo las páginas que se publican. Rótulos de viñeta con **texto**.
+// La fecha de publicación de todos los artículos es FECHA_CONTENIDO (fecha-contenido.mjs): un solo lugar para cambiar el día.
 import type { Articulo, Pagina } from '../tipos.ts';
 import { articulo, b, cita, h2, h3, noAfirmamos, p, ul } from '../ayudas.ts';
+import { FECHA_CONTENIDO } from '../fecha-contenido.mjs';
 
 export const BLOG_INDICE: Pagina = {
   id: 'blog',
@@ -34,6 +36,10 @@ export const BLOG_INDICE: Pagina = {
         b('Procedencia: la fuente, la fecha de corte y lo que todavía no se sabe de cada cifra.', 'Provenance: the source, the cut-off date and what is still unknown about each figure.'),
         b('Puntos de dolor: cómo pasar del texto libre de las conversaciones a una prioridad con tamaño y evidencia.', 'Pain points: how to go from the free text of conversations to a priority with size and evidence.'),
         b('Decisiones: propuestas con evidencia, una persona que decide y un resultado que queda registrado.', 'Decisions: proposals with evidence, a person who decides and an outcome that gets recorded.'),
+        b('Inteligencia artificial: qué trabajo conviene darle a un modelo, por qué los importes no salen de él y quién decide cada acción.', 'Artificial intelligence: which work belongs with a model, why amounts do not come from it and who decides every action.'),
+        b('Puestos: por qué cada persona ve solo lo que le toca y dónde se decide el acceso.', 'Roles: why each person sees only what applies to them and where access is decided.'),
+        b('Fuentes: cómo cargar tus exportes de Excel y CSV con vista previa y con el origen de cada fila.', 'Sources: how to load your Excel and CSV exports with a preview and with the origin of each row.'),
+        b('Seguridad: qué prácticas describimos, qué brechas declaramos y cómo leer una página de seguridad.', 'Security: which practices we describe, which gaps we declare and how to read a security page.'),
       ],
     },
   ],
@@ -42,7 +48,7 @@ export const BLOG_INDICE: Pagina = {
 
 export const ARTICULO_A1: Articulo = articulo({
   id: 'a1',
-  pub: '2026-11-03',
+  pub: FECHA_CONTENIDO,
   etiqueta: b('Reembolsos', 'Refunds'),
   seo: {
     titulo: b('Reembolsos: una fuga que se puede localizar | Rovaq AI', 'Refunds Are Not a Fixed Cost, They Are a Leak | Rovaq AI'),
@@ -57,18 +63,18 @@ export const ARTICULO_A1: Articulo = articulo({
     'A single total does not say what to tackle first. By channel, by product and by month, returned money starts to take shape.',
   ),
   resumen: b(
-    'Un total de reembolsos mezcla cosas que no se parecen. Este artículo explica cómo separar el dinero devuelto por canal, producto y mes, cómo leer un Pareto sin pedirle más de lo que da y qué debe llevar un paquete de evidencia para que un reclamo se pueda revisar.',
-    'A refund total mixes things that are not alike. This article explains how to split returned money by channel, product and month, how to read a Pareto without asking more of it than it gives, and what an evidence package should hold so a claim can be reviewed.',
+    'Un total de reembolsos mezcla cosas que no se parecen. Cómo separar el dinero devuelto por canal, producto y mes, cómo leer un Pareto sin pedirle más de lo que da y qué debe llevar un paquete de evidencia para que un reclamo se pueda revisar.',
+    'A refund total mixes things that are not alike. How to split returned money by channel, product and month, how to read a Pareto without asking more of it than it gives, and what an evidence package should hold so a claim can be reviewed.',
   ),
-  relacionados: ['fuga-de-reembolsos', 'a2', 'confianza-de-los-datos', 'analista'],
+  relacionados: ['a2', 'a6', 'a8', 'confianza-de-los-datos', 'analista'],
   bloques: [
     p(
       'Muchos equipos de comercio electrónico tratan los reembolsos como un costo de operar: un porcentaje que se acepta, se presupuesta y se revisa una vez al mes. El total sube o baja, alguien pregunta por qué y la conversación termina en una explicación general sobre la temporada, las devoluciones o los clientes exigentes.',
       'Many e-commerce teams treat refunds as a cost of doing business: a percentage that is accepted, budgeted and reviewed once a month. The total goes up or down, someone asks why, and the conversation ends with a general explanation about the season, returns or demanding customers.',
     ),
     p(
-      'Esa lectura tiene un problema. Un número único mezcla cosas que no se parecen, y lo que no se separa no se puede atender. Este artículo propone otra postura: tratar el dinero devuelto como una fuga, es decir, algo que tiene un lugar, una forma y, con trabajo, un responsable.',
-      'That reading has a problem. A single number mixes things that are not alike, and what is not separated cannot be handled. This article proposes a different stance: treat returned money as a leak, something that has a place, a shape and, with some work, an owner.',
+      'Esa lectura tiene un problema. Un número único mezcla cosas que no se parecen, y lo que no se separa no se puede atender. Conviene cambiar de postura: tratar el dinero devuelto como una fuga, es decir, algo que tiene un lugar, una forma y, con trabajo, un responsable.',
+      'That reading has a problem. A single number mixes things that are not alike, and what is not separated cannot be handled. A different stance helps: treat returned money as a leak, something that has a place, a shape and, with some work, an owner.',
     ),
     h2('Por qué un total único no sirve', 'Why a single total fails'),
     p(
@@ -97,9 +103,9 @@ export const ARTICULO_A1: Articulo = articulo({
       'It helps to read it in three cuts, one at a time:',
     ),
     ul(
-      ['Por canal. Muestra si el problema vive en un lugar de venta concreto o si es general. Si un canal concentra el movimiento, la conversación es con ese canal y con sus reglas, no con todo el negocio.', 'By channel. It shows whether the problem lives in one particular place of sale or is widespread. If one channel concentrates the movement, the conversation is with that channel and its rules, not with the whole business.'],
-      ['Por producto. Señala qué artículos suman más dinero devuelto. Un producto en la cima puede ser un asunto de descripción, de empaque o de proveedor; el corte no lo dice, pero te dice a quién preguntar.', 'By product. It points to which items add up to the most returned money. A product at the top may be a matter of description, packaging or supplier; the cut does not say which, but it tells you whom to ask.'],
-      ['Mes a mes. Muestra si el movimiento es estable, si tiene un pico o si crece. Un pico aislado y un crecimiento sostenido piden respuestas distintas.', 'By month. It shows whether the movement is steady, has a spike or is growing. An isolated spike and a sustained climb call for different answers.'],
+      ['**Por canal.** Muestra si el problema vive en un lugar de venta concreto o si es general. Si un canal concentra el movimiento, la conversación es con ese canal y con sus reglas, no con todo el negocio.', '**By channel.** It shows whether the problem lives in one particular place of sale or is widespread. If one channel concentrates the movement, the conversation is with that channel and its rules, not with the whole business.'],
+      ['**Por producto.** Señala qué artículos suman más dinero devuelto. Un producto en la cima puede ser un asunto de descripción, de empaque o de proveedor; el corte no lo dice, pero te dice a quién preguntar.', '**By product.** It points to which items add up to the most returned money. A product at the top may be a matter of description, packaging or supplier; the cut does not say which, but it tells you whom to ask.'],
+      ['**Mes a mes.** Muestra si el movimiento es estable, si tiene un pico o si crece. Un pico aislado y un crecimiento sostenido piden respuestas distintas.', '**By month.** It shows whether the movement is steady, has a spike or is growing. An isolated spike and a sustained climb call for different answers.'],
     ),
     p(
       'Después cruza los cortes entre sí. Un producto que domina en un solo canal cuenta una historia distinta a la de uno que domina en todos. Y mira también el contacto repetido: los clientes que escriben más de una vez por el mismo asunto suelen señalar algo que el primer mensaje no resolvió.',
@@ -127,8 +133,8 @@ export const ARTICULO_A1: Articulo = articulo({
       ['Los supuestos con los que se estimó el alcance del reclamo, escritos por quien los eligió.', 'The assumptions used to size the claim, written down by whoever chose them.'],
     ),
     p(
-      'En Rovaq AI, la {{fuga-de-reembolsos|pantalla de fuga de reembolsos}} genera un paquete de evidencia por producto, en HTML y CSV, y una lista de productos para el proveedor. Todo se arma en tu navegador y la pantalla confirma que no se envió nada: tú revisas el paquete y tú presentas el reclamo.',
-      'In Rovaq AI, the {{fuga-de-reembolsos|refund leakage screen}} generates an evidence package per product, as HTML and CSV, and a list of products for the supplier. Everything is built in your browser and the screen confirms that nothing was sent: you review the package and you file the claim.',
+      'En Rovaq AI, la pantalla de fuga de reembolsos genera un paquete de evidencia por producto, en HTML y CSV, y una lista de productos para el proveedor. Todo se arma en tu navegador y la pantalla confirma que no se envió nada: tú revisas el paquete y tú presentas el reclamo.',
+      'In Rovaq AI, the refund leakage screen generates an evidence package per product, as HTML and CSV, and a list of products for the supplier. Everything is built in your browser and the screen confirms that nothing was sent: you review the package and you file the claim.',
     ),
     h2('Cómo empezar con lo que ya tienes', 'How to start with what you already have'),
     p(
@@ -143,7 +149,6 @@ export const ARTICULO_A1: Articulo = articulo({
       ['No afirmamos que todo reembolso sea una fuga. Muchos son devoluciones legítimas y deben seguir siéndolo.', 'We do not claim that every refund is a leak. Many are legitimate returns and should stay that way.'],
       ['No prometemos ningún monto. Cualquier estimación del alcance de un reclamo depende de los supuestos que escribas tú.', 'We do not promise any amount. Any estimate of how large a claim could be depends on the assumptions you write.'],
       ['No calculamos la tasa de reembolso por producto, el margen, la pérdida neta ni la causa raíz con los datos de un exporte, porque faltan datos para hacerlo.', 'We do not calculate the refund rate per product, margin, net loss or root cause from an export, because the data needed to do it is missing.'],
-      ['No tratamos un dato desconocido como si fuera cero: si falta información, la pantalla lo dice.', 'We do not treat unknown data as if it were zero: if information is missing, the screen says so.'],
       ['Nada se envía solo: el reclamo lo presenta una persona.', 'Nothing is sent on its own: a person files the claim.'],
     ),
   ],

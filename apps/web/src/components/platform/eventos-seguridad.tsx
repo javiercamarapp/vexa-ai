@@ -1,4 +1,7 @@
 import {platformMfaGate, type Access} from '../../app/(app)/platform/_lib/access';
+import {traductor} from '../../lib/i18n';
+import {idiomaActual} from '../../lib/i18n/servidor';
+import {formatosDe} from '../../lib/i18n/formatos';
 
 /* Eventos de seguridad (auditoría 3): componente de SERVIDOR. Lee solo por las funciones public.platform_security_events / platform_security_alerts,
    que exigen administrador de plataforma con sesión viva. Muestra la huella de IP truncada (ipRef), nunca la IP. */
@@ -17,32 +20,34 @@ const tono=(s:string)=>s==='high'?'#b3261e':s==='warn'?'#8a5a00':'inherit';
 export async function EventosSeguridad({access,searchParams}:{access:Access|null;searchParams:Record<string,string|string[]|undefined>}){
   if(!access||access.mode!=='live'||!access.client)return null;
   if(await platformMfaGate(access)!=='ok')return null;
+  const idioma=await idiomaActual(),t=traductor(idioma),fmt=formatosDe(idioma);
   const f=filtrosSeguros(searchParams);
   const r=await access.client.rpc('platform_security_events',{p_input:{kind:f.kind,severity:f.severity,since:f.since,limit:50}});
   const filas:Fila[]=r.error?[]:(r.data?.items??[]);
   return <section className="pf-page" aria-labelledby="sec-ev-titulo" style={{marginTop:24}}>
-    <h2 id="sec-ev-titulo">Eventos de seguridad</h2>
-    <p>Accesos denegados, origen inválido, Bearer y firmas inválidas, bloqueos por límite, entrada y salida de «Ver como» y exportaciones. Sin contenido de clientes; la IP aparece solo como huella parcial. Los eventos repetidos se muestrean: la columna Detalle trae el total cuando aplica.</p>
+    <h2 id="sec-ev-titulo">{t('tr.sec.titulo')}</h2>
+    <p>{t('tr.sec.desc')}</p>
     <form method="get" style={{display:'flex',gap:8,flexWrap:'wrap',margin:'12px 0'}}>
-      <label>Tipo <select name="kind" defaultValue={f.kind??''}><option value="">Todos</option>{TIPOS.map(k=><option key={k} value={k}>{k}</option>)}</select></label>
-      <label>Severidad <select name="severity" defaultValue={f.severity??''}><option value="">Todas</option>{SEV.map(k=><option key={k} value={k}>{k}</option>)}</select></label>
-      <label>Desde <input type="date" name="since" defaultValue={f.since?.slice(0,10)??''} /></label>
-      <button type="submit">Filtrar</button>
+      <label>{t('tr.sec.tipo')} <select name="kind" defaultValue={f.kind??''}><option value="">{t('tr.sec.todos')}</option>{TIPOS.map(k=><option key={k} value={k}>{k}</option>)}</select></label>
+      <label>{t('tr.sec.severidad')} <select name="severity" defaultValue={f.severity??''}><option value="">{t('tr.sec.todas')}</option>{SEV.map(k=><option key={k} value={k}>{k}</option>)}</select></label>
+      <label>{t('tr.sec.desde')} <input type="date" name="since" defaultValue={f.since?.slice(0,10)??''} /></label>
+      <button type="submit">{t('tr.sec.filtrar')}</button>
     </form>
-    {r.error?<p role="alert">No se pudieron leer los eventos (la migración de eventos de seguridad puede no estar aplicada).</p>:filas.length===0?<p>Sin eventos para este filtro.</p>:
+    {r.error?<p role="alert">{t('tr.sec.errorLeer')}</p>:filas.length===0?<p>{t('tr.sec.vacio')}</p>:
     <div style={{overflowX:'auto'}}><table className="pf-table" style={{width:'100%'}}>
-      <thead><tr><th>Fecha</th><th>Tipo</th><th>Severidad</th><th>Ruta</th><th>Método</th><th>Organización</th><th>Actor</th><th>IP (huella)</th><th>Detalle</th></tr></thead>
-      <tbody>{filas.map(e=><tr key={e.id}><td>{new Date(e.at).toLocaleString('es-MX')}</td><td>{e.kind}</td><td style={{color:tono(e.severity)}}>{e.severity}</td><td>{e.route??''}</td><td>{e.method??''}</td><td>{e.tenantId?.slice(0,8)??''}</td><td>{e.actorId?.slice(0,8)??''}</td><td>{e.ipRef??''}</td><td>{Object.entries(e.detail??{}).map(([k,v])=>k+'='+String(v)).join(' ')}</td></tr>)}</tbody>
+      <thead><tr><th>{t('tr.sec.fecha')}</th><th>{t('tr.sec.tipo')}</th><th>{t('tr.sec.severidad')}</th><th>{t('tr.sec.ruta')}</th><th>{t('tr.sec.metodo')}</th><th>{t('tr.sec.org')}</th><th>{t('tr.sec.actor')}</th><th>{t('tr.sec.ip')}</th><th>{t('tr.sec.detalle')}</th></tr></thead>
+      <tbody>{filas.map(e=><tr key={e.id}><td>{fmt.fechaHora(e.at)}</td><td>{e.kind}</td><td style={{color:tono(e.severity)}}>{e.severity}</td><td>{e.route??''}</td><td>{e.method??''}</td><td>{e.tenantId?.slice(0,8)??''}</td><td>{e.actorId?.slice(0,8)??''}</td><td>{e.ipRef??''}</td><td>{Object.entries(e.detail??{}).map(([k,v])=>k+'='+String(v)).join(' ')}</td></tr>)}</tbody>
     </table></div>}
   </section>;
 }
 export async function AlertasSeguridad({access}:{access:Access|null}){
   if(!access||access.mode!=='live'||!access.client)return null;
   if(await platformMfaGate(access)!=='ok')return null;
+  const t=traductor(await idiomaActual());
   const r=await access.client.rpc('platform_security_alerts',{p_window:'15 minutes'});
   const alertas:Array<{id:string;severity:string;hits:number;title:string}>=r.error?[]:(r.data?.alerts??[]);
   return <section className="pf-page" aria-labelledby="sec-al-titulo" style={{marginBottom:16}}>
-    <h2 id="sec-al-titulo">Alertas de seguridad (últimos 15 minutos)</h2>
-    {r.error?<p>Sin datos de seguridad todavía.</p>:alertas.length===0?<p>Sin alertas por umbral.</p>:<ul>{alertas.map(a=><li key={a.id} style={{color:tono(a.severity)}}><strong>{a.title}</strong>: {a.hits}</li>)}</ul>}
+    <h2 id="sec-al-titulo">{t('tr.sec.alertasTitulo')}</h2>
+    {r.error?<p>{t('tr.sec.alertasSinDatos')}</p>:alertas.length===0?<p>{t('tr.sec.sinAlertas')}</p>:<ul>{alertas.map(a=><li key={a.id} style={{color:tono(a.severity)}}><strong>{a.title}</strong>: {a.hits}</li>)}</ul>}
   </section>;
 }

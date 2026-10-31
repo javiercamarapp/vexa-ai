@@ -59,6 +59,8 @@
 :root:root body .mv-franja .mv-franja-fuentes{flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;flex-wrap:nowrap;gap:4px}
 :root:root body .mv-franja .mv-etq{display:none}
 :root:root body .mv-franja .mv-franja-fuentes::before{content:"Fuentes"}
+/* Inglés: el texto generado por CSS sigue al idioma del documento (html lang). */
+html:lang(en):root:root body .mv-franja .mv-franja-fuentes::before{content:"Sources"}
 :root:root body .mv-franja .mv-franja-fuentes strong{white-space:nowrap}
 :root:root body .mv-franja>div>button{flex:none;white-space:nowrap;padding-inline:10px}
 :root:root body .mv-franja .mv-avisos{margin-left:auto}
@@ -211,6 +213,7 @@ html:root[data-tablas-movil=comparar] table[data-mv] :is(td,th):last-child{paddi
 :root:root body .chart-plot{display:flex;flex-direction:column;min-width:0;max-width:100%}
 :root:root body .chart-plot>svg{touch-action:pan-y;max-width:100%;height:auto;-webkit-tap-highlight-color:transparent}
 :root:root body .chart-plot::before{content:"Toca o desliza para ver el valor";order:-1;display:flex;align-items:center;min-height:40px;padding:0 10px;margin-bottom:4px;border-radius:8px;background:var(--ui-soft);color:var(--muted);font-size:12px}
+html:lang(en):root:root body .chart-plot::before{content:"Tap or swipe to see the value"}
 :root:root body .chart-plot:has(>.chart-tip)::before{display:none}
 :root:root body .chart-plot>.chart-tip{order:-1;position:static;transform:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;min-width:0;max-width:none;width:auto;min-height:40px;margin:0 0 4px;padding:6px 10px;border-radius:8px;box-shadow:none;background:var(--ui-soft)}
 :root:root body .chart-plot>.chart-tip[data-side]{transform:none}

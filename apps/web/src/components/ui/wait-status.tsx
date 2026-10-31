@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useState} from 'react';
+import {useIdioma,useT} from '../i18n/proveedor';
 import {RovaqCargando} from '../rovaq-cargando';
-import {useT} from '../i18n/proveedor';
 /** Segundos transcurridos desde que se montó (la espera sólo existe mientras el componente está en pantalla). */
 export function useElapsed(){
  const [s,setS]=useState(0);
@@ -10,7 +10,8 @@ export function useElapsed(){
 }
 /** Espera larga: solo el logo animado (sin texto visible). El título se conserva como etiqueta para lectores de pantalla; `detalle` y `children` ya no se muestran. */
 export function WaitStatus({titulo}:{titulo:string;detalle?:string;children?:React.ReactNode}){
- return <RovaqCargando mensaje={titulo}/>;
+ const idioma=useIdioma(),t=useT();
+ return <RovaqCargando mensaje={idioma==='en'?t('tr.ui.cargandoEspera'):titulo}/>;
 }
 
 /** Una lectura en vuelo: solo el logo animado (sin texto visible; `que` va como etiqueta para lectores de pantalla). */

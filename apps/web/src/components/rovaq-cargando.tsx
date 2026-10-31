@@ -1,4 +1,5 @@
 'use client';
+import {useT} from './i18n/proveedor';
 import {useEffect,useId,useLayoutEffect,useSyncExternalStore} from 'react';
 import {RovaqLogo} from './rovaq-logo';
 
@@ -23,13 +24,13 @@ const useEfectoTemprano = typeof window === 'undefined' ? useEffect : useLayoutE
 export const hayCargaDePagina = () => { for (const v of activos.values()) if (v.rango === 1) return true; return false; };
 export const suscribirCargaDePagina = suscribir;
 
-export function RovaqCargando({mensaje = 'Cargando…', compacto = false}: {mensaje?: string; compacto?: boolean}) {
-  const id = useId();
+export function RovaqCargando({mensaje, compacto = false}: {mensaje?: string; compacto?: boolean}) {
+  const id = useId(), t = useT(), texto = mensaje ?? t('comun.cargando');
   useSyncExternalStore(suscribir, instantanea, () => 0);
   useEfectoTemprano(() => { activos.set(id, {rango: compacto ? 0 : 1, orden: ++contador}); avisar(); return () => { activos.delete(id); avisar(); }; }, [id, compacto]);
   const g = ganador();
   if (g !== null && g !== id) return <div className={'rovaq-cargando-hueco' + (compacto ? ' rovaq-cargando-hueco-compacto' : '')} aria-hidden="true"/>;
-  return <div role="status" aria-busy="true" aria-live="polite" aria-label={mensaje || 'Cargando'} className={'rovaq-cargando' + (compacto ? ' rovaq-cargando-compacto' : '')}>
+  return <div role="status" aria-busy="true" aria-live="polite" aria-label={texto || t('tr.ui.cargando')} className={'rovaq-cargando' + (compacto ? ' rovaq-cargando-compacto' : '')}>
     <RovaqLogo variante={compacto ? 'simbolo' : 'horizontal'} ancho={compacto ? 36 : 140} className="rovaq-respira" decorativo espacioLibre={false}/>
   </div>;
 }

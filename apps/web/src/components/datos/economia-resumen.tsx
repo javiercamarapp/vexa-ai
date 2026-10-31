@@ -32,7 +32,7 @@ const acceptBundle=(j:unknown)=>{const d=(j as {data?:Bundle})?.data;return d&&d
 const acceptReport=(j:unknown)=>{const d=(j as {data?:ReportState})?.data;return d&&typeof d.status==='string'?d:null;};
 const mesCorto=(m:string,loc:string)=>new Intl.DateTimeFormat(loc,{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')).replace('.','');
 const mesLargo=(m:string,loc:string)=>new Intl.DateTimeFormat(loc,{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
-const pctBps=(b:number|null,nd='No disponible')=>b===null?nd:porcentaje(b/100);
+const pctBps=(b:number|null,nd:string)=>b===null?nd:porcentaje(b/100);
 
 /** Pantalla «Cortes publicados»: primero el estado de lo publicado y su cobertura; los formularios que escriben quedan plegados abajo. */
 export function EconomiaResumen({query='',puedePreparar,soloPropietario=false,children}:{query?:string;puedePreparar:boolean;soloPropietario?:boolean;children?:ReactNode}){

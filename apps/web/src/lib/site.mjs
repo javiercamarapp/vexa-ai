@@ -26,6 +26,16 @@ export const SITE = Object.freeze({
   contacto: 'javiercamaraportepetit@gmail.com',
   og: Object.freeze({ ancho: 1200, alto: 630, alt: 'Rovaq AI: inteligencia de ingresos para negocios que venden por marketplaces' }),
 });
+/** Los textos de marca que cambian con el idioma (título, descripción, palabras clave, locale y alt de la imagen social); el resto de SITE es el mismo. */
+export const SITE_EN = Object.freeze({
+  titulo: 'Rovaq AI · Revenue intelligence for marketplace businesses',
+  descripcion: 'Rovaq AI is revenue intelligence for businesses that sell on marketplaces: it detects revenue leaks, understands your customers and helps you decide with evidence.',
+  locale: 'en_US',
+  palabrasClave: Object.freeze(['revenue intelligence', 'marketplaces', 'ecommerce', 'sales analytics', 'refunds', 'customer experience', 'evidence-based decisions']),
+  og: Object.freeze({ ancho: 1200, alto: 630, alt: 'Rovaq AI: revenue intelligence for businesses that sell on marketplaces' }),
+});
+/** SITE en el idioma pedido ('es' por omisión). */
+export const siteDe = (idioma) => (idioma === 'en' ? Object.freeze({ ...SITE, ...SITE_EN }) : SITE);
 /** Rutas públicas indexables (todo lo demás es privado). `/` redirige: a /login sin sesión y a /overview con sesión. */
 export const RUTAS_PUBLICAS = Object.freeze(['/login']);
 /** Prefijos privados: noindex + Disallow. Debe cubrir cada carpeta de src/app/(workspace) (lo verifica tests/seo-produccion.test.mjs). */
@@ -36,7 +46,9 @@ export const PREFIJOS_PRIVADOS = Object.freeze([
   '/settings', '/setup', '/sources', '/workload',
 ]);
 /** Metadatos de una página pública: canonical + Open Graph + Twitter coherentes (un `openGraph` hijo reemplaza al del layout, por eso se arma completo). */
-export function metadatosPublicos({ titulo, descripcion = SITE.descripcion, ruta }) {
+export function metadatosPublicos({ titulo, descripcion, ruta, idioma = 'es' }) {
+  const SITE = siteDe(idioma);
+  descripcion ??= SITE.descripcion;
   const imagenes = [{ url: '/opengraph-image', width: SITE.og.ancho, height: SITE.og.alto, alt: SITE.og.alt, type: 'image/png' }];
   return {
     ...(titulo ? { title: titulo } : {}),

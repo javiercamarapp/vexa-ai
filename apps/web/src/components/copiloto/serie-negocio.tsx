@@ -51,6 +51,6 @@ export function SerieNegocio({serie, titulo, unidad, llena = false}: {serie: Ser
       {serie.principal.some(p => p.partial) && <li><span className="cn-sw cn-sw-part" aria-hidden="true" />{t('cop.s.punteado')}</li>}
     </ul>
     <details className="trend-table"><summary className="ctl">{t('cop.s.verTabla')}</summary><div className="table-wrap" tabIndex={0} role="region" aria-label={t('cop.s.tabla', {titulo})}><table><thead><tr><th scope="col">{t('cop.s.mes')}</th><th scope="col" className="num">{serie.etiquetaPrincipal}</th>{serie.comparativas.map(c => <th scope="col" className="num" key={c.etiqueta}>{c.etiqueta}</th>)}</tr></thead>
-      <tbody>{serie.principal.map((p, i) => <tr key={p.month}><th scope="row">{monthLabel(p.month)}{p.partial ? ' (incompleto)' : ''}</th><td className="num">{p.value == null ? 'No disponible' : p.display}</td>{serie.comparativas.map(c => <td className="num" key={c.etiqueta}>{c.puntos[i]?.value == null ? t('cop.s.noDisp') : c.puntos[i].display}</td>)}</tr>)}</tbody></table></div></details>
+      <tbody>{serie.principal.map((p, i) => <tr key={p.month}><th scope="row">{monthLabel(p.month)}{p.partial ? t('tr.ui.incompleto') : ''}</th><td className="num">{p.value == null ? t('cop.s.noDisp') : p.display}</td>{serie.comparativas.map(c => <td className="num" key={c.etiqueta}>{c.puntos[i]?.value == null ? t('cop.s.noDisp') : c.puntos[i].display}</td>)}</tr>)}</tbody></table></div></details>
   </figure>;
 }

@@ -34,7 +34,7 @@ test('cada página y cada pantalla de la app resuelve un título por clave',()=>
   const sin=pantallas.filter(f=>!tituloDe(f)).map(f=>f.ruta);
   assert.deepEqual(sin,[],'pantallas sin título');
   // /login declara su título desde el layout con la misma clave en ambos idiomas.
-  assert.match(TODOS.find(f=>f.ruta==='login/layout.tsx')!.texto,/traducir\(await idiomaActual\(\),'meta\.titulo\.login'\)/);
+  assert.match(TODOS.find(f=>f.ruta==='login/layout.tsx')!.texto,/traducir\(idioma,'meta\.titulo\.login'\)/);
 });
 test('todas las claves usadas existen en ES y EN y todas las claves meta.titulo.* se usan',()=>{
   const usadas=new Set(TODOS.map(f=>claveDe(f.texto)).filter(Boolean) as string[]);usadas.add('meta.titulo.login');

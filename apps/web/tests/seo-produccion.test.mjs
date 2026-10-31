@@ -38,7 +38,7 @@ test('title y description con longitud útil para buscadores', () => {
   assert.equal(m.openGraph.type,'website');assert.equal(m.openGraph.locale,'es_MX');assert.equal(m.openGraph.siteName,'Rovaq AI');
   assert.deepEqual([m.openGraph.images[0].width,m.openGraph.images[0].height],[1200,630]);assert.ok(m.openGraph.images[0].alt.length>10);
   assert.equal(m.twitter.card,'summary_large_image');assert.equal(m.robots.index,true);
-  assert.match(leer('src/app/(app)/login/layout.tsx'),/metadatosPublicos\(\{titulo:traducir\(await idiomaActual\(\),'meta\.titulo\.login'\),ruta:'\/login'\}\)/);
+  assert.match(leer('src/app/(app)/login/layout.tsx'),/metadatosPublicos\(\{titulo:traducir\(idioma,'meta\.titulo\.login'\),ruta:'\/login',idioma\}\)/);
   assert.equal(es['meta.titulo.login'],'Iniciar sesión');
 });
 test('páginas privadas: noindex en cada segmento y cabecera X-Robots-Tag', () => {

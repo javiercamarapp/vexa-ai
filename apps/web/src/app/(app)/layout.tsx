@@ -3,7 +3,8 @@ import {RovaqLogo} from "../../components/rovaq-logo";
 import {ArranqueLimpio} from "../../components/arranque-limpio";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import {SITE,siteUrl} from "../../lib/site.mjs";
+import {siteDe,siteUrl} from "../../lib/site.mjs";
+import {traductor} from "../../lib/i18n";
 import {idiomaActual} from "../../lib/i18n/servidor";
 import "./fonts.css";
 import "./globals.css";
@@ -12,7 +13,9 @@ import "./ui.css";
 import "../../components/ui/ui.css";
 import "../../components/ui/overlay.css";
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const idioma = await idiomaActual(), SITE = siteDe(idioma);
+  return {
   metadataBase: new URL(siteUrl()),
   title: {default:SITE.titulo,template:"%s · Rovaq AI"},
   description: SITE.descripcion,
@@ -45,6 +48,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: "Rovaq", statusBarStyle: "default" },
   formatDetection: { telephone: false, email: false, address: false },
 };
+}
 // viewport-fit=cover habilita env(safe-area-inset-*); «resizes-content» hace que el teclado encoja el viewport en Android (iOS se maneja con visualViewport).
 export const viewport: Viewport = {
   width: "device-width", initialScale: 1, viewportFit: "cover", colorScheme: "light dark", interactiveWidget: "resizes-content",
@@ -79,17 +83,17 @@ html[data-arranque] #arranque-logo .rovaq-respira{animation:rovaq-arranque-respi
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // <html lang> sigue al idioma activo (cookie rovaq_lang, inglés por omisión), no a uno fijo. El sitio público tiene su propia raíz con lang estático.
-  const idioma = await idiomaActual();
+  const idioma = await idiomaActual(), t = traductor(idioma);
   return (
     <html lang={idioma} suppressHydrationWarning>
       <head><style id="arranque-estilos-criticos">{ARRANQUE_CSS_CRITICO}</style><script dangerouslySetInnerHTML={{ __html: TEMA_ANTES_DEL_PINTADO }} /><script dangerouslySetInnerHTML={{ __html: ARRANQUE_ANTES_DEL_PINTADO }} /><noscript><style>{"html[data-arranque] .site-header,html[data-arranque] .site-footer,html[data-arranque] main{display:revert!important}#arranque-logo{display:none!important}"}</style></noscript></head>
       <body>
         <div id="arranque-logo" aria-hidden="true"><RovaqLogo variante="horizontal" ancho={140} className="rovaq-respira" decorativo espacioLibre={false}/></div>
         <ArranqueLimpio/>
-        <a className="skip-link" href="#contenido">Saltar al contenido</a>
+        <a className="skip-link" href="#contenido">{t("tr.shell.saltar")}</a>
         <header className="site-header">
-          <Link prefetch={false} className="brand-link" href="/" aria-label="Rovaq, inicio"><RovaqLogo variante="horizontal" ancho={120} decorativo/></Link>
-          <span className="site-purpose">Decisiones con evidencia</span>
+          <Link prefetch={false} className="brand-link" href="/" aria-label={t("tr.shell.inicioAria")}><RovaqLogo variante="horizontal" ancho={120} decorativo/></Link>
+          <span className="site-purpose">{t("tr.shell.lema")}</span>
         </header>
         <main id="contenido" tabIndex={-1}>{children}</main>
         <footer className="site-footer">

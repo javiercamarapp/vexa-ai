@@ -2,6 +2,7 @@
 import {useEffect,useId,useRef,useState,type KeyboardEvent,type ReactNode} from 'react';
 import '../agente/una-pagina.css';
 import {useLocationHash} from '../ui/browser-state';
+import {useT} from '../i18n/proveedor';
 
 /** Tamaño real (px) de una caja, en vivo: las gráficas de «una página» llenan el alto que sobra en vez de tener un alto fijo. */
 export function useCaja<T extends HTMLElement>(){
@@ -15,9 +16,10 @@ export const kpiCorto=(d:string)=>(d.length>9?d.replace(/\.\d+/,''):d).replace(/
 export type KpiUna={key:string;label:string;value:ReactNode;delta?:string|null;t?:'up'|'down';sub?:string;c?:number;title?:string};
 /** Indicadores en UNA fila compacta (rejilla en escritorio, deslizable en celular): etiqueta, cifra, variación y base de comparación. Desconocido nunca es 0. */
 export function UnaKpis({items,label}:{items:KpiUna[];label:string}){
+ const t=useT();
  return <ul className="una-kpis" aria-label={label}>{items.map(k=><li key={k.key} className="una-kpi" style={k.c?{['--cat' as string]:`var(--chart-${((k.c-1)%8)+1})`}:undefined} title={k.title}>
   <span className="una-kpi-l">{k.label}</span><strong className="una-kpi-v">{k.value}</strong>
-  <span className="una-kpi-d"><span className="dg-delta" data-t={k.t}>{k.delta??'sin comparar'}</span>{k.sub&&<small>{k.sub}</small>}</span></li>)}</ul>;
+  <span className="una-kpi-d"><span className="dg-delta" data-t={k.t}>{k.delta??t('tr.ui.sinComparar')}</span>{k.sub&&<small>{k.sub}</small>}</span></li>)}</ul>;
 }
 
 export type PestanaUna={id:string;label:string;count?:number;contenido:ReactNode;/** El panel llena el alto restante sin scroll propio (una gráfica). */llena?:boolean};

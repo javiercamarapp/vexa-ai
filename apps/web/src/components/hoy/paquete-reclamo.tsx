@@ -33,7 +33,7 @@ export function PaqueteReclamo({open,onClose,fuga,sku}:{open:boolean;onClose:()=
  const setTexto=(texto:string)=>setBorrador({identidad,texto});
  const fila=datos?.d.fila;
  const usd=(m:number|string|bigint)=>new Intl.NumberFormat(loc,{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(m)/100);
- const copiar=async()=>{if(!datos?.m)return;try{await navigator.clipboard.writeText(`Asunto: ${datos.m.asunto}\n\n${texto}`);setCopiado(true);setTimeout(()=>setCopiado(false),1800);}catch{setAviso(tx('tr.hoy.noCopio'));}};
+ const copiar=async()=>{if(!datos?.m)return;try{await navigator.clipboard.writeText(`${tx('tr.ui.asunto')}: ${datos.m.asunto}\n\n${texto}`);setCopiado(true);setTimeout(()=>setCopiado(false),1800);}catch{setAviso(tx('tr.hoy.noCopio'));}};
  const descargar=()=>{if(!datos?.p)return;bajar(datos.p.html);bajar(datos.p.csv);setAviso(tx('tr.hoy.descargados',{a:datos.p.html.nombre,b:datos.p.csv.nombre}));};
  return <Drawer open={open} onClose={onClose} size="lg" title={tx('tr.hoy.pqTitulo',{sku})} subtitle={tx('tr.hoy.pqSub')}
   footer={<>{aviso&&<span className="ov-foot-note" role="status">{aviso}</span>}<LinkButton href="/refunds#fg-acciones" variant="ghost" icon={<Arrow/>}>{tx('tr.hoy.pqExpediente')}</LinkButton><Button variant="primary" icon={<Download/>} disabled={!listo||!datos?.p} onClick={descargar}>{tx('tr.hoy.pqDescargar')}</Button></>}>

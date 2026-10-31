@@ -105,6 +105,7 @@
 @media(max-width:767px){
  html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] td.pf-check{order:99;width:auto;flex-direction:row!important;align-items:center;gap:8px;min-height:44px;padding:0}
  html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] td.pf-check::after{content:"Seleccionar";font-size:12px;font-weight:500;color:var(--muted)}
+ html:lang(en):root:not([data-tablas-movil=comparar]) .pf-table[data-mv] td.pf-check::after{content:"Select"}
  html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] .pf-pill{white-space:normal;max-width:100%}
  html:root:not([data-tablas-movil=comparar]) .pf-table[data-mv] td.pf-wrap .pf-sub{display:block}
 }

@@ -33,7 +33,8 @@ export function ListaBarras({items,max,c=1,label,apilado=false,vw=false}:{items:
   <span className="dg-val">{i.texto}{i.sub2&&<small>{i.sub2}</small>}</span></li>)}</ul>;
 }
 export function Leyenda({items}:{items:{label:string;c?:number;hatch?:boolean;integracion?:string}[]}){
- return <ul className="dg-leyenda" aria-label="Leyenda">{items.map(i=><li key={i.label}><i data-hatch={i.hatch||undefined} style={i.c?cat(i.c):undefined}/><ConMarca marca={i.integracion}>{i.label}</ConMarca></li>)}</ul>;
+ const t=useT();
+ return <ul className="dg-leyenda" aria-label={t('tr.ui.leyenda')}>{items.map(i=><li key={i.label}><i data-hatch={i.hatch||undefined} style={i.c?cat(i.c):undefined}/><ConMarca marca={i.integracion}>{i.label}</ConMarca></li>)}</ul>;
 }
 export function Vacio({children}:{children:ReactNode}){return <div className="dg-vacio" role="status"><p>{children}</p></div>;}
 

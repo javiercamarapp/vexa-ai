@@ -48,7 +48,7 @@ test('CSS: la capa del hilo lleva máscara con --s-corte, opaca desde su origen 
   assert.match(r, /inset:\s*0/);
   assert.match(r, /z-index:\s*var\(--s-z-hilo\)/, 'misma altura de apilado que tenían el trazo, los nodos y las notas');
   assert.match(r, /mask-image:\s*linear-gradient\(to bottom, transparent var\(--s-corte\), #000 calc\(var\(--s-corte\) \+ 28px\)\)/);
-  assert.match(r, /-webkit-mask-image:/);
+  assert.match(r, /-webkit-mask-image:\s*linear-gradient\(to bottom, transparent var\(--s-corte\), #000 calc\(var\(--s-corte\) \+ 28px\)\)/);
 });
 
 test('JS: el corte sigue el borde inferior de la barra con el aire mínimo, se actualiza en cada cuadro y también con movimiento reducido', () => {

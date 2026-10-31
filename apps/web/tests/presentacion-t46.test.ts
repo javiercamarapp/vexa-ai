@@ -15,7 +15,7 @@ import {FUENTES, METODOS, CALCULOS, filasSincronizacion, hace, dentroDe, textoEr
 import {sello, diaTxt, haceDeIso} from '../src/lib/confianza/sello.mjs';
 import {encabezadoFicha} from '../src/lib/legibilidad/ficha.mjs';
 import {insightsResumen, insightsProblemas} from '../src/lib/legibilidad/insights.mjs';
-import {etiquetaCategoria, CATEGORIAS} from '../src/lib/legibilidad/categorias.mjs';
+import {CATEGORIAS} from '../src/lib/legibilidad/categorias.mjs';
 import {fraseCriticosT, avisoCriticosT, avisoDeMeta} from '../src/lib/legibilidad/criticos.mjs';
 import {resumenEvidencia, severidadDe} from '../src/lib/legibilidad/hallazgos.mjs';
 import {etiquetaBase} from '../src/lib/legibilidad/jerga.mjs';
@@ -145,12 +145,12 @@ for (const idioma of ['en', 'es'] as const) {
   const t = traductor(idioma), malo = idioma === 'en' ? sinEspanol : sinIngles, loc = idioma === 'en' ? LOCALES.en : LOCALES.es;
   test(`Resumen (${idioma}): las tres tarjetas, la categoría principal y los estados vacíos salen solo en ${idioma}`, () => {
     const ahora = new Date('2026-10-21T12:00:00Z');
-    const tarjetas = insightsResumen({trends: TRENDS, categorias: CATS_VISTA, ahora, t, loc});
-    const vacias = [insightsResumen({trends: null, categorias: null, ahora, t, loc}), insightsResumen({trends: null, categorias: {status: 'timeout', rows: []}, ahora, t, loc}), insightsResumen({trends: null, categorias: {status: 'empty', rows: []}, ahora, t, loc})];
+    const tarjetas = insightsResumen({trends: TRENDS as never, categorias: CATS_VISTA as never, ahora, t, loc});
+    const vacias = [insightsResumen({trends: null, categorias: null, ahora, t, loc}), insightsResumen({trends: null, categorias: {status: 'timeout', rows: []} as never, ahora, t, loc}), insightsResumen({trends: null, categorias: {status: 'empty', rows: []} as never, ahora, t, loc})];
     assert.equal(tarjetas.length, 3); assert.ok(!tarjetas[2].vacio);
     assert.deepEqual(malo([tarjetas.map((x) => ({...x, texto: x.texto?.replace(/\*\*/g, '')})), vacias]), []);
     assert.match(tarjetas[2].texto, idioma === 'en' ? /most incidents is \*\*Order: Spare Parts\*\*/ : /es \*\*Pedido: Refacciones\*\*/);
-    const probs = insightsProblemas({items: [{id: 'a', title: 'Baterías', evidence: [{id: '1'}], metrics: [{kind: 'exposure', amount_minor: '500000', currency: 'USD', exponent: 2, coverage: {known_n: 4, eligible_n: 5}}]}], moneda: 'USD', t});
+    const probs = insightsProblemas({items: [{id: 'a', title: 'Baterías', evidence: [{id: '1'}], metrics: [{kind: 'exposure', amount_minor: '500000', currency: 'USD', exponent: 2, coverage: {known_n: 4, eligible_n: 5}}]}] as never, moneda: 'USD', t});
     assert.deepEqual(malo(probs.map((x: {fuente?: string; cobertura?: string; razon?: string}) => ({fuente: x.fuente, cobertura: x.cobertura, razon: x.razon}))), []);
   });
 }

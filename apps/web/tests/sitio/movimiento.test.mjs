@@ -197,3 +197,10 @@ test('Chrome: héroe: la ventana asoma 400 px a 1440 por 900 y 300 px a 390 por 
     });
   }
 });
+
+test('T22 hilo: el carril de escritorio se queda a 40 px o más del borde izquierdo de la barra de vidrio', () => {
+  assert.match(INICIO, /const barraIzq = \(innerWidth - Math\.min\(1088, 0\.94 \* innerWidth\)\) \/ 2;/);
+  assert.match(INICIO, /xmax = innerWidth > 768 \? Math\.min\(margen - 18 - wb \/ 2, barraIzq - 40 - wb \/ 2\)/);
+  const tokens = leer('src/styles/sitio/tokens.css');
+  assert.match(tokens, /--s-cab-w: min\(1088px, 94vw\);/, 'la constante del hilo debe seguir a --s-cab-w');
+});

@@ -157,7 +157,10 @@ function construirHilo(RM, notas) {
     const zr = zona.getBoundingClientRect(), z0 = zr.top + scrollY;
     const margen = c0.getBoundingClientRect().left - zr.left + parseFloat(getComputedStyle(c0).paddingLeft);
     // Carril dentro del margen: con margen amplio (1440) ondula en toda la franja libre; con margen estrecho (390) es recto
-    const xmin = 4 + w0 / 2, xmax = margen - 18 - wb / 2;
+    // T22: la barra de vidrio (compacta tras 60 px de scroll, --s-cab-w = min(1088px, 94vw)) pasa sobre el carril; el trazo se queda a 40 px o más de su borde izquierdo
+    // (a 1440 el carril llegaba a 22 px de la barra y a 4800 rozaba su esquina a 18 px).
+    const barraIzq = (innerWidth - Math.min(1088, 0.94 * innerWidth)) / 2;
+    const xmin = 4 + w0 / 2, xmax = innerWidth > 768 ? Math.min(margen - 18 - wb / 2, barraIzq - 40 - wb / 2) : margen - 18 - wb / 2;
     const recto = xmax - xmin < 12;
     const movil0 = innerWidth <= 768;
     // En móvil el riel recto queda a 10 px del borde (no pegado a él); el margen de 29 px deja 16 px libres entre su núcleo y el texto

@@ -12,7 +12,7 @@ export function answerToMarkdown({ question, answer, generatedAt, idioma: idi })
   const idioma = idiomaDe(idi), en = idioma === 'en', L = (es, enText) => (en ? enText : es), CL = classLabels(idioma);
   const out = [`# ${question}`, '', L(`_Generado ${generatedAt ?? new Date().toISOString().slice(0, 10)} · Rovaq AI_`, `_Generated ${generatedAt ?? new Date().toISOString().slice(0, 10)} · Rovaq AI_`), '', answer.text, ''];
   for (const b of answer.blocks ?? []) {
-    out.push(`## ${b.title}`, L(`Clase: ${b.class === 'mixed' ? 'según la columna «Clase»' : CL[b.class]} · Cobertura: ${covText(b.coverage)}`, `Class: ${b.class === 'mixed' ? 'by the "Class" column' : CL[b.class]} · Coverage: ${covText(b.coverage, idioma)}`), '');
+    out.push(`## ${b.title}`, L(`Clase: ${b.class === 'mixed' ? 'según la columna «Clase»' : CL[b.class]} · Cobertura: ${covText(b.coverage)}`, `Class: ${b.class === 'mixed' ? 'by the “Class” column' : CL[b.class]} · Coverage: ${covText(b.coverage, idioma)}`), '');
     out.push('| ' + b.columns.map((c) => esc(c.label)).join(' | ') + ' |', '|' + b.columns.map(() => '---').join('|') + '|');
     for (const r of b.rows) out.push('| ' + b.columns.map((c) => esc(r[c.key])).join(' | ') + ' |');
     if (b.note) out.push('', `_${b.note}_`);
@@ -87,6 +87,6 @@ export function answerToHtml({ question, answer, generatedAt, userContext = [], 
   if (answer.missing?.length) out.push(`<h2>${L('Falta cargar', 'Still to load')}</h2><ul>` + answer.missing.map((m) => `<li>${h(m)}</li>`).join('') + '</ul>');
   out.push(`<h2>${L('Cómo lo calculé', 'How I calculated it')}</h2><ol>` + (answer.calc ?? []).map((c) => `<li><b>${h(c.label)}</b> (<code>${h(c.tool)}</code>): ${h(c.method)} ${L('Parámetros', 'Parameters')}: <code>${h(JSON.stringify(c.args))}</code>. ${L('Lee', 'Reads')}: ${h((c.reads ?? []).join(', '))}.</li>`).join('') + '</ol>');
   out.push(`<h2>${L('Fuentes', 'Sources')}</h2><ul>` + (answer.sources ?? []).map((x) => `<li>${h(x.label)} <span class="note">(${h(x.ref)})</span></li>`).join('') + '</ul>');
-  out.push(`<footer>${L('Cada cifra lleva su clase (Observado, Estimado o Inferido) y su cobertura. Lo desconocido se muestra como «No disponible», nunca como cero, y las monedas no se suman. Para guardar como PDF usa Imprimir.', 'Every figure carries its class (Observed, Estimated or Inferred) and its coverage. Unknown values are shown as "Not available", never as zero, and currencies are not added. To save as a PDF use Print.')}</footer></main></body></html>`);
+  out.push(`<footer>${L('Cada cifra lleva su clase (Observado, Estimado o Inferido) y su cobertura. Lo desconocido se muestra como «No disponible», nunca como cero, y las monedas no se suman. Para guardar como PDF usa Imprimir.', 'Every figure carries its class (Observed, Estimated or Inferred) and its coverage. Unknown values are shown as “Not available”, never as zero, and currencies are not added. To save as a PDF use Print.')}</footer></main></body></html>`);
   return out.join('\n');
 }

@@ -119,7 +119,7 @@ export function armarPuntos(f, idioma = 'es') {
   });
   const wmOk = W && W.n > 0;
   puntos.push({
-    id: 'P2', tema: 'devoluciones', nombre: L('Walmart: reembolsos pendientes de cerrar', `Walmart: refunds pending to close`), descripcion: L('Reembolsos de Walmart en estado «pendiente»: dinero atorado por devoluciones que no se cierran a tiempo.', `Walmart refunds in "pending" status: money stuck because returns are not closed on time.`),
+    id: 'P2', tema: 'devoluciones', nombre: L('Walmart: reembolsos pendientes de cerrar', `Walmart: refunds pending to close`), descripcion: L('Reembolsos de Walmart en estado «pendiente»: dinero atorado por devoluciones que no se cierran a tiempo.', `Walmart refunds in “pending” status: money stuck because returns are not closed on time.`),
     padre: null, agregado: false,
     dinero: W === null ? off('libro', L('libro de reembolsos', 'refunds ledger')) : wmOk ? dineroUsd(W.minor) : sinDato('sin_fuente', L('El libro no tiene reembolsos pendientes de Walmart.', `The ledger has no pending Walmart refunds.`)),
     volumen: W === null ? sinDato('no_disponible', L('No disponible ahora', `Not available right now`)) : vol(W?.n ?? 0, L('reembolsos', `refunds`)),

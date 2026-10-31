@@ -101,7 +101,7 @@ export const tourEn: Record<keyof typeof tourEs, string> = {
   'onb.pant.problems.claveT': 'Priorities and management', 'onb.pant.problems.claveC': 'Priorities shows what weighs most, with its evidence; Manage shows status, assignee and follow-up.',
   'onb.pant.problems.accionT': 'Open one', 'onb.pant.problems.accionC': 'Open a problem to read its full evidence.',
   'onb.pant.pain-points.desc': 'Where money is lost and why, as pain points with their evidence.',
-  'onb.pant.pain-points.claveT': 'What weighs most', 'onb.pant.pain-points.claveC': 'Each bubble is a pain point; its size is the money at stake (returned, pending or cancelled) or the case volume, whichever you choose.',
+  'onb.pant.pain-points.claveT': 'What weighs most', 'onb.pant.pain-points.claveC': 'Each bubble is a pain point; its size is the money at stake (returned, pending or canceled) or the case volume, whichever you choose.',
   'onb.pant.map.desc': 'In which states after-sales cases concentrate, and for what reason.',
   'onb.pant.map.claveT': 'Read the map', 'onb.pant.map.claveC': 'Darker states hold more cases; pick one from the list to see its detail.',
   'onb.pant.workload.desc': 'When conversations arrive, at what hour more people are needed and how many open threads have gone more than a day without a reply.',

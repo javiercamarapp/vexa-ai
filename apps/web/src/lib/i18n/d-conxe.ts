@@ -87,7 +87,7 @@ export const conxeEn: Record<keyof typeof conxeEs, string> = {
   'conx.e.est.revoked': 'Revoked',
   'conx.e.est.pending': 'Pending',
   'conx.e.est.expired': 'Expired',
-  'conx.e.est.cancelled': 'Cancelled',
+  'conx.e.est.cancelled': 'Canceled',
   'conx.e.est.accepted': 'Accepted',
   'conx.e.errCargar': 'The team could not be loaded. Check your access and try again.',
   'conx.e.errUltimoProp': 'You must keep at least one active workspace administrator.',

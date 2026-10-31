@@ -157,7 +157,7 @@ export const cfoEn: Record<keyof typeof cfoEs, string> = {
   'cfo.vs': 'vs {vs}',
   'cfo.alertas': 'Alerts',
   'cfo.comp.titulo': 'Monthly comparison',
-  'cfo.comp.desc': '{moneda} · change is only calculated between complete months; "—" = not comparable or no amount',
+  'cfo.comp.desc': '{moneda} · change is only calculated between complete months; “—” = not comparable or no amount',
   'cfo.comp.caption': 'Monthly comparison in {moneda}',
   'cfo.comp.mes': 'Month',
   'cfo.comp.incompleto': 'Incomplete',

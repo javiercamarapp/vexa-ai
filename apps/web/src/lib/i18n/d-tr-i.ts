@@ -52,7 +52,7 @@ export const trIEn = {
   'tr.ui.sinComparar': 'not compared',
   'tr.ui.asunto': 'Subject',
   'tr.sec.titulo': 'Security events',
-  'tr.sec.desc': 'Denied access, invalid origin, invalid Bearer tokens and signatures, rate-limit blocks, entering and leaving "View as", and exports. No client content; the IP appears only as a partial fingerprint. Repeated events are sampled: the Details column carries the total when it applies.',
+  'tr.sec.desc': 'Denied access, invalid origin, invalid Bearer tokens and signatures, rate-limit blocks, entering and leaving “View as”, and exports. No client content; the IP appears only as a partial fingerprint. Repeated events are sampled: the Details column carries the total when it applies.',
   'tr.sec.tipo': 'Type',
   'tr.sec.todos': 'All',
   'tr.sec.severidad': 'Severity',

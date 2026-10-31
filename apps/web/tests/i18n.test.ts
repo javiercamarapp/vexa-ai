@@ -118,3 +118,42 @@ test('formateadores centrales: la locale solo cambia la presentación (mes, %), 
   const c = await import('../../../packages/cfo-copilot/src/format.mjs');
   assert.equal(c.monthLabel('2026-03'), 'mar 2026'); assert.equal(c.monthLabel('2026-03', 'en'), 'Mar 2026');
 });
+
+// ---- Calidad del inglés (T40): sin español suelto, sin «», comillas curvas, ortografía americana y términos unificados ----
+const EN = en as Record<string, string>;
+const sinVars = (t: string) => t.replace(/\{\w+\}/g, '');
+const SUELTAS_ES = ['Cancelar', 'Copiar', 'Copiado', 'Leyenda', 'Filtros', 'Tendencia', 'Quitar', 'Cargando', 'Guardar', 'Cerrar', 'Buscar', 'Eliminar', 'Editar', 'Aceptar', 'Continuar', 'Volver', 'Siguiente', 'Anterior', 'Aplicar', 'Enviar', 'Limpiar', 'Todos', 'Todas', 'Ninguno', 'Ninguna', 'Detalle', 'Fecha', 'Estado', 'Acciones', 'Opciones', 'Confirmar', 'Salir', 'Reintentar', 'Aviso', 'Alerta', 'Cobertura', 'Ingresos', 'Reembolsos', 'Pedidos', 'Ventas', 'Clientes', 'Problemas'];
+test('inglés: ningún valor es una palabra suelta en español ni lleva comillas angulares «» (solo el autónimo «Español»)', () => {
+  const sueltas = Object.entries(EN).filter(([k, v]) => SUELTAS_ES.includes(v.trim())).map(([k, v]) => `${k}=${v}`);
+  assert.deepEqual(sueltas, [], 'palabra suelta en español en el diccionario inglés');
+  assert.deepEqual(Object.entries(EN).filter(([, v]) => /[«»]/.test(v)).map(([k]) => k), [], 'comillas angulares en inglés: usa “…”');
+  assert.equal(EN['idioma.es'], 'Español');
+});
+test('inglés: comillas curvas consistentes (nunca rectas alrededor de palabras ni angulares) y pares balanceados', () => {
+  assert.deepEqual(Object.entries(EN).filter(([, v]) => /"[^"\n]+"/.test(v)).map(([k]) => k), [], 'comillas rectas en inglés: usa “…”');
+  for (const [k, v] of Object.entries(EN)) assert.equal((v.match(/“/g) ?? []).length, (v.match(/”/g) ?? []).length, 'comillas curvas desparejadas: ' + k);
+});
+test('inglés americano: analyze/canceled/recognized (no analyse/cancelled/recognised) y un solo término por rol', () => {
+  const malos = Object.entries(EN).filter(([, v]) => /\b(analysed|analysing|analyse)\b|cancell(ed|ing)|recognis/i.test(v)).map(([k, v]) => `${k}: ${v.slice(0, 60)}`);
+  assert.deepEqual(malos, [], 'ortografía británica');
+  assert.deepEqual(Object.entries(EN).filter(([, v]) => /\b(owners?|viewers?|readers?)\b/i.test(sinVars(v))).map(([k]) => k), [], 'rol sin unificar: Workspace administrator / Read-only');
+  assert.equal(EN['tr.pp.btnAnalizar'], 'Analyze'); assert.match(EN['tr.err.agCancelado'], /^Canceled/);
+  const roles = Object.entries(EN).filter(([k]) => /shell\.rol\./.test(k)).map(([, v]) => v);
+  assert.ok(roles.includes('Workspace administrator') && roles.includes('Read-only'), roles.join('|'));
+});
+test('inglés: fechas, cifras y moneda salen con el locale del idioma activo (en-US) y no con es-MX fijo', async () => {
+  const {formatosDe} = await import('../src/lib/i18n/formatos');
+  const iso = '2026-10-20T14:05:00Z', en = formatosDe('en'), es = formatosDe('es');
+  assert.match(en.fechaHora(iso) ?? '', /Oct/); assert.match(es.fechaHora(iso) ?? '', /oct/);
+  assert.notEqual(en.fechaHora(iso), es.fechaHora(iso));
+  assert.equal(en.locale, 'en-US'); assert.equal(es.locale, 'es-MX');
+  const eventos = leer('src/components/platform/eventos-seguridad.tsx');
+  assert.ok(!/toLocale\w*String\('es-MX'\)/.test(eventos) && /fmt\.fechaHora\(e\.at\)/.test(eventos), 'eventos de seguridad: fecha con el idioma activo');
+});
+test('el cascarón (enlace de salto, encabezado, lema) y los metadatos salen por clave y por idioma', () => {
+  const layout = leer('src/app/(app)/layout.tsx');
+  assert.match(layout, /t\("tr\.shell\.saltar"\)/); assert.match(layout, /t\("tr\.shell\.inicioAria"\)/); assert.match(layout, /t\("tr\.shell\.lema"\)/); assert.match(layout, /<html lang=\{idioma\}/);
+  assert.ok(!/>Saltar al contenido</.test(layout) && !/Decisiones con evidencia</.test(layout));
+  assert.equal(EN['tr.shell.saltar'], 'Skip to content'); assert.equal((es as Record<string, string>)['tr.shell.saltar'], 'Saltar al contenido');
+  assert.match(layout, /export async function generateMetadata/);
+});

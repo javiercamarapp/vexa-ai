@@ -34,8 +34,8 @@ const Q_EN = Object.freeze({
   '¿Cómo van las conversaciones por mes?': 'How are conversations going per month?',
   '¿Cuánto ingreso está expuesto por problema?': 'How much revenue is exposed per problem?',
   '¿Qué categorías crecieron en los últimos 6 meses?': 'Which categories grew in the last 6 months?',
-  '¿Qué dicen los clientes sobre el producto dañado en tránsito?': 'What do customers say about "producto dañado en tránsito"?',
-  '¿Cuántos clientes se ven afectados por el cobro duplicado?': 'How many customers are affected by "cobro duplicado"?',
+  '¿Qué dicen los clientes sobre el producto dañado en tránsito?': 'What do customers say about “producto dañado en tránsito”?',
+  '¿Cuántos clientes se ven afectados por el cobro duplicado?': 'How many customers are affected by “cobro duplicado”?',
   '¿Qué versión del Tracker manda y cuántas hojas están cerradas?': 'Which Tracker version leads and how many sheets are closed?',
   '¿Cómo van las asociaciones ticket–contacto?': 'How are the ticket–contact associations going?',
   '¿Cuántos pedidos tuvimos por marketplace en septiembre?': 'How many orders did we have by marketplace in September?',
@@ -52,7 +52,7 @@ const Q_EN = Object.freeze({
 export const preguntaEn = (q) => Q_EN[q] ?? q;
 const qIdioma = (q, idioma) => (idioma === 'en' ? preguntaEn(q) : q);
 /** «¿Qué dicen los clientes sobre X?» (X es el nombre de un problema: dato del catálogo). */
-export const preguntaSobre = (titulo, idioma = 'es') => (idioma === 'en' ? `What do customers say about "${titulo}"?` : `¿Qué dicen los clientes sobre ${titulo}?`);
+export const preguntaSobre = (titulo, idioma = 'es') => (idioma === 'en' ? `What do customers say about “${titulo}”?` : `¿Qué dicen los clientes sobre ${titulo}?`);
 export const defaultSuggestions = (role, idioma = 'es') => ['¿Qué cubre y qué falta de mi información?', '¿Cuáles son los 5 problemas con más incidencias este mes?', '¿Cuánto dinero en reembolsos tuvimos por marketplace?'].filter((q) => !byQ(q)?.roles || byQ(q).roles.includes(role)).map((q) => qIdioma(q, idioma));
 
 /** Sugerencias, tarjetas y consultas directas según lo que hay cargado y el rol. `coverage` es la vista real de cobertura. */

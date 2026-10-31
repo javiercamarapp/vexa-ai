@@ -90,8 +90,8 @@ export const confEs = {
 export const confEn: Record<keyof typeof confEs, string> = {
   'conf.reglaTitulo': 'freshness alert',
   'conf.reglaFuente': 'Sync state of each source (source_sync_state)',
-  'conf.reglaFormula': 'Each source with an expected cadence is marked "Late" if more than 2 times its cadence has passed without a success, and "Alert" if more than {n} times have passed or the last run failed. Manual uploads have no cadence and raise no alert.',
-  'conf.reglaNo1': 'A source that never ran shows "No data", not "Up to date".',
+  'conf.reglaFormula': 'Each source with an expected cadence is marked “Late” if more than 2 times its cadence has passed without a success, and “Alert” if more than {n} times have passed or the last run failed. Manual uploads have no cadence and raise no alert.',
+  'conf.reglaNo1': 'A source that never ran shows “No data”, not “Up to date”.',
   'conf.reglaNo2': 'The Excel Tracker and files are manual: their freshness is that of the last upload, not a health indicator.',
   'conf.sec': 'Data and trust',
   'conf.titulo': 'Data and trust',

@@ -36,7 +36,7 @@ export const conxjEn: Record<keyof typeof conxjEs, string> = {
   'conx.j.st.succeeded': 'Completed',
   'conx.j.st.partial': 'Completed with rejections',
   'conx.j.st.failed': 'Needs attention',
-  'conx.j.st.cancelled': 'Cancelled',
+  'conx.j.st.cancelled': 'Canceled',
   'conx.j.st.otro': 'Status to review',
   'conx.j.filaUna': '{n} row confirmed',
   'conx.j.filasVarias': '{n} rows confirmed',

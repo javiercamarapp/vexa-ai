@@ -160,7 +160,7 @@ export const exploradorEn: Record<keyof typeof exploradorEs, string> = {
   'exp.identidadCorte': 'Cut identity and coverage',
   'exp.publicacion': 'Publication',
   'exp.alcance': 'Scope',
-  'exp.citasReg': 'Citations are counted as recorded; each piece of evidence is fully verified when opened with "View evidence".',
+  'exp.citasReg': 'Citations are counted as recorded; each piece of evidence is fully verified when opened with “View evidence”.',
   'exp.cobertura': 'Coverage: {x}',
   'exp.noPasaron': ' {n} on this page did not pass evidence verification and are not shown.',
   'exp.soloAlAbrir': 'Conversation text only appears when the evidence is opened.',

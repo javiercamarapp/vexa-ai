@@ -164,7 +164,7 @@ export const conxrEn: Record<keyof typeof conxrEs, string> = {
   'conx.r.alcance': 'Deletion scope',
   'conx.r.revisar': 'Review exact scope',
   'conx.r.target': 'Connection {conexion} · {tipo}: {id}',
-  'conx.r.resumen': '{conv} conversations, {msgs} messages, {revs} revisions and {vecs} vectors. {der} derived materializations and {art} associated registered artifacts. {jobs} active jobs will be cancelled, {probs} problems will lose this evidence and be archived, and {raw} canonical RAW objects will be emptied.',
+  'conx.r.resumen': '{conv} conversations, {msgs} messages, {revs} revisions and {vecs} vectors. {der} derived materializations and {art} associated registered artifacts. {jobs} active jobs will be canceled, {probs} problems will lose this evidence and be archived, and {raw} canonical RAW objects will be emptied.',
   'conx.r.rawTitulo': 'Complete RAW files',
   'conx.r.rawFilas': '{n} rows recorded. The entire file is deleted, including any other rows it contains.',
   'conx.r.rawNinguno': 'There are no RAW files associated with this scope.',

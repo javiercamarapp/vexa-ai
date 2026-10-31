@@ -140,7 +140,7 @@ export const mapaEn: Record<keyof typeof mapaEs, string> = {
   'mapa.como': 'How it was calculated',
   'mapa.como1': 'Source: the Excel Tracker sheets that have an address column (latest version of each row; the WTR and WPR mirror sheets are excluded to avoid duplicates). Each row counts as one case; the same customer may appear in more than one sheet.',
   'mapa.como2': 'The state is read from the address in memory and the text is discarded: the app does not store or show addresses, streets, names or cities. Reading order: state name, abbreviation with ZIP code, US ZIP code (ZIP table) and, if the address says Mexico, Mexican postal code (SEPOMEX table). It is an approximate reading: some border codes may land in the neighboring state.',
-  'mapa.como3': 'Privacy: only states with 5 or more cases and breakdowns with 5 or more are shown; the rest is grouped. If an "Others" group would have fewer than 5, it is merged into the smallest breakdown so it cannot be subtracted out.',
+  'mapa.como3': 'Privacy: only states with 5 or more cases and breakdowns with 5 or more are shown; the rest is grouped. If an “Others” group would have fewer than 5, it is merged into the smallest breakdown so it cannot be subtracted out.',
   'mapa.como4': 'This is not a rate: more cases in a state may just mean more sales there. Comparing states requires orders with a shipping state (Amazon, Walmart and Shopify connected).',
   'mapa.como5': 'Queried on {fecha}. Observed, provisional figures.',
   'mapa.zoomGrupo': 'Zoom the map in or out',

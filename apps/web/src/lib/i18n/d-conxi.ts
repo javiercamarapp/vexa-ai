@@ -174,7 +174,7 @@ export const conxiEn: Record<keyof typeof conxiEs, string> = {
   'conx.i.job.succeeded': 'Completed',
   'conx.i.job.partial': 'With rejections',
   'conx.i.job.failed': 'Needs attention',
-  'conx.i.job.cancelled': 'Cancelled',
+  'conx.i.job.cancelled': 'Canceled',
   'conx.i.errRespuesta': 'The response could not be received. Check the status before repeating the operation.',
   'conx.i.errSolicitud': 'The import request could not be completed.',
   'conx.i.codigo': '(code {status}{code})',

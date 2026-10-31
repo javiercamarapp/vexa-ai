@@ -43,7 +43,7 @@ export const intervEn: Record<keyof typeof intervEs, string> = {
   'interv.sActive': 'Executing',
   'interv.sMeasuring': 'Measuring',
   'interv.sClosed': 'Measurement closed',
-  'interv.sCancelled': 'Cancelled',
+  'interv.sCancelled': 'Canceled',
   'interv.f401': 'Your access changed. Sign in again or select an authorized organization.',
   'interv.f404': 'This intervention or its evidence cannot be viewed with the current permissions.',
   'interv.f409': 'The version, plan or cuts do not allow this operation. Refresh and review the coverage, dates and result before continuing.',

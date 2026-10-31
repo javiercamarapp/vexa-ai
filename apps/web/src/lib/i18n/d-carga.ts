@@ -173,7 +173,7 @@ export const cargaEn: Record<keyof typeof cargaEs, string> = {
   'carga.lFuera': 'Late (> 24 h)',
   'carga.lSin': 'No reply recorded',
   'carga.coberturaBaja': 'Low coverage.',
-  'carga.coberturaTxt': 'Only {a} of {b} threads ({pct}) have an agent reply in the database: "no reply recorded" is neither met nor missed. Risk of an A-to-z claim at 48 h, not a penalty.',
+  'carga.coberturaTxt': 'Only {a} of {b} threads ({pct}) have an agent reply in the database: “no reply recorded” is neither met nor missed. Risk of an A-to-z claim at 48 h, not a penalty.',
   'carga.cierreTitulo': 'Closing and reopenings',
   'carga.cierreDesc': 'HubSpot threads, precomputed',
   'carga.cierreVacio': 'No threads with a calculated close time.',
@@ -203,7 +203,7 @@ export const cargaEn: Record<keyof typeof cargaEs, string> = {
   'carga.aFecha': 'to {fecha}',
   'carga.como': 'How it was calculated',
   'carga.como1': 'Workload: each conversation counts once, on the day and hour of its first customer message, in Mexico City time. Each cell is the per-day average over the months used (up to 6 complete ones); the scale is capped at the 95th percentile. The latest month with data and months with a possible export gap are excluded.',
-  'carga.como2': 'SLA: only HubSpot API threads with a customer message. A thread with no agent reply in the database is counted as neither met nor missed. "Open with no reply > 24 h" uses the state of the latest HubSpot cut ({fecha}).',
+  'carga.como2': 'SLA: only HubSpot API threads with a customer message. A thread with no agent reply in the database is counted as neither met nor missed. “Open with no reply > 24 h” uses the state of the latest HubSpot cut ({fecha}).',
   'carga.como3': 'The CSV history is not used for SLA: in two of every three conversations there is no agent message in the database.',
   'carga.como4': 'Closing and reopenings: precomputed summary (reopening = a thread that goes back to open right after being closed). Median and 90th percentile, never average. Queried on {fecha}.',
 };

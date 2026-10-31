@@ -425,7 +425,7 @@ export const probdetEn: Record<keyof typeof probdetEs, string> = {
   'pnl.job.running': 'Grouping',
   'pnl.job.succeeded': 'Finished',
   'pnl.job.failed': 'Needs attention',
-  'pnl.job.cancelled': 'Cancelled',
+  'pnl.job.cancelled': 'Canceled',
   'pnl.miembro': 'Member',
   'pnl.miembroBuscar': 'Member to find similar to',
   'pnl.miembros': 'Members',

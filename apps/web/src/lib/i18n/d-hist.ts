@@ -113,7 +113,7 @@ export const histEs = {
 export const histEn: Record<keyof typeof histEs, string> = {
   'hist.sActive': 'In progress',
   'hist.sPaused': 'Paused',
-  'hist.sCancelled': 'Cancelled',
+  'hist.sCancelled': 'Canceled',
   'hist.sCompleted': 'Completed',
   'hist.sPending': 'Pending',
   'hist.sExtracting': 'Analyzing',
@@ -171,7 +171,7 @@ export const histEn: Record<keyof typeof histEs, string> = {
   'hist.accionesH': 'History actions',
   'hist.cargandoHist': 'Loading history',
   'hist.sinLotes': 'There are no processing batches yet.',
-  'hist.usaAutorizar': 'Use "Authorize processing" to analyze the history of a connection.',
+  'hist.usaAutorizar': 'Use “Authorize processing” to analyze the history of a connection.',
   'hist.aparecera': 'They will appear here once history analysis is turned on.',
   'hist.lotesAria': 'Historical batches',
   'hist.kpisAria': 'History indicators',

@@ -11,18 +11,24 @@ import {useOnboarding} from './contexto';
 import './onboarding.css';
 
 const VIDA_MS=60_000;
+/** Tope de espera de la lectura: pasado este tiempo se corta y se pinta el error con «Reintentar» (nunca «Calculando…» para siempre). */
+export const TOPE_LECTURA_MS=8_000;
 const cache=new Map<string,{t:number;senales:Senales|null}>();
 type Carga={estado:'cargando'}|{estado:'error'}|{estado:'listo';senales:Senales|null};
 /** Lee las señales una vez por minuto y organización; una petición en vuelo se comparte. */
-async function leerSenales(tenant:string,signal:AbortSignal):Promise<Senales|null>{
+export async function leerSenales(tenant:string,signal:AbortSignal,topeMs=TOPE_LECTURA_MS):Promise<Senales|null>{
  const hit=cache.get(tenant);if(hit&&Date.now()-hit.t<VIDA_MS)return hit.senales;
- const r=await fetch('/api/onboarding/estado',{credentials:'same-origin',signal});
- if(!r.ok)throw new Error('estado '+r.status);
- const json=await r.json() as {data?:{senales?:unknown}};
- const senales=normalizarSenales(json.data?.senales);cache.set(tenant,{t:Date.now(),senales});return senales;
+ const corte=new AbortController(),alCancelar=()=>corte.abort(),tope=setTimeout(()=>corte.abort(),topeMs);
+ signal.addEventListener('abort',alCancelar);
+ try{
+  const r=await fetch('/api/onboarding/estado',{credentials:'same-origin',signal:corte.signal});
+  if(!r.ok)throw new Error('estado '+r.status);
+  const json=await r.json() as {data?:{senales?:unknown}};
+  const senales=normalizarSenales(json.data?.senales);cache.set(tenant,{t:Date.now(),senales});return senales;
+ }finally{clearTimeout(tope);signal.removeEventListener('abort',alCancelar);}
 }
 export function ChecklistHoy(){
- const c=useOnboarding(),t=useT(),[carga,setCarga]=useState<Carga>({estado:'cargando'});
+ const c=useOnboarding(),t=useT(),[carga,setCarga]=useState<Carga>({estado:'cargando'}),[intento,setIntento]=useState(0);
  const pista=c?.pista??null,tenant=c?.datos.tenantId??'',activo=Boolean(c?.listo&&c.tieneChecklist&&!c.local.descartado);
  const recargar=useCallback(async()=>{// lectura en segundo plano: conserva lo pintado hasta que lleguen los datos nuevos
   cache.delete(tenant);
@@ -35,7 +41,8 @@ export function ChecklistHoy(){
   // Diferido: Hoy pinta primero; el cálculo del avance nunca compite con sus cifras.
   const id=window.setTimeout(()=>{leerSenales(tenant,ctl.signal).then(senales=>setCarga({estado:'listo',senales}),()=>{if(!ctl.signal.aborted)setCarga({estado:'error'});});},400);
   return()=>{window.clearTimeout(id);ctl.abort();};
- },[activo,tenant,pista]);
+ },[activo,tenant,pista,intento]);
+ const reintentar=()=>{cache.delete(tenant);setCarga({estado:'cargando'});setIntento(n=>n+1);};
  if(!c||!c.listo)return null;
  if(c.pista==='soporte'||c.soporteTerminado)return <AvisoSoporte/>;
  if(!activo||!pista)return null;
@@ -56,7 +63,7 @@ export function ChecklistHoy(){
   <div className="onb-lista-cab"><h2 id="onb-lista-titulo">{t('onb.check.titulo')}</h2>
    {carga.estado==='listo'&&(lista.progreso.total>0||lista.esperan>0)&&<div className="onb-progreso">{lista.progreso.total>0&&<><progress max={lista.progreso.total} value={lista.progreso.hechos} aria-label={t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}/><span>{t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}</span></>}{lista.esperan>0&&<span className="onb-espera">{t('onb.check.esperan',{n:lista.esperan})}</span>}</div>}</div>
   {carga.estado==='cargando'?<p role="status">{t('onb.check.cargando')}</p>
-   :carga.estado==='error'?<p role="status">{t('onb.check.noDisponible')}</p>
+   :carga.estado==='error'?<div role="status"><p>{t('onb.check.noDisponible')}</p><button type="button" onClick={reintentar}>{t('onb.check.reintentar')}</button></div>
    :<>
     <ul className="onb-items">{lista.visibles.map(item)}</ul>
     {lista.plegados.length>0&&<details><summary>{t('onb.check.masTareas')}</summary><ul className="onb-items">{lista.plegados.map(item)}</ul></details>}

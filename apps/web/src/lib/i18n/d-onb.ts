@@ -14,7 +14,7 @@ export const onbEs = {
   'onb.ui.recorridoCorto': 'Recorrido corto ({n} pasos)', 'onb.ui.recorridoCompleto': 'Recorrido completo ({n} pasos)',
   // Checklist en Hoy
   'onb.check.titulo': 'Primeros pasos', 'onb.check.progreso': '{hechos} de {total} que puedes hacer ahora', 'onb.check.siguiente': 'Recomendado ahora', 'onb.check.masTareas': 'Ver más tareas', 'onb.check.ocultar': 'Ocultar lista',
-  'onb.check.cargando': 'Calculando tu avance…', 'onb.check.noDisponible': 'No se pudo calcular tu avance ahora.', 'onb.check.abrir': 'Abrir',
+  'onb.check.cargando': 'Calculando tu avance…', 'onb.check.noDisponible': 'No se pudo calcular tu avance ahora.', 'onb.check.reintentar': 'Reintentar', 'onb.check.abrir': 'Abrir',
   'onb.check.estado.hecho': 'Hecho', 'onb.check.estado.salvedad': 'Hecho, con notas', 'onb.check.estado.esperando': 'En espera', 'onb.check.estado.bloqueado': 'Bloqueado', 'onb.check.estado.pendiente': 'Pendiente', 'onb.check.estado.informativo': 'Para revisar',
   'onb.check.concil': 'Pendiente: las cifras de dinero son parciales hasta relacionar los pedidos con sus clientes.',
   'onb.check.bloq.sinDatos': 'Primero necesitas datos: una conexión activa o un historial importado.', 'onb.check.bloq.sinIntervencion': 'Primero necesitas una intervención asignada a ti.',
@@ -80,7 +80,7 @@ export const onbEn = {
   'onb.ui.recorridoCorto': 'Short tour ({n} steps)', 'onb.ui.recorridoCompleto': 'Full tour ({n} steps)',
   // Checklist on Today
   'onb.check.titulo': 'Getting started', 'onb.check.progreso': '{hechos} of {total} you can do now', 'onb.check.siguiente': 'Recommended now', 'onb.check.masTareas': 'Show more tasks', 'onb.check.ocultar': 'Hide list',
-  'onb.check.cargando': 'Working out your progress…', 'onb.check.noDisponible': 'Your progress could not be worked out right now.', 'onb.check.abrir': 'Open',
+  'onb.check.cargando': 'Working out your progress…', 'onb.check.noDisponible': 'Your progress could not be worked out right now.', 'onb.check.reintentar': 'Try again', 'onb.check.abrir': 'Open',
   'onb.check.estado.hecho': 'Done', 'onb.check.estado.salvedad': 'Done, with notes', 'onb.check.estado.esperando': 'Waiting', 'onb.check.estado.bloqueado': 'Blocked', 'onb.check.estado.pendiente': 'To do', 'onb.check.estado.informativo': 'To review',
   'onb.check.concil': 'Pending: money numbers are partial until orders are matched to their customers.',
   'onb.check.bloq.sinDatos': 'You need data first: an active connection or an imported history.', 'onb.check.bloq.sinIntervencion': 'You first need an intervention assigned to you.',

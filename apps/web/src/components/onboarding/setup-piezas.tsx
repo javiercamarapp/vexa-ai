@@ -87,10 +87,10 @@ export function ListaPasos({t,locale,pista=null,items,siguiente,hoja,soloLectura
  </ol>;
 }
 
-export interface PropsVista{t:Traductor;locale:string;pista:Pista|null;rolEtiqueta:string;soporteTerminado:boolean;cargando:boolean;errorDeLectura:boolean;
+export interface PropsVista{t:Traductor;locale:string;pista:Pista|null;rolEtiqueta:string;soporteTerminado:boolean;cargando:boolean;errorDeLectura:boolean;reintentar?:()=>void;
  lista:{items:ItemAsistente[];progreso:{hechos:number;total:number};siguiente:string|null}|null;conciliacion:Conciliacion|null;fechaResumen:string|null;hoja:DatosHoja|null}
 /** Pantalla completa a partir de datos ya resueltos. Soporte («Ver como») y las vistas sin pista solo muestran un aviso: ningún paso, ningún enlace, ninguna lectura. */
-export function SetupVista({t,locale,pista,rolEtiqueta,soporteTerminado,cargando,errorDeLectura,lista,conciliacion,fechaResumen,hoja}:PropsVista){
+export function SetupVista({t,locale,pista,rolEtiqueta,soporteTerminado,cargando,errorDeLectura,reintentar,lista,conciliacion,fechaResumen,hoja}:PropsVista){
  const encabezado=<PageHeader title={t('onb.setup.titulo')} description={t('onb.setup.desc')}/>;
  const nf=new Intl.NumberFormat(locale);
  if(pista==='soporte'||soporteTerminado)return <section className="task-page stack setup-pantalla" aria-label={t('onb.setup.titulo')}>{encabezado}<AvisoSoporte/><p className="setup-aviso">{t('onb.setup.soporte')}</p></section>;
@@ -99,7 +99,7 @@ export function SetupVista({t,locale,pista,rolEtiqueta,soporteTerminado,cargando
   {encabezado}
   {rolEtiqueta&&<p className="setup-aviso" role="note">{t('onb.setup.rolActual',{rol:rolEtiqueta})}{pista==='lector'?' '+t('onb.setup.lector'):''}</p>}
   {cargando?<p role="status">{t('onb.check.cargando')}</p>:<>
-   {errorDeLectura&&<p role="status">{t('onb.check.noDisponible')}</p>}
+   {errorDeLectura&&<div role="status"><p>{t('onb.check.noDisponible')}</p>{reintentar&&<button type="button" className="onb-btn-sec" onClick={reintentar}>{t('onb.check.reintentar')}</button>}</div>}
    {lista.progreso.total>0&&<div className="setup-progreso"><progress max={lista.progreso.total} value={lista.progreso.hechos} aria-label={t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}/><span>{t('onb.check.progreso',{hechos:lista.progreso.hechos,total:lista.progreso.total})}</span></div>}
    {conciliacion&&<IndicadorConciliacion t={t} c={conciliacion} fecha={fechaResumen} formato={n=>nf.format(n)}/>}
    <ListaPasos t={t} locale={locale} pista={pista} items={lista.items} siguiente={lista.siguiente} hoja={hoja}/>

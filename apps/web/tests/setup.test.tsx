@@ -361,6 +361,39 @@ test('«Invitar a tu equipo»: etiqueta «Pendiente», aclara cuándo se marca h
   }
 });
 
+test('robustez: la lectura de Hoy y la de /setup tienen tope de espera y un estado de error con «Reintentar»; nunca «Calculando…» para siempre',()=>{
+  const lista=leer('src/components/onboarding/checklist.tsx'),pant=leer('src/components/onboarding/setup-pantalla.tsx'),piezas=leer('src/components/onboarding/setup-piezas.tsx');
+  assert.match(lista,/TOPE_LECTURA_MS=8_000/);assert.match(lista,/setTimeout\(\(\)=>corte\.abort\(\),topeMs\)/);assert.match(lista,/signal:corte\.signal/);assert.match(lista,/clearTimeout\(tope\)/);
+  assert.match(lista,/onClick=\{reintentar\}/);assert.match(lista,/onb\.check\.reintentar/);
+  assert.match(pant,/setTimeout\(\(\)=>setVencido\(true\),TOPE_LECTURA_MS\)/);assert.match(pant,/cargando=esperandoLectura&&!vencido/);assert.match(pant,/reintentar=\{/);
+  assert.match(piezas,/errorDeLectura&&[\s\S]*onb\.check\.reintentar/);
+  for(const [idioma,dic] of [['es',ESP],['en',ING]] as const)assert.ok(dic['onb.check.reintentar']?.trim(),idioma);
+  // Con el error y el reintento disponibles, la vista pinta el aviso y el botón en lugar de «Calculando…».
+  for(const idioma of ['es','en'] as const){
+    const t=traductor(idioma);
+    const html=envolver('propietario',<SetupVista t={t} locale="es-MX" pista="propietario" rolEtiqueta="x" soporteTerminado={false} cargando={false} errorDeLectura reintentar={()=>{}} lista={calcularAsistente('propietario',{senales:null,consultadas:[]})} conciliacion={null} fechaResumen={null} hoja={null}/>);
+    assert.ok(html.includes(t('onb.check.noDisponible')));assert.ok(html.includes(`>${t('onb.check.reintentar')}<`));assert.ok(!html.includes(t('onb.check.cargando')));
+  }
+});
+
+test('robustez (comportamiento): una lectura que nunca responde se corta al vencer el tope y rechaza; una que responde a tiempo no',async()=>{
+  const {leerSenales}=await import('../src/components/onboarding/checklist');
+  const original=globalThis.fetch;
+  try{
+    globalThis.fetch=((_u:unknown,init?:{signal?:AbortSignal})=>new Promise((_res,rej)=>{init?.signal?.addEventListener('abort',()=>rej(Object.assign(new Error('abortado'),{name:'AbortError'})));})) as typeof fetch;
+    const t0=Date.now();
+    await assert.rejects(leerSenales('tenant-colgado',new AbortController().signal,30),(e:Error)=>e.name==='AbortError');
+    assert.ok(Date.now()-t0<2000,'se cortó por el tope, no esperó indefinidamente');
+    globalThis.fetch=(async()=>new Response(JSON.stringify({data:{senales:{historial_importado:true}}}),{status:200})) as typeof fetch;
+    const ok=await leerSenales('tenant-rapido',new AbortController().signal,500);
+    assert.equal(ok?.historial_importado,true);
+    // Si quien llama cancela (cambio de pantalla), la lectura se cancela también.
+    globalThis.fetch=((_u:unknown,init?:{signal?:AbortSignal})=>new Promise((_res,rej)=>{init?.signal?.addEventListener('abort',()=>rej(new Error('cancelado')));})) as typeof fetch;
+    const ctl=new AbortController(),p=leerSenales('tenant-cancelado',ctl.signal,60_000);ctl.abort();
+    await assert.rejects(p);
+  }finally{globalThis.fetch=original;}
+});
+
 // ---- Entradas: menú, Hoy, Guía y /confianza
 test('menú por rol: «Configuración» (/setup) visible para los cuatro roles, derivado de la capacidad read; Ver como (rol lector) lo ve',()=>{
   for(const rol of ['owner','analyst','operator','viewer'])assert.ok(menuVisible({role:rol}).some(e=>e.tipo==='item'&&e.href==='/setup'),rol);

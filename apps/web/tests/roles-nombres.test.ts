@@ -27,11 +27,11 @@ const ES_MAL = /propiet|dueñ|\blectora?e?s?\b/i;
 const EN_MAL = /\bowners?\b|\bviewers?\b/i;
 
 test('ningún texto visible de es.ts llama propietario/dueño/lector al puesto', () => {
-  const malos = Object.entries(ESP).filter(([k, v]) => ES_MAL.test(v.replace(OTRO_SENTIDO, ' '))).map(([k, v]) => `${k}: ${v}`);
+  const malos = Object.entries(ESP).filter(([, v]) => ES_MAL.test(v.replace(OTRO_SENTIDO, ' '))).map(([k, v]) => `${k}: ${v}`);
   assert.deepEqual(malos, []);
 });
 test('ningún texto visible de en.ts llama owner/viewer al puesto', () => {
-  const malos = Object.entries(ING).filter(([k, v]) => EN_MAL.test(v.replace(OTRO_SENTIDO, ' '))).map(([k, v]) => `${k}: ${v}`);
+  const malos = Object.entries(ING).filter(([, v]) => EN_MAL.test(v.replace(OTRO_SENTIDO, ' '))).map(([k, v]) => `${k}: ${v}`);
   assert.deepEqual(malos, []);
 });
 test('las claves de «responsable» existen, dicen «responsable» en español y «Assignee/Responsible» (nunca «owner») en inglés', () => {

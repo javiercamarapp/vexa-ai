@@ -14,7 +14,7 @@
     "test:agente-ui": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/agente/agente-ui.test.tsx",
     "test:pain-points": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/pain-points-ruta.test.ts tests/weekly-ruta.test.ts",
     "test:i18n": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/i18n.test.ts",
-    "test:onboarding": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/onboarding.test.ts tests/onboarding-ui.test.tsx tests/onboarding-tour.test.tsx tests/onboarding-viaje.test.tsx tests/onboarding-textos.test.tsx tests/setup.test.tsx",
+    "test:onboarding": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/onboarding.test.ts tests/onboarding-ui.test.tsx tests/onboarding-tour.test.tsx tests/onboarding-viaje.test.tsx tests/onboarding-cableado.test.tsx tests/onboarding-textos.test.tsx tests/setup.test.tsx",
     "test:auth": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/auth-http.test.ts",
     "test:cargador": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/member-file-loader.test.tsx",
     "test:cco": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/cco.test.tsx",

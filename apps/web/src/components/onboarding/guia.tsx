@@ -8,7 +8,8 @@ import {todosLosItems} from '../../lib/workspace/menu.mjs';
 import {pasosDe} from '../../lib/onboarding/catalogo.mjs';
 import {enPantalla} from '../../lib/onboarding/ruta.mjs';
 import {reducir,teclasPropias} from '../../lib/onboarding/recorrido.mjs';
-import {crearViaje,estadoViajeInicial,planearViaje,type EstadoViaje} from '../../lib/onboarding/viaje.mjs';
+import {crearViaje,estadoViajeInicial,type EstadoViaje} from '../../lib/onboarding/viaje.mjs';
+import {cancelarConTecla,planDelPaso,puedeTomarFoco,punteroFueraDeTarjeta,reiniciarAlSalir} from '../../lib/onboarding/cableado.mjs';
 import type {Clave} from '../../lib/i18n';
 import {contarPasos,useOnboarding} from './contexto';
 import {CapaFoco,EtiquetaObjetivo,InvitacionRecorrido,MenuGuia,TarjetaRecorrido,type LadoEtiqueta} from './paneles';
@@ -70,19 +71,19 @@ export function GuiaPaneles(){
   el.addEventListener('click',alClic,true);return()=>el.removeEventListener('click',alClic,true);
  },[el,tipo]);
  // Al cambiar de paso (o cerrar) nada del viaje anterior queda vivo: ni la cuenta ni el plazo.
- useEffect(()=>()=>{ctlRef.current?.reiniciar();},[pasoId]);
+ useEffect(()=>reiniciarAlSalir(()=>ctlRef.current),[pasoId]);
  // Con el elemento ya resuelto (existe, o no existe: menú plegado o cajón móvil) se decide si viaja: solo si se llegó avanzando, sin movimiento reducido, sin foco en un campo ni formulario modificado.
  useEffect(()=>{
   if(tipo!=='ir'||el===undefined)return;
-  ctlRef.current?.enviar({tipo:'planear',plan:planearViaje({tipo,armado:viajeRef.current?.()??false,elemento:el?'existe':'ausente',movimientoReducido:reducirMovimiento(),focoEnCampo:enCampo(document.activeElement),formularioSucio:hayFormularioSucio()})});
+  ctlRef.current?.enviar({tipo:'planear',plan:planDelPaso({tipo,armado:viajeRef.current?.()??false,el,sensores:{reducirMovimiento,enCampo:()=>enCampo(document.activeElement),hayFormularioSucio:()=>hayFormularioSucio()}})});
  },[el,tipo,pasoId]);
- // Mientras corre la cuenta, Tab, un clic fuera de la tarjeta o tocar un campo la cancelan (Esc cierra la guía y con ella la cuenta).
+ // Mientras corre la cuenta, Escape, Tab, un clic fuera de la tarjeta o tocar un campo la cancelan. Escape SOLO cancela el viaje (queda «Ir a …»); un segundo Escape cierra la guía.
  const faseViaje=viaje.fase;
  useEffect(()=>{
   if(faseViaje!=='cuenta')return;
   const cancelar=(motivo:string)=>{ctlRef.current?.enviar({tipo:'cancelar',motivo});};
-  const alTecla=(e:KeyboardEvent)=>{if(e.key==='Tab')cancelar('tab');};
-  const alPuntero=(e:PointerEvent)=>{if(!(e.target instanceof Node&&tarjeta.current?.contains(e.target)))cancelar('clic-fuera');};
+  const alTecla=(e:KeyboardEvent)=>{if(ctlRef.current)cancelarConTecla(ctlRef.current,e);};
+  const alPuntero=(e:PointerEvent)=>{if(punteroFueraDeTarjeta(e.target,tarjeta.current))cancelar('clic-fuera');};
   const alCampo=(e:Event)=>{if(e.target instanceof HTMLElement&&teclasPropias(e.target))cancelar('campo');};
   document.addEventListener('keydown',alTecla,true);document.addEventListener('pointerdown',alPuntero,true);document.addEventListener('focusin',alCampo,true);document.addEventListener('input',alCampo,true);
   return()=>{document.removeEventListener('keydown',alTecla,true);document.removeEventListener('pointerdown',alPuntero,true);document.removeEventListener('focusin',alCampo,true);document.removeEventListener('input',alCampo,true);};
@@ -121,9 +122,17 @@ export function GuiaPaneles(){
  // 5) Foco: si estaba en la tarjeta, en el menú o en el disparador (o en ningún sitio), pasa al botón principal del paso; si la persona está en la página, no se le quita.
  useEffect(()=>{
   if(!abierto)return;
-  const a=document.activeElement;
-  if(!a||a===document.body||tarjeta.current?.contains(a)||menu.current?.contains(a)||a.id==='onb-boton')tarjeta.current?.querySelector<HTMLElement>('[data-onb-primario]')?.focus({preventScroll:true});
+  if(puedeTomarFoco({activo:document.activeElement,cuerpo:document.body,tarjeta:tarjeta.current,menu:menu.current}))tarjeta.current?.querySelector<HTMLElement>('[data-onb-primario]')?.focus({preventScroll:true});
  },[abierto,pasoId]);
+ // 6) Lector de pantalla en modo exploración (no dispara Tab): al aparecer la cuenta el foco pasa a «Quedarme aquí», que es lo único que hay que alcanzar en 3 s;
+ // si la persona está en un campo o en la página, no se le quita. Al cancelarla, «Quedarme aquí» desaparece y el foco pasa a «Ir a …» (no se pierde en el documento).
+ const faseAntes=useRef(faseViaje);
+ useEffect(()=>{
+  const antes=faseAntes.current;faseAntes.current=faseViaje;
+  const quien=faseViaje==='cuenta'?'[data-onb-quedarme]':antes==='cuenta'&&faseViaje==='manual'?'[data-onb-manual]':null;
+  if(!quien||!puedeTomarFoco({activo:document.activeElement,cuerpo:document.body,tarjeta:tarjeta.current,menu:menu.current}))return;
+  tarjeta.current?.querySelector<HTMLElement>(quien)?.focus({preventScroll:true});
+ },[faseViaje]);
  if(!c||!c.listo||!c.tieneRecorrido)return null;
  const nombrePantalla=(href:string|null)=>{
   if(!href)return '';

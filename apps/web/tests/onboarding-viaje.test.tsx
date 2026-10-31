@@ -4,7 +4,7 @@
 import {test,mock,afterEach} from 'node:test';
 import assert from 'node:assert/strict';
 import {renderToStaticMarkup} from 'react-dom/server';
-import {CUENTA_MS,MINIMO_MS,FALLO_MS,armadoTras,planearViaje,reducirViaje,estadoViajeInicial,crearViaje,MOTIVOS_CANCELACION} from '../src/lib/onboarding/viaje.mjs';
+import {CUENTA_MS,FALLO_MS,armadoTras,planearViaje,reducirViaje,estadoViajeInicial,crearViaje,MOTIVOS_CANCELACION} from '../src/lib/onboarding/viaje.mjs';
 import {estadoInicial,reducir,eventoDeTecla} from '../src/lib/onboarding/recorrido.mjs';
 import {construirTour} from '../src/lib/onboarding/tour.mjs';
 import {TarjetaRecorrido,type ViajeUi} from '../src/components/onboarding/paneles';
@@ -38,10 +38,9 @@ test('planearViaje: solo arma un paso «ir» alcanzado avanzando, con el element
   assert.equal(plan({armado:false}).manual,false,'sin viaje armado no se ofrece «Ir a …», basta Siguiente');
   assert.equal(planearViaje({tipo:'info',armado:true,elemento:'existe'}).armar,false,'un paso informativo nunca viaja');
 });
-test('planearViaje: menú plegado o cajón móvil (el elemento no existe) espera lo mismo: nunca menos de 1.6 s',()=>{
+test('planearViaje: menú plegado o cajón móvil (el elemento no existe) espera lo mismo: nunca menos de 3 s',()=>{
   const sin=plan({elemento:'ausente'});
-  assert.equal(sin.armar,true);assert.ok(sin.ms>=MINIMO_MS,'al menos el mínimo');assert.equal(sin.ms,plan().ms,'la misma cuenta que con elemento');
-  assert.equal(MINIMO_MS,1600);
+  assert.equal(sin.armar,true);assert.ok(sin.ms>=3000,'nunca menos de 3 s (lector de pantalla)');assert.equal(sin.ms,plan().ms,'la misma cuenta que con elemento');
 });
 test('planearViaje: movimiento reducido, foco en un campo o formulario modificado NO viajan y ofrecen el botón manual',()=>{
   for(const [extra,motivo] of [[{movimientoReducido:true},'movimiento-reducido'],[{focoEnCampo:true},'campo'],[{formularioSucio:true},'formulario']] as const){
@@ -80,8 +79,8 @@ for(const motivo of MOTIVOS_CANCELACION){
     v.enviar({tipo:'manual'});assert.equal(r.viajes,1);
   });
 }
-test('los motivos de cancelación son exactamente: quedarme, Tab, clic fuera y campo',()=>{
-  assert.deepEqual([...MOTIVOS_CANCELACION].sort(),['campo','clic-fuera','quedarme','tab']);
+test('los motivos de cancelación son exactamente: quedarme, Escape, Tab, clic fuera y campo',()=>{
+  assert.deepEqual([...MOTIVOS_CANCELACION].sort(),['campo','clic-fuera','escape','quedarme','tab']);
 });
 test('Esc cierra el recorrido y con él la cuenta: no viaja nada después',()=>{
   const ev=eventoDeTecla('Escape','BODY');assert.deepEqual(ev,{tipo:'cerrar'});
@@ -145,14 +144,14 @@ test('salida por fallo también tras Siguiente o tras un clic de la propia perso
   avanzar(FALLO_MS);assert.equal(b.v.estado().fase,'fallo');
   mock.timers.reset();
   const c=arrancar();avanzar(3000);avanzar(1500);
-  c.v.enviar({tipo:'ruta'});assert.equal(c.v.estado().fase,'hecho');
-  avanzar(60000);assert.equal(c.v.estado().fase,'hecho','una ruta que llegó a tiempo cancela el plazo');
+  c.v.reiniciar(); // llegó la ruta: el recorrido cambia de paso y la guía reinicia el viaje
+  avanzar(60000);assert.equal(c.v.estado().fase,'inactivo','una ruta que llegó a tiempo cancela el plazo: nunca cae en fallo');
 });
 test('el paso «ir» se completa por la ruta, no por el clic: sin ruta el recorrido no avanza',()=>{
   const pasos=construirTour('propietario'),i=pasos.findIndex(p=>p.tipo==='ir');
   const rec={...estadoInicial(),abierto:true,indice:i};
   assert.equal(reducir(rec,{tipo:'ruta',ruta:'/sin-acceso'},pasos.length,pasos,'/zzz').indice,i,'una ruta ajena (redirección) no completa el paso');
-  assert.equal(reducirViaje(estadoViajeInicial(),{tipo:'ruta'}).estado.fase,'hecho');
+  assert.equal(reducirViaje(estadoViajeInicial(),{tipo:'siguiente'}).efecto,'viajar');
 });
 
 // ---- Marcado de la tarjeta

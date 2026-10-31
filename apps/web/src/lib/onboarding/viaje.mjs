@@ -2,16 +2,14 @@
 // Reglas (decisión tomada tras un debate de 3 agentes: se conserva el viaje automático, pero nadie queda varado ni sorprendido):
 //  - Solo viaja un paso «ir» al que se llegó AVANZANDO por una acción de la persona (Siguiente, flecha derecha, Empezar, Retomar, elegir pantalla).
 //    Anterior, cerrar y un recorrido restaurado tras recargar nunca viajan solos.
-//  - Cuenta regresiva visible de CUENTA_MS (nunca menos de MINIMO_MS, exista o no el elemento en el menú).
-//  - Se cancela con «Quedarme aquí», Tab, clic fuera de la tarjeta o cualquier interacción con un campo; Esc cierra la guía (y con ella la cuenta).
+//  - Cuenta regresiva visible de CUENTA_MS (3 s, exista o no el elemento en el menú).
+//  - Se cancela con «Quedarme aquí», Escape, Tab, clic fuera de la tarjeta o cualquier interacción con un campo. Escape durante la cuenta SOLO cancela el viaje (queda «Ir a …»); un segundo Escape cierra la guía.
 //  - No viaja con movimiento reducido, ni con el foco en un campo, ni con un formulario modificado en la pantalla: queda el botón manual «Ir a …».
 //  - El viaje se dispara UNA sola vez (Siguiente + temporizador no avanzan dos pasos).
 //  - Si tras viajar no llega la ruta en FALLO_MS, el paso sale por «No pude abrir esta pantalla» + «Continuar» en vez de quedarse mudo.
 
-/** Cuenta regresiva visible antes de viajar. */
+/** Cuenta regresiva visible antes de viajar. Nunca menos de 3 s: quien usa lector de pantalla necesita tiempo para llegar a «Quedarme aquí». */
 export const CUENTA_MS = 3000;
-/** Lo mínimo que se espera antes de viajar solo, también cuando el elemento no existe (menú plegado o cajón móvil). */
-export const MINIMO_MS = 1600;
 /** Tiempo para que llegue la ruta tras el clic o el push; pasado, el paso sale por fallo. */
 export const FALLO_MS = 3000;
 /** Paso de la cuenta (ms). */
@@ -31,7 +29,7 @@ export function armadoTras(origen) {
  *  armar = empezar la cuenta; manual = mostrar el botón «Ir a …» (la persona decide cuándo); ninguno = solo el texto de «haz clic o pulsa Siguiente».
  */
 export function planearViaje(e) {
-  const ms = Math.max(CUENTA_MS, MINIMO_MS);
+  const ms = CUENTA_MS;
   if (e.tipo && e.tipo !== 'ir') return { armar: false, ms: 0, manual: false, motivo: 'no-ir' };
   if (!e.armado) return { armar: false, ms: 0, manual: false, motivo: 'no-armado' };
   if (e.elemento === 'buscando') return { armar: false, ms: 0, manual: false, motivo: 'buscando' };
@@ -42,12 +40,13 @@ export function planearViaje(e) {
 }
 
 /** Motivos por los que la persona cancela la cuenta. */
-export const MOTIVOS_CANCELACION = Object.freeze(['quedarme', 'tab', 'clic-fuera', 'campo']);
+export const MOTIVOS_CANCELACION = Object.freeze(['quedarme', 'escape', 'tab', 'clic-fuera', 'campo']);
 
 /**
  * Fases del viaje de un paso «ir»:
- *  inactivo (aún no se decide) · cuenta (cuenta regresiva) · manual (la persona decide con «Ir a …») · viajando (clic/push hecho, esperando la ruta) · fallo (no llegó la ruta) · hecho.
- * @typedef {{fase:'inactivo'|'cuenta'|'manual'|'viajando'|'fallo'|'hecho', restan:number, motivo:string|null}} EstadoViaje
+ *  inactivo (aún no se decide) · cuenta (cuenta regresiva) · manual (la persona decide con «Ir a …») · viajando (clic/push hecho, esperando la ruta) · fallo (no llegó la ruta).
+ * Al llegar la ruta el recorrido cambia de paso y la guía reinicia el viaje; no hay fase propia para eso.
+ * @typedef {{fase:'inactivo'|'cuenta'|'manual'|'viajando'|'fallo', restan:number, motivo:string|null}} EstadoViaje
  */
 /** @returns {EstadoViaje} */
 export const estadoViajeInicial = () => ({ fase: 'inactivo', restan: 0, motivo: null });
@@ -55,7 +54,7 @@ export const estadoViajeInicial = () => ({ fase: 'inactivo', restan: 0, motivo: 
 /**
  * Transición pura. Devuelve el estado siguiente y, si toca, un efecto: 'viajar' (hacer el clic o el push), exactamente una vez por paso.
  * @param {EstadoViaje} estado
- * @param {{tipo:'planear', plan:ReturnType<typeof planearViaje>}|{tipo:'tick'}|{tipo:'cancelar', motivo:string}|{tipo:'siguiente'|'manual'|'clic'|'ruta'|'plazo'|'reiniciar'}} evento
+ * @param {{tipo:'planear', plan:ReturnType<typeof planearViaje>}|{tipo:'tick'}|{tipo:'cancelar', motivo:string}|{tipo:'siguiente'|'manual'|'clic'|'plazo'|'reiniciar'}} evento
  * @returns {{estado:EstadoViaje, efecto:'viajar'|null}}
  */
 export function reducirViaje(estado, evento) {
@@ -80,15 +79,13 @@ export function reducirViaje(estado, evento) {
       return estado.fase === 'cuenta' ? { estado: { fase: 'manual', restan: 0, motivo: evento.motivo }, efecto: null } : igual;
     case 'siguiente':
     case 'manual':
-      // Siguiente, flecha derecha o «Ir a …». Si ya se viaja (o ya llegó) no se dispara otra vez: así Siguiente + temporizador son un solo viaje.
-      if (estado.fase === 'viajando' || estado.fase === 'hecho' || estado.fase === 'fallo') return igual;
+      // Siguiente, flecha derecha o «Ir a …». Si ya se viaja (o ya falló) no se dispara otra vez: así Siguiente + temporizador son un solo viaje.
+      if (estado.fase === 'viajando' || estado.fase === 'fallo') return igual;
       return { estado: { fase: 'viajando', restan: 0, motivo: null }, efecto: 'viajar' };
     case 'clic':
       // La persona hizo clic ella misma en el elemento señalado: no hay nada que disparar, solo esperar la ruta.
-      if (estado.fase === 'viajando' || estado.fase === 'hecho') return igual;
+      if (estado.fase === 'viajando') return igual;
       return { estado: { fase: 'viajando', restan: 0, motivo: null }, efecto: null };
-    case 'ruta':
-      return estado.fase === 'hecho' ? igual : { estado: { fase: 'hecho', restan: 0, motivo: null }, efecto: null };
     case 'plazo':
       return estado.fase === 'viajando' ? { estado: { fase: 'fallo', restan: 0, motivo: 'sin-ruta' }, efecto: null } : igual;
     case 'reiniciar':

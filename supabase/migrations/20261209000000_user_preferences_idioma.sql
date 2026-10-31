@@ -14,7 +14,7 @@ set local statement_timeout='15s';
 
 create table if not exists public.user_preferences(
  user_id uuid primary key references auth.users(id) on delete cascade,
- idioma text check(idioma in('es','en')),
+ idioma text not null check(idioma in('es','en')),
  updated_at timestamptz not null default now()
 );
 alter table public.user_preferences enable row level security;

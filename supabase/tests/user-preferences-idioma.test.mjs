@@ -43,6 +43,9 @@ test('user_preferences: RLS por persona, lectura de servicio, trigger, check y r
     falla('authenticated', U1, `update public.user_preferences set user_id='${U3}' where user_id='${U1}'`, /row-level security/);
     assert.equal(q(`select count(*) from public.user_preferences where user_id='${U3}'`), '0');
     falla('authenticated', U1, `update public.user_preferences set idioma='fr' where user_id='${U1}'`, /check constraint/);
+    // Mismo intento SIN WHERE: la política SELECT no puede enmascarar un with check laxo (ahí sí se movería la fila).
+    falla('authenticated', U1, `update public.user_preferences set user_id='${U3}'`, /row-level security/);
+    assert.equal(q(`select count(*) from public.user_preferences where user_id='${U3}'`), '0', 'sin WHERE tampoco se mueve la fila');
     assert.equal(q(`select idioma from public.user_preferences where user_id='${U2}'`), 'en', 'la fila ajena no cambia');
     // update de la fila ajena: 0 filas (RLS la oculta), sin error.
     assert.doesNotMatch(como('authenticated', U1, `update public.user_preferences set idioma='es' where user_id='${U2}' returning 1`).stdout, /^1$/m, 'RLS oculta la fila ajena: 0 filas actualizadas');

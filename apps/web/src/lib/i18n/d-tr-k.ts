@@ -85,6 +85,17 @@ export const trKEs = {
   'tr.mk.nombre': '[nombre]',
   'tr.mk.direccion': '[dirección]',
   'tr.mk.pii': '[dato personal oculto]',
+  // Cobertura que el servidor arma en español (T43)
+  'tr.cov.sinCorte': 'Sin snapshot publicado para este alcance.',
+  'tr.cov.anclaje': 'Anclaje de alcance: sin cifras.',
+  'tr.cov.sinVinculos': 'Sin vínculos problema–pedido: la exposición no se calcula. Se listan los problemas vigentes del catálogo ordenados por incidencias; el importe no está disponible (desconocido, no cero).',
+  'tr.cov.versionCambio': 'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.',
+  'tr.cov.financiera': 'Cobertura financiera según el snapshot; filas por problema no aditivas.',
+  'tr.cov.briefMetricas': 'Cobertura de cada métrica según el snapshot y las pertenencias confirmadas del alcance; un subtotal conocido no equivale al total.',
+  'tr.cov.sinDatos': 'Sin datos publicados',
+  'tr.cov.pendiente': 'Publicación pendiente',
+  'tr.cov.pertenencia': '{n} órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.',
+  'tr.cov.nDeM': 'Cobertura {a}/{b}',
 } as const;
 export const trKEn = {
   'tr.nt.tendencias': 'Counts of loaded records (conversations by start date or, if missing, by the date of their first message; orders recorded and refunds settled by effective date, from every basis of the economic ledger, including raw Shopify and “to review” rows; /cfo shows a single basis; conversations from all sources, not only the HubSpot rows in the Explorer). The publication rules of the published cut do not apply and different currencies are not added together.',
@@ -170,4 +181,15 @@ export const trKEn = {
   'tr.mk.nombre': '[name]',
   'tr.mk.direccion': '[address]',
   'tr.mk.pii': '[personal data hidden]',
+  // Cobertura que el servidor arma en español (T43)
+  'tr.cov.sinCorte': 'No published cut for this scope.',
+  'tr.cov.anclaje': 'Scope anchor: no figures.',
+  'tr.cov.sinVinculos': 'No problem-to-order links: exposure is not calculated. The current problems of the catalog are listed ordered by incidents; the amount is not available (unknown, not zero).',
+  'tr.cov.versionCambio': 'The current version of the problem changed; this view keeps the history and the published figures.',
+  'tr.cov.financiera': 'Financial coverage according to the published cut; per-problem rows are not additive.',
+  'tr.cov.briefMetricas': 'Coverage of each metric according to the published cut and the confirmed memberships of the scope; a known subtotal is not the same as the total.',
+  'tr.cov.sinDatos': 'No published data',
+  'tr.cov.pendiente': 'Publication pending',
+  'tr.cov.pertenencia': '{n} orders with unknown membership in the filter; subtotal of confirmed memberships.',
+  'tr.cov.nDeM': 'Coverage {a}/{b}',
 } as const;

@@ -174,3 +174,19 @@ test('citas: los marcadores de datos de terceros se rotulan en el idioma activo;
   assert.equal(marcasEnIdioma('Sin marcas aquí.', en), 'Sin marcas aquí.', 'el resto de la cita no se toca');
   assert.match(leer('src/components/ui/citation.tsx'), /marcasEnIdioma\(enmascararTerceros\(quote\),t\)/);
 });
+
+test('cobertura que el servidor arma en español: se rotula por idioma; el texto debe seguir existiendo en el paquete (si cambia, esta prueba falla)', async () => {
+  const {coberturaTexto, CLAVES_COBERTURA} = await import('../src/lib/legibilidad/cobertura');
+  const servidor = leer('../../packages/workspace-service/index.mjs') + leer('src/lib/workspace/data.ts') + leer('../../packages/briefs/index.mjs');
+  const textos = ['Sin snapshot publicado para este alcance.', 'Anclaje de alcance: sin cifras.', 'La versión actual del problema cambió; esta vista conserva la historia y las cifras publicadas.', 'Cobertura financiera según el snapshot; filas por problema no aditivas.', 'Cobertura de cada métrica según el snapshot y las pertenencias confirmadas del alcance; un subtotal conocido no equivale al total.', 'Sin datos publicados', 'Publicación pendiente', 'Sin vínculos problema–pedido: la exposición no se calcula.'];
+  for (const x of textos) assert.ok(servidor.includes(x), 'el servidor ya no manda: ' + x);
+  for (const x of textos.slice(0, 7)) { const ing = coberturaTexto(en, x); assert.ok(!ACENTOS.test(ing) && ing !== x, x + ' -> ' + ing); assert.equal(coberturaTexto(es, x), x, 'en español no cambia'); assert.equal(coberturaTexto(null, x), x); }
+  assert.equal(coberturaTexto(en, 'Cobertura financiera según el snapshot; filas por problema no aditivas.'), 'Financial coverage according to the published cut; per-problem rows are not additive.');
+  assert.equal(coberturaTexto(en, '12 órdenes con pertenencia al filtro desconocida; subtotal de pertenencias confirmadas.'), '12 orders with unknown membership in the filter; subtotal of confirmed memberships.');
+  assert.equal(coberturaTexto(en, 'Cobertura 3/5'), 'Coverage 3/5'); assert.equal(coberturaTexto(es, 'Cobertura 3/5'), 'Cobertura 3/5');
+  assert.match(coberturaTexto(en, 'Sin vínculos problema–pedido: la exposición no se calcula. Se listan los problemas vigentes del catálogo ordenados por incidencias; el importe no está disponible (desconocido, no cero).'), /^No problem-to-order links/);
+  assert.equal(coberturaTexto(en, 'Un texto nuevo del servidor'), 'Un texto nuevo del servidor', 'lo desconocido sale tal cual');
+  for (const k of CLAVES_COBERTURA()) assert.notEqual(en(k as never, {n: 1, a: 1, b: 2}), es(k as never, {n: 1, a: 1, b: 2}), k);
+  assert.match(leer('src/components/workspace/data-state.tsx'), /coberturaTexto\(t,state\.coverage\)/);
+  assert.match(leer('src/components/briefs/panel.tsx'), /coberturaTexto\(tx,d\.coverage\)/);
+});

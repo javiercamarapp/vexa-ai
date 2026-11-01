@@ -258,8 +258,12 @@ test('?lang= explícito gana: no se lee la preferencia ni se siembra nada',async
 test('sin preferencia o sin tabla: la navegación sigue, no se siembra cookie y una marca evita repetir la lectura',async()=>{
   for(const idioma of ['ninguno','sin_tabla'] as const){
     setup();const paths=mockServer({idioma});const primera=await middleware(request('/overview'));
-    assert.equal(primera.status,200,idioma);assert.equal(primera.cookies.get('rovaq_lang'),undefined);assert.equal(primera.cookies.get('rovaq_lang_sin_pref')?.value,'1');assert.equal(lecturasDePreferencia(paths),1);
-    const segunda=await middleware(conCookie('/overview','rovaq_lang_sin_pref=1'));
+    assert.equal(primera.status,200,idioma);assert.equal(primera.cookies.get('rovaq_lang'),undefined);assert.equal(primera.cookies.get('rovaq_lang_sin_pref')?.value,userId);assert.equal(lecturasDePreferencia(paths),1);
+    const segunda=await middleware(conCookie('/overview',`rovaq_lang_sin_pref=${userId}`));
     assert.equal(segunda.status,200);assert.equal(lecturasDePreferencia(paths),1,'con la marca no hay segunda lectura');
   }
+});
+test('la marca de «sin preferencia» es de una persona: con la marca de otra se vuelve a leer',async()=>{
+  setup();const paths=mockServer({idioma:'es'});const respuesta=await middleware(conCookie('/overview','rovaq_lang_sin_pref=otra-persona'));
+  assert.equal(respuesta.status,200);assert.equal(lecturasDePreferencia(paths),1);assert.equal(respuesta.cookies.get('rovaq_lang')?.value,'es');
 });

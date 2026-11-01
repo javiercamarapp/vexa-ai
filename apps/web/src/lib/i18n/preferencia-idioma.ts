@@ -28,6 +28,21 @@ export async function leerIdiomaDePersona(client: ClienteLecturaPreferencias, us
   }
 }
 
+/** Tope de la lectura en el middleware: una base lenta no puede retrasar la navegación más que esto. */
+export const TOPE_LECTURA_IDIOMA_MS = 800;
+
+/** Igual que leerIdiomaDePersona pero con tope de tiempo. `concluyente` es false si se agotó el tiempo: no se sabe si hay preferencia, así que NO se debe dejar la marca de «sin preferencia». */
+export async function leerIdiomaConTope(client: ClienteLecturaPreferencias, userId: string | null | undefined, topeMs: number = TOPE_LECTURA_IDIOMA_MS): Promise<{idioma: Idioma | null; concluyente: boolean}> {
+  let temporizador: ReturnType<typeof setTimeout> | undefined;
+  const agotado = new Promise<'agotado'>((resolve) => { temporizador = setTimeout(() => resolve('agotado'), topeMs); });
+  try {
+    const resultado = await Promise.race([leerIdiomaDePersona(client, userId), agotado]);
+    return resultado === 'agotado' ? {idioma: null, concluyente: false} : {idioma: resultado, concluyente: true};
+  } finally {
+    clearTimeout(temporizador);
+  }
+}
+
 export async function guardarIdiomaDePersona(client: ClientePreferencias, userId: string | null | undefined, valor: unknown): Promise<ResultadoGuardado> {
   const idioma: Idioma | null = idiomaValido(valor);
   if (!idioma) return {guardado: false, motivo: 'idioma_invalido'};

@@ -29,11 +29,12 @@ export function idiomaDeAcceptLanguage(cabecera: string | null | undefined): Idi
 export function resolverIdioma({parametro, cookie, preferencia, acceptLanguage}: {parametro?: unknown; cookie?: unknown; preferencia?: unknown; acceptLanguage?: string | null}): Idioma {
   return idiomaValido(parametro) ?? idiomaValido(cookie) ?? idiomaValido(preferencia) ?? idiomaDeAcceptLanguage(acceptLanguage) ?? IDIOMA_POR_OMISION;
 }
-/** Marca (cookie de corta vida) que dice «ya se consultó la preferencia y no hay ninguna»: evita repetir la lectura a la base en cada navegación. */
+/** Marca (cookie de corta vida) que dice «ya se consultó la preferencia de ESTA persona y no hay ninguna»: su valor es el id de la persona, así otra persona en el mismo dispositivo no hereda la marca. */
 export const COOKIE_SIN_PREFERENCIA = 'rovaq_lang_sin_pref';
-/** ¿Vale la pena leer la preferencia guardada para sembrar la cookie? Solo con una persona autenticada, sin ?lang= explícito, sin cookie válida y sin la marca de «no hay preferencia». */
-export function debeSembrarIdioma({parametro, cookie, marca}: {parametro?: unknown; cookie?: unknown; marca?: unknown}): boolean {
-  return idiomaValido(parametro) === null && idiomaValido(cookie) === null && !marca;
+/** ¿Vale la pena leer la preferencia guardada para sembrar la cookie? Solo con una persona autenticada, sin ?lang= explícito, sin cookie válida y sin la marca de «no hay preferencia» de esa misma persona (`usuario`). */
+export function debeSembrarIdioma({parametro, cookie, marca, usuario}: {parametro?: unknown; cookie?: unknown; marca?: unknown; usuario?: string | null}): boolean {
+  const marcaVigente = typeof marca === 'string' && marca !== '' && marca === usuario;
+  return idiomaValido(parametro) === null && idiomaValido(cookie) === null && !marcaVigente;
 }
 /** Idioma de una petición (middleware, rutas, páginas): cookie rovaq_lang y cabecera Accept-Language, sin tocar nada más. `parametro` es el ?lang= si la ruta lo admite. */
 export function idiomaDeSolicitud(solicitud: {cookies: {get(nombre: string): {value: string} | undefined}; headers?: {get(nombre: string): string | null} | null}, parametro?: unknown): Idioma {

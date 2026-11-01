@@ -59,11 +59,11 @@ export function reglasCabecerasEspejos(fichas, espejoDe, base = 'https://rovaq.a
 /**
  * Negociación de contenido sin detección por User-Agent (eso sería cloaking): la misma URL sirve HTML por defecto y su espejo Markdown si el cliente pide
  * text/markdown de forma explícita. Reglas de rewrite con `has` por cabecera Accept y por host, generadas desde las fichas. No se aplican aquí: T3 las
- * incorpora a next.config.ts (beforeFiles) o T14 decide hacerlo en el middleware, junto con Vary: Accept en la respuesta.
+ * incorpora a next.config.ts (beforeFiles) o T14 decide hacerlo en el proxy, junto con Vary: Accept en la respuesta.
  */
 export function reglasNegociacionMarkdown(fichas, espejoDe) {
   // `has` solo compara con una expresión regular: no entiende los valores q de Accept. Esta versión es la conservadora (cualquier mención de text/markdown);
-  // si se necesita la precisión de host-routing.prefiereMarkdown (prioridad igual o mayor que text/html), la negociación debe vivir en el middleware.
+  // si se necesita la precisión de host-routing.prefiereMarkdown (prioridad igual o mayor que text/html), la negociación debe vivir en el proxy.
   const has = [{ type: 'host', value: 'rovaq.ai' }, { type: 'header', key: 'accept', value: '.*text/markdown.*' }];
   const reglas = [];
   for (const f of fichas) {

@@ -22,7 +22,7 @@ const TEXTO = {
   },
 } as const;
 
-/** Cuerpo del 404 del sitio. Lo usan la frontera not-found.tsx y el segmento centinela __404, que el middleware sirve con estado 404 y HTML estático completo (lang, h1, enlaces) sin depender de JavaScript. */
+/** Cuerpo del 404 del sitio. Lo usan la frontera not-found.tsx y el segmento centinela __404, que el proxy sirve con estado 404 y HTML estático completo (lang, h1, enlaces) sin depender de JavaScript. */
 export function PaginaNoEncontrada({lang}: {lang: Lang}) {
   const t = TEXTO[lang];
   const enlaces = menus(lang).flatMap((g) => g.items.map((it) => ({href: it.href, titulo: it.titulo})));

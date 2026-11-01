@@ -7,7 +7,7 @@ import {POST as select} from '../src/app/(app)/auth/organization/route';
 import {GET as callback} from '../src/app/(app)/auth/callback/route';
 import {POST as logout} from '../src/app/(app)/auth/logout/route';
 import {POST as google} from '../src/app/(app)/auth/google/route';
-import {middleware} from '../src/middleware';
+import {proxy} from '../src/proxy';
 import {config, ACTIVE_ORG} from '../src/lib/auth';
 const originalFetch=globalThis.fetch;
 const savedEnv={...process.env};
@@ -44,28 +44,28 @@ test('same-origin foreign selection returns authorization 403, preserves active 
   setup();mockServer();const denied=await select(request('/auth/organization','tenant_id=cccccccc-cccc-4ccc-8ccc-cccccccccccc'));
   assert.equal(denied.status,403);assert.equal((await denied.json()).error.code,'organization_not_authorized');assert.equal(denied.cookies.get(ACTIVE_ORG),undefined);
   const allowed=await select(request('/auth/organization',`tenant_id=${B}`));assert.equal(allowed.status,303);assert.equal(allowed.cookies.get(ACTIVE_ORG)?.value,B);
-  const follow=request('/');follow.cookies.set(ACTIVE_ORG,allowed.cookies.get(ACTIVE_ORG)!.value);assert.equal((await middleware(follow)).status,200);
+  const follow=request('/');follow.cookies.set(ACTIVE_ORG,allowed.cookies.get(ACTIVE_ORG)!.value);assert.equal((await proxy(follow)).status,200);
 });
 test('CSRF fails before Auth network and does not alter org cookie',async()=>{setup();const paths=mockServer();const result=await select(request('/auth/organization',`tenant_id=${B}`,'https://evil.test'));assert.equal(result.status,403);assert.equal((await result.json()).error.code,'csrf_rejected');assert.equal(result.cookies.get(ACTIVE_ORG),undefined);assert.equal(paths.length,0);});
-test('Auth rejection denies even structurally valid synthetic token',async()=>{setup();const paths=mockServer({invalid:true});const result=await middleware(request('/'));assert.equal(result.status,303);assert.equal(result.headers.get('location'),origin+'/login');assert.deepEqual(paths,['/auth/v1/user']);});
-test('active membership rechecked on every request; revoked membership denied',async()=>{setup();mockServer();assert.equal((await middleware(request('/'))).status,200);const paths=mockServer({revoked:true});const result=await middleware(request('/'));assert.equal(result.status,303);assert.equal(result.headers.get('location'),origin+'/sin-acceso');assert.ok(paths.includes('/rest/v1/memberships'));assert.match(result.headers.get('cache-control')!,/no-store/);});
-test('DB error is 503, not missing membership or empty UI',async()=>{setup();mockServer({dbError:true});assert.equal((await middleware(request('/'))).status,503);});
+test('Auth rejection denies even structurally valid synthetic token',async()=>{setup();const paths=mockServer({invalid:true});const result=await proxy(request('/'));assert.equal(result.status,303);assert.equal(result.headers.get('location'),origin+'/login');assert.deepEqual(paths,['/auth/v1/user']);});
+test('active membership rechecked on every request; revoked membership denied',async()=>{setup();mockServer();assert.equal((await proxy(request('/'))).status,200);const paths=mockServer({revoked:true});const result=await proxy(request('/'));assert.equal(result.status,303);assert.equal(result.headers.get('location'),origin+'/sin-acceso');assert.ok(paths.includes('/rest/v1/memberships'));assert.match(result.headers.get('cache-control')!,/no-store/);});
+test('DB error is 503, not missing membership or empty UI',async()=>{setup();mockServer({dbError:true});assert.equal((await proxy(request('/'))).status,503);});
 for(const next of ['https://evil.test','//evil.test','/\\evil.test','/a/..//evil.test','/?tab=one'])test(`successful mocked PKCE callback normalizes ${next}`,async()=>{
   setup();const paths=mockServer();const req=request('/auth/callback?code=synthetic-code&next='+encodeURIComponent(next));req.cookies.set('sb-127-auth-token-code-verifier','base64-'+encode('synthetic-verifier'));req.headers.set('host','evil.test');const response=await callback(req);
   assert.equal(response.status,303);assert.equal(response.headers.get('location'),origin+(next==='/?tab=one'?next:'/'));assert.ok(paths.includes('/auth/v1/user'));assert.match(response.headers.get('cache-control')!,/no-store/);
 });
 test('local OTP callback verifies token hash with Auth',async()=>{setup();const paths=mockServer();const response=await callback(request('/auth/callback?token_hash=synthetic-hash&type=email'));assert.equal(response.status,303);assert.ok(paths.includes('/auth/v1/verify'));});
 test('remote token-hash callback is disabled',async()=>{setup();process.env.NEXT_PUBLIC_SUPABASE_URL='https://synthetic.supabase.co';const paths=mockServer();assert.equal((await callback(request('/auth/callback?token_hash=synthetic-hash&type=email'))).status,401);assert.equal(paths.length,0);});
-test('logout revokes through official SDK and expires cookies',async()=>{setup();const paths=mockServer();const response=await logout(request('/auth/logout',''));assert.equal(response.status,303);assert.ok(paths.includes('/auth/v1/logout'));assert.equal(response.cookies.get(ACTIVE_ORG)?.value,'');assert.equal(response.cookies.get('sb-127-auth-token')?.value,'');assert.match(response.headers.get('cache-control')!,/no-store/);assert.ok(response.headers.get('clear-site-data'));const fresh=new NextRequest(origin+'/');assert.equal((await middleware(fresh)).status,303);});
+test('logout revokes through official SDK and expires cookies',async()=>{setup();const paths=mockServer();const response=await logout(request('/auth/logout',''));assert.equal(response.status,303);assert.ok(paths.includes('/auth/v1/logout'));assert.equal(response.cookies.get(ACTIVE_ORG)?.value,'');assert.equal(response.cookies.get('sb-127-auth-token')?.value,'');assert.match(response.headers.get('cache-control')!,/no-store/);assert.ok(response.headers.get('clear-site-data'));const fresh=new NextRequest(origin+'/');assert.equal((await proxy(fresh)).status,303);});
 test('logout service failure is visible, local cookies still removed',async()=>{setup();mockServer({logoutError:true});const response=await logout(request('/auth/logout',''));assert.equal(response.status,503);assert.equal(response.cookies.get('sb-127-auth-token')?.value,'');});
 test('Google unavailable by default, no network call',async()=>{setup();delete process.env.VEXA_GOOGLE_AUTH_ENABLED;const paths=mockServer();assert.equal((await google(request('/auth/google',''))).status,503);assert.equal(paths.length,0);});
 test('missing config supports build; partial and untrusted site configuration fails closed',()=>{for(const k of ['NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_ANON_KEY','NEXT_PUBLIC_SITE_URL'])delete process.env[k];assert.equal(config(),null);process.env.NEXT_PUBLIC_SITE_URL=origin;assert.throws(config);setup();process.env.NEXT_PUBLIC_SITE_URL='https://name:pass@example.test';assert.throws(config);});
 test('callback without code is denied without trusting next or cookies',async()=>{setup();const paths=mockServer();const response=await callback(request('/auth/callback?next=/'));assert.equal(response.status,401);assert.equal(paths.length,0);});
-test('corrupt session cookie does not confer identity',async()=>{setup();const paths=mockServer();const req=request('/');req.cookies.set('sb-127-auth-token','corrupt-cookie');assert.equal((await middleware(req)).status,303);assert.equal(paths.includes('/rest/v1/memberships'),false);});
+test('corrupt session cookie does not confer identity',async()=>{setup();const paths=mockServer();const req=request('/');req.cookies.set('sb-127-auth-token','corrupt-cookie');assert.equal((await proxy(req)).status,303);assert.equal(paths.includes('/rest/v1/memberships'),false);});
 
 for (const path of ['/login', '/']) test(`form page ${path} permits same-origin referrers without leaking to external origins`, async()=>{
   setup();mockServer();
-  const response=await middleware(request(path));
+  const response=await proxy(request(path));
   assert.equal(response.status,200);
   assert.equal(response.headers.get('referrer-policy'),'same-origin');
   assert.match(response.headers.get('cache-control')!,/no-store/);
@@ -93,54 +93,54 @@ test('platform authorization outage fails callback visibly instead of selecting 
  assert.equal(response.status,503);assert.equal(response.headers.get('location'),null);assert.match(response.headers.get('cache-control')!,/no-store/);
 });
 test('platform middleware refreshes identity without requiring membership; page and RPC own grant checks',async()=>{
- setup();const paths=mockServer({revoked:true});const response=await middleware(request('/platform'));
+ setup();const paths=mockServer({revoked:true});const response=await proxy(request('/platform'));
  assert.equal(response.status,200);assert.deepEqual(paths,['/auth/v1/user']);assert.match(response.headers.get('cache-control')!,/no-store/);
- mockServer({invalid:true});assert.equal((await middleware(request('/platform'))).status,303);
+ mockServer({invalid:true});assert.equal((await proxy(request('/platform'))).status,303);
 });
 
 test('OAuth cancellation returns to local login without network, tokens or provider details',async()=>{setup();const paths=mockServer();const response=await callback(request('/auth/callback?error=access_denied&error_description=private-provider-message&next=https://evil.test'));assert.equal(response.status,303);assert.equal(response.headers.get('location'),origin+'/login?error=oauth_cancelled');assert.match(response.headers.get('cache-control')!,/no-store/);assert.deepEqual(paths,[]);assert.equal(response.cookies.get(ACTIVE_ORG),undefined);});
 
-for(const path of ['/', '/overview', '/platform'])test(`first visit without session opens normal login: ${path}`,async()=>{setup();const paths=mockServer();const result=await middleware(new NextRequest(origin+path));assert.equal(result.status,303);assert.equal(result.headers.get('location'),origin+'/login');assert.match(result.headers.get('cache-control')!,/no-store/);assert.deepEqual(paths,[]);});
+for(const path of ['/', '/overview', '/platform'])test(`first visit without session opens normal login: ${path}`,async()=>{setup();const paths=mockServer();const result=await proxy(new NextRequest(origin+path));assert.equal(result.status,303);assert.equal(result.headers.get('location'),origin+'/login');assert.match(result.headers.get('cache-control')!,/no-store/);assert.deepEqual(paths,[]);});
 
 // ---------------------------------------------------------------- SUPERADMIN (24-oct): cookie revocada, soporte «ver como» solo lectura
 const C='cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const mark=(minutes:number)=>String(Math.floor(Date.now()/1000)+minutes*60);
 function withMark(req:NextRequest,minutes=30){req.cookies.set('vexa_support',mark(minutes));return req;}
 test('cookie de organización revocada: navegación cae a una membresía válida, la repara en la respuesta y no hay 403',async()=>{
-  setup();mockServer({tenants:[B]});const response=await middleware(request('/'));
+  setup();mockServer({tenants:[B]});const response=await proxy(request('/'));
   assert.equal(response.status,200);assert.equal(response.cookies.get(ACTIVE_ORG)?.value,B);
 });
-test('cookie válida no se reescribe',async()=>{setup();mockServer();const response=await middleware(request('/'));assert.equal(response.status,200);assert.equal(response.cookies.get(ACTIVE_ORG),undefined);});
+test('cookie válida no se reescribe',async()=>{setup();mockServer();const response=await proxy(request('/'));assert.equal(response.status,200);assert.equal(response.cookies.get(ACTIVE_ORG),undefined);});
 test('sin ninguna membresía válida: /sin-acceso (ya no el genérico acceso denegado)',async()=>{
-  setup();mockServer({tenants:[]});const response=await middleware(request('/overview'));assert.equal(response.status,303);assert.equal(response.headers.get('location'),origin+'/sin-acceso');
+  setup();mockServer({tenants:[]});const response=await proxy(request('/overview'));assert.equal(response.status,303);assert.equal(response.headers.get('location'),origin+'/sin-acceso');
 });
 test('soporte vigente: el administrador sin membresía entra a la organización del cliente (como lector) por la navegación',async()=>{
   setup();const exp=new Date(Date.now()+20*60000).toISOString();mockServer({tenants:[],support:{tenantId:C,expiresAt:exp}});
-  const req=request('/overview');req.cookies.set(ACTIVE_ORG,C);const response=await middleware(req);assert.equal(response.status,200);
+  const req=request('/overview');req.cookies.set(ACTIVE_ORG,C);const response=await proxy(req);assert.equal(response.status,200);
 });
 test('soporte: la cookie apuntando a otra organización NO concede nada',async()=>{
   setup();const exp=new Date(Date.now()+20*60000).toISOString();mockServer({tenants:[],support:{tenantId:C,expiresAt:exp}});
-  const req=request('/overview');req.cookies.set(ACTIVE_ORG,B);assert.equal((await middleware(req)).status,303);
+  const req=request('/overview');req.cookies.set(ACTIVE_ORG,B);assert.equal((await proxy(req)).status,303);
 });
 test('soporte vencido en la base: 303 a /sin-acceso aunque la cookie siga',async()=>{
   setup();mockServer({tenants:[],support:{tenantId:C,expiresAt:new Date(Date.now()-5000).toISOString()}});
-  const req=request('/overview');req.cookies.set(ACTIVE_ORG,C);assert.equal((await middleware(req)).status,303);
+  const req=request('/overview');req.cookies.set(ACTIVE_ORG,C);assert.equal((await proxy(req)).status,303);
 });
 for(const [method,path] of [['POST','/api/agent/turn'],['PUT','/api/connections/settings'],['DELETE','/api/notifications/push'],['PATCH','/api/briefs/x'],['POST','/api/workspace/mappings'],['GET','/api/workspace/export'],['GET','/api/briefs/abc/export'],['GET','/api/pain-points/P2/evidence?format=csv'],['GET','/api/jobs/abc/errors'],['GET','/cfo/data/export?format=pdf']] as const)
   test(`marca de soporte: ${method} ${path} se rechaza con 403 antes de llegar a la ruta`,async()=>{
     setup();const paths=mockServer();const req=withMark(new NextRequest(origin+path,{method,headers:{cookie:cookies()}}));
-    const response=await middleware(req);assert.equal(response.status,403);assert.match((await response.json()).error.code,/^support_(read_only|export_blocked)$/);assert.equal(paths.length,0,'sin red');
+    const response=await proxy(req);assert.equal(response.status,403);assert.match((await response.json()).error.code,/^support_(read_only|export_blocked)$/);assert.equal(paths.length,0,'sin red');
   });
 test('marca de soporte: lecturas, cambio de organización, salida y consola siguen permitidos',async()=>{
   setup();mockServer();
   for(const [method,path] of [['GET','/api/problems'],['POST','/auth/organization'],['POST','/auth/logout'],['POST','/api/platform'],['POST','/platform/data/support']] as const){
-    const response=await middleware(withMark(new NextRequest(origin+path,{method,headers:{cookie:cookies()}})));assert.notEqual(response.status,403,method+' '+path);
+    const response=await proxy(withMark(new NextRequest(origin+path,{method,headers:{cookie:cookies()}})));assert.notEqual(response.status,403,method+' '+path);
   }
 });
 test('sin marca (o vencida) las rutas /api quedan exactamente como antes',async()=>{
   setup();mockServer();
-  const plain=await middleware(new NextRequest(origin+'/api/agent/turn',{method:'POST',headers:{cookie:cookies()}}));assert.equal(plain.status,200);
-  const stale=new NextRequest(origin+'/api/agent/turn',{method:'POST',headers:{cookie:cookies()}});stale.cookies.set('vexa_support',String(Math.floor(Date.now()/1000)-60));assert.equal((await middleware(stale)).status,200);
+  const plain=await proxy(new NextRequest(origin+'/api/agent/turn',{method:'POST',headers:{cookie:cookies()}}));assert.equal(plain.status,200);
+  const stale=new NextRequest(origin+'/api/agent/turn',{method:'POST',headers:{cookie:cookies()}});stale.cookies.set('vexa_support',String(Math.floor(Date.now()/1000)-60));assert.equal((await proxy(stale)).status,200);
 });
 // ---------------------------------------------------------------- AUTH-01 / R-01 (auditoría 28-oct): exportar no depende de la cookie vexa_support
 import {GET as exportWorkspace} from '../src/app/api/workspace/export/route';
@@ -239,31 +239,31 @@ test('cookies de sesión que escribe el cliente de Auth: HttpOnly, SameSite=Lax,
 const conCookie=(path:string,extra:string)=>{const r=request(path);const h=new Headers(r.headers);h.set('cookie',h.get('cookie')+'; '+extra);return new NextRequest(r.url,{headers:h});};
 const lecturasDePreferencia=(paths:string[])=>paths.filter(p=>p==='/rest/v1/user_preferences').length;
 test('dispositivo nuevo con preferencia guardada: la cookie rovaq_lang se siembra en el servidor con una sola lectura',async()=>{
-  setup();const paths=mockServer({idioma:'es'});const respuesta=await middleware(request('/overview'));
+  setup();const paths=mockServer({idioma:'es'});const respuesta=await proxy(request('/overview'));
   assert.equal(respuesta.status,200);assert.equal(respuesta.cookies.get('rovaq_lang')?.value,'es');assert.equal(lecturasDePreferencia(paths),1);
   assert.equal(respuesta.cookies.get('rovaq_lang_sin_pref'),undefined);assert.match(String(respuesta.headers.get('set-cookie')),/rovaq_lang=es;.*Max-Age=31536000/i);
 });
 test('con cookie válida no se lee la base ni se toca la cookie (la cookie manda sobre la preferencia)',async()=>{
-  setup();const paths=mockServer({idioma:'es'});const respuesta=await middleware(conCookie('/overview','rovaq_lang=en'));
+  setup();const paths=mockServer({idioma:'es'});const respuesta=await proxy(conCookie('/overview','rovaq_lang=en'));
   assert.equal(respuesta.status,200);assert.equal(lecturasDePreferencia(paths),0);assert.equal(respuesta.cookies.get('rovaq_lang'),undefined);
 });
 test('una cookie inválida cuenta como ausente y se siembra la preferencia',async()=>{
-  setup();const paths=mockServer({idioma:'en'});const respuesta=await middleware(conCookie('/overview','rovaq_lang=fr'));
+  setup();const paths=mockServer({idioma:'en'});const respuesta=await proxy(conCookie('/overview','rovaq_lang=fr'));
   assert.equal(respuesta.cookies.get('rovaq_lang')?.value,'en');assert.equal(lecturasDePreferencia(paths),1);
 });
 test('?lang= explícito gana: no se lee la preferencia ni se siembra nada',async()=>{
-  setup();const paths=mockServer({idioma:'es'});const respuesta=await middleware(request('/overview?lang=en'));
+  setup();const paths=mockServer({idioma:'es'});const respuesta=await proxy(request('/overview?lang=en'));
   assert.equal(respuesta.status,200);assert.equal(lecturasDePreferencia(paths),0);assert.equal(respuesta.cookies.get('rovaq_lang'),undefined);
 });
 test('sin preferencia o sin tabla: la navegación sigue, no se siembra cookie y una marca evita repetir la lectura',async()=>{
   for(const idioma of ['ninguno','sin_tabla'] as const){
-    setup();const paths=mockServer({idioma});const primera=await middleware(request('/overview'));
+    setup();const paths=mockServer({idioma});const primera=await proxy(request('/overview'));
     assert.equal(primera.status,200,idioma);assert.equal(primera.cookies.get('rovaq_lang'),undefined);assert.equal(primera.cookies.get('rovaq_lang_sin_pref')?.value,userId);assert.equal(lecturasDePreferencia(paths),1);
-    const segunda=await middleware(conCookie('/overview',`rovaq_lang_sin_pref=${userId}`));
+    const segunda=await proxy(conCookie('/overview',`rovaq_lang_sin_pref=${userId}`));
     assert.equal(segunda.status,200);assert.equal(lecturasDePreferencia(paths),1,'con la marca no hay segunda lectura');
   }
 });
 test('la marca de «sin preferencia» es de una persona: con la marca de otra se vuelve a leer',async()=>{
-  setup();const paths=mockServer({idioma:'es'});const respuesta=await middleware(conCookie('/overview','rovaq_lang_sin_pref=otra-persona'));
+  setup();const paths=mockServer({idioma:'es'});const respuesta=await proxy(conCookie('/overview','rovaq_lang_sin_pref=otra-persona'));
   assert.equal(respuesta.status,200);assert.equal(lecturasDePreferencia(paths),1);assert.equal(respuesta.cookies.get('rovaq_lang')?.value,'es');
 });

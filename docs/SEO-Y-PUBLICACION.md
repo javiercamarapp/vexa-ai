@@ -28,7 +28,7 @@ Regla del caché inmutable: **si cambia un archivo de `public/fonts` o `public/b
 
 1. Hoy la política estricta está en `Content-Security-Policy-Report-Only` (no bloquea). Sin endpoint de reportes, se ve solo en la consola del navegador.
 2. Navegar el espacio de trabajo real 1-2 semanas con la consola abierta y anotar violaciones (Supabase, Google, push, fuentes).
-3. Sustituir `'unsafe-inline'` de `script-src` por nonces (Next los admite desde el middleware) y revisar `style-src`.
+3. Sustituir `'unsafe-inline'` de `script-src` por nonces (Next los admite desde el proxy, antes middleware) y revisar `style-src`.
 4. Con 0 violaciones reales, renombrar la cabecera a `Content-Security-Policy` fusionándola con la actual. Rollback: volver a Report-Only.
 
 ## Cómo verificarlo

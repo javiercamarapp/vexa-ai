@@ -4,7 +4,7 @@
 import {test, afterEach} from 'node:test';
 import assert from 'node:assert/strict';
 import {NextRequest} from 'next/server';
-import {middleware} from '../src/middleware';
+import {proxy} from '../src/proxy';
 import {decidirHost, normalizarHost, rutaConAutenticacion, rutaSiempreAbierta, esActivoPublico, rutaPublicaDeInterna, destinoInterno, RUTAS_APP, ORIGEN_APP} from '../src/lib/host-routing.mjs';
 import {PAGINAS, RUTAS} from '../src/content/sitio/registro.mjs';
 
@@ -191,49 +191,49 @@ test('rutaConAutenticacion conserva exactamente la lista anterior del matcher', 
 
 // ---- middleware real (respaldo Fase B en rovaq.ai y comportamiento en los demás hosts) ---------------------------------------------------------------------
 test('middleware (respaldo): rovaq.ai/ reescribe a /sitio/es y /en a /sitio/en conservando la consulta, sin cabecera x-rovaq-lang', async () => {
-  const r = await middleware(pet('rovaq.ai', '/?lang=es'));
+  const r = await proxy(pet('rovaq.ai', '/?lang=es'));
   assert.equal(r.status, 200); assert.match(r.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/sitio\/es\?lang=es$/);
-  const en = await middleware(pet('rovaq.ai', '/en?x=1'));
+  const en = await proxy(pet('rovaq.ai', '/en?x=1'));
   assert.match(en.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/sitio\/en\?x=1$/);
   assert.ok(![...r.headers.keys()].some((k) => /x-rovaq-lang/i.test(k)));
 });
 test('middleware (respaldo): /login en rovaq.ai redirige 308, una desconocida se reescribe al 404 del sitio y www redirige al apex', async () => {
-  const login = await middleware(pet('rovaq.ai', '/login')); assert.equal(login.status, 308); assert.equal(login.headers.get('location'), 'https://app.rovaq.ai/login');
+  const login = await proxy(pet('rovaq.ai', '/login')); assert.equal(login.status, 308); assert.equal(login.headers.get('location'), 'https://app.rovaq.ai/login');
   // El 404 se sirve con HTML completo desde el segmento __404 y estado 404 real (no el cascarón de error de Next).
-  const x = await middleware(pet('rovaq.ai', '/no-existe?a=1')); assert.equal(x.status, 404); assert.match(x.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/sitio\/es\/__404$/);
-  const w = await middleware(pet('www.rovaq.ai', '/producto?z=1')); assert.equal(w.status, 308); assert.equal(w.headers.get('location'), 'https://rovaq.ai/producto?z=1');
+  const x = await proxy(pet('rovaq.ai', '/no-existe?a=1')); assert.equal(x.status, 404); assert.match(x.headers.get('x-middleware-rewrite') ?? '', /^https:\/\/rovaq\.ai\/sitio\/es\/__404$/);
+  const w = await proxy(pet('www.rovaq.ai', '/producto?z=1')); assert.equal(w.status, 308); assert.equal(w.headers.get('location'), 'https://rovaq.ai/producto?z=1');
 });
 test('middleware: rovaq.ai sirve activos y no pide autenticación', async () => {
   process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://127.0.0.1:56321'; process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'synthetic-public-key';
   for (const ruta of ['/robots.txt', '/sitemap.xml', '/opengraph-image', '/fonts/a.woff2', '/api/health/version', '/s/nube.ab12cd34.js', '/vendor/lenis-1.1.13.min.js']) {
-    const r = await middleware(pet('rovaq.ai', ruta));
+    const r = await proxy(pet('rovaq.ai', ruta));
     assert.equal(r.status, 200, ruta); assert.equal(r.headers.get('location'), null, ruta); assert.equal(r.headers.get('x-middleware-rewrite'), null, ruta);
   }
 });
 test('middleware: x-forwarded-host manda sobre host', async () => {
-  const r = await middleware(pet('interno.vercel.app', '/login', {'x-forwarded-host': 'rovaq.ai'}));
+  const r = await proxy(pet('interno.vercel.app', '/login', {'x-forwarded-host': 'rovaq.ai'}));
   assert.equal(r.status, 308); assert.equal(r.headers.get('location'), 'https://app.rovaq.ai/login');
 });
 test('middleware: hosts antiguos redirigen solo en producción; salud y webhooks responden', async () => {
   process.env.VERCEL_ENV = 'production';
-  const r = await middleware(pet('vexa-ai.vercel.app', '/overview?p=1'));
+  const r = await proxy(pet('vexa-ai.vercel.app', '/overview?p=1'));
   assert.equal(r.status, 308); assert.equal(r.headers.get('location'), 'https://app.rovaq.ai/overview?p=1');
-  for (const ruta of ['/api/health/version', '/api/internal/x', '/api/webhooks/y']) { const o = await middleware(pet('rovaq-ai.vercel.app', ruta)); assert.equal(o.status, 200, ruta); assert.equal(o.headers.get('location'), null, ruta); }
+  for (const ruta of ['/api/health/version', '/api/internal/x', '/api/webhooks/y']) { const o = await proxy(pet('rovaq-ai.vercel.app', ruta)); assert.equal(o.status, 200, ruta); assert.equal(o.headers.get('location'), null, ruta); }
   process.env.VERCEL_ENV = 'preview';
-  const p = await middleware(pet('vexa-ai.vercel.app', '/overview'));
+  const p = await proxy(pet('vexa-ai.vercel.app', '/overview'));
   assert.notEqual(p.status, 308);
 });
 test('middleware: app.rovaq.ai sigue igual (rutas fuera de la lista pasan intactas, sin cabeceras privadas nuevas)', async () => {
   for (const ruta of ['/landing', '/robots.txt', '/opengraph-image', '/settings/team', '/workload', '/sitio/es']) {
-    const r = await middleware(pet('app.rovaq.ai', ruta));
+    const r = await proxy(pet('app.rovaq.ai', ruta));
     assert.equal(r.status, 200, ruta); assert.equal(r.headers.get('location'), null, ruta); assert.equal(r.headers.get('x-middleware-rewrite'), null, ruta); assert.equal(r.headers.get('cache-control'), null, ruta);
   }
-  const sinConfig = await middleware(pet('app.rovaq.ai', '/overview'));
+  const sinConfig = await proxy(pet('app.rovaq.ai', '/overview'));
   assert.equal(sinConfig.status, 200); assert.equal(sinConfig.headers.get('location'), null);
 });
 test('middleware: en producción /sitio/es en app.rovaq.ai redirige a rovaq.ai', async () => {
   process.env.VERCEL_ENV = 'production';
-  const r = await middleware(pet('app.rovaq.ai', '/sitio/es/producto?a=1'));
+  const r = await proxy(pet('app.rovaq.ai', '/sitio/es/producto?a=1'));
   assert.equal(r.status, 308); assert.equal(r.headers.get('location'), 'https://rovaq.ai/producto?a=1');
 });
 
@@ -248,18 +248,18 @@ test('R2-17: barras iniciales tras /sitio/<idioma> no producen una redirección 
 });
 
 test('middleware: páginas no publicables responden 404 desde __404; las publicables 200; Accept text/markdown reescribe al espejo con sus cabeceras', async () => {
-  const pendiente = await middleware(pet('rovaq.ai', '/producto'));
+  const pendiente = await proxy(pet('rovaq.ai', '/producto'));
   assert.equal(pendiente.status, 404); assert.match(pendiente.headers.get('x-middleware-rewrite') ?? '', /\/sitio\/es\/__404$/);
-  const pendienteEn = await middleware(pet('rovaq.ai', '/en/product'));
+  const pendienteEn = await proxy(pet('rovaq.ai', '/en/product'));
   assert.equal(pendienteEn.status, 404); assert.match(pendienteEn.headers.get('x-middleware-rewrite') ?? '', /\/sitio\/en\/__404$/);
-  const html = await middleware(pet('rovaq.ai', '/producto/hoy'));
+  const html = await proxy(pet('rovaq.ai', '/producto/hoy'));
   assert.equal(html.status, 200); assert.match(html.headers.get('x-middleware-rewrite') ?? '', /\/sitio\/es\/producto\/hoy$/);
-  const md = await middleware(pet('rovaq.ai', '/producto/hoy', {accept: 'text/markdown'}));
+  const md = await proxy(pet('rovaq.ai', '/producto/hoy', {accept: 'text/markdown'}));
   assert.equal(md.status, 200); assert.match(md.headers.get('x-middleware-rewrite') ?? '', /\/s\/md\/es\/hoy\.[0-9a-f]{8}\.md$/);
   assert.equal(md.headers.get('content-type'), 'text/markdown; charset=utf-8'); assert.equal(md.headers.get('vary'), 'Accept');
   assert.equal(md.headers.get('x-robots-tag'), 'noindex'); assert.equal(md.headers.get('link'), '<https://rovaq.ai/producto/hoy>; rel="canonical"');
-  const nav = await middleware(pet('rovaq.ai', '/producto/hoy', {accept: 'text/html,application/xhtml+xml,*/*;q=0.8'}));
+  const nav = await proxy(pet('rovaq.ai', '/producto/hoy', {accept: 'text/html,application/xhtml+xml,*/*;q=0.8'}));
   assert.match(nav.headers.get('x-middleware-rewrite') ?? '', /\/sitio\/es\/producto\/hoy$/, 'un navegador recibe HTML');
-  const app = await middleware(pet('app.rovaq.ai', '/login', {accept: 'text/markdown'}));
+  const app = await proxy(pet('app.rovaq.ai', '/login', {accept: 'text/markdown'}));
   assert.equal(app.headers.get('content-type')?.includes('markdown') ?? false, false, 'la app no negocia Markdown');
 });

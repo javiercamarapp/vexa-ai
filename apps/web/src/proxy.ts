@@ -17,7 +17,7 @@ function authLinkHeaders(request:NextRequest,response:NextResponse) {
   return response;
 }
 const protectedPathPrefix=(path:string)=>/^\/(overview|problems|customers|recommendations|explorer|preguntale|interventions|briefs|cfo)(\/|$)/.test(path);
-export async function middleware(request:NextRequest) {
+export async function proxy(request:NextRequest) {
   try {
     const path=request.nextUrl.pathname;
     // Ruta y método para el registro de seguridad aguas abajo (sin consulta). La IP y el agente se leen de las cabeceras originales.
@@ -29,7 +29,7 @@ export async function middleware(request:NextRequest) {
       return NextResponse.json({error:{code:'rate_limited',message:MENSAJES_ACCESO[idiomaDelMiddleware(request)].limite,retryable:true}},{status:429,headers:{...PRIVATE_HEADERS,'Retry-After':String(exceso.reintentarEn)}});
     }
     // Host primero (decisión pura y probada en host-routing.mjs). Con las reglas por host de next.config (Fase A) rovaq.ai y www.rovaq.ai ya no llegan aquí: el matcher los excluye.
-    // Lo que sigue sirve a app.rovaq.ai y a los hosts antiguos, y es también el respaldo (Fase B) si rovaq.ai volviera a pasar por el middleware.
+    // Lo que sigue sirve a app.rovaq.ai y a los hosts antiguos, y es también el respaldo (Fase B) si rovaq.ai volviera a pasar por el proxy.
     const decision=decidirHost({host:request.headers.get('x-forwarded-host')??request.headers.get('host')??request.nextUrl.host,pathname:path,search:request.nextUrl.search,produccion:process.env.VERCEL_ENV==='production',accept:request.method==='GET'||request.method==='HEAD'?request.headers.get('accept')??'':null,espejoDe});
     if(decision.tipo==='reescribir'&&decision.markdown){
       // Mismo URL, representación Markdown (negociada por Accept). Las cabeceras de los archivos .md no corren para la URL original: se fijan aquí.
@@ -47,7 +47,7 @@ export async function middleware(request:NextRequest) {
         return NextResponse.rewrite(new URL(destino,request.url),{status:404});
       }
       const respuesta=NextResponse.rewrite(new URL(decision.destino+request.nextUrl.search,request.url));
-      // Next fija su propio Vary en las páginas prerenderizadas, así que Vary: Accept no sale en el HTML; la caché no se mezcla porque el middleware corre antes de ella y el destino de la reescritura (HTML o .md) es la clave.
+      // Next fija su propio Vary en las páginas prerenderizadas, así que Vary: Accept no sale en el HTML; la caché no se mezcla porque el proxy corre antes de ella y el destino de la reescritura (HTML o .md) es la clave.
       return respuesta;
     }
     if(decision.tipo==='redirigir')return NextResponse.redirect(new URL(decision.url,request.url),decision.status);
@@ -99,7 +99,7 @@ export async function middleware(request:NextRequest) {
     }
   } catch(error) {return authLinkHeaders(request,failure(error,request));}
 }
-// Matcher (Fase B vigente): todo menos estáticos y activos públicos; rovaq.ai y www pasan por aquí y decidirHost los enruta. Fase A: añadir `missing: [{ type: 'header', key: 'host', value: '(www\\\\.)?rovaq\\\\.ai' }]`. Next exige que sea un literal estático:
+// Proxy (antes middleware) corre siempre en Node.js: Next 16 no admite `runtime` en este archivo. Matcher (Fase B vigente): todo menos estáticos y activos públicos; rovaq.ai y www pasan por aquí y decidirHost los enruta. Fase A: añadir `missing: [{ type: 'header', key: 'host', value: '(www\\\\.)?rovaq\\\\.ai' }]`. Next exige que sea un literal estático:
 // config/sitio/reglas-host.mjs guarda el mismo valor como MATCHER_MIDDLEWARE y una prueba los compara.
 // En app.rovaq.ai, rutaConAutenticacion() conserva la lista anterior: lo demás no se toca.
-export const config = { runtime: 'nodejs', matcher: [{ source: '/((?!_next/static|_next/image|fonts/|brand/|images/|vendor/|s/).*)' }] };
+export const config = { matcher: [{ source: '/((?!_next/static|_next/image|fonts/|brand/|images/|vendor/|s/).*)' }] };

@@ -28,7 +28,7 @@ export async function leerIdiomaDePersona(client: ClienteLecturaPreferencias, us
   }
 }
 
-/** Tope de la lectura en el middleware: una base lenta no puede retrasar la navegación más que esto. */
+/** Tope de la lectura en el proxy: una base lenta no puede retrasar la navegación más que esto. */
 export const TOPE_LECTURA_IDIOMA_MS = 800;
 
 /** Igual que leerIdiomaDePersona pero con tope de tiempo. `concluyente` es false si se agotó el tiempo: no se sabe si hay preferencia, así que NO se debe dejar la marca de «sin preferencia». */

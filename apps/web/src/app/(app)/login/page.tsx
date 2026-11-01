@@ -22,7 +22,7 @@ export default async function Login({searchParams}:{searchParams:Promise<{error?
   const locale=await idiomaActual(params.lang);
   const t=(es:string,en:string)=>locale==='en'?en:es;
   const localeLink=(lang:string)=>`/login?${new URLSearchParams({...loginError?{error:loginError}:{},lang})}`;
-  // Con una sesión válida no hay nada que iniciar: va al resumen. Con ?error= se queda (acceso denegado) para no encadenar redirecciones con el middleware.
+  // Con una sesión válida no hay nada que iniciar: va al resumen. Con ?error= se queda (acceso denegado) para no encadenar redirecciones con el proxy.
   if(signedIn&&!loginError)redirect('/overview');
   const denied=!!loginError;
   const google=configured && process.env.VEXA_GOOGLE_AUTH_ENABLED==='true';

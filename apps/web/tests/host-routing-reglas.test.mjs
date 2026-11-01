@@ -10,7 +10,7 @@ import {MATCHER_MIDDLEWARE, MODO_ENRUTAMIENTO} from '../config/sitio/reglas-host
 import {reglasNext, decidirHost, RUTAS_APP, esActivoPublico, HOSTS_ANTIGUOS} from '../src/lib/host-routing.mjs';
 import {RUTAS, PAGINAS} from '../src/content/sitio/registro.mjs';
 import * as modConfig from '../next.config.ts';
-import {config as configMiddleware} from '../src/middleware.ts';
+import {config as configMiddleware} from '../src/proxy.ts';
 
 const nextConfig = modConfig.default?.default ?? modConfig.default;
 const RAIZ = join(import.meta.dirname, '..');
@@ -95,8 +95,8 @@ test('next.config.ts entrega lo que dice reglasHost: vacío en Fase B (middlewar
 
 test('el matcher del middleware es estático, igual a MATCHER_MIDDLEWARE, y excluye rovaq.ai, www y los activos públicos', () => {
   assert.deepEqual(configMiddleware.matcher, MATCHER_MIDDLEWARE);
-  const fuente = readFileSync(join(RAIZ, 'src/middleware.ts'), 'utf8');
-  assert.match(fuente, /export const config = \{ runtime: 'nodejs', matcher: \[\{ source: '[^']+'(?:, missing: \[\{ type: 'header', key: 'host', value: '[^']+' \}\])? \}\] \};/, 'el matcher debe ser un literal');
+  const fuente = readFileSync(join(RAIZ, 'src/proxy.ts'), 'utf8');
+  assert.match(fuente, /export const config = \{ matcher: \[\{ source: '[^']+'(?:, missing: \[\{ type: 'header', key: 'host', value: '[^']+' \}\])? \}\] \};/, 'el matcher debe ser un literal');
   const pasa = (host, ruta) => casa({config: {matcher: MATCHER_MIDDLEWARE}, url: `https://${host}${ruta}`, headers: {host}});
   // Cero invocaciones en el sitio: ni páginas, ni activos, ni desconocidas, ni app de pega.
   // Fase A: cero invocaciones en el sitio. Fase B: el middleware enruta rovaq.ai y www; los activos siguen excluidos.

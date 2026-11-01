@@ -81,5 +81,5 @@ test('dos raíces: no hay app/layout.tsx; la app lee la cookie de idioma y el si
   assert.match(app, /await idiomaActual\(\)/); assert.doesNotMatch(app, /x-rovaq-lang|headers\(/);
   assert.match(sitio, /<html lang=\{lang\}>/); assert.doesNotMatch(sitio, /cookies\(|headers\(|idiomaActual/);
   assert.match(sitio, /dynamic = 'force-static'/); assert.match(sitio, /dynamicParams = false/); assert.match(sitio, /generateStaticParams/);
-  assert.doesNotMatch(leer('src/middleware.ts'), /x-rovaq-lang/);
+  assert.doesNotMatch(leer('src/proxy.ts'), /x-rovaq-lang/);
 });

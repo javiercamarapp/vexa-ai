@@ -51,7 +51,7 @@ test('middleware y errores de acceso: idiomaDelMiddleware y failure() leen cooki
 });
 
 test('el middleware pasa la petición completa (con cabeceras) a los mensajes de límite y soporte', () => {
-  const mw = leer('src/middleware.ts');
+  const mw = leer('src/proxy.ts');
   assert.match(mw, /MENSAJES_ACCESO\[idiomaDelMiddleware\(request\)\]\.limite/);
   assert.match(mw, /MENSAJES_ACCESO\[idiomaDelMiddleware\(request\)\]\.soporte/);
 });

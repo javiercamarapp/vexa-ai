@@ -1016,7 +1016,7 @@
       "sha256": "0a6f8e98c28a854c449c2085d2dc2bdb5b97b56ab4371de15ef925e704afcf96"
     },
     {
-      "path": "apps/web/src/middleware.ts",
+      "path": "apps/web/src/proxy.ts",
       "sha256": "a8264fb85c0cecc50a658fad927ad7796f1929cbdfa4c9a432e3ec472b6d8b6a"
     },
     {

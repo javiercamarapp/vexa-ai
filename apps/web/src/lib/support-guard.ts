@@ -2,7 +2,7 @@
  * Guardia HTTP de «ver como» (solo lectura). Es la CAPA EXTERNA: rechaza escrituras y exportaciones antes de llegar a la ruta.
  * La marca es una cookie, no autoridad (la autoridad es la sesión de soporte leída en la base: db.ts acción 'export' y resolveSession); si alguien la borra, las escrituras siguen fallando abajo (db.ts permite solo 'read' con sesión de soporte y
  * el administrador no tiene membresía en la organización, así que ninguna política de escritura lo deja pasar).
- * Módulo sin dependencias de servidor para poder probarse y usarse desde el middleware.
+ * Módulo sin dependencias de servidor para poder probarse y usarse desde el proxy.
  */
 export const SUPPORT_SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS'] as const;
 /** Rutas propias del administrador que siguen permitidas con sesión de soporte (cambiar de organización, salir, consola de plataforma). */

@@ -1,5 +1,5 @@
 // Enrutamiento por host. Fuente única y pura (sin Next): decidirHost() es la decisión por petición, probada caso por caso, y reglasNext() la traduce a las
-// reglas de configuración (redirects y rewrites con `has host`) que next.config.ts entrega a Next. Con ellas rovaq.ai se sirve sin ejecutar el middleware.
+// reglas de configuración (redirects y rewrites con `has host`) que next.config.ts entrega a Next. Con ellas rovaq.ai se sirve sin ejecutar el proxy.
 //   rovaq.ai     sitio público estático: español sin prefijo (/ y /producto) e inglés bajo /en. Internamente /sitio/es/... y /sitio/en/...
 //   www.rovaq.ai redirige 308 al apex conservando ruta y consulta
 //   app.rovaq.ai la aplicación, sin cambios
@@ -129,7 +129,7 @@ export function decidirHost({host, pathname, search = '', produccion = false, ac
   if (produccion && h === HOST_APP && (pathname === PREFIJO_INTERNO || pathname.startsWith(PREFIJO_INTERNO + '/'))) return redir(ORIGEN_SITIO + (rutaPublicaDeInterna(pathname) ?? '/') + search);
   return {tipo: 'pasar'};
 }
-/** Rutas que antes de este cambio pasaban por el middleware de autenticación (el matcher era una lista). Fuera de ellas el middleware no hace nada en el host de la app. */
+/** Rutas que antes de este cambio pasaban por el proxy de autenticación (el matcher era una lista). Fuera de ellas el proxy no hace nada en el host de la app. */
 export function rutaConAutenticacion(pathname) {
   return pathname === '/' || pathname === '/seguridad' || pathname === '/sin-acceso' || pathname === '/login'
     || /^\/(?:api|platform|cfo|auth|overview|problems|customers|recommendations|explorer|preguntale|interventions|briefs)(?:\/|$)/.test(pathname);
@@ -157,7 +157,7 @@ export function reglasNext({produccion = false} = {}) {
   const redirects = [
     // www al apex, todo el árbol.
     {source: '/:ruta*', has: enHost(HOST_WWW), destination: ORIGEN_SITIO + '/:ruta*', permanent: true},
-    // Hosts antiguos de Vercel (solo en el build de producción, como VERCEL_ENV en el middleware): todo a la aplicación salvo los endpoints abiertos.
+    // Hosts antiguos de Vercel (solo en el build de producción, como VERCEL_ENV en el proxy): todo a la aplicación salvo los endpoints abiertos.
     ...(produccion ? HOSTS_ANTIGUOS.map((h) => ({source: `/:ruta((?!api/(?:${API_ABIERTA})).*)`, has: enHost(h), destination: ORIGEN_APP + '/:ruta', permanent: true})) : []),
     // El sitio vive en rovaq.ai: /sitio/... en la aplicación (solo producción) redirige allí.
     ...(produccion ? reglasInternasAPublica(HOST_APP, (r) => ORIGEN_SITIO + r, {resto: true}) : []),

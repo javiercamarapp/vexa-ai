@@ -221,12 +221,12 @@ for (const idioma of ['en', 'es'] as const) {
 }
 
 // ---------------------------------------------------------------- M4: middleware
-test('middleware.ts: el 429 y el modo soporte salen de la tabla mínima por cookie (sin español fijo); código y estado HTTP no cambian', async () => {
+test('proxy.ts: el 429 y el modo soporte salen de la tabla mínima por cookie (sin español fijo); código y estado HTTP no cambian', async () => {
   const {MENSAJES_ACCESO} = await import('../src/lib/auth-http');
   assert.equal(MENSAJES_ACCESO.es.limite, 'Demasiadas solicitudes. Intenta de nuevo en unos segundos.'); assert.equal(MENSAJES_ACCESO.es.soporte, 'Modo soporte: solo lectura.');
   assert.deepEqual(sinEspanol(Object.values(MENSAJES_ACCESO.en)), []); assert.deepEqual(sinIngles(Object.values(MENSAJES_ACCESO.es)), []);
   assert.deepEqual(Object.keys(MENSAJES_ACCESO.en).sort(), Object.keys(MENSAJES_ACCESO.es).sort());
-  const mw = leer('src/middleware.ts');
+  const mw = leer('src/proxy.ts');
   assert.match(mw, /code:'rate_limited',message:MENSAJES_ACCESO\[idiomaDelMiddleware\(request\)\]\.limite,retryable:true\}\},\{status:429/);
   assert.match(mw, /message:MENSAJES_ACCESO\[idiomaDelMiddleware\(request\)\]\.soporte,retryable:false\}\},\{status:403/);
   assert.doesNotMatch(mw.replace(/\/\/.*$/gm, ''), /Demasiadas|solo lectura/);

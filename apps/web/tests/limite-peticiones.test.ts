@@ -7,7 +7,7 @@ import {NextRequest} from 'next/server';
 import {claseDe,crearLimitador,huellaDeUsuario,huellaIp,LIMITES} from '../src/lib/security/limite';
 import {evaluarLimite,revisarUsuario} from '../src/lib/security/limite-servidor';
 import {clientIp} from '../src/lib/email-auth/admission';
-import {middleware} from '../src/middleware';
+import {proxy} from '../src/proxy';
 const K='k'.repeat(32);
 test('clases por endpoint: lectura, escritura, exportación, importación, IA, auth y ganchos; salud y páginas sin límite',()=>{
   assert.equal(claseDe('GET','/api/problems'),'read');assert.equal(claseDe('POST','/api/interventions'),'write');
@@ -85,9 +85,9 @@ test('middleware: 429 con Retry-After y cabeceras privadas al exceder; las rutas
   const saved={...process.env};process.env.NEXT_PUBLIC_SUPABASE_URL='http://127.0.0.1:56321';process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY='k';process.env.NEXT_PUBLIC_SITE_URL='http://localhost:3000';
   try{
     const mk=()=>new NextRequest('http://localhost:3000/api/webhooks/email',{method:'POST',headers:{'x-forwarded-for':'203.0.113.123'}});
-    let ultimo=200;for(let i=0;i<LIMITES.hook.ip+5;i++)ultimo=(await middleware(mk())).status;
-    assert.equal(ultimo,429);const r=await middleware(mk());assert.equal(r.status,429);assert.match(r.headers.get('retry-after')??'',/^\d+$/);assert.match(r.headers.get('cache-control')??'',/no-store/);assert.equal((await r.json()).error.code,'rate_limited');
-    for(let i=0;i<LIMITES.hook.ip+50;i++)assert.notEqual((await middleware(new NextRequest('http://localhost:3000/api/health/version',{headers:{'x-forwarded-for':'203.0.113.123'}}))).status,429);
+    let ultimo=200;for(let i=0;i<LIMITES.hook.ip+5;i++)ultimo=(await proxy(mk())).status;
+    assert.equal(ultimo,429);const r=await proxy(mk());assert.equal(r.status,429);assert.match(r.headers.get('retry-after')??'',/^\d+$/);assert.match(r.headers.get('cache-control')??'',/no-store/);assert.equal((await r.json()).error.code,'rate_limited');
+    for(let i=0;i<LIMITES.hook.ip+50;i++)assert.notEqual((await proxy(new NextRequest('http://localhost:3000/api/health/version',{headers:{'x-forwarded-for':'203.0.113.123'}}))).status,429);
   }finally{for(const k of Object.keys(process.env))if(!(k in saved))delete process.env[k];Object.assign(process.env,saved);}
 });
 

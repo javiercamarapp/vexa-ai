@@ -62,7 +62,7 @@ export async function generateMetadata({params}: {params: Promise<{lang: string;
 
 export default async function PaginaInterna({params}: {params: Promise<{lang: string; ruta: string[]}>}) {
   const {lang, ruta} = await params;
-  // Centinela: página completa del 404 (no el notFound() de Next, cuyo HTML sin JavaScript es el cascarón de error sin lang ni h1). El middleware la sirve con estado 404.
+  // Centinela: página completa del 404 (no el notFound() de Next, cuyo HTML sin JavaScript es el cascarón de error sin lang ni h1). El proxy la sirve con estado 404.
   if (esLang(lang) && ruta.length === 1 && ruta[0] === CENTINELA) return <PaginaNoEncontrada lang={lang} />;
   const id = resolver(lang, ruta);
   const pagina = id ? paginaDe(id) : undefined;

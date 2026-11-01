@@ -15,7 +15,7 @@ export const URI_INFORMES_CSP = 'https://app.rovaq.ai/api/csp-informe';
  * CSP candidata del sitio. Next inyecta scripts en línea de hidratación (self.__next_f.push, $RC...), que la lista blanca de la prueba de HTML enumera
  * (tests/sitio/csp-lista-blanca.json); sin nonces por petición no se pueden permitir por hash en una página estática, así que script-src lleva 'unsafe-inline'
  * y NADA más fuera de 'self' (sin eval, sin orígenes externos). El sitio no usa style en línea ni atributos style (escáner de fuentes), por eso style-src es solo 'self'.
- * Plan para enforce: vigilar los informes 1-2 semanas; pasar a nonces cuando el middleware sirva el HTML; entonces retirar 'unsafe-inline'.
+ * Plan para enforce: vigilar los informes 1-2 semanas; pasar a nonces cuando el proxy sirva el HTML; entonces retirar 'unsafe-inline'.
  */
 export function cspSitioInforme(uriInformes = URI_INFORMES_CSP) {
   return [

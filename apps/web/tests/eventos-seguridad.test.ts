@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {NextRequest} from 'next/server';
 import {claseDeRuta,construirCarga,huellaDeIp,registrarEventoSeguridad,instalarEscritor,_reiniciarLocal} from '../src/lib/security/eventos';
 import {POST as logout} from '../src/app/(app)/auth/logout/route';
-import {middleware} from '../src/middleware';
+import {proxy} from '../src/proxy';
 import {POST as internalProblems} from '../src/app/api/internal/problems/route';
 import '../src/lib/imports/server'; // instala el ayudante global que usan los paquetes
 beforeEach(()=>_reiniciarLocal());
@@ -57,7 +57,7 @@ test('puntos de captura: CSRF inválido, Bearer inválido y bloqueo de soporte d
     assert.equal((await internalProblems(bad)).status,401);await tick(30);
     const marca=String(Math.floor(Date.now()/1000)+1800);
     const soporte=new NextRequest(origin+'/api/workspace/export?format=csv',{headers:{cookie:'vexa_support='+marca+'; sb-x=1','x-forwarded-for':'203.0.113.79'}});
-    assert.equal((await middleware(soporte)).status,403);
+    assert.equal((await proxy(soporte)).status,403);
     await tick(40);
     const tipos=eventos.map(e=>e.kind);
     assert.ok(tipos.includes('csrf_rejected'),tipos.join());assert.ok(tipos.includes('bearer_invalid'),tipos.join());assert.ok(tipos.includes('support_blocked'),tipos.join());

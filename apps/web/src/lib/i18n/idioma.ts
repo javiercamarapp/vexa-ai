@@ -23,7 +23,7 @@ export function idiomaDeAcceptLanguage(cabecera: string | null | undefined): Idi
   for (const c of candidatos) { const v = idiomaValido(c.base); if (v) return v; }
   return null;
 }
-/** Orden de decisión: ?lang= válido, cookie rovaq_lang válida, preferencia guardada de la persona (user_preferences; solo la conoce quien ya leyó la base, p. ej. el middleware),
+/** Orden de decisión: ?lang= válido, cookie rovaq_lang válida, preferencia guardada de la persona (user_preferences; solo la conoce quien ya leyó la base, p. ej. el proxy),
  *  idioma del navegador (Accept-Language: es* → es, en* → en, cualquier otro → en) y, sin nada de eso, inglés.
  *  La cookie, cuando existe y es válida, SIEMPRE manda sobre lo demás (la persona ya eligió en el selector). Una cookie inválida cuenta como ausente. */
 export function resolverIdioma({parametro, cookie, preferencia, acceptLanguage}: {parametro?: unknown; cookie?: unknown; preferencia?: unknown; acceptLanguage?: string | null}): Idioma {
@@ -36,7 +36,7 @@ export function debeSembrarIdioma({parametro, cookie, marca, usuario}: {parametr
   const marcaVigente = typeof marca === 'string' && marca !== '' && marca === usuario;
   return idiomaValido(parametro) === null && idiomaValido(cookie) === null && !marcaVigente;
 }
-/** Idioma de una petición (middleware, rutas, páginas): cookie rovaq_lang y cabecera Accept-Language, sin tocar nada más. `parametro` es el ?lang= si la ruta lo admite. */
+/** Idioma de una petición (proxy, rutas, páginas): cookie rovaq_lang y cabecera Accept-Language, sin tocar nada más. `parametro` es el ?lang= si la ruta lo admite. */
 export function idiomaDeSolicitud(solicitud: {cookies: {get(nombre: string): {value: string} | undefined}; headers?: {get(nombre: string): string | null} | null}, parametro?: unknown): Idioma {
   return resolverIdioma({parametro, cookie: solicitud.cookies.get(COOKIE_IDIOMA)?.value, acceptLanguage: solicitud.headers?.get('accept-language') ?? null});
 }

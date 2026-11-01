@@ -54,7 +54,7 @@ test('errores de acceso del middleware y de /auth: el texto sigue la cookie de i
 });
 
 test('todo llamador de failure() le pasa la petición, y import-preview ya no lleva español de respaldo', () => {
-  for (const rel of ['src/middleware.ts', 'src/app/(app)/auth/organization/route.ts', 'src/app/(app)/auth/google/route.ts', 'src/app/(app)/auth/logout/route.ts', 'src/app/(app)/auth/callback/route.ts']) {
+  for (const rel of ['src/proxy.ts', 'src/app/(app)/auth/organization/route.ts', 'src/app/(app)/auth/google/route.ts', 'src/app/(app)/auth/logout/route.ts', 'src/app/(app)/auth/callback/route.ts']) {
     const fuente = leer(rel);
     const llamadas = fuente.match(/\bfailure\([^;]*?\)\)?[;}]/g) ?? [];
     assert.ok(llamadas.length > 0, rel);

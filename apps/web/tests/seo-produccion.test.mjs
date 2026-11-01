@@ -62,7 +62,7 @@ test('el middleware de auth no intercepta robots, sitemap, manifest, íconos ni 
   const {rutaConAutenticacion}=await import('../src/lib/host-routing.mjs');
   for (const ruta of ['/robots.txt','/sitemap.xml','/site.webmanifest','/opengraph-image','/twitter-image','/favicon.ico','/.well-known/security.txt','/humans.txt','/landing'])
     assert.equal(rutaConAutenticacion(ruta),false,ruta+' pasaría por el middleware de auth');
-  const m=leer('src/middleware.ts');
+  const m=leer('src/proxy.ts');
   assert.match(m,/decidirHost\(/);assert.match(m,/if\(!rutaConAutenticacion\(path\)\)return NextResponse\.next\(\)/);
   assert.match(m,/matcher:\s*\[\{\s*source:\s*'\/\(\(\?!_next\/static\|_next\/image\|fonts\/\|brand\/\|images\/\|vendor\/\|s\/\)\.\*\)'(?:,\s*missing:\s*\[\{\s*type:\s*'header',\s*key:\s*'host',\s*value:\s*'\(www\\\\\.\)\?rovaq\\\\\.ai')?/);
 });

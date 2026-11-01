@@ -1,9 +1,9 @@
 // Espejos Markdown por ruta pública (T3). Une el registro de páginas con el manifest de /s/ para saber, dada una URL del sitio, qué archivo .md la espeja.
-// Pura salvo por el manifest que se le entrega: el middleware lo importa del JSON generado en el build; las herramientas, de disco.
+// Pura salvo por el manifest que se le entrega: el proxy lo importa del JSON generado en el build; las herramientas, de disco.
 import {PAGINAS} from '../../content/sitio/registro.mjs';
 import {ORIGEN_SITIO} from '../host-routing.mjs';
 
-/** Misma regla que rutaEspejo de metadatos.mjs (copiada para no cargar el contenido en el middleware; una prueba las compara). */
+/** Misma regla que rutaEspejo de metadatos.mjs (copiada para no cargar el contenido en el proxy; una prueba las compara). */
 export function rutaEspejoDe(id, lang, manifestMd = {}) {
   if (id === 'inicio') return lang === 'es' ? '/index.md' : '/en/index.md';
   return manifestMd[`${lang}/${id}`]?.url ?? null;

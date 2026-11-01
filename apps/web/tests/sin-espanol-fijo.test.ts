@@ -91,7 +91,7 @@ const TOPE_MODULOS: Record<string, number> = {
  'components/refunds/fuga-modelo.mjs': 19,
  'components/workload/carga-modelo.mjs': 1,
  'components/workspace/cfo-model.mjs': 4,
- 'lib/auth-http.ts': 2, // T46: +1 = el español canónico del límite 429 y del modo soporte, que salía fijo en middleware.ts (que baja de 2 a 0)
+ 'lib/auth-http.ts': 2, // T46: +1 = el español canónico del límite 429 y del modo soporte, que salía fijo en proxy.ts (que baja de 2 a 0)
  'lib/connections/estado.mjs': 5,
  'lib/copiloto/modos.mjs': 26,
  'lib/db-resiliencia.mjs': 1,
@@ -151,7 +151,7 @@ test('las excepciones de .tsx existen y siguen teniendo español (si ya no lo ti
 test('el español canónico de módulos .mjs/.ts de pantallas no crece (TOPE_MODULOS)', () => {
   const actual: Record<string, number> = {};
   for (const rel of archivos(RAIZ, /\.(mjs|ts)$/)) {
-    if (!(/^(components|lib|app\/api)\//.test(rel) || rel === 'middleware.ts') || /\.d\.m?ts$/.test(rel)) continue; // T46: middleware.ts también (sus mensajes salen de MENSAJES_ACCESO)
+    if (!(/^(components|lib|app\/api)\//.test(rel) || rel === 'proxy.ts') || /\.d\.m?ts$/.test(rel)) continue; // T46: proxy.ts también (sus mensajes salen de MENSAJES_ACCESO)
     const n = hallazgos(fs.readFileSync(RAIZ + '/' + rel, 'utf8')).length;
     if (n) actual[rel] = n;
   }

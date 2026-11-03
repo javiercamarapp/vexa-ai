@@ -6,9 +6,9 @@ Fecha: 3-nov-2026. Sustituye a `~/vexa-notas-28oct/legal/checklist-abogado.md` d
 
 | Dato | Variable de Vercel | Quién lo da |
 |---|---|---|
-| Razón social del responsable | `VEXA_LEGAL_ENTIDAD` | Javier, Responsable A y Responsable B: denominación exacta de la sociedad que contrata |
+| Razón social del responsable | `VEXA_LEGAL_ENTIDAD` | Javier, el socio técnico y el cliente piloto: denominación exacta de la sociedad que contrata |
 | Domicilio | `VEXA_LEGAL_DOMICILIO` | Igual; domicilio fiscal o el que el abogado indique |
-| Correo de privacidad y ARCO | `VEXA_LEGAL_CORREO` | Responsable B como responsable del aviso; buzón de la empresa, no personal. Hay que crearlo. Responsable A queda como contacto de emergencia y seguridad |
+| Correo de privacidad y ARCO | `VEXA_LEGAL_CORREO` | La persona responsable del aviso en el cliente piloto; buzón de la empresa, no personal. Hay que crearlo. El socio técnico queda como contacto de emergencia y seguridad |
 
 Mientras falte una, ninguna de las dos páginas se sirve, se enlaza ni entra al sitemap. Fijarlas es el interruptor: solo después del visto bueno de la sección B.
 

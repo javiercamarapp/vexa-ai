@@ -32,7 +32,7 @@ export function normalizeCarrier(raw) {
   return k.slice(0, 40);
 }
 
-/** «Reference 1 - Defective - SKUP-L5» -> {reason:'Defective', sku:'SKUP-L5'}; un pedido en Reference 1 (filas viejas intercambiadas) se detecta aparte. */
+/** «Reference 1 - Defective - SKU-L5» -> {reason:'Defective', sku:'SKU-L5'}; un pedido en Reference 1 (filas viejas intercambiadas) se detecta aparte. */
 export function parseReference1(raw) {
   const body = stripLabel(raw);
   if (!body) return {reason: null, sku: null, orderLike: null};

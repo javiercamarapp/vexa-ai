@@ -1,6 +1,6 @@
 # Cómo publicar el Aviso de privacidad y los Términos
 
-Reemplaza la guía del 31-oct. No ejecutar hasta tener el visto bueno del abogado y de Responsable B y los tres datos. Este repositorio no hace push ni despliegue por su cuenta.
+Reemplaza la guía del 31-oct. No ejecutar hasta tener el visto bueno del abogado y del cliente piloto y los tres datos. Este repositorio no hace push ni despliegue por su cuenta.
 
 1. En Vercel, proyecto del sitio, definir `VEXA_LEGAL_ENTIDAD`, `VEXA_LEGAL_DOMICILIO` y `VEXA_LEGAL_CORREO` para producción. No son secretos. Se leen al construir; solo toman efecto con un build.
 2. Con las mismas tres variables en el entorno local, desde la raíz: `node tools/sitio/generar-md.mjs --fechas`, luego `node tools/sitio/generar-md.mjs` y `node tools/sitio/generar-md.mjs --verificar`. Esto crea los espejos Markdown, `llms.txt`, el sitemap y el manifiesto con las dos páginas. Commit de esos archivos generados, sin las variables.

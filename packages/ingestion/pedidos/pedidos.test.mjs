@@ -30,7 +30,7 @@ test('formato y retailer', () => {
 const H = ['Carrier', 'Ship Date', 'PRO/Tracking#', 'Created Date', 'Reference 1', 'Reference 2', 'Receiver Zip', 'Receiver Address Line1', 'Destination Company Name'];
 test('Speedship: parsea referencias, no conserva datos personales, dedup', () => {
   const rows = [H,
-    ['UNITED PARCEL SERVICE', '2026-01-05', '1ZSYN0001', '46025.45', 'Reference 1 - Defective - SKUP-L5', 'Reference 2 - 113-5268979-5206610', '99999', 'SYN CALLE 1', 'SYN PERSONA'],
+    ['UNITED PARCEL SERVICE', '2026-01-05', '1ZSYN0001', '46025.45', 'Reference 1 - Defective - SKU-L5', 'Reference 2 - 113-5268979-5206610', '99999', 'SYN CALLE 1', 'SYN PERSONA'],
     ['UNITED PARCEL SERVICE', '01/06/2026', '1ZSYN0001', '2026-01-05', 'x', 'x', '1', 'a', 'b'], // duplicado
     ['UNITED PARCEL SERVICE', '2026-01-07', '1ZSYN0002', '', 'Reference 1 - 113-1111111-2222222', '', '', '', ''], // intercambiado
     ['UNITED PARCEL SERVICE', '', '1ZSYN0003', '', '', 'Reference 2 - WN56823848', '', '', ''],
@@ -38,21 +38,21 @@ test('Speedship: parsea referencias, no conserva datos personales, dedup', () =>
   const r = parseShipments(rows); assert.ok(r.shipments.every(x => x.shipmentKind === 'garantia'));
   assert.equal(r.shipments.length, 3); assert.equal(r.duplicates, 1); assert.deepEqual(r.rejections, [{row: 6, code: 'TRACKING_MISSING'}]);
   const [a, b, c] = r.shipments;
-  assert.equal(a.orderKey, '113-5268979-5206610'); assert.equal(a.reason, 'Defective'); assert.equal(a.sku, 'SKUP-L5'); assert.equal(a.retailer, 'amazon'); assert.equal(a.shipDate, '2026-01-05');
+  assert.equal(a.orderKey, '113-5268979-5206610'); assert.equal(a.reason, 'Defective'); assert.equal(a.sku, 'SKU-L5'); assert.equal(a.retailer, 'amazon'); assert.equal(a.shipDate, '2026-01-05');
   assert.equal(b.orderKey, '113-1111111-2222222'); assert.equal(b.orderSource, 'reference_1');
   assert.equal(c.orderKey, 'WN56823848'); assert.equal(c.retailer, 'unknown');
   const blob = JSON.stringify(r); for (const p of ['99999', 'SYN CALLE', 'SYN PERSONA']) assert.ok(!blob.includes(p), 'dato personal: ' + p);
 });
 import {parseShipmentsFile} from './index.mjs';
 test('archivo: CSV se lee; XLSX con tipo macroEnabled se rechaza (el parser no se debilita)', () => {
-  const csv = H.join(',') + '\n' + 'UPS,2026-01-05,1ZSYN9,,Reference 1 - Defective - SKUP-L5,Reference 2 - 113-5268979-5206610,,,\n';
+  const csv = H.join(',') + '\n' + 'UPS,2026-01-05,1ZSYN9,,Reference 1 - Defective - SKU-L5,Reference 2 - 113-5268979-5206610,,,\n';
   const r = parseShipmentsFile(Buffer.from(csv), 'export.csv'); assert.equal(r.shipments.length, 1); assert.equal(r.shipments[0].orderKey, '113-5268979-5206610');
   assert.equal(parseShipments([H, ['UPS', '', 'X1', '', '', '', '', '', '']], {kind: 'venta'}).shipments[0].shipmentKind, 'venta');
   assert.throws(() => parseShipments([H, []], {kind: 'otro'}), /INVALID_SHIPMENT_KIND/);
   assert.throws(() => parseShipmentsFile(Buffer.from('x'), 'a.txt'), /UNSUPPORTED_FILE_TYPE/);
 });
 test('Reference 1 con motivo y SKU', () => {
-  assert.deepEqual(parseReference1('Reference 1 - Defective SKUP-L5'), {reason: 'Defective', sku: 'SKUP-L5', orderLike: null});
+  assert.deepEqual(parseReference1('Reference 1 - Defective SKU-L5'), {reason: 'Defective', sku: 'SKU-L5', orderLike: null});
   assert.equal(parseReference1('').reason, null);
 });
 test('ticket: extrae order_id/retailer', () => {

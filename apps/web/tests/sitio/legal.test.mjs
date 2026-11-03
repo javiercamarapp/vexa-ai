@@ -3,6 +3,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { AVISO_DE_PRIVACIDAD, TERMINOS } from '../../src/content/sitio/paginas/legal.ts';
@@ -89,8 +90,11 @@ describe('contenido legal', () => {
     assert.doesNotMatch(es, /\bVexa\b/);
   });
 
-  test('no nombra a clientes finales ni terceros sin autorización: ni CLIENTEX ni nombres de cliente', () => {
-    for (const p of PAGINAS) for (const { hoja } of hojas(p)) for (const l of ['es', 'en']) assert.doesNotMatch(hoja[l], /clientex|empresax|innovativos|likida/i);
+  test('no nombra a clientes finales ni terceros sin autorización: ni el cliente piloto ni otros nombres de cliente', () => {
+    // Los nombres vetados del cliente piloto se comparan por huella SHA-256 (el repositorio es público y no puede contenerlos en claro).
+    const HUELLAS_VETADAS = new Set(['d51db60749a2709ca9cf7eab289bbad72852adf3e3e00716d42159e3c78225da', 'b084aa36c5f6efdd6ff341cfea3499e7c27c134ff267cc31209bc0383ee40dc5']);
+    const vetada = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().split(/[^a-z0-9]+/).some((w) => w && HUELLAS_VETADAS.has(createHash('sha256').update(w).digest('hex')));
+    for (const p of PAGINAS) for (const { hoja } of hojas(p)) for (const l of ['es', 'en']) { assert.ok(!vetada(hoja[l]), 'nombre vetado en el texto legal'); assert.doesNotMatch(hoja[l], /innovativos|likida/i); }
   });
 
   test('el respaldo se describe sin afirmar más de lo que existe: 8 días, sin punto exacto, sin adjuntos, sin restauración probada', () => {

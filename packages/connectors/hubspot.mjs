@@ -11,7 +11,7 @@ const conversationCursor=value=>/^[A-Za-z0-9+/_-]+(?:%3d){1,2}$/i.test(value)?va
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 // Observed administrative types. Unknown provider types remain quarantined.
 const threadEventTypes=new Set(['ASSIGNMENT','THREAD_STATUS_CHANGE','THREAD_INBOX_CHANGE']);
-// Propiedades del ticket que se sincronizan. order_id/retailer (y los campos de la captura de Responsable B) permiten unir pedidos<->tickets;
+// Propiedades del ticket que se sincronizan. order_id/retailer (y los campos de la captura del cliente piloto) permiten unir pedidos<->tickets;
 // HubSpot ignora los nombres que el portal no tenga. Los nombres internos se pueden ajustar con config.ticketOrderProperties.
 const ORDER_PROPERTIES=Object.freeze(['order_id','retailer','date_of_purchase','tool_family','sku','country','contact_reason']);
 export function createHubSpotAdapter(config){

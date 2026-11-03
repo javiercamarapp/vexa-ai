@@ -11,7 +11,13 @@ const conversationCursor=value=>/^[A-Za-z0-9+/_-]+(?:%3d){1,2}$/i.test(value)?va
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 // Observed administrative types. Unknown provider types remain quarantined.
 const threadEventTypes=new Set(['ASSIGNMENT','THREAD_STATUS_CHANGE','THREAD_INBOX_CHANGE']);
+// Propiedades del ticket que se sincronizan. order_id/retailer (y los campos de la captura de Responsable B) permiten unir pedidos<->tickets;
+// HubSpot ignora los nombres que el portal no tenga. Los nombres internos se pueden ajustar con config.ticketOrderProperties.
+const ORDER_PROPERTIES=Object.freeze(['order_id','retailer','date_of_purchase','tool_family','sku','country','contact_reason']);
 export function createHubSpotAdapter(config){
+ const extra=config?.ticketOrderProperties??ORDER_PROPERTIES;
+ if(!Array.isArray(extra)||extra.length>20||extra.some(p=>typeof p!=='string'||!/^[a-z][a-z0-9_]{0,63}$/.test(p)))fail('INVALID_CONFIG');
+ const ticketProperties=['subject','content','hs_pipeline_stage',...extra].join(',');
  if(config?.version!=='v3')fail('CONTRACT_BLOCKED');
  const context=Object.freeze(validateContext(config.context));if(context.source!=='hubspot')fail('INVALID_CONFIG');
  if(!Array.isArray(config.scopes)||!config.scopes.includes('conversations.read'))fail('SCOPE_REQUIRED');
@@ -147,7 +153,7 @@ export function createHubSpotAdapter(config){
     if(message!==undefined){const result=await messageRecord(message,state.threadId,associations(),observed_at);if(result.error)rejected(message,0,result.error);else{push(result.record);if(result.event)eventCount++;else{messageCount++;if(!result.record.body_complete){missing++;state.totals.missing++;}}}}
     state.innerAfter=next;if(next===null)afterMessages();
    }else if(state.phase==='ticket'){
-    const ticket=await transport.request(url(`/crm/v3/objects/tickets/${state.ticketId}`,{properties:'subject,content,hs_pipeline_stage',archived}));if(!object(ticket)||id(ticket.id)!==state.ticketId)fail('PROVIDER_SCHEMA');
+    const ticket=await transport.request(url(`/crm/v3/objects/tickets/${state.ticketId}`,{properties:ticketProperties,archived}));if(!object(ticket)||id(ticket.id)!==state.ticketId)fail('PROVIDER_SCHEMA');
     push(record(ticket,'ticket',observed_at,{associations:[{entity_type:'thread',external_id:state.threadId}]}));if(includeNotes)state.phase='links';else finishThread();
    }else if(state.phase==='links'){
     const {body,next}=await page(`/crm/v4/objects/tickets/${state.ticketId}/associations/notes`,{},state.innerAfter,'notes');const link=body.results[0];state.innerAfter=next;
@@ -187,7 +193,7 @@ export function createHubSpotAdapter(config){
     }
     for(const association of associations){
      const ticketId=association.external_id;
-     if(includeTickets){const ticket=await transport.request(url(`/crm/v3/objects/tickets/${ticketId}`,{properties:'subject,content,hs_pipeline_stage',archived}));if(id(ticket.id)!==ticketId)fail('PROVIDER_SCHEMA');push(record(ticket,'ticket',observed_at,{associations:[{entity_type:'thread',external_id:threadId}]}));}
+     if(includeTickets){const ticket=await transport.request(url(`/crm/v3/objects/tickets/${ticketId}`,{properties:ticketProperties,archived}));if(id(ticket.id)!==ticketId)fail('PROVIDER_SCHEMA');push(record(ticket,'ticket',observed_at,{associations:[{entity_type:'thread',external_id:threadId}]}));}
      if(includeNotes){for await(const{body:links}of collection(`/crm/v4/objects/tickets/${ticketId}/associations/notes`,{limit:100})){
       for(const link of links.results){const noteId=id(link?.toObjectId),note=await transport.request(url(`/crm/v3/objects/notes/${noteId}`,{properties:'hs_note_body,hs_timestamp,hubspot_owner_id',archived}));if(id(note.id)!==noteId)fail('PROVIDER_SCHEMA');
        // Notes are HTML stored inertly; never call it sanitized or execute it. No assumption of one thread per ticket.

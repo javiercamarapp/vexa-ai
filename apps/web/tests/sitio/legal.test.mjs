@@ -89,6 +89,18 @@ describe('contenido legal', () => {
     assert.doesNotMatch(es, /\bVexa\b/);
   });
 
+  test('no nombra a clientes finales ni terceros sin autorización: ni CLIENTEX ni nombres de cliente', () => {
+    for (const p of PAGINAS) for (const { hoja } of hojas(p)) for (const l of ['es', 'en']) assert.doesNotMatch(hoja[l], /clientex|empresax|innovativos|likida/i);
+  });
+
+  test('el respaldo se describe sin afirmar más de lo que existe: 8 días, sin punto exacto, sin adjuntos, sin restauración probada', () => {
+    const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
+    assert.match(es, /respaldo diario automático que se conserva 8 días/);
+    assert.match(es, /adjuntos no están cubiertos/);
+    assert.match(es, /aún no se ha probado/);
+    assert.doesNotMatch(es, /35 días/);
+  });
+
   test('distingue los dos papeles: responsable y encargado', () => {
     const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
     assert.match(es, /responsable/);

@@ -23,6 +23,7 @@ Rovaq acts in two different roles. It is the controller of the data of the peopl
 
 - Support conversations: messages, channel, dates, authorship and any contact details the text contains, such as a buyer name, email or phone number.
 - Orders and refunds: identifiers, products, amounts, dates and statuses, loaded from marketplace exports with the help of our team.
+- Warranty shipment data and order and ticket references: tracking number, carrier, dates, reason, SKU and order and ticket references. These are operational data, without the recipient name or address.
 - Data read from the support tool the company connects, today HubSpot, with read-only permissions: conversations, messages, notes and basic ticket data. Rovaq does not write to that tool.
 - Attachments and exports that the company hands over for loading.
 

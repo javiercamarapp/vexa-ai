@@ -116,6 +116,16 @@ describe('contenido legal', () => {
     for (const p of PAGINAS) assert.deepEqual(marcadoresEn(JSON.stringify(hojas(p).map((h) => h.hoja.es))).map((m) => m.replace(/^\[.*\]$/, 'x')).length, marcadoresEn(JSON.stringify(hojas(p).map((h) => h.hoja.en))).length);
   });
 
+  test('el aviso describe los datos de envíos de garantía y referencias de pedido y de ticket, sin nombre ni domicilio del destinatario, en es y en, y los docs exportados coinciden', () => {
+    const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
+    const en = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.en).join('\n');
+    assert.match(es, /envíos de garantía y referencias de pedido y de ticket[^\n]*número de seguimiento[^\n]*transportista[^\n]*SKU[^\n]*sin nombre ni domicilio del destinatario/);
+    assert.match(en, /Warranty shipment data and order and ticket references[^\n]*tracking number[^\n]*carrier[^\n]*SKU[^\n]*without the recipient name or address/);
+    const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
+    assert.match(fs.readFileSync(path.join(raiz, 'docs/legal/aviso-de-privacidad.es.md'), 'utf8'), /sin nombre ni domicilio del destinatario/);
+    assert.match(fs.readFileSync(path.join(raiz, 'docs/legal/aviso-de-privacidad.en.md'), 'utf8'), /without the recipient name or address/);
+  });
+
   test('el aviso dice lo que el código hace: la IA no calcula importes y la redacción no es anonimización', () => {
     const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
     assert.match(es, /No calcula importes/);

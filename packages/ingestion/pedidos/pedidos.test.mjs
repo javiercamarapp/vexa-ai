@@ -64,3 +64,14 @@ test('cobertura: unión por (id, retailer), sin_id != 0, candidatos', () => {
   assert.equal(g('unknown', 'envios').candidatos, 0); // llave bajo 3 retailers: ambigua
   assert.equal(g('unknown', 'envios').cobertura, 0);
 });
+import {OrderLinksRepository, ticketRefRow} from './index.mjs';
+test('repositorio: el tenant sale de la sesión y los lotes son <=250', async () => {
+  const calls = [];
+  const s = {tenantId: 'T-SYN', query: async (q, p) => { calls.push([q, p]); return {rows: [{r: {inserted: JSON.parse(p?.[0] ?? '[]').length, updated: 0, unchanged: 0}}]}; }};
+  const repo = new OrderLinksRepository(s);
+  const many = Array.from({length: 600}, (_, i) => ({carrier: 'ups', tracking: 'T' + i, orderKey: null, retailer: 'unknown', retailerBasis: 'unknown', rowHash: 'a'.repeat(64)}));
+  assert.deepEqual(await repo.ingestShipments(many), {inserted: 600, updated: 0, unchanged: 0}); assert.equal(calls.length, 3);
+  await repo.coverage(); assert.deepEqual(calls.at(-1)[1], ['T-SYN']);
+  assert.ok(!JSON.stringify(calls).includes('tenant_id'), 'el tenant no viaja en los datos');
+  assert.equal(ticketRefRow({id: 9, properties: {order_id: '113-5268979-5206610', retailer: 'Amazon'}}).retailer, 'amazon');
+});

@@ -24,24 +24,27 @@ const tally = (items, hasKey, matched) => {
 };
 
 /**
- * orders: [{entityId, retailer, orderKey}] (pedidos del libro, un registro por línea; se deduplican por llave),
- * tickets: [{ticketId, retailer, orderKey}], shipments: [{id, retailer, orderKey}].
- * Cobertura por retailer y entidad. Un envío con retailer 'unknown' solo es «candidato» si su llave existe bajo un único retailer.
+ * orders (ventas del libro): [{entityId, retailer, orderKey}], tickets: [{ticketId, retailer, orderKey}],
+ * shipments: [{id, retailer, orderKey, kind}] con kind 'garantia' (por omisión, Speedship = postventa) o 'venta'.
+ * Filas por (retailer, entidad, tipo). La cobertura de la fila 'pedidos' (tipo venta) es SIEMPRE null: los envíos son de garantía,
+ * así que ligar pedidos de venta no es un % de ventas. Envíos y tickets sí tienen denominador propio (su tipo).
+ * Un envío con retailer 'unknown' solo es «candidato» si su llave existe bajo un único retailer.
  */
 export function linkCoverage({orders = [], tickets = [], shipments = []}) {
+  const sh = shipments.map(x => ({...x, kind: x.kind ?? 'garantia'}));
   const idx = list => { const m = new Map(); for (const x of list) if (x.orderKey && x.retailer && x.retailer !== 'unknown') m.set(keyOf(x.retailer, x.orderKey), true); return m; };
-  const O = idx(orders), T = idx(tickets), S = idx(shipments);
-  const byKey = new Map(); for (const x of [...orders, ...tickets]) if (x.orderKey && x.retailer !== 'unknown') { const s = byKey.get(x.orderKey) ?? new Set(); s.add(x.retailer); byKey.set(x.orderKey, s); }
-  const candidate = s => s.retailer === 'unknown' && s.orderKey && byKey.get(s.orderKey)?.size === 1;
-  const retailers = new Set([...orders, ...tickets, ...shipments].map(x => x.retailer || 'unknown'));
+  const O = idx(orders), T = idx(tickets), S = idx(sh);
+  const byKey = new Map(); for (const x of [...orders, ...tickets]) if (x.orderKey && x.retailer !== 'unknown') { const q = byKey.get(x.orderKey) ?? new Set(); q.add(x.retailer); byKey.set(x.orderKey, q); }
+  const candidate = x => x.retailer === 'unknown' && x.orderKey && byKey.get(x.orderKey)?.size === 1;
+  const retailers = new Set([...orders, ...tickets, ...sh].map(x => x.retailer || 'unknown'));
   const rows = [];
   for (const r of [...retailers].sort()) {
     const of = list => list.filter(x => (x.retailer || 'unknown') === r);
     const uniqOrders = [...new Map(of(orders).map(o => [o.orderKey ?? `__${o.entityId}`, o])).values()];
     const known = x => x.orderKey && r !== 'unknown';
-    rows.push({retailer: r, entidad: 'pedidos', ...tally(uniqOrders, known, o => T.has(keyOf(r, o.orderKey)) || S.has(keyOf(r, o.orderKey))), con_ticket: uniqOrders.filter(o => known(o) && T.has(keyOf(r, o.orderKey))).length, con_envio: uniqOrders.filter(o => known(o) && S.has(keyOf(r, o.orderKey))).length});
-    rows.push({retailer: r, entidad: 'tickets', ...tally(of(tickets), known, t => O.has(keyOf(r, t.orderKey)) || S.has(keyOf(r, t.orderKey)))});
-    rows.push({retailer: r, entidad: 'envios', ...tally(of(shipments), known, s => O.has(keyOf(r, s.orderKey)) || T.has(keyOf(r, s.orderKey))), candidatos: of(shipments).filter(candidate).length});
+    rows.push({retailer: r, entidad: 'pedidos', tipo: 'venta', ...tally(uniqOrders, known, o => T.has(keyOf(r, o.orderKey)) || S.has(keyOf(r, o.orderKey))), cobertura: null, con_ticket: uniqOrders.filter(o => known(o) && T.has(keyOf(r, o.orderKey))).length, con_envio: uniqOrders.filter(o => known(o) && S.has(keyOf(r, o.orderKey))).length});
+    rows.push({retailer: r, entidad: 'tickets', tipo: 'ticket', ...tally(of(tickets), known, t => O.has(keyOf(r, t.orderKey)) || S.has(keyOf(r, t.orderKey)))});
+    for (const kind of ['garantia', 'venta']) { const mine = of(sh).filter(x => x.kind === kind); if (mine.length) rows.push({retailer: r, entidad: 'envios', tipo: kind, ...tally(mine, known, x => O.has(keyOf(r, x.orderKey)) || T.has(keyOf(r, x.orderKey))), candidatos: mine.filter(candidate).length}); }
   }
   return rows;
 }

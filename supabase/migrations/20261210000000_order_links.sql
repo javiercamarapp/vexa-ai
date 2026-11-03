@@ -49,6 +49,7 @@ grant execute on function public.order_id_normalize(text),public.order_retailer_
 create table if not exists public.order_shipments (
  id uuid primary key default gen_random_uuid(), tenant_id uuid not null references public.organizations(id) on delete restrict,
  created_at timestamptz not null default now(), updated_at timestamptz not null default now(),
+ shipment_kind text not null default 'garantia' check(shipment_kind in ('garantia','venta')),
  carrier text not null check(length(carrier) between 1 and 40), tracking text not null check(length(tracking) between 1 and 80),
  ship_date date, created_date date, reason text check(reason is null or length(reason)<=80), sku text check(sku is null or length(sku)<=60),
  order_key text check(order_key is null or public.order_id_normalize(order_key) is not distinct from order_key),
@@ -88,10 +89,10 @@ do $$ declare tab text; begin
   execute format('create policy backend_update on public.%I for update to vexa_backend using (tenant_id=nullif(current_setting(''vexa.tenant_id'',true),'''')::uuid and public.vexa_backend_action(tenant_id,array[''import''])) with check (tenant_id=nullif(current_setting(''vexa.tenant_id'',true),'''')::uuid and public.vexa_backend_action(tenant_id,array[''import'']))',tab);
  end loop;
 end $$;
-grant update(updated_at,ship_date,created_date,reason,sku,order_key,order_format,order_source,retailer,retailer_basis,row_hash) on public.order_shipments to vexa_backend;
+grant update(updated_at,shipment_kind,ship_date,created_date,reason,sku,order_key,order_format,order_source,retailer,retailer_basis,row_hash) on public.order_shipments to vexa_backend;
 grant update(updated_at,order_key,retailer,purchase_date,sku,tool_family,country,contact_reason,row_hash) on public.ticket_order_refs to vexa_backend;
 
--- Lote (<=250) de envíos: upsert por (tenant,transportista,tracking); idempotente. p_rows: [{carrier,tracking,ship_date,created_date,reason,sku,order_key,order_format,order_source,retailer,retailer_basis,row_hash}]
+-- Lote (<=250) de envíos: upsert por (tenant,transportista,tracking); idempotente. p_rows: [{shipment_kind,carrier,tracking,ship_date,created_date,reason,sku,order_key,order_format,order_source,retailer,retailer_basis,row_hash}]
 create or replace function public.order_shipments_ingest(p_rows jsonb) returns jsonb language plpgsql set search_path='' as $$
 declare t uuid:=nullif(current_setting('vexa.tenant_id',true),'')::uuid; n integer; ins integer; upd integer;
 begin
@@ -100,10 +101,10 @@ begin
  n:=jsonb_array_length(p_rows); if n=0 or n>250 then raise exception 'BATCH_SIZE_INVALID'; end if;
  if (select count(distinct (e->>'carrier')||'|'||(e->>'tracking')) from jsonb_array_elements(p_rows) e)<>n then raise exception 'DUPLICATE_IN_BATCH'; end if;
  with r as (
-  insert into public.order_shipments(tenant_id,carrier,tracking,ship_date,created_date,reason,sku,order_key,order_format,order_source,retailer,retailer_basis,row_hash)
-  select t,e->>'carrier',e->>'tracking',(e->>'ship_date')::date,(e->>'created_date')::date,e->>'reason',e->>'sku',e->>'order_key',e->>'order_format',e->>'order_source',coalesce(e->>'retailer','unknown'),coalesce(e->>'retailer_basis','unknown'),e->>'row_hash'
+  insert into public.order_shipments(tenant_id,shipment_kind,carrier,tracking,ship_date,created_date,reason,sku,order_key,order_format,order_source,retailer,retailer_basis,row_hash)
+  select t,coalesce(e->>'shipment_kind','garantia'),e->>'carrier',e->>'tracking',(e->>'ship_date')::date,(e->>'created_date')::date,e->>'reason',e->>'sku',e->>'order_key',e->>'order_format',e->>'order_source',coalesce(e->>'retailer','unknown'),coalesce(e->>'retailer_basis','unknown'),e->>'row_hash'
   from jsonb_array_elements(p_rows) e
-  on conflict(tenant_id,carrier,tracking) do update set ship_date=excluded.ship_date,created_date=excluded.created_date,reason=excluded.reason,sku=excluded.sku,order_key=excluded.order_key,order_format=excluded.order_format,order_source=excluded.order_source,retailer=excluded.retailer,retailer_basis=excluded.retailer_basis,row_hash=excluded.row_hash,updated_at=now()
+  on conflict(tenant_id,carrier,tracking) do update set shipment_kind=excluded.shipment_kind,ship_date=excluded.ship_date,created_date=excluded.created_date,reason=excluded.reason,sku=excluded.sku,order_key=excluded.order_key,order_format=excluded.order_format,order_source=excluded.order_source,retailer=excluded.retailer,retailer_basis=excluded.retailer_basis,row_hash=excluded.row_hash,updated_at=now()
    where public.order_shipments.row_hash<>excluded.row_hash
   returning (xmax=0) as inserted)
  select count(*) filter(where inserted),count(*) filter(where not inserted) into ins,upd from r;
@@ -138,30 +139,33 @@ create or replace view public.order_ledger_keys with (security_invoker=true) as
   case when e.external_id ~ '^[^|]+\|[^|]+\|' then public.order_id_normalize(split_part(e.external_id,'|',2)) end as order_key
  from public.economic_ledger_entries e where e.kind='order' order by e.tenant_id,e.entity_id,e.revision desc;
 
--- Cobertura por retailer y entidad. unknown != zero: sin_id (no trae ID válido o retailer) se separa de sin_ligar (trae ID y no tiene par); cobertura NULL sin denominador.
+-- Cobertura por retailer, entidad y TIPO. Los envíos de Speedship son de garantía (postventa): la cobertura NUNCA es un % de ventas.
+-- La fila 'pedidos' (tipo venta) devuelve cobertura NULL siempre (sin denominador de ventas válido); envíos y tickets tienen denominador propio.
+-- unknown != zero: sin_id (no trae ID válido o retailer) se separa de sin_ligar (trae ID y no tiene par); cobertura NULL sin denominador.
 create or replace view public.order_link_coverage with (security_invoker=true) as
 with o as (select tenant_id,entity_id,retailer r,order_key k from public.order_ledger_keys),
  ou as (select distinct on (tenant_id,r,coalesce(k,'#'||entity_id::text)) tenant_id,r,k from o order by tenant_id,r,coalesce(k,'#'||entity_id::text)),
  t as (select tenant_id,retailer r,order_key k from public.ticket_order_refs),
- s as (select tenant_id,retailer r,order_key k from public.order_shipments),
+ s as (select tenant_id,retailer r,order_key k,shipment_kind kind from public.order_shipments),
  ok as (select distinct tenant_id,r,k from o where k is not null and r<>'unknown'),
  tk as (select distinct tenant_id,r,k from t where k is not null and r<>'unknown'),
  sk as (select distinct tenant_id,r,k from s where k is not null and r<>'unknown'),
  cand as (select tenant_id,k,count(distinct r) n from (select * from ok union select * from tk) x group by tenant_id,k),
- pedidos as (select ou.tenant_id,ou.r,'pedidos'::text entidad,count(*) total,
+ pedidos as (select ou.tenant_id,ou.r,'pedidos'::text entidad,'venta'::text tipo,count(*) total,
    count(*) filter(where k is not null and r<>'unknown' and (exists(select 1 from tk where tk.tenant_id=ou.tenant_id and tk.r=ou.r and tk.k=ou.k) or exists(select 1 from sk where sk.tenant_id=ou.tenant_id and sk.r=ou.r and sk.k=ou.k))) ligados,
    count(*) filter(where k is null or r='unknown') sin_id,
    count(*) filter(where k is not null and r<>'unknown' and exists(select 1 from tk where tk.tenant_id=ou.tenant_id and tk.r=ou.r and tk.k=ou.k)) con_ticket,
    count(*) filter(where k is not null and r<>'unknown' and exists(select 1 from sk where sk.tenant_id=ou.tenant_id and sk.r=ou.r and sk.k=ou.k)) con_envio,
    null::bigint candidatos from ou group by ou.tenant_id,ou.r),
- tickets as (select t.tenant_id,t.r,'tickets'::text entidad,count(*) total,
+ tickets as (select t.tenant_id,t.r,'tickets'::text entidad,'ticket'::text tipo,count(*) total,
    count(*) filter(where k is not null and r<>'unknown' and (exists(select 1 from ok where ok.tenant_id=t.tenant_id and ok.r=t.r and ok.k=t.k) or exists(select 1 from sk where sk.tenant_id=t.tenant_id and sk.r=t.r and sk.k=t.k))) ligados,
    count(*) filter(where k is null or r='unknown') sin_id,null::bigint con_ticket,null::bigint con_envio,null::bigint candidatos from t group by t.tenant_id,t.r),
- envios as (select s.tenant_id,s.r,'envios'::text entidad,count(*) total,
+ envios as (select s.tenant_id,s.r,'envios'::text entidad,s.kind tipo,count(*) total,
    count(*) filter(where k is not null and r<>'unknown' and (exists(select 1 from ok where ok.tenant_id=s.tenant_id and ok.r=s.r and ok.k=s.k) or exists(select 1 from tk where tk.tenant_id=s.tenant_id and tk.r=s.r and tk.k=s.k))) ligados,
    count(*) filter(where k is null or r='unknown') sin_id,null::bigint con_ticket,null::bigint con_envio,
-   count(*) filter(where r='unknown' and k is not null and exists(select 1 from cand where cand.tenant_id=s.tenant_id and cand.k=s.k and cand.n=1)) candidatos from s group by s.tenant_id,s.r)
-select tenant_id,r as retailer,entidad,total,ligados,sin_id,total-sin_id-ligados as sin_ligar,ligados::numeric/nullif(total,0) as cobertura,con_ticket,con_envio,candidatos
+   count(*) filter(where r='unknown' and k is not null and exists(select 1 from cand where cand.tenant_id=s.tenant_id and cand.k=s.k and cand.n=1)) candidatos from s group by s.tenant_id,s.r,s.kind)
+select tenant_id,r as retailer,entidad,tipo,total,ligados,sin_id,total-sin_id-ligados as sin_ligar,
+ case when entidad='pedidos' then null else ligados::numeric/nullif(total,0) end as cobertura,con_ticket,con_envio,candidatos
 from (select * from pedidos union all select * from tickets union all select * from envios) u;
 revoke all on public.order_ledger_keys,public.order_link_coverage from public,anon,authenticated,service_role,vexa_backend;
 grant select on public.order_ledger_keys,public.order_link_coverage to vexa_backend;

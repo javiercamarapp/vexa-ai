@@ -3,6 +3,8 @@
 // (no hacen falta para la unión y son datos personales de clientes finales).
 import {createHash} from 'node:crypto';
 import {normalizeOrderId, orderFormat, retailerFromFormat} from './order-id.mjs';
+import {parseCSV} from '../csv.mjs';
+import {parseXLSX} from '../xlsx.mjs';
 
 const COLS = {
   carrier: ['carrier'], tracking: ['pro/tracking#', 'pro/tracking', 'tracking', 'tracking number'],
@@ -44,7 +46,27 @@ export function parseReference1(raw) {
   return {reason, sku, orderLike: null};
 }
 
-export function parseShipments(rows) {
+// Los envíos de Speedship de la cuenta del cliente son REEMPLAZOS POR GARANTÍA (postventa), no ventas: shipment_kind='garantia' por omisión.
+// La cobertura nunca se publica como % del total de pedidos de venta.
+export const SHIPMENT_KINDS = Object.freeze(['garantia', 'venta']);
+
+/**
+ * Lee el archivo de Speedship. CSV (recomendado) o XLSX. El parser XLSX endurecido NO se debilita: el xlsx de Speedship del cliente
+ * se rechaza con XLSX_MACROS (su [Content_Types].xml declara un tipo macroEnabled aunque no trae macros). Hay que exportarlo a CSV
+ * o decidir explícitamente una excepción a esa regla.
+ */
+export function parseShipmentsFile(bytes, name = '', options = {}) {
+  let rows;
+  if (/\.csv$/i.test(name)) rows = parseCSV(bytes).rows.map(r => r.values);
+  else if (/\.xlsx$/i.test(name)) {
+    const sheet = parseXLSX(bytes).sheets[0];
+    rows = sheet.rows.map(r => { const a = []; const n = Math.max(0, ...Object.keys(r.values).map(Number)) + 1; for (let i = 0; i < n; i++) a.push(r.values[i] ?? null); return a; });
+  } else throw new Error('UNSUPPORTED_FILE_TYPE');
+  return parseShipments(rows, options);
+}
+
+export function parseShipments(rows, {kind = 'garantia'} = {}) {
+  if (!SHIPMENT_KINDS.includes(kind)) throw new Error('INVALID_SHIPMENT_KIND');
   const out = {shipments: [], rejections: [], duplicates: 0};
   if (!Array.isArray(rows) || rows.length < 2) return {...out, rejections: [{row: 0, code: 'EMPTY_FILE'}]};
   const header = rows[0].map(norm), idx = {};
@@ -63,7 +85,7 @@ export function parseShipments(rows) {
     if (!orderKey && r1.orderLike) { orderKey = r1.orderLike; orderSource = 'reference_1'; }
     const retailer = retailerFromFormat(orderKey);
     const s = {
-      carrier, tracking, shipDate: parseDateLoose(get('shipDate')), createdDate: parseDateLoose(get('createdDate')),
+      carrier, tracking, shipmentKind: kind, shipDate: parseDateLoose(get('shipDate')), createdDate: parseDateLoose(get('createdDate')),
       reason: r1.reason, sku: r1.sku, orderKey, orderFormat: orderFormat(orderKey), orderSource,
       retailer: retailer ?? 'unknown', retailerBasis: retailer ? 'format' : 'unknown',
     };

@@ -19,7 +19,7 @@ function asBackend(h, user, tenant, sql, action = 'import') {
   const r = spawnSync('psql', ['-h', h.sock, '-U', 'postgres', '-d', 't', '-At', '-q', '-v', 'ON_ERROR_STOP=1', '-f', '-'], {input, encoding: 'utf8'});
   return {ok: r.status === 0, out: r.stdout.trim(), err: r.stderr.trim()};
 }
-const ship = (o) => ({carrier: 'ups', tracking: 'X', ship_date: '2026-01-05', created_date: null, reason: 'Defective', sku: 'SKU-A', order_key: null, order_format: null, order_source: null, retailer: 'unknown', retailer_basis: 'unknown', row_hash: H64('a'), ...o});
+const ship = (o) => ({shipment_kind: 'garantia', carrier: 'ups', tracking: 'X', ship_date: '2026-01-05', created_date: null, reason: 'Defective', sku: 'SKU-A', order_key: null, order_format: null, order_source: null, retailer: 'unknown', retailer_basis: 'unknown', row_hash: H64('a'), ...o});
 const tick = (o) => ({ticket_external_id: 't', order_key: null, retailer: 'unknown', purchase_date: null, sku: null, tool_family: null, country: null, contact_reason: null, row_hash: H64('b'), ...o});
 const json = o => `'${JSON.stringify(o).replace(/'/g, "''")}'::jsonb`;
 
@@ -56,13 +56,16 @@ test('order_links: paridad, cobertura, aislamiento y negativas', {skip: SKIP, ti
       r = asBackend(h, OWNER.A, TENANT_A, 'select count(*) from public.order_shipments;'); assert.equal(r.out, '6', 'el lote rechazado no deja filas');
     });
     await t.test('cobertura SQL = oráculo JS (unknown != zero, retailer es parte de la llave)', () => {
-      const r = asBackend(h, OWNER.A, TENANT_A, `select coalesce(json_agg(c),'[]') from (select retailer,entidad,total,ligados,sin_id,sin_ligar,coalesce(candidatos,-1) candidatos from public.order_link_coverage order by 1,2) c;`); assert.ok(r.ok, r.err);
+      const r = asBackend(h, OWNER.A, TENANT_A, `select coalesce(json_agg(c),'[]') from (select retailer,entidad,tipo,total,ligados,sin_id,sin_ligar,coalesce(candidatos,-1) candidatos,cobertura from public.order_link_coverage order by 1,2,3) c;`); assert.ok(r.ok, r.err);
       const sql = JSON.parse(r.out);
       const orders = ['SYN-111-0000001', 'SYN-111-0000002', 'SYN-111-0000003', 'SYN-111-0000003', 'SYN-111-0000004'].map((k, i) => ({entityId: 'o' + i, retailer: 'amazon', orderKey: k})).concat([{entityId: 'sh', retailer: 'unknown', orderKey: null}]);
-      const js = linkCoverage({orders, tickets: TK.map(x => ({ticketId: x.ticket_external_id, retailer: x.retailer, orderKey: x.order_key})), shipments: SH.map(x => ({id: x.tracking, retailer: x.retailer, orderKey: x.order_key}))})
-        .filter(x => x.total > 0).map(x => ({retailer: x.retailer, entidad: x.entidad, total: x.total, ligados: x.ligados, sin_id: x.sin_id, sin_ligar: x.sin_ligar, candidatos: x.candidatos ?? -1})).sort((a, b) => a.retailer.localeCompare(b.retailer) || a.entidad.localeCompare(b.entidad));
-      const norm = rows => rows.map(x => ({...x, total: Number(x.total), ligados: Number(x.ligados), sin_id: Number(x.sin_id), sin_ligar: Number(x.sin_ligar), candidatos: Number(x.candidatos)}));
+      const js = linkCoverage({orders, tickets: TK.map(x => ({ticketId: x.ticket_external_id, retailer: x.retailer, orderKey: x.order_key})), shipments: SH.map(x => ({kind: x.shipment_kind, id: x.tracking, retailer: x.retailer, orderKey: x.order_key}))})
+        .filter(x => x.total > 0).map(x => ({retailer: x.retailer, entidad: x.entidad, tipo: x.tipo, total: x.total, ligados: x.ligados, sin_id: x.sin_id, sin_ligar: x.sin_ligar, candidatos: x.candidatos ?? -1})).sort((a, b) => a.retailer.localeCompare(b.retailer) || a.entidad.localeCompare(b.entidad));
+      const norm = rows => rows.map(({cobertura, ...x}) => ({...x, total: Number(x.total), ligados: Number(x.ligados), sin_id: Number(x.sin_id), sin_ligar: Number(x.sin_ligar), candidatos: Number(x.candidatos)}));
       assert.deepEqual(norm(sql), js);
+      // La cobertura de pedidos de venta es SIEMPRE null (los envíos son de garantía); envíos y tickets sí la publican.
+      for (const x of sql.filter(y => y.entidad === 'pedidos')) assert.equal(x.cobertura, null, 'pedidos: sin % de ventas');
+      const en = sql.find(x => x.retailer === 'amazon' && x.entidad === 'envios'); assert.equal(en.tipo, 'garantia'); assert.ok(Math.abs(Number(en.cobertura) - 2 / 3) < 1e-9);
       const am = sql.find(x => x.retailer === 'amazon' && x.entidad === 'pedidos'); assert.equal(Number(am.total), 4); assert.equal(Number(am.ligados), 2);
     });
     await t.test('aislamiento: B no ve ni cuenta lo de A, y A no escribe en B', () => {

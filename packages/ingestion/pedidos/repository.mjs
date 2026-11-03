@@ -4,7 +4,7 @@ import {shipmentBatches} from './speedship.mjs';
 import {ticketOrderRef} from './link.mjs';
 import {createHash} from 'node:crypto';
 
-const snake = x => ({carrier: x.carrier, tracking: x.tracking, ship_date: x.shipDate, created_date: x.createdDate, reason: x.reason, sku: x.sku, order_key: x.orderKey, order_format: x.orderFormat, order_source: x.orderSource, retailer: x.retailer, retailer_basis: x.retailerBasis, row_hash: x.rowHash});
+const snake = x => ({carrier: x.carrier, tracking: x.tracking, shipment_kind: x.shipmentKind ?? 'garantia', ship_date: x.shipDate, created_date: x.createdDate, reason: x.reason, sku: x.sku, order_key: x.orderKey, order_format: x.orderFormat, order_source: x.orderSource, retailer: x.retailer, retailer_basis: x.retailerBasis, row_hash: x.rowHash});
 export const ticketRefRow = (payload) => {
   const r = ticketOrderRef(payload);
   const row = {ticket_external_id: r.ticketId, order_key: r.orderKey, retailer: r.retailer, purchase_date: /^\d{4}-\d{2}-\d{2}$/.test(r.purchaseDate ?? '') ? r.purchaseDate : null, sku: r.sku, tool_family: r.toolFamily, country: r.country, contact_reason: r.contactReason};

@@ -1,5 +1,9 @@
 // Normalizador de Order ID y de retailer. La llave de unión es (order_key, retailer), nunca el ID solo.
 // Debe mantenerse en paridad con public.order_id_normalize / public.order_retailer_normalize (migración 20261210000000).
+// Paridad SQL-JS: el normalizador es SOLO ASCII. Tras NFKC, quitar invisibles, espacios y guiones Unicode, cualquier carácter
+// que no sea ASCII imprimible o espacio ASCII devuelve null (sin ID). Así no dependen de la configuración regional de Postgres ni de upper() de Unicode
+// (p. ej. «ß» pasa a «SS» en JS y no en Postgres; los espacios Unicode raros se recortan distinto en cada lado).
+// Notación científica: solo `d(.d{1,15})?E[+]?d{1,3}` de a lo más 20 caracteres; otra cosa queda como texto sin convertir.
 const DASHES = /[‐-―−﹣－]/g;
 const INVISIBLE = /[​-‍﻿]/g;
 const PLACEHOLDERS = new Set(['NONE', 'NULL', 'NAN', 'TBD', 'UNKNOWN', 'NOORDER', 'NOTAPPLICABLE']);
@@ -14,12 +18,14 @@ export const ORDER_FORMATS = Object.freeze({
 /** Devuelve la llave normalizada o null (sin ID válido: «sin ID», nunca cero ni cadena vacía). */
 export function normalizeOrderId(raw) {
   if (raw === null || raw === undefined) return null;
-  let s = String(raw).normalize('NFKC').replace(INVISIBLE, '').replace(/ /g, ' ').replace(DASHES, '-').trim();
+  let s = String(raw).normalize('NFKC').replace(INVISIBLE, '').replace(/ /g, ' ').replace(DASHES, '-');
+  if (/[^\x09-\x0d\x20-\x7e]/.test(s)) return null;
+  s = s.trim();
   if (!s) return null;
   s = s.replace(/^(?:reference|ref)\s*\d*\s*[-:=]\s*/i, '');
   s = s.replace(/^(?:order\s*(?:id|number|no|num)?|pedido)\s*[:#]\s*/i, '');
   s = s.toUpperCase().replace(/\s+/g, '');
-  if (/^\d(?:\.\d+)?E\+?\d+$/.test(s)) { const n = Number(s); if (Number.isSafeInteger(n)) s = String(n); }
+  if (s.length <= 20 && /^\d(?:\.\d{1,15})?E\+?\d{1,3}$/.test(s)) { const n = Number(s); if (Number.isSafeInteger(n)) s = String(n); }
   s = s.replace(/^(\d+)\.0+$/, '$1');
   s = s.replace(/-{2,}/g, '-').replace(/^[-#.,:;'"`]+|[-#.,:;'"`]+$/g, '');
   if (/^\d{17}$/.test(s)) s = `${s.slice(0, 3)}-${s.slice(3, 10)}-${s.slice(10)}`;

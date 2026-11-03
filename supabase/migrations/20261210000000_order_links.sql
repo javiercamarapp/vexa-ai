@@ -12,12 +12,13 @@ begin
  s:=regexp_replace(s,'[​-‍﻿]','','g');
  s:=replace(s,E' ',' ');
  s:=regexp_replace(s,'[‐-―−﹣－]','-','g');
+ if s ~ '[^\x09-\x0d\x20-\x7e]' then return null; end if; -- solo ASCII (paridad con order-id.mjs)
  s:=regexp_replace(s,'^\s+|\s+$','','g');
  if s='' then return null; end if;
  s:=regexp_replace(s,'^(reference|ref)\s*\d*\s*[-:=]\s*','','i');
  s:=regexp_replace(s,'^(order\s*(id|number|no|num)?|pedido)\s*[:#]\s*','','i');
  s:=regexp_replace(upper(s),'\s+','','g');
- if s ~ '^\d(\.\d+)?E\+?\d+$' then
+ if length(s)<=20 and s ~ '^\d(\.\d{1,15})?E\+?\d{1,3}$' then
   if s::numeric=trunc(s::numeric) and s::numeric<9007199254740992 then s:=trunc(s::numeric)::text; end if;
  end if;
  s:=regexp_replace(s,'^(\d+)\.0+$','\1');
@@ -89,6 +90,15 @@ do $$ declare tab text; begin
   execute format('create policy backend_update on public.%I for update to vexa_backend using (tenant_id=nullif(current_setting(''vexa.tenant_id'',true),'''')::uuid and public.vexa_backend_action(tenant_id,array[''import''])) with check (tenant_id=nullif(current_setting(''vexa.tenant_id'',true),'''')::uuid and public.vexa_backend_action(tenant_id,array[''import'']))',tab);
  end loop;
 end $$;
+-- Retención: borrado acotado. Solo vexa_backend, solo filas de su tenant de sesión y solo con la acción 'retain' (la que exige rol owner),
+-- igual que el resto de tablas con retención (restrictive delete + vexa_backend_action 'retain', 0004_evidence_money.sql).
+do $$ declare tab text; begin
+ foreach tab in array array['order_shipments','ticket_order_refs'] loop
+  execute format('grant delete on public.%I to vexa_backend',tab);
+  execute format('drop policy if exists backend_delete on public.%I',tab);
+  execute format('create policy backend_delete on public.%I for delete to vexa_backend using (tenant_id=nullif(current_setting(''vexa.tenant_id'',true),'''')::uuid and public.vexa_backend_action(tenant_id,array[''retain'']))',tab);
+ end loop;
+end $$;
 grant update(updated_at,shipment_kind,ship_date,created_date,reason,sku,order_key,order_format,order_source,retailer,retailer_basis,row_hash) on public.order_shipments to vexa_backend;
 grant update(updated_at,order_key,retailer,purchase_date,sku,tool_family,country,contact_reason,row_hash) on public.ticket_order_refs to vexa_backend;
 
@@ -141,7 +151,10 @@ create or replace view public.order_ledger_keys with (security_invoker=true) as
 
 -- Cobertura por retailer, entidad y TIPO. Los envíos de Speedship son de garantía (postventa): la cobertura NUNCA es un % de ventas.
 -- La fila 'pedidos' (tipo venta) devuelve cobertura NULL siempre (sin denominador de ventas válido); envíos y tickets tienen denominador propio.
--- unknown != zero: sin_id (no trae ID válido o retailer) se separa de sin_ligar (trae ID y no tiene par); cobertura NULL sin denominador.
+-- unknown != zero: sin_id (no trae ID válido o retailer) se separa de sin_ligar (trae ID y no tiene par).
+-- denominador = total - sin_id (lo que sí podía ligarse); cobertura = ligados / denominador, y es NULL (nunca 0 %) si el retailer es 'unknown' o el denominador es 0.
+-- Rendimiento: semi-uniones por LEFT JOIN contra conjuntos DISTINTOS (tenant,retailer,llave); cada fila encuentra a lo más una pareja, así que no hay duplicados
+-- ni subconsultas correlacionadas (costo ~ N log N en lugar de N x M).
 create or replace view public.order_link_coverage with (security_invoker=true) as
 with o as (select tenant_id,entity_id,retailer r,order_key k from public.order_ledger_keys),
  ou as (select distinct on (tenant_id,r,coalesce(k,'#'||entity_id::text)) tenant_id,r,k from o order by tenant_id,r,coalesce(k,'#'||entity_id::text)),
@@ -152,20 +165,28 @@ with o as (select tenant_id,entity_id,retailer r,order_key k from public.order_l
  sk as (select distinct tenant_id,r,k from s where k is not null and r<>'unknown'),
  cand as (select tenant_id,k,count(distinct r) n from (select * from ok union select * from tk) x group by tenant_id,k),
  pedidos as (select ou.tenant_id,ou.r,'pedidos'::text entidad,'venta'::text tipo,count(*) total,
-   count(*) filter(where k is not null and r<>'unknown' and (exists(select 1 from tk where tk.tenant_id=ou.tenant_id and tk.r=ou.r and tk.k=ou.k) or exists(select 1 from sk where sk.tenant_id=ou.tenant_id and sk.r=ou.r and sk.k=ou.k))) ligados,
-   count(*) filter(where k is null or r='unknown') sin_id,
-   count(*) filter(where k is not null and r<>'unknown' and exists(select 1 from tk where tk.tenant_id=ou.tenant_id and tk.r=ou.r and tk.k=ou.k)) con_ticket,
-   count(*) filter(where k is not null and r<>'unknown' and exists(select 1 from sk where sk.tenant_id=ou.tenant_id and sk.r=ou.r and sk.k=ou.k)) con_envio,
-   null::bigint candidatos from ou group by ou.tenant_id,ou.r),
+   count(*) filter(where tk.k is not null or sk.k is not null) ligados,
+   count(*) filter(where ou.k is null or ou.r='unknown') sin_id,
+   count(tk.k) con_ticket,count(sk.k) con_envio,null::bigint candidatos
+  from ou left join tk on tk.tenant_id=ou.tenant_id and tk.r=ou.r and tk.k=ou.k
+   left join sk on sk.tenant_id=ou.tenant_id and sk.r=ou.r and sk.k=ou.k
+  group by ou.tenant_id,ou.r),
  tickets as (select t.tenant_id,t.r,'tickets'::text entidad,'ticket'::text tipo,count(*) total,
-   count(*) filter(where k is not null and r<>'unknown' and (exists(select 1 from ok where ok.tenant_id=t.tenant_id and ok.r=t.r and ok.k=t.k) or exists(select 1 from sk where sk.tenant_id=t.tenant_id and sk.r=t.r and sk.k=t.k))) ligados,
-   count(*) filter(where k is null or r='unknown') sin_id,null::bigint con_ticket,null::bigint con_envio,null::bigint candidatos from t group by t.tenant_id,t.r),
+   count(*) filter(where ok.k is not null or sk.k is not null) ligados,
+   count(*) filter(where t.k is null or t.r='unknown') sin_id,null::bigint con_ticket,null::bigint con_envio,null::bigint candidatos
+  from t left join ok on ok.tenant_id=t.tenant_id and ok.r=t.r and ok.k=t.k
+   left join sk on sk.tenant_id=t.tenant_id and sk.r=t.r and sk.k=t.k
+  group by t.tenant_id,t.r),
  envios as (select s.tenant_id,s.r,'envios'::text entidad,s.kind tipo,count(*) total,
-   count(*) filter(where k is not null and r<>'unknown' and (exists(select 1 from ok where ok.tenant_id=s.tenant_id and ok.r=s.r and ok.k=s.k) or exists(select 1 from tk where tk.tenant_id=s.tenant_id and tk.r=s.r and tk.k=s.k))) ligados,
-   count(*) filter(where k is null or r='unknown') sin_id,null::bigint con_ticket,null::bigint con_envio,
-   count(*) filter(where r='unknown' and k is not null and exists(select 1 from cand where cand.tenant_id=s.tenant_id and cand.k=s.k and cand.n=1)) candidatos from s group by s.tenant_id,s.r,s.kind)
-select tenant_id,r as retailer,entidad,tipo,total,ligados,sin_id,total-sin_id-ligados as sin_ligar,
- case when entidad='pedidos' then null else ligados::numeric/nullif(total,0) end as cobertura,con_ticket,con_envio,candidatos
+   count(*) filter(where ok.k is not null or tk.k is not null) ligados,
+   count(*) filter(where s.k is null or s.r='unknown') sin_id,null::bigint con_ticket,null::bigint con_envio,
+   count(*) filter(where s.r='unknown' and s.k is not null and cand.n=1) candidatos
+  from s left join ok on ok.tenant_id=s.tenant_id and ok.r=s.r and ok.k=s.k
+   left join tk on tk.tenant_id=s.tenant_id and tk.r=s.r and tk.k=s.k
+   left join cand on cand.tenant_id=s.tenant_id and cand.k=s.k
+  group by s.tenant_id,s.r,s.kind)
+select tenant_id,r as retailer,entidad,tipo,total,ligados,sin_id,total-sin_id-ligados as sin_ligar,total-sin_id as denominador,
+ case when entidad='pedidos' or r='unknown' or total-sin_id=0 then null else ligados::numeric/(total-sin_id) end as cobertura,con_ticket,con_envio,candidatos
 from (select * from pedidos union all select * from tickets union all select * from envios) u;
 revoke all on public.order_ledger_keys,public.order_link_coverage from public,anon,authenticated,service_role,vexa_backend;
 grant select on public.order_ledger_keys,public.order_link_coverage to vexa_backend;

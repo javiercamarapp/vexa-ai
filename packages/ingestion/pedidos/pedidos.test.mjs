@@ -13,6 +13,17 @@ test('normaliza formatos reales por retailer (sintéticos)', () => {
   assert.equal(normalizeOrderId('109012345678901.0'), '109012345678901');
   assert.equal(normalizeOrderId('1.2345678901E11'), '123456789010'); // sin «+»: así lo escribe Excel/Python
   assert.equal(normalizeOrderId('Order ID: #ABC-1234'), 'ABC-1234');
+  // Notación científica acotada (sin overflow del cast en SQL) y paridad solo-ASCII.
+  assert.equal(normalizeOrderId('8.99E15'), '8990000000000000');
+  assert.equal(normalizeOrderId('9.99E15'), null); // sobre 2^53: texto con «.», inválido
+  assert.equal(normalizeOrderId('1.5E+3'), '1500');
+  assert.equal(normalizeOrderId('1E999999'), '1E999999'); // exponente > 3 dígitos: no se convierte
+  assert.equal(normalizeOrderId('1E+20'), null); // sobre 2^53: queda como texto con «+», inválido
+  assert.equal(normalizeOrderId('1E999'), '1E999');
+  assert.equal(normalizeOrderId('1.00000000000000001E0'), null); // más de 15 decimales: no se convierte y el punto lo invalida
+  assert.equal(normalizeOrderId('Stra\u00dfe-1234'), null); // «ß» (upper difiere entre JS y Postgres)
+  assert.equal(normalizeOrderId('\u1680ABC-1234'), null);
+  assert.equal(normalizeOrderId('\uff21\uff22\uff23-1234'), 'ABC-1234'); // NFKC lleva fullwidth a ASCII
 });
 test('inválidos => null (sin ID, no cero)', () => {
   for (const v of [null, undefined, '', '  ', 'N/A', 'none', '0000', '-', 'ab', 'x'.repeat(41), 'A B!C']) assert.equal(normalizeOrderId(v), null, String(v));
@@ -51,6 +62,12 @@ test('archivo: CSV se lee; XLSX con tipo macroEnabled se rechaza (el parser no s
   assert.throws(() => parseShipments([H, []], {kind: 'otro'}), /INVALID_SHIPMENT_KIND/);
   assert.throws(() => parseShipmentsFile(Buffer.from('x'), 'a.txt'), /UNSUPPORTED_FILE_TYPE/);
 });
+test('Speedship: tracking o SKU que no cabe en el CHECK se rechaza por fila sin abortar el resto', () => {
+  const largo = '1Z' + 'A'.repeat(79), ok = '1Z' + 'B'.repeat(78), skuLargo = 'AB1-' + 'X'.repeat(60);
+  const r = parseShipments([H, ['UPS', '', largo, '', '', '', '', '', ''], ['UPS', '', ok, '', '', '', '', '', ''], ['UPS', '', 'T9', '', 'Reference 1 - Defective - ' + skuLargo, '', '', '', '']]);
+  assert.deepEqual(r.rejections, [{row: 2, code: 'TRACKING_TOO_LONG'}, {row: 4, code: 'SKU_TOO_LONG'}]);
+  assert.equal(r.shipments.length, 1); assert.equal(r.shipments[0].tracking.length, 80);
+});
 test('Reference 1 con motivo y SKU', () => {
   assert.deepEqual(parseReference1('Reference 1 - Defective SKU-L5'), {reason: 'Defective', sku: 'SKU-L5', orderLike: null});
   assert.equal(parseReference1('').reason, null);
@@ -73,9 +90,28 @@ test('cobertura: unión por (id, retailer), sin_id != 0, candidatos', () => {
   assert.equal(g('bestbuy', 'tickets').sin_ligar, 1);
   assert.equal(g('unknown', 'tickets').sin_id, 1); assert.equal(g('unknown', 'tickets').ligados, 0);
   assert.equal(g('unknown', 'envios').candidatos, 0); // llave bajo 3 retailers: ambigua
-  assert.equal(g('unknown', 'envios').cobertura, 0);
+  assert.equal(g('unknown', 'envios').cobertura, null); // retailer unknown: nunca 0 %
+  assert.equal(g('unknown', 'tickets').cobertura, null);
+  assert.equal(g('unknown', 'tickets').denominador, 0);
+  // denominador = total - sin_id: amazon tickets = t1 ligado (t3 sin id es unknown); bestbuy t2 con id sin par => 0/1
+  assert.equal(g('amazon', 'tickets').denominador, 1); assert.equal(g('amazon', 'tickets').cobertura, 1);
+  assert.equal(g('bestbuy', 'tickets').denominador, 1); assert.equal(g('bestbuy', 'tickets').cobertura, 0);
+  // sin_id no entra al denominador: 1 ligado + 1 sin id => 100 % de lo ligable, no 50 %
+  const m = linkCoverage({orders: [{entityId: 'a', retailer: 'amazon', orderKey: '111-1-1'}], tickets: [{ticketId: 't1', retailer: 'amazon', orderKey: '111-1-1'}, {ticketId: 't2', retailer: 'amazon', orderKey: null}], shipments: []});
+  const mt = m.find(x => x.retailer === 'amazon' && x.entidad === 'tickets'); assert.deepEqual([mt.total, mt.sin_id, mt.denominador, mt.cobertura], [2, 1, 1, 1]);
+  const sinDen = linkCoverage({tickets: [{ticketId: 't1', retailer: 'amazon', orderKey: null}]}).find(x => x.entidad === 'tickets'); assert.equal(sinDen.cobertura, null);
 });
 import {OrderLinksRepository, ticketRefRow} from './index.mjs';
+test('ticket: fechas válidas, epoch en ms a fecha UTC y fechas imposibles a null (no abortan el lote SQL)', () => {
+  const f = v => ticketRefRow({id: 5, properties: {order_id: '111-2222222-3333333', retailer: 'Amazon', date_of_purchase: v}}).purchase_date;
+  assert.equal(f('2025-03-09'), '2025-03-09');
+  assert.equal(f('2025-13-45'), null); assert.equal(f('2025-02-30'), null); assert.equal(f('13/45/2025'), null);
+  assert.equal(f('1700000000000'), '2023-11-14'); // epoch ms (HubSpot datetime)
+  assert.equal(f(1700000000000), '2023-11-14');
+  assert.equal(f('2023-11-14T22:13:20.000Z'), '2023-11-14');
+  assert.equal(f('99999999999999'), null); assert.equal(f(''), null); assert.equal(f(undefined), null);
+});
+
 test('repositorio: el tenant sale de la sesión y los lotes son <=250', async () => {
   const calls = [];
   const s = {tenantId: 'T-SYN', query: async (q, p) => { calls.push([q, p]); return {rows: [{r: {inserted: q.includes('_ingest') ? JSON.parse(p[0]).length : 0, updated: 0, unchanged: 0}}]}; }};

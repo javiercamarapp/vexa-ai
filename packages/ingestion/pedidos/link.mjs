@@ -1,10 +1,12 @@
 // Unión pedidos <-> tickets <-> envíos por (order_key, retailer) y cobertura. Oráculo puro en JS de las vistas SQL.
 // unknown != zero: lo que no trae ID válido es «sin_id»; lo que trae ID y no encuentra par es «sin_ligar»; la cobertura es null sin denominador.
 import {normalizeOrderId, normalizeRetailer} from './order-id.mjs';
+import {parseDateLoose} from './speedship.mjs';
 
 const PROPS = {orderId: ['order_id'], retailer: ['retailer'], purchaseDate: ['date_of_purchase'], sku: ['sku'], toolFamily: ['tool_family'], country: ['country'], contactReason: ['contact_reason']};
 const clean = (v, n = 120) => { const s = String(v ?? '').replace(/\s+/g, ' ').trim(); return s ? s.slice(0, n) : null; };
 
+// purchaseDate: fecha UTC válida (YYYY-MM-DD) o null; acepta ISO, m/d/aaaa y epoch en ms (HubSpot datetime).
 /** Extrae del payload de un ticket de HubSpot (objects/tickets) la referencia de pedido. Sin datos personales del cliente. */
 export function ticketOrderRef(payload) {
   const p = payload?.properties ?? {}, pick = k => PROPS[k].map(n => p[n]).find(v => v !== undefined && v !== null && v !== '');
@@ -12,15 +14,17 @@ export function ticketOrderRef(payload) {
   const orderKey = normalizeOrderId(pick('orderId'));
   return {
     ticketId: String(payload?.id ?? ''), orderKey, retailer: retailer ?? 'unknown',
-    purchaseDate: clean(pick('purchaseDate'), 10), sku: clean(pick('sku'), 60), toolFamily: clean(pick('toolFamily'), 60),
+    purchaseDate: parseDateLoose(pick('purchaseDate')), sku: clean(pick('sku'), 60), toolFamily: clean(pick('toolFamily'), 60),
     country: clean(pick('country'), 40), contactReason: clean(pick('contactReason'), 80),
   };
 }
 
 const keyOf = (r, k) => `${r}\u0000${k}`;
-const tally = (items, hasKey, matched) => {
-  const sinId = items.filter(i => !hasKey(i)).length, ligados = items.filter(i => hasKey(i) && matched(i)).length;
-  return {total: items.length, ligados, sin_id: sinId, sin_ligar: items.length - sinId - ligados, cobertura: items.length ? ligados / items.length : null};
+// denominador = total - sin_id: lo que no trae ID válido o retailer no puede ligarse y no entra al cociente.
+// Cobertura NULL (nunca 0 %) cuando el retailer es 'unknown' o el denominador es 0.
+const tally = (items, hasKey, matched, retailer) => {
+  const sinId = items.filter(i => !hasKey(i)).length, ligados = items.filter(i => hasKey(i) && matched(i)).length, den = items.length - sinId;
+  return {total: items.length, ligados, sin_id: sinId, sin_ligar: items.length - sinId - ligados, denominador: den, cobertura: retailer === 'unknown' || den === 0 ? null : ligados / den};
 };
 
 /**
@@ -42,9 +46,9 @@ export function linkCoverage({orders = [], tickets = [], shipments = []}) {
     const of = list => list.filter(x => (x.retailer || 'unknown') === r);
     const uniqOrders = [...new Map(of(orders).map(o => [o.orderKey ?? `__${o.entityId}`, o])).values()];
     const known = x => x.orderKey && r !== 'unknown';
-    rows.push({retailer: r, entidad: 'pedidos', tipo: 'venta', ...tally(uniqOrders, known, o => T.has(keyOf(r, o.orderKey)) || S.has(keyOf(r, o.orderKey))), cobertura: null, con_ticket: uniqOrders.filter(o => known(o) && T.has(keyOf(r, o.orderKey))).length, con_envio: uniqOrders.filter(o => known(o) && S.has(keyOf(r, o.orderKey))).length});
+    rows.push({retailer: r, entidad: 'pedidos', tipo: 'venta', ...tally(uniqOrders, known, o => T.has(keyOf(r, o.orderKey)) || S.has(keyOf(r, o.orderKey)), r), cobertura: null, con_ticket: uniqOrders.filter(o => known(o) && T.has(keyOf(r, o.orderKey))).length, con_envio: uniqOrders.filter(o => known(o) && S.has(keyOf(r, o.orderKey))).length});
     rows.push({retailer: r, entidad: 'tickets', tipo: 'ticket', ...tally(of(tickets), known, t => O.has(keyOf(r, t.orderKey)) || S.has(keyOf(r, t.orderKey)))});
-    for (const kind of ['garantia', 'venta']) { const mine = of(sh).filter(x => x.kind === kind); if (mine.length) rows.push({retailer: r, entidad: 'envios', tipo: kind, ...tally(mine, known, x => O.has(keyOf(r, x.orderKey)) || T.has(keyOf(r, x.orderKey))), candidatos: mine.filter(candidate).length}); }
+    for (const kind of ['garantia', 'venta']) { const mine = of(sh).filter(x => x.kind === kind); if (mine.length) rows.push({retailer: r, entidad: 'envios', tipo: kind, ...tally(mine, known, x => O.has(keyOf(r, x.orderKey)) || T.has(keyOf(r, x.orderKey)), r), candidatos: mine.filter(candidate).length}); }
   }
   return rows;
 }

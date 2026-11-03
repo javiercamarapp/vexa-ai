@@ -7,7 +7,7 @@ import {createHash} from 'node:crypto';
 const snake = x => ({carrier: x.carrier, tracking: x.tracking, shipment_kind: x.shipmentKind ?? 'garantia', ship_date: x.shipDate, created_date: x.createdDate, reason: x.reason, sku: x.sku, order_key: x.orderKey, order_format: x.orderFormat, order_source: x.orderSource, retailer: x.retailer, retailer_basis: x.retailerBasis, row_hash: x.rowHash});
 export const ticketRefRow = (payload) => {
   const r = ticketOrderRef(payload);
-  const row = {ticket_external_id: r.ticketId, order_key: r.orderKey, retailer: r.retailer, purchase_date: /^\d{4}-\d{2}-\d{2}$/.test(r.purchaseDate ?? '') ? r.purchaseDate : null, sku: r.sku, tool_family: r.toolFamily, country: r.country, contact_reason: r.contactReason};
+  const row = {ticket_external_id: r.ticketId, order_key: r.orderKey, retailer: r.retailer, purchase_date: r.purchaseDate, sku: r.sku, tool_family: r.toolFamily, country: r.country, contact_reason: r.contactReason};
   return {...row, row_hash: createHash('sha256').update(JSON.stringify(row)).digest('hex')};
 };
 export class OrderLinksRepository {
@@ -24,6 +24,6 @@ export class OrderLinksRepository {
   }
   /** Cobertura visible: ligados/total por retailer y entidad; cobertura NULL = sin denominador (nunca 0 %). */
   async coverage() {
-    return (await this.s.query('SELECT retailer,entidad,total,ligados,sin_id,sin_ligar,cobertura,con_ticket,con_envio,candidatos FROM public.order_link_coverage WHERE tenant_id=$1 ORDER BY retailer,entidad', [this.s.tenantId])).rows;
+    return (await this.s.query('SELECT retailer,entidad,tipo,total,ligados,sin_id,sin_ligar,denominador,cobertura,con_ticket,con_envio,candidatos FROM public.order_link_coverage WHERE tenant_id=$1 ORDER BY retailer,entidad', [this.s.tenantId])).rows;
   }
 }

@@ -12,12 +12,15 @@ const COLS = {
 };
 const norm = h => String(h ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
 const stripLabel = v => String(v ?? '').normalize('NFKC').trim().replace(/^reference\s*\d*\s*-\s*/i, '').trim();
+const TRACKING_MAX = 80, SKU_MAX = 60; // = CHECK de order_shipments (tracking <= 80, sku <= 60); lo que no cabe se rechaza por fila
 const SKU = /^(?=.*[A-Z])(?=.*\d)[A-Z0-9][A-Z0-9-]{2,}$/;
 
 export function parseDateLoose(raw) {
   if (raw === null || raw === undefined || raw === '') return null;
   const s = String(raw).trim();
   if (/^\d{5}(?:\.\d+)?$/.test(s)) { const n = Number(s); if (n > 36526 && n < 80000) return new Date(Date.UTC(1899, 11, 30) + Math.floor(n) * 864e5).toISOString().slice(0, 10); return null; }
+  // Epoch en milisegundos (HubSpot datetime): 12-13 dígitos, fecha UTC; fuera de 1990-2100 => null.
+  if (/^\d{12,13}$/.test(s)) { const d = new Date(Number(s)); const y = d.getUTCFullYear(); return y >= 1990 && y <= 2100 ? d.toISOString().slice(0, 10) : null; }
   let m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); if (m) return valid(+m[1], +m[2], +m[3]);
   m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s); if (m) return valid(+m[3], +m[1], +m[2]);
   return null;
@@ -77,12 +80,14 @@ export function parseShipments(rows, {kind = 'garantia'} = {}) {
     const get = k => (idx[k] >= 0 ? r[idx[k]] : null);
     const tracking = String(get('tracking') ?? '').replace(/\s+/g, '').toUpperCase();
     if (!tracking) { out.rejections.push({row: i + 2, code: 'TRACKING_MISSING'}); return; }
+    if (tracking.length > TRACKING_MAX) { out.rejections.push({row: i + 2, code: 'TRACKING_TOO_LONG'}); return; } // el CHECK de la tabla abortaría todo el lote
     const carrier = normalizeCarrier(get('carrier')) ?? 'desconocido';
     const dedup = `${carrier}|${tracking}`;
     if (seen.has(dedup)) { out.duplicates++; return; }
     const r1 = parseReference1(get('ref1'));
     let orderKey = normalizeOrderId(stripLabel(get('ref2'))), orderSource = orderKey ? 'reference_2' : null;
     if (!orderKey && r1.orderLike) { orderKey = r1.orderLike; orderSource = 'reference_1'; }
+    if (r1.sku && r1.sku.length > SKU_MAX) { out.rejections.push({row: i + 2, code: 'SKU_TOO_LONG'}); return; }
     const retailer = retailerFromFormat(orderKey);
     const s = {
       carrier, tracking, shipmentKind: kind, shipDate: parseDateLoose(get('shipDate')), createdDate: parseDateLoose(get('createdDate')),

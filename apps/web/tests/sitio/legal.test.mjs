@@ -9,6 +9,7 @@ import path from 'node:path';
 import { AVISO_DE_PRIVACIDAD, TERMINOS } from '../../src/content/sitio/paginas/legal.ts';
 import { contextoPorDefecto, datosLegalesDeEntorno, estadoPagina, publicar, hojas, marcadoresEn } from '../../src/lib/sitio/marcadores.mjs';
 import { SITE } from '../../src/lib/site.mjs';
+import { espejosLegalesSinVariables } from '../../../../tools/sitio/generar-md.mjs';
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 const APROB = JSON.parse(fs.readFileSync(path.join(aqui, '../../src/content/sitio/aprobaciones.json'), 'utf8'));
@@ -124,5 +125,23 @@ describe('contenido legal', () => {
     const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
     assert.match(es, /responsable/);
     assert.match(es, /encargado/);
+  });
+});
+
+describe('espejos .md legales (se comitean y se sirven estáticos)', () => {
+  const RUTAS = ['s/md/es/aviso-de-privacidad.0123abcd.md', 's/md/en/aviso-de-privacidad.0123abcd.md', 's/md/es/terminos.89abcdef.md', 's/md/en/terminos.89abcdef.md', 's/md/es/a1.ef87e5df.md', 's/md/es/estado.12345678.md'];
+  test('sin las tres variables, un espejo del aviso o de los términos se señala; los demás no', () => {
+    const sueltos = espejosLegalesSinVariables(RUTAS, {});
+    assert.equal(sueltos.length, 4);
+    assert.ok(sueltos.every((r) => /aviso-de-privacidad|terminos/.test(r)));
+    for (const falta of Object.keys(OK)) assert.equal(espejosLegalesSinVariables(RUTAS, { ...OK, [falta]: '' }).length, 4, `sin ${falta}`);
+  });
+  test('con las tres variables no se señala nada', () => {
+    assert.deepEqual(espejosLegalesSinVariables(RUTAS, OK), []);
+  });
+  test('el repositorio no trae espejos legales comiteados mientras las variables no estén fijadas', () => {
+    const dir = path.join(aqui, '../../public/s/md');
+    const rutas = ['es', 'en'].flatMap((l) => (fs.existsSync(path.join(dir, l)) ? fs.readdirSync(path.join(dir, l)).map((f) => `s/md/${l}/${f}`) : []));
+    assert.deepEqual(espejosLegalesSinVariables(rutas, {}), []);
   });
 });

@@ -20,6 +20,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { brotliCompressSync, constants as zc } from 'node:zlib';
 import { plantillaSecurityTxt } from '../../apps/web/config/sitio/agentic.mjs';
 import { RE_ENLACE } from '../../apps/web/src/lib/sitio/articulos.mjs';
+import { datosLegalesDeEntorno } from '../../apps/web/src/lib/sitio/marcadores.mjs';
 import { FECHA_CONTENIDO } from '../../apps/web/src/content/sitio/fecha-contenido.mjs';
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -354,6 +355,18 @@ function listarMd() {
   return rec(dir).map((p) => relative(PUB, p).split('\\').join('/'));
 }
 
+const ESPEJO_LEGAL = /^s\/md\/(?:es|en)\/(?:aviso-de-privacidad|terminos)\.[0-9a-f]{8}\.md$/;
+/**
+ * Espejos .md del Aviso de privacidad o de los Términos que existen en disco sin que el entorno traiga las tres VEXA_LEGAL_*.
+ * Los espejos se comitean y se sirven estáticos, así que un espejo sin las variables publicaría el texto con marcadores aunque
+ * la ruta HTML devuelva 404. Función pura: recibe la lista de rutas (relativas a public/) y el entorno.
+ */
+export function espejosLegalesSinVariables(rutas, env = process.env) {
+  const d = datosLegalesDeEntorno(env);
+  if (d.razonSocial && d.domicilio && d.correoPrivacidad) return [];
+  return rutas.filter((r) => ESPEJO_LEGAL.test(r));
+}
+
 async function main() {
   const args = new Set(process.argv.slice(2));
   if (args.has('--fechas')) {
@@ -375,6 +388,11 @@ async function main() {
   for (const ruta of listarMd()) if (!archivos.has(ruta)) diferencias.push(`${ruta} (sobra)`);
   if (readFileSync(MANIFEST, 'utf8') !== textoManifest) diferencias.push('s/manifest.json (sección md)');
   if (!archivos.has('.well-known/security.txt') && existsSync(join(PUB, '.well-known', 'security.txt'))) diferencias.push('.well-known/security.txt (no debe publicarse sin buzón y fecha)');
+  const legalesSueltos = espejosLegalesSinVariables(listarMd());
+  if (args.has('--verificar') && legalesSueltos.length) {
+    console.error(`Hay espejos legales comiteados y faltan VEXA_LEGAL_ENTIDAD, VEXA_LEGAL_DOMICILIO o VEXA_LEGAL_CORREO en el entorno:\n  ${legalesSueltos.join('\n  ')}\nLos espejos se sirven estáticos aunque la página HTML no se publique: quitarlos (node tools/sitio/generar-md.mjs sin las variables) o fijar las tres variables (ver docs/legal/COMO-PUBLICAR.md).`);
+    process.exit(1);
+  }
   if (args.has('--verificar')) {
     if (diferencias.length) { console.error(`Desfasado respecto al contenido:\n  ${diferencias.join('\n  ')}\nCorrer: node tools/sitio/generar-md.mjs`); process.exit(1); }
     console.log(`OK: ${archivos.size} archivos al día.`);

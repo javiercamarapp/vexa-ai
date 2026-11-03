@@ -13,7 +13,7 @@ import { espejosLegalesSinVariables } from '../../../../tools/sitio/generar-md.m
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 const APROB = JSON.parse(fs.readFileSync(path.join(aqui, '../../src/content/sitio/aprobaciones.json'), 'utf8'));
-const OK = { VEXA_LEGAL_ENTIDAD: 'Ejemplo Servicios SA de CV', VEXA_LEGAL_DOMICILIO: 'Calle Ejemplo 123, Colonia Centro, Ciudad de México', VEXA_LEGAL_CORREO: 'privacidad@ejemplo.test' };
+const OK = { VEXA_LEGAL_ENTIDAD: 'Servicios Sintéticos SA de CV', VEXA_LEGAL_DOMICILIO: 'Calle Sintética 123, Colonia Centro, Ciudad de México', VEXA_LEGAL_CORREO: 'privacidad@proveedor-sintetico.mx' };
 const ctx = (env) => contextoPorDefecto(SITE, env);
 const estado = (pagina, env) => estadoPagina(pagina, { aprobaciones: APROB, ctx: ctx(env), tipo: 'legal' });
 const PAGINAS = [AVISO_DE_PRIVACIDAD, TERMINOS];
@@ -29,6 +29,27 @@ describe('datos legales desde el entorno', () => {
       const d = datosLegalesDeEntorno({ ...OK, [k]: malo });
       assert.equal(Object.values(d).filter((v) => v === null).length, 1, `${k}=${JSON.stringify(malo)}`);
     }
+  });
+
+  test('el relleno no cuenta: TBD, N/A, xxx, «Pendiente..», «por definir», ejemplo, test, a@b.cc y dominios reservados', () => {
+    const malos = [['VEXA_LEGAL_ENTIDAD', 'TBD'], ['VEXA_LEGAL_ENTIDAD', 'N/A'], ['VEXA_LEGAL_ENTIDAD', 'xxx'], ['VEXA_LEGAL_ENTIDAD', 'Pendiente..'], ['VEXA_LEGAL_ENTIDAD', 'Por definir'], ['VEXA_LEGAL_ENTIDAD', 'Ejemplo'], ['VEXA_LEGAL_ENTIDAD', 'test'], ['VEXA_LEGAL_ENTIDAD', 'xxxxxx'],
+      ['VEXA_LEGAL_DOMICILIO', 'Pendiente de confirmar'], ['VEXA_LEGAL_DOMICILIO', 'por definir...'], ['VEXA_LEGAL_DOMICILIO', 'XXXXXXXXXXXX'], ['VEXA_LEGAL_DOMICILIO', 'Domiciliox'], ['VEXA_LEGAL_DOMICILIO', 'Domiciliodesconocido'],
+      ['VEXA_LEGAL_CORREO', 'a@b.cc'], ['VEXA_LEGAL_CORREO', 'xxx@xxx.com'], ['VEXA_LEGAL_CORREO', 'test@test.com'], ['VEXA_LEGAL_CORREO', 'privacidad@example.com'], ['VEXA_LEGAL_CORREO', 'privacidad@empresa.test'], ['VEXA_LEGAL_CORREO', 'privacidad@localhost'], ['VEXA_LEGAL_CORREO', 'privacidad@empresa.c'], ['VEXA_LEGAL_CORREO', 'privacidad@empresa.123'], ['VEXA_LEGAL_CORREO', 'privacidad@x.mx'], ['VEXA_LEGAL_CORREO', 'privacidad@.mx'], ['VEXA_LEGAL_CORREO', 'a@empresa.mx'], ['VEXA_LEGAL_CORREO', 'tbd@empresa.mx'], ['VEXA_LEGAL_CORREO', 'TBD'], ['VEXA_LEGAL_CORREO', 'n/a']];
+    for (const [k, malo] of malos) {
+      const d = datosLegalesDeEntorno({ ...OK, [k]: malo });
+      assert.equal(Object.values(d).filter((v) => v === null).length, 1, `${k}=${JSON.stringify(malo)}`);
+    }
+  });
+
+  test('domicilio: basta un dígito o dos palabras; una sola palabra larga no', () => {
+    assert.equal(datosLegalesDeEntorno({ ...OK, VEXA_LEGAL_DOMICILIO: 'Avenida Principal Oriente' }).domicilio, 'Avenida Principal Oriente');
+    assert.equal(datosLegalesDeEntorno({ ...OK, VEXA_LEGAL_DOMICILIO: 'Paseo 1234567890' }).domicilio, 'Paseo 1234567890');
+    assert.equal(datosLegalesDeEntorno({ ...OK, VEXA_LEGAL_DOMICILIO: 'Avenidaprincipaloriente' }).domicilio, null);
+  });
+
+  test('datos verosímiles de empresas reales con nombres cortos sí pasan', () => {
+    const d = datosLegalesDeEntorno({ VEXA_LEGAL_ENTIDAD: 'Acme SA de CV', VEXA_LEGAL_DOMICILIO: 'Av. Reforma 222, Piso 3, CDMX', VEXA_LEGAL_CORREO: 'privacidad@acme.com.mx' });
+    assert.deepEqual(Object.values(d).map((v) => v !== null), [true, true, true]);
   });
 
   test('el contexto por defecto del proceso no trae datos legales inventados', () => {
@@ -143,5 +164,33 @@ describe('espejos .md legales (se comitean y se sirven estáticos)', () => {
     const dir = path.join(aqui, '../../public/s/md');
     const rutas = ['es', 'en'].flatMap((l) => (fs.existsSync(path.join(dir, l)) ? fs.readdirSync(path.join(dir, l)).map((f) => `s/md/${l}/${f}`) : []));
     assert.deepEqual(espejosLegalesSinVariables(rutas, {}), []);
+  });
+});
+
+describe('las variables VEXA_LEGAL_* solo se leen en el servidor', () => {
+  // shell/datos.ts calcula con process.env (vía contextoPorDefecto) qué páginas legales se publican. Un componente de cliente que lo importe
+  // lo evaluaría en el navegador, sin las variables, y mostraría un estado distinto del servidor. Cabecera y pie son componentes de servidor.
+  const raiz = path.join(aqui, '../../src');
+  const archivos = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? archivos(path.join(d, e.name)) : [path.join(d, e.name)]));
+  const fuentes = archivos(raiz).filter((f) => /\.(tsx?|mjs)$/.test(f)).map((f) => [path.relative(raiz, f), fs.readFileSync(f, 'utf8')]);
+  const esCliente = (t) => /^\s*(?:\/\/[^\n]*\n|\/\*[\s\S]*?\*\/\s*)*['"]use client['"]/.test(t);
+  const lee = (t) => /shell\/datos['"]|from ['"]\.\/datos['"]|lib\/sitio\/marcadores/.test(t);
+
+  test('ningún componente de cliente importa shell/datos ni marcadores', () => {
+    const malos = fuentes.filter(([, t]) => esCliente(t) && lee(t)).map(([f]) => f);
+    assert.deepEqual(malos, []);
+  });
+
+  test('la cabecera y el pie del sitio son componentes de servidor', () => {
+    for (const f of ['components/sitio/shell/cabecera.tsx', 'components/sitio/shell/pie.tsx', 'components/sitio/shell/marco.tsx']) {
+      const t = fuentes.find(([r]) => r === f)?.[1];
+      assert.ok(t, f);
+      assert.equal(esCliente(t), false, f);
+    }
+  });
+
+  test('process.env.VEXA_LEGAL_* se lee solo en marcadores.mjs y el contexto del servidor, nunca en un componente de cliente', () => {
+    const malos = fuentes.filter(([, t]) => esCliente(t) && /VEXA_LEGAL_/.test(t)).map(([f]) => f);
+    assert.deepEqual(malos, []);
   });
 });

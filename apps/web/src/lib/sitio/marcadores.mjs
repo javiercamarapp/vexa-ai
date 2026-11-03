@@ -26,21 +26,44 @@ export const MARCADORES = Object.freeze({
   correoPrivacidad: ['[CORREO_DE_PRIVACIDAD]', '[PRIVACY_EMAIL]'],
 });
 
+// Valores de relleno que alguien podría poner en una variable para «salir del paso»: no cuentan como dato (falla cerrado).
+const RELLENO = new Set(['tbd', 'tba', 'n/a', 'na', 'n.a', 'none', 'null', 'nil', 'xxx', 'xxxx', 'xx', 'x', 'ejemplo', 'example', 'test', 'prueba', 'todo', 'pendiente', 'pending', 'placeholder', 'default', 'lorem ipsum', 'por definir', 'por confirmar', 'por determinar', 'sin dato', 'sin datos', 'sin nombre', 'nombre', 'empresa', 'company', 'domicilio', 'address', 'correo', 'email', 'mail', 'usuario', 'user', 'dominio', 'domain', 'aqui', 'aquí']);
+const claveRelleno = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[\s.\-_!?*,;:]+$/g, '').replace(/^[\s.\-_!?*,;:]+/g, '').replace(/\s+/g, ' ');
+const esRelleno = (t) => {
+  const k = claveRelleno(t), compacto = k.replace(/[\s.\-_/]/g, '');
+  return k === '' || RELLENO.has(k) || /^(?:pendiente|por (?:definir|confirmar|determinar)|tbd|n\/?a)(?:\s|$)/.test(k) || /^(.)\1{2,}$/.test(compacto);
+};
+const DOMINIOS_RESERVADOS = new Set(['example.com', 'example.org', 'example.net']);
+const TLD_RESERVADOS = new Set(['test', 'invalid', 'localhost', 'example', 'local']);
+/** Correo con forma de dirección real: parte local de 2 o más caracteres, dominio con punto, etiqueta de dominio de 2 o más y TLD alfabético de 2 o más; sin relleno ni dominios reservados. */
+function correoReal(t) {
+  const m = /^([^\s@]+)@([^\s@]+)$/.exec(t);
+  if (!m) return false;
+  const [, local, dominio] = m, etiquetas = dominio.toLowerCase().split('.');
+  if (etiquetas.length < 2 || etiquetas.some((e) => !/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(e))) return false;
+  const tld = etiquetas.at(-1), sld = etiquetas.at(-2);
+  if (!/^[a-z]{2,}$/.test(tld) || sld.length < 2 || local.length < 2) return false;
+  if (TLD_RESERVADOS.has(tld) || DOMINIOS_RESERVADOS.has(etiquetas.slice(-2).join('.'))) return false;
+  return !esRelleno(local) && !esRelleno(sld);
+}
+
 /**
  * Datos legales que solo el responsable puede dar: VEXA_LEGAL_ENTIDAD, VEXA_LEGAL_DOMICILIO y VEXA_LEGAL_CORREO.
- * Se leen al construir el sitio. Un valor vacío, con corchetes o con salto de línea no cuenta como dato (falla cerrado);
- * el correo debe tener forma de dirección. Sin los tres, el Aviso de privacidad y los Términos no se publican.
+ * Se leen al construir el sitio. Un valor vacío, con corchetes, con salto de línea o de relleno (TBD, N/A, xxx, «Pendiente...», «por definir»,
+ * ejemplo, test) no cuenta como dato (falla cerrado); el correo debe ser una dirección verosímil (dominio con punto, TLD de 2 o más letras,
+ * sin dominios reservados) y el domicilio debe traer al menos un dígito o dos palabras. Sin los tres, el Aviso de privacidad y los Términos no se publican.
  */
 export function datosLegalesDeEntorno(env = process.env) {
   const limpio = (v, min) => {
     const t = typeof v === 'string' ? v.trim() : '';
-    return t.length >= min && !/[\[\]\r\n<>]/.test(t) ? t : null;
+    return t.length >= min && !/[\[\]\r\n<>]/.test(t) && !esRelleno(t) ? t : null;
   };
   const correo = limpio(env?.VEXA_LEGAL_CORREO, 6);
+  const domicilio = limpio(env?.VEXA_LEGAL_DOMICILIO, 10);
   return {
     razonSocial: limpio(env?.VEXA_LEGAL_ENTIDAD, 3),
-    domicilio: limpio(env?.VEXA_LEGAL_DOMICILIO, 10),
-    correoPrivacidad: correo && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo) ? correo : null,
+    domicilio: domicilio && (/\d/.test(domicilio) || domicilio.split(/\s+/).filter((w) => /\p{L}/u.test(w)).length >= 2) ? domicilio : null,
+    correoPrivacidad: correo && correoReal(correo) ? correo : null,
   };
 }
 

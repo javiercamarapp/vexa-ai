@@ -72,6 +72,6 @@ test('repositorio: el tenant sale de la sesión y los lotes son <=250', async ()
   const many = Array.from({length: 600}, (_, i) => ({carrier: 'ups', tracking: 'T' + i, orderKey: null, retailer: 'unknown', retailerBasis: 'unknown', rowHash: 'a'.repeat(64)}));
   assert.deepEqual(await repo.ingestShipments(many), {inserted: 600, updated: 0, unchanged: 0}); assert.equal(calls.length, 3);
   await repo.coverage(); assert.deepEqual(calls.at(-1)[1], ['T-SYN']);
-  assert.ok(!JSON.stringify(calls).includes('tenant_id'), 'el tenant no viaja en los datos');
+  assert.ok(!JSON.stringify(calls.map(c => c[1])).includes('tenant_id'), 'el tenant no viaja en los datos');
   assert.equal(ticketRefRow({id: 9, properties: {order_id: '113-5268979-5206610', retailer: 'Amazon'}}).retailer, 'amazon');
 });

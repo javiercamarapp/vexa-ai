@@ -22,11 +22,31 @@ export const MARCADORES = Object.freeze({
   seguridad: ['[CORREO_DE_SEGURIDAD]', '[SECURITY_EMAIL]'],
   fechaRevision: ['[FECHA_DE_REVISION]', '[REVIEW_DATE]'],
   razonSocial: ['[RAZON_SOCIAL]', '[LEGAL_NAME]'],
+  domicilio: ['[DOMICILIO]', '[ADDRESS]'],
+  correoPrivacidad: ['[CORREO_DE_PRIVACIDAD]', '[PRIVACY_EMAIL]'],
 });
 
-/** Contexto de resolución del build. Solo el contacto está resuelto: lo demás se llena cuando exista y se haya decidido. */
-export function contextoPorDefecto(sitio = SITE) {
-  return { contacto: sitio.contacto, seguridad: null, fechaRevision: null, razonSocial: null };
+/**
+ * Datos legales que solo el responsable puede dar: VEXA_LEGAL_ENTIDAD, VEXA_LEGAL_DOMICILIO y VEXA_LEGAL_CORREO.
+ * Se leen al construir el sitio. Un valor vacío, con corchetes o con salto de línea no cuenta como dato (falla cerrado);
+ * el correo debe tener forma de dirección. Sin los tres, el Aviso de privacidad y los Términos no se publican.
+ */
+export function datosLegalesDeEntorno(env = process.env) {
+  const limpio = (v, min) => {
+    const t = typeof v === 'string' ? v.trim() : '';
+    return t.length >= min && !/[\[\]\r\n<>]/.test(t) ? t : null;
+  };
+  const correo = limpio(env?.VEXA_LEGAL_CORREO, 6);
+  return {
+    razonSocial: limpio(env?.VEXA_LEGAL_ENTIDAD, 3),
+    domicilio: limpio(env?.VEXA_LEGAL_DOMICILIO, 10),
+    correoPrivacidad: correo && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo) ? correo : null,
+  };
+}
+
+/** Contexto de resolución del build. El contacto sale de SITE; razón social, domicilio y correo de privacidad, de VEXA_LEGAL_*; lo demás sigue sin resolver. */
+export function contextoPorDefecto(sitio = SITE, env = process.env) {
+  return { contacto: sitio.contacto, seguridad: null, fechaRevision: null, ...datosLegalesDeEntorno(env) };
 }
 
 /** Marcadores entre corchetes presentes en un texto, sin repetir. */

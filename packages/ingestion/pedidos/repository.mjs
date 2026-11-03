@@ -18,8 +18,9 @@ export class OrderLinksRepository {
     return total;
   }
   async ingestTicketRefs(ticketPayloads) {
-    const rows = ticketPayloads.map(ticketRefRow).filter(r => r.ticket_external_id), total = {inserted: 0, updated: 0, unchanged: 0};
-    for (let i = 0; i < rows.length; i += 250) { const r = (await this.s.query('SELECT public.ticket_order_refs_ingest($1::jsonb) AS r', [JSON.stringify(rows.slice(i, i + 250))])).rows[0].r; for (const k of Object.keys(total)) total[k] += r[k]; }
+    const rows = [], rejections = [], total = {inserted: 0, updated: 0, unchanged: 0, rejections};
+    ticketPayloads.forEach((p, i) => { const code = ticketOrderRef(p).rejection; if (code) rejections.push({row: i + 1, code}); else rows.push(ticketRefRow(p)); });
+    for (let i = 0; i < rows.length; i += 250) { const r = (await this.s.query('SELECT public.ticket_order_refs_ingest($1::jsonb) AS r', [JSON.stringify(rows.slice(i, i + 250))])).rows[0].r; for (const k of ['inserted', 'updated', 'unchanged']) total[k] += r[k]; }
     return total;
   }
   /** Cobertura visible: ligados/total por retailer y entidad; cobertura NULL = sin denominador (nunca 0 %). */

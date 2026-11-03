@@ -122,3 +122,28 @@ test('repositorio: el tenant sale de la sesión y los lotes son <=250', async ()
   assert.ok(!JSON.stringify(calls.map(c => c[1])).includes('tenant_id'), 'el tenant no viaja en los datos');
   assert.equal(ticketRefRow({id: 9, properties: {order_id: '111-2222222-3333333', retailer: 'Amazon'}}).retailer, 'amazon');
 });
+test('NUL y controles C0 se eliminan (tracking, SKU, campos de ticket); tab y espacio se conservan colapsados', () => {
+  const NUL = String.fromCharCode(0), BEL = String.fromCharCode(7);
+  const hdr = ['Carrier', 'PRO/Tracking#', 'Reference 1', 'Reference 2'];
+  const out = parseShipments([hdr, ['UPS', `1Z${NUL}99${BEL}AA`, `Reference 1 - Defec${NUL}tive - SKU${NUL}-L5`, '113-1234567-1234567']]);
+  assert.equal(out.shipments[0].tracking, '1Z99AA');
+  assert.ok(!JSON.stringify(out.shipments).includes('\\u0000') && !JSON.stringify(out.shipments).includes('\\u0007'));
+  const t = ticketOrderRef({id: `9${NUL}1`, properties: {sku: `S${NUL}1\tX`, country: `M${BEL}X`, contact_reason: `a${NUL}b`}});
+  assert.equal(t.ticketId, '9 1'); // el NUL pasa a separador
+  assert.equal(t.sku, 'S 1 X'); assert.equal(t.country, 'M X'); assert.equal(t.contactReason, 'a b');
+  assert.ok(!JSON.stringify(t).includes('\\u0000'));
+});
+test('ticketOrderRef: ticket_external_id vacío o > 1024 se rechaza por fila', () => {
+  assert.equal(ticketOrderRef({id: 5, properties: {}}).rejection, null);
+  assert.equal(ticketOrderRef({id: '1'.repeat(1024), properties: {}}).rejection, null);
+  assert.equal(ticketOrderRef({id: '1'.repeat(1025), properties: {}}).rejection, 'TICKET_ID_TOO_LONG');
+  for (const id of [undefined, null, '', '   ', String.fromCharCode(0)]) assert.equal(ticketOrderRef({id, properties: {}}).rejection, 'TICKET_ID_MISSING');
+});
+test('ingestTicketRefs reporta rejections por fila y no envía las rechazadas', async () => {
+  const {OrderLinksRepository} = await import('./repository.mjs');
+  const sent = [];
+  const repo = new OrderLinksRepository({query: async (_q, [j]) => { const rows = JSON.parse(j); sent.push(...rows); return {rows: [{r: {inserted: rows.length, updated: 0, unchanged: 0}}]}; }});
+  const r = await repo.ingestTicketRefs([{id: 1, properties: {}}, {id: '', properties: {}}, {id: 'x'.repeat(1025), properties: {}}, {id: 2, properties: {}}]);
+  assert.equal(r.inserted, 2); assert.deepEqual(r.rejections, [{row: 2, code: 'TICKET_ID_MISSING'}, {row: 3, code: 'TICKET_ID_TOO_LONG'}]);
+  assert.deepEqual(sent.map(x => x.ticket_external_id), ['1', '2']);
+});

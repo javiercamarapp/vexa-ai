@@ -1,10 +1,11 @@
 // Unión pedidos <-> tickets <-> envíos por (order_key, retailer) y cobertura. Oráculo puro en JS de las vistas SQL.
 // unknown != zero: lo que no trae ID válido es «sin_id»; lo que trae ID y no encuentra par es «sin_ligar»; la cobertura es null sin denominador.
 import {normalizeOrderId, normalizeRetailer} from './order-id.mjs';
-import {parseDateLoose} from './speedship.mjs';
+import {parseDateLoose, stripControls} from './speedship.mjs';
 
+export const TICKET_ID_MAX = 1024; // = CHECK de ticket_order_refs.ticket_external_id (1..1024); fuera de rango se rechaza por fila
 const PROPS = {orderId: ['order_id'], retailer: ['retailer'], purchaseDate: ['date_of_purchase'], sku: ['sku'], toolFamily: ['tool_family'], country: ['country'], contactReason: ['contact_reason']};
-const clean = (v, n = 120) => { const s = String(v ?? '').replace(/\s+/g, ' ').trim(); return s ? s.slice(0, n) : null; };
+const clean = (v, n = 120) => { const s = stripControls(v).replace(/\s+/g, ' ').trim(); return s ? s.slice(0, n) : null; };
 
 // purchaseDate: fecha UTC válida (YYYY-MM-DD) o null; acepta ISO, m/d/aaaa y epoch en ms (HubSpot datetime).
 /** Extrae del payload de un ticket de HubSpot (objects/tickets) la referencia de pedido. Sin datos personales del cliente. */
@@ -12,8 +13,9 @@ export function ticketOrderRef(payload) {
   const p = payload?.properties ?? {}, pick = k => PROPS[k].map(n => p[n]).find(v => v !== undefined && v !== null && v !== '');
   const retailer = normalizeRetailer(pick('retailer'));
   const orderKey = normalizeOrderId(pick('orderId'));
+  const ticketId = stripControls(payload?.id).trim();
   return {
-    ticketId: String(payload?.id ?? ''), orderKey, retailer: retailer ?? 'unknown',
+    ticketId, rejection: ticketId === '' ? 'TICKET_ID_MISSING' : ticketId.length > TICKET_ID_MAX ? 'TICKET_ID_TOO_LONG' : null, orderKey, retailer: retailer ?? 'unknown',
     purchaseDate: parseDateLoose(pick('purchaseDate')), sku: clean(pick('sku'), 60), toolFamily: clean(pick('toolFamily'), 60),
     country: clean(pick('country'), 40), contactReason: clean(pick('contactReason'), 80),
   };

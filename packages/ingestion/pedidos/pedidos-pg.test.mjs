@@ -32,7 +32,7 @@ test('order_links: paridad, cobertura, aislamiento y negativas', {skip: SKIP, ti
     assert.equal(h.file(MIGF).status, 0, 'idempotente');
 
     await t.test('paridad SQL-JS del normalizador', () => {
-      const vectores = ['113-5268979-5206610', ' 113–5268979–5206610 ', 'Reference 2 - 113-5268979-5206610', '1135268979 5206610', '261962365-a', 'Reference 2 - wn56823848', 'WH28882973', '109012345678901.0', '1.09012345678901E+14', 'Order ID: #abc-1234', 'N/A', 'none', '0000', '-', 'ab', 'A B!C', '--ABC--123--', '', '  '];
+      const vectores = ['113-5268979-5206610', ' 113–5268979–5206610 ', 'Reference 2 - 113-5268979-5206610', '1135268979 5206610', '261962365-a', 'Reference 2 - wn56823848', 'WH28882973', '109012345678901.0', '1.09012345678901E+14', '1.2345678901E11', 'Order ID: #abc-1234', 'N/A', 'none', '0000', '-', 'ab', 'A B!C', '--ABC--123--', '', '  '];
       for (const v of vectores) {
         const r = h.psql(`select coalesce(public.order_id_normalize($q$${v}$q$),'<null>')`); assert.ok(r.ok, r.err);
         assert.equal(r.out, normalizeOrderId(v) ?? '<null>', JSON.stringify(v));

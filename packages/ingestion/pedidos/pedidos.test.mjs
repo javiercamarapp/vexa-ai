@@ -11,6 +11,7 @@ test('normaliza formatos reales por retailer (sintéticos)', () => {
   assert.equal(normalizeOrderId('Reference 2 - wn56823848'), 'WN56823848');
   assert.equal(normalizeOrderId('WH28882973 '), 'WH28882973');
   assert.equal(normalizeOrderId('109012345678901.0'), '109012345678901');
+  assert.equal(normalizeOrderId('1.2345678901E11'), '123456789010'); // sin «+»: así lo escribe Excel/Python
   assert.equal(normalizeOrderId('Order ID: #ABC-1234'), 'ABC-1234');
 });
 test('inválidos => null (sin ID, no cero)', () => {

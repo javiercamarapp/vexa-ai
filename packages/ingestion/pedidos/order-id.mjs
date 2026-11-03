@@ -19,7 +19,7 @@ export function normalizeOrderId(raw) {
   s = s.replace(/^(?:reference|ref)\s*\d*\s*[-:=]\s*/i, '');
   s = s.replace(/^(?:order\s*(?:id|number|no|num)?|pedido)\s*[:#]\s*/i, '');
   s = s.toUpperCase().replace(/\s+/g, '');
-  if (/^\d(?:\.\d+)?E\+\d+$/.test(s)) { const n = Number(s); if (Number.isSafeInteger(n)) s = String(n); }
+  if (/^\d(?:\.\d+)?E\+?\d+$/.test(s)) { const n = Number(s); if (Number.isSafeInteger(n)) s = String(n); }
   s = s.replace(/^(\d+)\.0+$/, '$1');
   s = s.replace(/-{2,}/g, '-').replace(/^[-#.,:;'"`]+|[-#.,:;'"`]+$/g, '');
   if (/^\d{17}$/.test(s)) s = `${s.slice(0, 3)}-${s.slice(3, 10)}-${s.slice(10)}`;

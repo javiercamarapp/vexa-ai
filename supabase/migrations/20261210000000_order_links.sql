@@ -17,7 +17,7 @@ begin
  s:=regexp_replace(s,'^(reference|ref)\s*\d*\s*[-:=]\s*','','i');
  s:=regexp_replace(s,'^(order\s*(id|number|no|num)?|pedido)\s*[:#]\s*','','i');
  s:=regexp_replace(upper(s),'\s+','','g');
- if s ~ '^\d(\.\d+)?E\+\d+$' then
+ if s ~ '^\d(\.\d+)?E\+?\d+$' then
   if s::numeric=trunc(s::numeric) and s::numeric<9007199254740992 then s:=trunc(s::numeric)::text; end if;
  end if;
  s:=regexp_replace(s,'^(\d+)\.0+$','\1');

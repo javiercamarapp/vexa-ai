@@ -414,6 +414,12 @@
         "\\bcompliance\\b",
         "\\bcompliant\\b",
         "conforme a"
+      ],
+      "excepciones": [
+        {
+          "ruta": "^paginas\\.(aviso-de-privacidad|terminos)\\.",
+          "motivo": "El Aviso de privacidad debe nombrar la ley aplicable; la afirmación 28 protege el texto comercial, no el texto legal."
+        }
       ]
     },
     {

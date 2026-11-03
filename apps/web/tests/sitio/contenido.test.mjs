@@ -241,7 +241,7 @@ describe('paridad entre español e inglés', () => {
 
   test('cada hoja conserva las mismas cifras y los mismos marcadores en los dos idiomas', () => {
     const malas = [];
-    const marcadoresEquivalentes = (t) => marcadoresEn(t).map((x) => x.replace(/^\[(CORREO_DE_CONTACTO|CONTACT_EMAIL)\]$/, '[C]').replace(/^\[(CORREO_DE_SEGURIDAD|SECURITY_EMAIL)\]$/, '[S]').replace(/^\[(FECHA_DE_REVISION|REVIEW_DATE)\]$/, '[F]').replace(/^\[(RAZON_SOCIAL|LEGAL_NAME)\]$/, '[R]'));
+    const marcadoresEquivalentes = (t) => marcadoresEn(t).map((x) => x.replace(/^\[(CORREO_DE_CONTACTO|CONTACT_EMAIL)\]$/, '[C]').replace(/^\[(CORREO_DE_SEGURIDAD|SECURITY_EMAIL)\]$/, '[S]').replace(/^\[(FECHA_DE_REVISION|REVIEW_DATE)\]$/, '[F]').replace(/^\[(RAZON_SOCIAL|LEGAL_NAME)\]$/, '[R]').replace(/^\[(DOMICILIO|ADDRESS)\]$/, '[D]').replace(/^\[(CORREO_DE_PRIVACIDAD|PRIVACY_EMAIL)\]$/, '[P]'));
     for (const { ruta, hoja } of todasLasHojas()) {
       if (/(^|\.)(href|hrefReportar|hrefTodas|hrefRuta)$/.test(ruta) || /\.href$/.test(ruta)) continue;
       const cifras = (t) => (t.match(/\d[\d,.]*/g) ?? []).map((x) => x.replace(/[,.]$/, '')).sort().join('|');
@@ -652,11 +652,11 @@ describe('títulos de pestaña y descripciones', () => {
 
 // ------------------------------------------------------------------ 8. páginas internas
 describe('páginas internas', () => {
-  test('hay treinta y una páginas con identificador único y los ids del mapa (veintiuna del sitio, Estado, el índice del blog y los artículos a1 a a8)', () => {
+  test('hay treinta y tres páginas con identificador único y los ids del mapa (veintiuna del sitio, Estado, el índice del blog, los artículos a1 a a8 y las dos legales)', () => {
     const ids = PAGINAS_INTERNAS.map((p) => p.id);
-    assert.equal(ids.length, 31);
-    assert.equal(new Set(ids).size, 31);
-    for (const esperado of ['estado', 'blog', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'producto', 'producto/hoy', 'producto/fuga-de-reembolsos', 'producto/problemas', 'producto/puntos-de-dolor', 'producto/pregunta-a-tus-datos', 'producto/por-decidir', 'producto/carga-y-sla', 'producto/confianza-de-los-datos', 'producto/fuentes-e-importaciones', 'producto/finanzas', 'casos-de-uso', 'casos-de-uso/propietario', 'casos-de-uso/analista', 'casos-de-uso/operador', 'casos-de-uso/lector', 'seguridad-y-privacidad', 'integraciones', 'hoja-de-ruta', 'acerca', 'solicitar-acceso']) assert.ok(ids.includes(esperado), esperado);
+    assert.equal(ids.length, 33);
+    assert.equal(new Set(ids).size, 33);
+    for (const esperado of ['aviso-de-privacidad', 'terminos', 'estado', 'blog', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'producto', 'producto/hoy', 'producto/fuga-de-reembolsos', 'producto/problemas', 'producto/puntos-de-dolor', 'producto/pregunta-a-tus-datos', 'producto/por-decidir', 'producto/carga-y-sla', 'producto/confianza-de-los-datos', 'producto/fuentes-e-importaciones', 'producto/finanzas', 'casos-de-uso', 'casos-de-uso/propietario', 'casos-de-uso/analista', 'casos-de-uso/operador', 'casos-de-uso/lector', 'seguridad-y-privacidad', 'integraciones', 'hoja-de-ruta', 'acerca', 'solicitar-acceso']) assert.ok(ids.includes(esperado), esperado);
   });
 
   test('cada página trae SEO, h1, subtítulo y bloques, y una pendiente trae el motivo', () => {

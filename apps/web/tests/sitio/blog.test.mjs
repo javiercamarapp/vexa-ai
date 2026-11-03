@@ -228,14 +228,14 @@ describe('RSS y sitemap solo con lo publicable', () => {
   });
 });
 
-describe('el aviso de privacidad y los términos siguen sin contenido', () => {
-  test('no tienen página escrita, no son publicables ni indexables y no están en el sitemap', () => {
+describe('el aviso de privacidad y los términos fallan cerrados sin los datos legales', () => {
+  test('tienen contenido pero sin VEXA_LEGAL_* no son publicables ni indexables y no están en el sitemap', () => {
     for (const id of ['aviso-de-privacidad', 'terminos']) {
-      assert.ok(!PAGINAS_INTERNAS.some((x) => x.id === id), `${id} no debe tener contenido hasta que lo apruebe el abogado`);
+      assert.ok(PAGINAS_INTERNAS.some((x) => x.id === id), `${id} tiene contenido escrito`);
       const f = fichas.find((x) => x.id === id);
       assert.equal(f.publicable, false);
       assert.equal(f.indexable, false);
-      assert.deepEqual(f.motivos, ['sin contenido escrito']);
+      assert.ok(f.motivos.some((m) => /marcador sin resolver/.test(m)), f.motivos.join());
       const mapa = entradasSitemap(fichas).map((e) => e.url);
       for (const l of IDIOMAS) assert.ok(!mapa.includes(urlAbsoluta(rutaDe(id, l))));
     }

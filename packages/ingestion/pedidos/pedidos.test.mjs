@@ -67,7 +67,7 @@ test('cobertura: unión por (id, retailer), sin_id != 0, candidatos', () => {
 import {OrderLinksRepository, ticketRefRow} from './index.mjs';
 test('repositorio: el tenant sale de la sesión y los lotes son <=250', async () => {
   const calls = [];
-  const s = {tenantId: 'T-SYN', query: async (q, p) => { calls.push([q, p]); return {rows: [{r: {inserted: JSON.parse(p?.[0] ?? '[]').length, updated: 0, unchanged: 0}}]}; }};
+  const s = {tenantId: 'T-SYN', query: async (q, p) => { calls.push([q, p]); return {rows: [{r: {inserted: q.includes('_ingest') ? JSON.parse(p[0]).length : 0, updated: 0, unchanged: 0}}]}; }};
   const repo = new OrderLinksRepository(s);
   const many = Array.from({length: 600}, (_, i) => ({carrier: 'ups', tracking: 'T' + i, orderKey: null, retailer: 'unknown', retailerBasis: 'unknown', rowHash: 'a'.repeat(64)}));
   assert.deepEqual(await repo.ingestShipments(many), {inserted: 600, updated: 0, unchanged: 0}); assert.equal(calls.length, 3);

@@ -105,6 +105,21 @@ describe('contenido legal', () => {
     assert.doesNotMatch(es, /35 días/);
   });
 
+  test('terminación y baja: solo se promete lo que el operador puede cumplir (solicitud escrita, 60 días, procedimiento manual)', () => {
+    for (const [lang, pagina] of [['es', AVISO_DE_PRIVACIDAD], ['es', TERMINOS], ['en', AVISO_DE_PRIVACIDAD], ['en', TERMINOS]]) {
+      const t = hojas(pagina).map((h) => h.hoja[lang]).join('\n');
+      assert.doesNotMatch(t, /\b90 (días|days)/, `${pagina.id} ${lang}: sin plazo de 90 días para cuentas`);
+      assert.doesNotMatch(t, /(30 (días|days))[^.]{0,40}(export)|export[^.]{0,40}(30 (días|days))/i, `${pagina.id} ${lang}: sin exporte de 30 días`);
+    }
+    const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
+    assert.match(es, /A solicitud escrita de la empresa, dentro de los 60 días siguientes a la solicitud/);
+    assert.match(es, /procedimiento manual del operador/);
+    assert.match(es, /previa solicitud y sin demora indebida/);
+    const en = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.en).join('\n');
+    assert.match(en, /written request of the company, within 60 days after the request/);
+    assert.match(en, /upon request and without undue delay/);
+  });
+
   test('distingue los dos papeles: responsable y encargado', () => {
     const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
     assert.match(es, /responsable/);

@@ -19,7 +19,7 @@ Mientras falte una, ninguna de las dos páginas se sirve, se enlaza ni entra al 
 | 1 | Papeles responsable y encargado, y si falta un contrato de encargo con cada empresa cliente | Responsable de usuarios del portal; encargado de datos que la empresa carga o conecta. Falta redactar el contrato de encargo |
 | 2 | Ley y autoridad | Ley Federal de Protección de Datos Personales en Posesión de los Particulares, autoridad nombrada solo como competente. Confirmar la denominación vigente de la autoridad y los plazos de respuesta ARCO |
 | 3 | Transferencias y remisiones a proveedores en el extranjero | El aviso las informa como remisiones a encargados, sin consentimiento. Confirmar que basta |
-| 4 | Plazos de conservación | Exporte 30 días y eliminación a los 60 días al terminar; cuenta 90 días tras la baja; seguridad 180 días; respaldo 8 días |
+| 4 | Plazos de conservación | Exporte y eliminación a solicitud escrita del cliente dentro de los 60 días siguientes, por procedimiento manual del operador; cuentas de personas usuarias previa solicitud y sin demora indebida (sin cifra); seguridad 180 días; respaldo 8 días |
 | 5 | Datos sensibles y de menores | El producto no está diseñado para ellos; si aparecen, es responsabilidad de la empresa |
 | 6 | Finalidades secundarias | Ninguna |
 | 7 | Términos: ley aplicable y tribunales | Leyes federales mexicanas; tribunales del domicilio de Rovaq |
@@ -38,7 +38,7 @@ Mientras falte una, ninguna de las dos páginas se sirve, se enlaza ni entra al 
 4. Google: si el inicio de sesión está activo en producción.
 5. Sesiones de soporte: si las migraciones `20261126000000` y siguientes están aplicadas. El texto dice que existen con esos límites; si no están aplicadas, es una capacidad descrita, no una práctica.
 6. Cron de retención de registros de seguridad: activo o no. Si no, quitar la cifra de 180 días.
-7. Rutina de baja de organización: documentarla y ensayarla una vez en local, o ajustar el texto de 60 días.
+7. Rutina de baja de organización: el texto ya se limita a un procedimiento manual a solicitud escrita dentro de 60 días; documentar y ensayar esa rutina una vez en local antes de publicar. Sigue sin existir exporte de autoservicio ni baja de personas usuarias (ver CONSERVACION-Y-ELIMINACION.md).
 8. Cookies: revisar en el navegador las que fija Supabase Auth.
 9. Dónde se guardan los respaldos lógicos por tenant y quién los tiene.
 10. Verificación en dos pasos y política de contenido: el aviso no las afirma; revisar `a7` con la matización de que «Ver como» existe y TOTP existe antes de publicar ese artículo.

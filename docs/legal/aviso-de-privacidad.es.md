@@ -61,10 +61,10 @@ El producto no está diseñado para tratar datos personales sensibles ni de meno
 ## 7. Cuánto tiempo conservamos los datos y cómo se eliminan
 
 - Datos de la empresa usuaria. Se conservan mientras dure la relación. La empresa decide qué conservar: el Administrador del espacio dispone de una pantalla de retención que muestra el alcance exacto antes de borrar y no borra nada hasta que se confirma. El borrado alcanza los mensajes, las conversaciones, sus versiones, vectores, trabajos, problemas, archivos y adjuntos asociados, y deja un registro de lo borrado. No elimina el origen en la herramienta de la empresa ni las copias que ella mantenga.
-- Al terminar la relación. Durante 30 días ponemos a disposición de la empresa un exporte de sus datos. Eliminamos sus datos de los sistemas activos dentro de los 60 días siguientes a la terminación, o antes si la empresa lo pide por escrito. Conservamos, si la ley lo exige, solo lo que ella ordene.
+- Al terminar la relación. A solicitud escrita de la empresa, dentro de los 60 días siguientes a la solicitud, entregamos un exporte de sus datos y eliminamos sus datos de los sistemas activos, mediante un procedimiento manual del operador. Conservamos, si la ley lo exige, solo lo que ella ordene.
 - Copias de respaldo. La base de datos tiene un respaldo diario automático que se conserva 8 días. Los datos eliminados pueden permanecer en él hasta que pasen esos 8 días. No hay recuperación a un punto exacto en el tiempo, los archivos adjuntos no están cubiertos por el respaldo y la restauración de un respaldo aún no se ha probado.
 - Registros de seguridad. Se eliminan cuando pasan 180 días, y nunca antes de 30.
-- Datos de la persona usuaria. La cuenta, el equipo y las notificaciones se conservan mientras la cuenta esté activa. Tras la baja, los suprimimos o los bloqueamos dentro de los 90 días siguientes. El registro de cambios de equipo y de operaciones de administración puede conservarse más tiempo por razones de seguridad y de obligaciones legales.
+- Datos de la persona usuaria. La cuenta, el equipo y las notificaciones se conservan mientras la cuenta esté activa. Tras la baja, los suprimimos o los bloqueamos previa solicitud y sin demora indebida. El registro de cambios de equipo y de operaciones de administración puede conservarse más tiempo por razones de seguridad y de obligaciones legales.
 
 ## 8. Derechos ARCO y cómo ejercerlos
 

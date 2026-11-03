@@ -34,15 +34,15 @@ Fecha: 3-nov-2026. Rama `ola3-legal`. Las columnas «Existe hoy» salen del cód
 | Concepto | Plazo propuesto | Por qué | Cómo se cumple hoy |
 |---|---|---|---|
 | Datos del cliente durante la relación | Los que el cliente configure con la política de retención | Ya existe | Panel de retención |
-| Exporte al terminar | Disponible 30 días | Plazo razonable para que el cliente recupere lo suyo | Manual: respaldo lógico del tenant entregado por canal seguro |
-| Eliminación de sistemas activos tras terminar | 60 días, o antes si el cliente lo pide por escrito | Margen operativo para una rutina manual | **Manual**: rutina de baja basada en el catálogo de tablas; brecha 1 |
+| Exporte al terminar | A solicitud escrita del cliente, dentro de los 60 días siguientes | No existe exporte de autoservicio; lo entrega el operador | Manual: respaldo lógico del tenant entregado por canal seguro |
+| Eliminación de sistemas activos tras terminar | A solicitud escrita del cliente, dentro de los 60 días siguientes | Margen operativo para una rutina manual | **Manual** por el operador: rutina de baja basada en el catálogo de tablas; brecha 1 |
 | Respaldos del proveedor | Se sobrescriben solos; 8 días | Dato real | Automático del proveedor |
 | Registros de seguridad | 180 días | Ya en código | Cron por activar |
-| Cuenta de persona usuaria tras la baja | Supresión o bloqueo en 90 días | Evita conservar cuentas sin uso | **Manual**; brecha 3 |
+| Cuenta de persona usuaria tras la baja | Supresión o bloqueo previa solicitud y sin demora indebida; sin cifra de días | No hay baja de personas usuarias en el producto; no se promete un plazo | **Manual** del operador; brecha 3 |
 | Auditoría de equipo y administración | Mientras dure la relación y lo que exija la ley; sin cifra pública | El código no la purga; no prometer una cifra | n/a |
 | Confidencialidad posterior | 3 años | Práctica corriente; el abogado decide | Contractual |
 
-Lo que el aviso dice: exporte 30 días, eliminación en 60 días, respaldo 8 días, seguridad 180 días, cuenta 90 días. Si Javier o el abogado cambian una cifra, se cambia en `apps/web/src/content/sitio/paginas/legal.ts` en español e inglés y se repite `node --test tests/sitio/legal.test.mjs`.
+Lo que el aviso dice: exporte y eliminación a solicitud escrita del cliente dentro de los 60 días siguientes, mediante un procedimiento manual del operador; respaldo 8 días; seguridad 180 días; cuentas de personas usuarias previa solicitud y sin demora indebida (sin cifra). El aviso no promete exporte de autoservicio ni baja automática de personas usuarias. Si Javier o el abogado cambian una cifra, se cambia en `apps/web/src/content/sitio/paginas/legal.ts` en español e inglés y se repite `node --test tests/sitio/legal.test.mjs`.
 
 ## 4. Qué no se implementó y por qué
 
@@ -51,6 +51,6 @@ El borrado integral de un tenant toca más de 150 tablas con claves `restrict`, 
 ## 5. Antes de publicar el aviso con estos plazos
 
 1. Aprobación escrita de Javier y del abogado de las cifras de la sección 3.
-2. Una rutina manual de baja documentada y ensayada una vez en local (brecha 1), o ajustar el texto a «a solicitud, dentro de 60 días» sin cifra automática.
+2. Una rutina manual de baja documentada y ensayada una vez en local (brecha 1). El texto ya está ajustado a «a solicitud escrita, dentro de 60 días» por procedimiento manual, sin cifra automática.
 3. Activar y verificar el cron de registros de seguridad, o quitar la frase de 180 días.
 4. Confirmar con el panel de Supabase los 8 días de respaldo y el plan.

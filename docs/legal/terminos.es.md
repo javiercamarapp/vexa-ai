@@ -28,7 +28,7 @@ El Cliente y sus Personas usuarias no deben cargar datos que no tengan derecho a
 - Los datos que el Cliente carga o conecta, y los resultados que el servicio produce a partir de ellos para el Cliente, siguen siendo del Cliente. Rovaq los trata solo para prestar el servicio, conforme al Aviso de privacidad. Sobre esos datos Rovaq actúa como encargado y el Cliente como responsable.
 - El Cliente responde frente a sus compradores de los avisos y consentimientos que correspondan por los datos que carga.
 - Rovaq conserva sus derechos sobre el software, la documentación, la marca y las mejoras generales del servicio que no contengan datos del Cliente.
-- La retención y la eliminación de datos son las que describe el Aviso de privacidad, incluidos el exporte durante 30 días y la eliminación dentro de los 60 días siguientes a la terminación. El borrado no elimina el origen en la herramienta del Cliente ni las copias que este mantenga.
+- La retención y la eliminación de datos son las que describe el Aviso de privacidad, incluidos el exporte y la eliminación a solicitud escrita de la empresa, dentro de los 60 días siguientes a la solicitud, mediante un procedimiento manual del operador. El borrado no elimina el origen en la herramienta del Cliente ni las copias que este mantenga.
 
 ## 6. Confidencialidad
 
@@ -61,7 +61,7 @@ En la medida permitida por la ley, la responsabilidad total de Rovaq frente al C
 
 - Rovaq puede suspender el acceso de una cuenta u organización si hay un riesgo de seguridad, un uso que incumple estos términos o la ley, o una orden de autoridad, avisando cuando sea posible y dando 10 días para subsanar cuando la causa lo permita.
 - El Cliente puede terminar el uso en cualquier momento, avisando por escrito a [CORREO_DE_PRIVACIDAD]. Rovaq puede terminarlo con aviso de 30 días. Duración, renovación y pago se pactan por escrito aparte.
-- Al terminar, el acceso se cierra y los datos del Cliente se tratan como describe el Aviso de privacidad: exporte durante 30 días y eliminación dentro de los 60 días siguientes. Subsisten las cláusulas que por su naturaleza deban subsistir, como confidencialidad, limitación de responsabilidad y propiedad.
+- Al terminar, el acceso se cierra y los datos del Cliente se tratan como describe el Aviso de privacidad: exporte y eliminación a solicitud escrita del Cliente, dentro de los 60 días siguientes a la solicitud, mediante un procedimiento manual del operador. Subsisten las cláusulas que por su naturaleza deban subsistir, como confidencialidad, limitación de responsabilidad y propiedad.
 
 ## 13. Ley aplicable y jurisdicción
 

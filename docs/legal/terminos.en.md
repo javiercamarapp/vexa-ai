@@ -28,7 +28,7 @@ The Customer and its Users must not load data that they have no right to process
 - The data the Customer loads or connects, and the results the service produces from it for the Customer, remain the Customer property. Rovaq processes them only to provide the service, under the Privacy notice. For that data Rovaq acts as processor and the Customer as controller.
 - The Customer is responsible toward its buyers for the notices and consents that apply to the data it loads.
 - Rovaq keeps its rights over the software, the documentation, the brand and the general improvements to the service that contain no Customer data.
-- Data retention and deletion are as described in the Privacy notice, including the export for 30 days and deletion within 60 days after termination. Deletion does not remove the source in the Customer tool or the copies the Customer keeps.
+- Data retention and deletion are as described in the Privacy notice, including the export and deletion on the written request of the company, within 60 days after the request, through a manual procedure run by the operator. Deletion does not remove the source in the Customer tool or the copies the Customer keeps.
 
 ## 6. Confidentiality
 
@@ -61,7 +61,7 @@ To the extent permitted by law, the total liability of Rovaq toward the Customer
 
 - Rovaq may suspend the access of an account or organization if there is a security risk, a use that breaches these terms or the law, or an order from an authority, giving notice when possible and allowing 10 days to cure when the cause permits.
 - The Customer may stop using the service at any time, giving written notice to [PRIVACY_EMAIL]. Rovaq may end it with 30 days notice. Duration, renewal and payment are agreed in writing separately.
-- On termination, access is closed and the Customer data is handled as described in the Privacy notice: export for 30 days and deletion within the following 60 days. The clauses that by their nature must survive do so, such as confidentiality, limitation of liability and ownership.
+- On termination, access is closed and the Customer data is handled as described in the Privacy notice: export and deletion on the written request of the Customer, within 60 days after the request, through a manual procedure run by the operator. The clauses that by their nature must survive do so, such as confidentiality, limitation of liability and ownership.
 
 ## 13. Governing law and jurisdiction
 

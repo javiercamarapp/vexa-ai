@@ -61,10 +61,10 @@ The product is not designed to process sensitive personal data or data about min
 ## 7. How long we keep data and how it is deleted
 
 - Customer company data. It is kept while the relationship lasts. The company decides what to keep: the workspace administrator has a retention screen that shows the exact scope before deleting and deletes nothing until confirmed. Deletion covers the associated messages, conversations, their versions, vectors, jobs, problems, files and attachments, and leaves a record of what was deleted. It does not delete the source in the company tool or the copies the company keeps.
-- When the relationship ends. For 30 days we make an export of its data available to the company. We delete its data from the active systems within 60 days after termination, or earlier if the company asks in writing. We keep only what the law requires.
+- When the relationship ends. At the written request of the company, within 60 days after the request, we deliver an export of its data and delete its data from the active systems, through a manual procedure run by the operator. We keep only what the law requires.
 - Backups. The database has an automatic daily backup that is kept for 8 days. Deleted data may remain in it until those 8 days pass. There is no recovery to an exact point in time, file attachments are not covered by the backup and restoring a backup has not yet been tested.
 - Security records. They are deleted after 180 days, and never before 30.
-- User data. The account, the team and the notifications are kept while the account is active. After deactivation, we delete or block them within the following 90 days. The record of team changes and administration operations may be kept longer for security reasons and legal obligations.
+- User data. The account, the team and the notifications are kept while the account is active. After deactivation, we delete or block them upon request and without undue delay. The record of team changes and administration operations may be kept longer for security reasons and legal obligations.
 
 ## 8. ARCO rights and how to exercise them
 

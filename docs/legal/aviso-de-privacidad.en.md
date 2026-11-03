@@ -96,4 +96,3 @@ We will publish changes on this page with their date. If a change is substantial
 ## 13. Contact
 
 - Controller: [LEGAL_NAME]. Address: [ADDRESS]. Privacy and ARCO requests email: [PRIVACY_EMAIL].
-

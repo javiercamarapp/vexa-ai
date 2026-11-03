@@ -74,4 +74,3 @@ We may update these terms. We will publish the new version with its date and, if
 ## 15. Contact
 
 - Operator: [LEGAL_NAME]. Address: [ADDRESS]. Email: [PRIVACY_EMAIL].
-

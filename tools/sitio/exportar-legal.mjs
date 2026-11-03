@@ -21,6 +21,6 @@ function aMarkdown(pagina, lang) {
 
 const destino = path.join(raiz, 'docs/legal');
 for (const [nombre, pagina] of [['aviso-de-privacidad', AVISO_DE_PRIVACIDAD], ['terminos', TERMINOS]]) {
-  for (const lang of ['es', 'en']) fs.writeFileSync(path.join(destino, `${nombre}.${lang}.md`), `${aMarkdown(pagina, lang)}\n`);
+  for (const lang of ['es', 'en']) fs.writeFileSync(path.join(destino, `${nombre}.${lang}.md`), aMarkdown(pagina, lang));
 }
 console.log('docs/legal: aviso y términos exportados en es y en');

@@ -96,4 +96,3 @@ Publicaremos los cambios en esta página con su fecha. Si el cambio es sustancia
 ## 13. Contacto
 
 - Responsable: [RAZON_SOCIAL]. Domicilio: [DOMICILIO]. Correo de privacidad y de solicitudes ARCO: [CORREO_DE_PRIVACIDAD].
-

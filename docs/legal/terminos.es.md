@@ -74,4 +74,3 @@ Podemos actualizar estos términos. Publicaremos la versión nueva con su fecha 
 ## 15. Contacto
 
 - Responsable: [RAZON_SOCIAL]. Domicilio: [DOMICILIO]. Correo: [CORREO_DE_PRIVACIDAD].
-

@@ -34,7 +34,7 @@ Leyenda de evidencia: `archivo:línea`. «Dato personal» describe lo que recibe
 
 - **Qué es y para qué.** Alojamiento de la aplicación y del sitio, funciones, crons (`apps/web/vercel.json`: `/api/internal/crm` cada 5 minutos, `/api/internal/metadata` y `/api/internal/security-alerts` cada 15).
 - **Datos que recibe.** Todo lo que transita por la aplicación y los registros técnicos de la plataforma, que pueden incluir la dirección IP de quien visita. La aplicación no guarda la IP en claro en sus tablas (`supabase/migrations/20261205000000_email_auth_throttle.sql`, cabecera: solo huellas HMAC).
-- **Región.** `vercel.json` no fija región. Las respuestas observadas el 31-oct salen de `iad1` (observación en `~/vexa-notas-28oct/legal/a7-seguridad-revision.md`, fuera del repo; los costos citan iad1/pdx1 en `docs/operacion/03-CRON-Y-TAREAS-PROGRAMADAS.md:49`). Es una observación, no una configuración: **por confirmar** si se quiere afirmar algo más que «principalmente en Estados Unidos».
+- **Región.** `vercel.json` no fija región. Las respuestas observadas el 31-oct salen de `iad1` (observación en una revisión de seguridad, copia privada fuera del repo; los costos citan iad1/pdx1 en `docs/operacion/03-CRON-Y-TAREAS-PROGRAMADAS.md:49`). Es una observación, no una configuración: **por confirmar** si se quiere afirmar algo más que «principalmente en Estados Unidos».
 - **Transferencia internacional.** Sí, de acuerdo con la región observada.
 
 ## 3. Resend

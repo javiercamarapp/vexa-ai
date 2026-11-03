@@ -4,12 +4,12 @@ import assert from 'node:assert/strict';
 import {normalizeOrderId, normalizeRetailer, orderFormat, retailerFromFormat, parseShipments, parseReference1, ticketOrderRef, linkCoverage} from './index.mjs';
 
 test('normaliza formatos reales por retailer (sintéticos)', () => {
-  assert.equal(normalizeOrderId(' 113-5268979-5206610 '), '113-5268979-5206610');
-  assert.equal(normalizeOrderId('Reference 2 - 113–5268979–5206610'), '113-5268979-5206610'); // guion largo
-  assert.equal(normalizeOrderId('1135268979 5206610'), '113-5268979-5206610');
-  assert.equal(normalizeOrderId('261962365-a'), '261962365-A'); // conserva sufijo -A
-  assert.equal(normalizeOrderId('Reference 2 - wn56823848'), 'WN56823848');
-  assert.equal(normalizeOrderId('WH28882973 '), 'WH28882973');
+  assert.equal(normalizeOrderId(' 111-2222222-3333333 '), '111-2222222-3333333');
+  assert.equal(normalizeOrderId('Reference 2 - 111–2222222–3333333'), '111-2222222-3333333'); // guion largo
+  assert.equal(normalizeOrderId('1112222222 3333333'), '111-2222222-3333333');
+  assert.equal(normalizeOrderId('987654321-a'), '987654321-A'); // conserva sufijo -A
+  assert.equal(normalizeOrderId('Reference 2 - wn11112222'), 'WN11112222');
+  assert.equal(normalizeOrderId('WH33334444 '), 'WH33334444');
   assert.equal(normalizeOrderId('109012345678901.0'), '109012345678901');
   assert.equal(normalizeOrderId('1.2345678901E11'), '123456789010'); // sin «+»: así lo escribe Excel/Python
   assert.equal(normalizeOrderId('Order ID: #ABC-1234'), 'ABC-1234');
@@ -18,9 +18,9 @@ test('inválidos => null (sin ID, no cero)', () => {
   for (const v of [null, undefined, '', '  ', 'N/A', 'none', '0000', '-', 'ab', 'x'.repeat(41), 'A B!C']) assert.equal(normalizeOrderId(v), null, String(v));
 });
 test('formato y retailer', () => {
-  assert.equal(orderFormat('113-5268979-5206610'), 'amazon');
-  assert.equal(retailerFromFormat('261962365-A'), 'bestbuy');
-  assert.equal(retailerFromFormat('WN56823848'), null); // ambiguo: no se adivina
+  assert.equal(orderFormat('111-2222222-3333333'), 'amazon');
+  assert.equal(retailerFromFormat('987654321-A'), 'bestbuy');
+  assert.equal(retailerFromFormat('WN11112222'), null); // ambiguo: no se adivina
   assert.equal(normalizeRetailer('Best Buy'), 'bestbuy');
   assert.equal(normalizeRetailer('Amazon.com'), 'amazon');
   assert.equal(normalizeRetailer('Tienda Rara'), 'tiendarara');
@@ -30,23 +30,23 @@ test('formato y retailer', () => {
 const H = ['Carrier', 'Ship Date', 'PRO/Tracking#', 'Created Date', 'Reference 1', 'Reference 2', 'Receiver Zip', 'Receiver Address Line1', 'Destination Company Name'];
 test('Speedship: parsea referencias, no conserva datos personales, dedup', () => {
   const rows = [H,
-    ['UNITED PARCEL SERVICE', '2026-01-05', '1ZSYN0001', '46025.45', 'Reference 1 - Defective - SKU-L5', 'Reference 2 - 113-5268979-5206610', '99999', 'SYN CALLE 1', 'SYN PERSONA'],
+    ['UNITED PARCEL SERVICE', '2026-01-05', '1ZSYN0001', '46025.45', 'Reference 1 - Defective - SKU-L5', 'Reference 2 - 111-2222222-3333333', '99999', 'SYN CALLE 1', 'SYN PERSONA'],
     ['UNITED PARCEL SERVICE', '01/06/2026', '1ZSYN0001', '2026-01-05', 'x', 'x', '1', 'a', 'b'], // duplicado
     ['UNITED PARCEL SERVICE', '2026-01-07', '1ZSYN0002', '', 'Reference 1 - 113-1111111-2222222', '', '', '', ''], // intercambiado
-    ['UNITED PARCEL SERVICE', '', '1ZSYN0003', '', '', 'Reference 2 - WN56823848', '', '', ''],
+    ['UNITED PARCEL SERVICE', '', '1ZSYN0003', '', '', 'Reference 2 - WN11112222', '', '', ''],
     ['UPS', '', '', '', '', '', '', '', '']];
   const r = parseShipments(rows); assert.ok(r.shipments.every(x => x.shipmentKind === 'garantia'));
   assert.equal(r.shipments.length, 3); assert.equal(r.duplicates, 1); assert.deepEqual(r.rejections, [{row: 6, code: 'TRACKING_MISSING'}]);
   const [a, b, c] = r.shipments;
-  assert.equal(a.orderKey, '113-5268979-5206610'); assert.equal(a.reason, 'Defective'); assert.equal(a.sku, 'SKU-L5'); assert.equal(a.retailer, 'amazon'); assert.equal(a.shipDate, '2026-01-05');
+  assert.equal(a.orderKey, '111-2222222-3333333'); assert.equal(a.reason, 'Defective'); assert.equal(a.sku, 'SKU-L5'); assert.equal(a.retailer, 'amazon'); assert.equal(a.shipDate, '2026-01-05');
   assert.equal(b.orderKey, '113-1111111-2222222'); assert.equal(b.orderSource, 'reference_1');
-  assert.equal(c.orderKey, 'WN56823848'); assert.equal(c.retailer, 'unknown');
+  assert.equal(c.orderKey, 'WN11112222'); assert.equal(c.retailer, 'unknown');
   const blob = JSON.stringify(r); for (const p of ['99999', 'SYN CALLE', 'SYN PERSONA']) assert.ok(!blob.includes(p), 'dato personal: ' + p);
 });
 import {parseShipmentsFile} from './index.mjs';
 test('archivo: CSV se lee; XLSX con tipo macroEnabled se rechaza (el parser no se debilita)', () => {
-  const csv = H.join(',') + '\n' + 'UPS,2026-01-05,1ZSYN9,,Reference 1 - Defective - SKU-L5,Reference 2 - 113-5268979-5206610,,,\n';
-  const r = parseShipmentsFile(Buffer.from(csv), 'export.csv'); assert.equal(r.shipments.length, 1); assert.equal(r.shipments[0].orderKey, '113-5268979-5206610');
+  const csv = H.join(',') + '\n' + 'UPS,2026-01-05,1ZSYN9,,Reference 1 - Defective - SKU-L5,Reference 2 - 111-2222222-3333333,,,\n';
+  const r = parseShipmentsFile(Buffer.from(csv), 'export.csv'); assert.equal(r.shipments.length, 1); assert.equal(r.shipments[0].orderKey, '111-2222222-3333333');
   assert.equal(parseShipments([H, ['UPS', '', 'X1', '', '', '', '', '', '']], {kind: 'venta'}).shipments[0].shipmentKind, 'venta');
   assert.throws(() => parseShipments([H, []], {kind: 'otro'}), /INVALID_SHIPMENT_KIND/);
   assert.throws(() => parseShipmentsFile(Buffer.from('x'), 'a.txt'), /UNSUPPORTED_FILE_TYPE/);
@@ -56,8 +56,8 @@ test('Reference 1 con motivo y SKU', () => {
   assert.equal(parseReference1('').reason, null);
 });
 test('ticket: extrae order_id/retailer', () => {
-  const t = ticketOrderRef({id: 123, properties: {order_id: ' 261962365-A', retailer: 'Best Buy', sku: 'S1', email: 'no@debe.salir'}});
-  assert.equal(t.orderKey, '261962365-A'); assert.equal(t.retailer, 'bestbuy'); assert.ok(!JSON.stringify(t).includes('debe'));
+  const t = ticketOrderRef({id: 123, properties: {order_id: ' 987654321-A', retailer: 'Best Buy', sku: 'S1', email: 'no@debe.salir'}});
+  assert.equal(t.orderKey, '987654321-A'); assert.equal(t.retailer, 'bestbuy'); assert.ok(!JSON.stringify(t).includes('debe'));
   assert.equal(ticketOrderRef({id: 1, properties: {}}).orderKey, null);
 });
 test('cobertura: unión por (id, retailer), sin_id != 0, candidatos', () => {
@@ -84,5 +84,5 @@ test('repositorio: el tenant sale de la sesión y los lotes son <=250', async ()
   assert.deepEqual(await repo.ingestShipments(many), {inserted: 600, updated: 0, unchanged: 0}); assert.equal(calls.length, 3);
   await repo.coverage(); assert.deepEqual(calls.at(-1)[1], ['T-SYN']);
   assert.ok(!JSON.stringify(calls.map(c => c[1])).includes('tenant_id'), 'el tenant no viaja en los datos');
-  assert.equal(ticketRefRow({id: 9, properties: {order_id: '113-5268979-5206610', retailer: 'Amazon'}}).retailer, 'amazon');
+  assert.equal(ticketRefRow({id: 9, properties: {order_id: '111-2222222-3333333', retailer: 'Amazon'}}).retailer, 'amazon');
 });

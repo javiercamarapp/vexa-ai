@@ -32,7 +32,7 @@ test('order_links: paridad, cobertura, aislamiento y negativas', {skip: SKIP, ti
     assert.equal(h.file(MIGF).status, 0, 'idempotente');
 
     await t.test('paridad SQL-JS del normalizador', () => {
-      const vectores = ['113-5268979-5206610', ' 113–5268979–5206610 ', 'Reference 2 - 113-5268979-5206610', '1135268979 5206610', '261962365-a', 'Reference 2 - wn56823848', 'WH28882973', '109012345678901.0', '1.09012345678901E+14', '1.2345678901E11', 'Order ID: #abc-1234', 'N/A', 'none', '0000', '-', 'ab', 'A B!C', '--ABC--123--', '', '  '];
+      const vectores = ['111-2222222-3333333', ' 111–2222222–3333333 ', 'Reference 2 - 111-2222222-3333333', '1112222222 3333333', '987654321-a', 'Reference 2 - wn11112222', 'WH33334444', '109012345678901.0', '1.09012345678901E+14', '1.2345678901E11', 'Order ID: #abc-1234', 'N/A', 'none', '0000', '-', 'ab', 'A B!C', '--ABC--123--', '', '  '];
       for (const v of vectores) {
         const r = h.psql(`select coalesce(public.order_id_normalize($q$${v}$q$),'<null>')`); assert.ok(r.ok, r.err);
         assert.equal(r.out, normalizeOrderId(v) ?? '<null>', JSON.stringify(v));
@@ -45,7 +45,7 @@ test('order_links: paridad, cobertura, aislamiento y negativas', {skip: SKIP, ti
 
     // Datos del tenant A. Pedidos del libro: amazon SYN-111-0000001..4 (O3a y O3b son el mismo pedido) y un gid de Shopify (sin ID).
     const SH = [ship({tracking: 'T1', order_key: 'SYN-111-0000001', retailer: 'amazon', retailer_basis: 'format'}), ship({tracking: 'T2', order_key: 'SYN-111-0000001', retailer: 'amazon', retailer_basis: 'format', row_hash: H64('c')}),
-      ship({tracking: 'T3', order_key: 'WN56823848'}), ship({tracking: 'T4', order_key: 'SYN-111-0000002'}), ship({tracking: 'T5'}), ship({tracking: 'T6', order_key: 'SYN-111-9999999', retailer: 'amazon', retailer_basis: 'format'})];
+      ship({tracking: 'T3', order_key: 'WN11112222'}), ship({tracking: 'T4', order_key: 'SYN-111-0000002'}), ship({tracking: 'T5'}), ship({tracking: 'T6', order_key: 'SYN-111-9999999', retailer: 'amazon', retailer_basis: 'format'})];
     const TK = [tick({ticket_external_id: '1', order_key: 'SYN-111-0000001', retailer: 'amazon'}), tick({ticket_external_id: '2', order_key: 'SYN-111-0000001', retailer: 'walmart'}), tick({ticket_external_id: '3'}), tick({ticket_external_id: '4', order_key: 'SYN-111-0000003', retailer: 'amazon'})];
     await t.test('ingesta idempotente por lote', () => {
       let r = asBackend(h, OWNER.A, TENANT_A, `select public.order_shipments_ingest(${json(SH)});`); assert.ok(r.ok, r.err); assert.deepEqual(JSON.parse(r.out), {inserted: 6, updated: 0, unchanged: 0});

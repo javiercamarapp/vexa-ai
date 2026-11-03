@@ -1,6 +1,6 @@
 # Checklist final para el abogado y para Javier
 
-Fecha: 3-nov-2026. Sustituye a `~/vexa-notas-28oct/legal/checklist-abogado.md` del 31-oct. Textos finales en `docs/legal/aviso-de-privacidad.{es,en}.md` y `terminos.{es,en}.md` (exportados de `apps/web/src/content/sitio/paginas/legal.ts`). Evidencia en `INVENTARIO-PROVEEDORES.md` y `CONSERVACION-Y-ELIMINACION.md`. Nada de esto es asesoría legal.
+Fecha: 3-nov-2026. Sustituye a la lista de verificación previa del 31-oct (copia privada fuera del repo). Textos finales en `docs/legal/aviso-de-privacidad.{es,en}.md` y `terminos.{es,en}.md` (exportados de `apps/web/src/content/sitio/paginas/legal.ts`). Evidencia en `INVENTARIO-PROVEEDORES.md` y `CONSERVACION-Y-ELIMINACION.md`. Nada de esto es asesoría legal.
 
 ## A. Los tres datos externos (único bloqueo técnico de publicación)
 

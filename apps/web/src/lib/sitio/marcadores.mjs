@@ -33,7 +33,9 @@ const esRelleno = (t) => {
   const k = claveRelleno(t), compacto = k.replace(/[\s.\-_/]/g, '');
   return k === '' || RELLENO.has(k) || /^(?:pendiente|por (?:definir|confirmar|determinar)|tbd|n\/?a)(?:\s|$)/.test(k) || /^(.)\1{2,}$/.test(compacto);
 };
-const DOMINIOS_RESERVADOS = new Set(['example.com', 'example.org', 'example.net']);
+// Dominios COMPLETOS de relleno o reservados (RFC 2606 y los de plantilla más comunes). Coinciden el dominio exacto o un subdominio suyo;
+// una palabra de relleno en el dominio de segundo nivel de una empresa real (legal@x.empresa.mx, privacidad@company.com) NO basta para rechazar.
+const DOMINIOS_RESERVADOS = new Set(['example.com', 'example.org', 'example.net', 'example.edu', 'ejemplo.com', 'ejemplo.org', 'ejemplo.mx', 'ejemplo.com.mx', 'test.com', 'domain.com', 'dominio.com', 'yourdomain.com', 'tudominio.com', 'tbd.com', 'xxx.com']);
 const TLD_RESERVADOS = new Set(['test', 'invalid', 'localhost', 'example', 'local']);
 /** Correo con forma de dirección real: parte local de 2 o más caracteres, dominio con punto, etiqueta de dominio de 2 o más y TLD alfabético de 2 o más; sin relleno ni dominios reservados. */
 function correoReal(t) {
@@ -43,8 +45,11 @@ function correoReal(t) {
   if (etiquetas.length < 2 || etiquetas.some((e) => !/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(e))) return false;
   const tld = etiquetas.at(-1), sld = etiquetas.at(-2);
   if (!/^[a-z]{2,}$/.test(tld) || sld.length < 2 || local.length < 2) return false;
-  if (TLD_RESERVADOS.has(tld) || DOMINIOS_RESERVADOS.has(etiquetas.slice(-2).join('.'))) return false;
-  return !esRelleno(local) && !esRelleno(sld);
+  if (TLD_RESERVADOS.has(tld)) return false;
+  const completo = etiquetas.join('.');
+  if ([...DOMINIOS_RESERVADOS].some((d) => completo === d || completo.endsWith(`.${d}`))) return false;
+  // Parte local de placeholder (a, x, xxx, test, tbd, n/a, usuario...) solo se rechaza si el dominio también es de relleno (empresa, company, tbd, xxx...).
+  return !(esRelleno(local) && esRelleno(sld));
 }
 
 /**

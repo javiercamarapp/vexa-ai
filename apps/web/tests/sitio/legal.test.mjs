@@ -52,6 +52,18 @@ describe('datos legales desde el entorno', () => {
     assert.deepEqual(Object.values(d).map((v) => v !== null), [true, true, true]);
   });
 
+  test('correos corporativos normales pasan aunque el dominio de segundo nivel sea una palabra común', () => {
+    for (const ok of ['legal@x.empresa.mx', 'privacidad@company.com', 'privacidad@empresa.com.mx', 'datos@correo.mx', 'dpo@mail.acme.io', 'user@proveedor-sintetico.mx']) {
+      assert.equal(datosLegalesDeEntorno({ ...OK, VEXA_LEGAL_CORREO: ok }).correoPrivacidad, ok, ok);
+    }
+  });
+
+  test('correos de relleno o reservados siguen rechazados: dominio completo reservado o placeholder en parte local y dominio', () => {
+    for (const malo of ['privacidad@example.com', 'privacidad@mail.example.org', 'privacidad@ejemplo.com', 'privacidad@dominio.com', 'x@empresa.mx', 'xxx@empresa.mx', 'test@company.com', 'tbd@tbd.com', 'user@company.com', 'privacidad@a.test', 'privacidad@servidor.invalid', 'privacidad@localhost']) {
+      assert.equal(datosLegalesDeEntorno({ ...OK, VEXA_LEGAL_CORREO: malo }).correoPrivacidad, null, malo);
+    }
+  });
+
   test('el contexto por defecto del proceso no trae datos legales inventados', () => {
     const c = contextoPorDefecto(SITE, {});
     assert.equal(c.razonSocial, null);

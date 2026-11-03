@@ -15,6 +15,7 @@ Fecha: 3-nov-2026. Rama `ola3-legal`. Las columnas «Existe hoy» salen del cód
 | Sesión de soporte | Caducidad dura | 60 minutos | `20261126000000_platform_support_and_audited_reads.sql:34` |
 | Invitaciones | `expires_at`; las vencidas se listan 60 días | Por invitación | `20261126000200_team_my_invitations.sql:17` |
 | Enlace de baja del reporte semanal | Token HMAC | 400 días por omisión | `packages/notifications/baja-semanal.mjs:1` |
+| Envíos de Speedship y referencias de pedido de tickets (`order_shipments`, `ticket_order_refs`; migración `20261210000000_order_links`, por aplicar) | Sin datos personales del receptor (solo tracking, transportista, fechas, motivo, SKU y llave de pedido). Borrado acotado: `vexa_backend` puede hacer DELETE solo de filas de su tenant de sesión y solo con la acción `retain` (rol owner), con prueba de no cruce entre tenants. No hay purga por antigüedad; **no están enlazadas aún** a `retention_erase` ni a `packages/recovery` (ese borrado va por conexión y entidad de origen, y estas tablas no tienen conexión: enlazarlas no es un cambio pequeño y seguro) | Hasta que el owner las borre o se dé de baja la organización; entra en la rutina manual de baja (brecha 1) | `supabase/migrations/20261210000000_order_links.sql`, prueba `packages/ingestion/pedidos/pedidos-pg.test.mjs` |
 | Respaldo gestionado de la base | Diario automático | 8 días (dato del responsable, 3-nov); sin punto exacto; no cubre adjuntos; restauración nunca probada | `docs/operacion/04-RESPALDOS-Y-RESTAURACION.md` |
 | Respaldo lógico por tenant | Script de operador; escribe una carpeta local | Lo que decida quien lo corre | `ops/backup-restore/` |
 
@@ -27,7 +28,8 @@ Fecha: 3-nov-2026. Rama `ola3-legal`. Las columnas «Existe hoy» salen del cód
 5. **Storage no entra en el respaldo** (`04-RESPALDOS...`). Una eliminación de adjuntos es inmediata y definitiva; la contrapartida es que un adjunto perdido no se restaura.
 6. **No hay purga automática por antigüedad** de conversaciones ni pedidos cuando no hay una acción del Administrador.
 7. **Copias de respaldo lógico fuera de la nube**: sin declaración de dónde viven ni cuándo se borran.
-8. **El cron de retención de seguridad y los de Storage** dependen de aplicación manual por Javier; su estado en producción no consta.
+8. **`order_shipments` y `ticket_order_refs` no pasan por el borrado por entidad (`retention_erase`) ni por `packages/recovery`.** Se pueden borrar a mano con la acción `retain` (ver la tabla de la sección 1), pero el panel de retención no las toca y un borrado de origen no las alcanza. Ambas entran al catálogo de tablas con alcance de tenant que usa `ops/backup-restore` (se lee de la base viva, así que el respaldo lógico y la rutina de baja las incluyen sin cambios).
+9. **El cron de retención de seguridad y los de Storage** dependen de aplicación manual por Javier; su estado en producción no consta.
 
 ## 3. Propuestas de plazo (PROPUESTA, sujeta a aprobación)
 

@@ -314,7 +314,7 @@ to { transform:none; }
 .workspace-frame,.workspace-shell .workspace-sidebar { box-shadow:var(--ui-shadow); }
 .workspace-shell .workspace-content { padding:24px 28px 28px; min-width:0; background:var(--ui-sunken); }
 .workspace-shell .sidebar-brand { display:flex; align-items:center; justify-content:space-between; padding:12px; gap:8px; flex:none; min-height:52px; }
-.workspace-shell .sidebar-navigation a[aria-current] { font-weight:600; background:var(--ui-nav-active); color:var(--ui-nav-text); box-shadow:inset 3px 0 0 var(--ui-highlight); }
+.workspace-shell .sidebar-navigation a[aria-current] { font-weight:var(--ux-fw); background:color-mix(in srgb,var(--ink) 7%,transparent); color:var(--ink); box-shadow:inset 2px 0 0 var(--ui-highlight); }
 .workspace-shell .sidebar-navigation ul[hidden] { display:none; }
 .workspace-shell .nav-group { margin:0 0 7px; }
 .workspace-shell .nav-group-toggle { display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; min-height:32px; margin:0; padding:6px 10px; border:0; border-radius:8px; background:transparent; color:var(--muted); font:500 11px/1.5 'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:.06em; text-align:left; }
@@ -473,7 +473,7 @@ button:not(:disabled):active { transform:scale(.98); }
 .workspace-shell .sidebar-notifications { margin:0 0 8px; }
 .workspace-shell .sidebar-notifications a { display:flex; align-items:center; gap:9px; border-radius:8px; line-height:1.35; font-weight:500; color:var(--ui-secondary); text-decoration:none; min-height:32px; padding:6px 10px; font-size:13px; }
 .workspace-shell .sidebar-notifications a:hover { background:var(--ui-soft); color:var(--ink); }
-.workspace-shell .sidebar-notifications a[aria-current] { font-weight:600; background:var(--ui-nav-active); color:var(--ui-nav-text); box-shadow:inset 3px 0 0 var(--ui-highlight); }
+.workspace-shell .sidebar-notifications a[aria-current] { font-weight:var(--ux-fw); background:color-mix(in srgb,var(--ink) 7%,transparent); color:var(--ink); box-shadow:inset 2px 0 0 var(--ui-highlight); }
 .workspace-shell .sidebar-notifications svg { width:16px; height:16px; flex:none; }
 .workspace-shell .sidebar-notifications .notification-count { margin-left:auto; }
 .workspace-shell .workspace-sidebar .sidebar-navigation { min-height:96px; overscroll-behavior:contain; }

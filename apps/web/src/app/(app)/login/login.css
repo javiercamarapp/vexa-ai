@@ -24,11 +24,11 @@
 .login-editorial .login-intro{font-size:15px;line-height:1.6;margin:0}
 .login-editorial .login-divider{margin-top:36px}
 .login-editorial .login-google{margin-top:32px}
-.login-editorial .login-btn{min-height:52px;padding:14px 22px;font:600 15px/1.5 var(--font-ui);border-radius:999px}
+.login-editorial .login-btn{min-height:var(--ux-hit);padding:10px 20px;font:var(--ux-fw) 14px/1.4 var(--font-ui);border-radius:999px}
 .login-editorial .login-btn-tinta{background:#0e0e10;color:#fff}
-.login-editorial .login-btn-tinta:not(:disabled):hover{background:#26262b;box-shadow:0 8px 24px #0e0e1026}
+.login-editorial .login-btn-tinta:not(:disabled):hover{background:#26262b}
 .login-editorial .login-btn-borde{background:#fff;border-color:var(--ui-border)}
-.login-editorial .login-campo{min-height:52px;padding:14px 18px;border-radius:13px;font:500 15px/1.5 var(--font-ui)}
+.login-editorial .login-campo{min-height:var(--ux-hit);padding:10px 16px;border-radius:var(--ux-r-card);font:var(--ux-fw) 14px/1.4 var(--font-ui)}
 .login-editorial .login-campo:focus-visible{outline:2px solid #0e0e10;outline-offset:2px;box-shadow:0 0 0 4px #0e0e1012}
 .login-editorial .login-email{gap:16px}
 .login-editorial .login-separator{margin:24px 0 32px;gap:10px;font-size:12px;text-align:center}

@@ -83,13 +83,13 @@ main:has(.login),main:has(.workspace-shell) { max-width:none; padding:0; margin:
 .login h1 { max-width:340px; font-size:38px; line-height:1.06; margin:20px 0 16px; }
 .login-intro { font-size:15px; line-height:1.6; color:var(--muted); margin:8px 0 0; }
 .login-divider { height:1px; background:var(--ui-border); margin-top:36px; }
-.login-btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; width:100%; max-width:100%; min-height:52px; border-radius:999px; padding:14px 22px; font:600 15px/1.6 var(--font-ui); letter-spacing:.005em; border:1px solid transparent; cursor:pointer; text-decoration:none; }
+.login-btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; width:100%; max-width:100%; min-height:var(--ux-hit); border-radius:999px; padding:10px 20px; font:var(--ux-fw) 14px/1.4 var(--font-ui); letter-spacing:0; border:1px solid transparent; cursor:pointer; text-decoration:none; }
 .login-btn-tinta { background:var(--ink); color:var(--background); }
 .login-btn-borde { background:var(--ui-surface); border-color:var(--ui-border); color:var(--ink); }
-.login-btn-borde:not(:disabled):hover { border-color:var(--ui-input); box-shadow:0 8px 20px #00000012; }
+.login-btn-borde:not(:disabled):hover { border-color:var(--ui-input); }
 .login-btn:disabled { opacity:.6; cursor:not-allowed; }
 .login-google { margin-top:32px; }
-.login-campo { width:100%; min-width:0; min-height:52px; padding:14px 18px; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-surface); color:var(--ink); font:500 15px/1.5 var(--font-ui); }
+.login-campo { width:100%; min-width:0; min-height:var(--ux-hit); padding:10px 16px; border:1px solid var(--ui-border); border-radius:var(--ux-r-card); background:var(--ui-surface); color:var(--ink); font:var(--ux-fw) 14px/1.4 var(--font-ui); }
 .login-campo:focus-visible { outline:2px solid var(--ui-focus); outline-offset:2px; box-shadow:0 0 0 4px var(--ui-nav-active); }
 .login-campo:disabled { background:var(--ui-soft); color:var(--muted); cursor:not-allowed; }
 .login-separator { display:flex; align-items:center; gap:16px; margin:24px 0; font-size:13px; color:var(--muted); }
@@ -128,7 +128,7 @@ main:has(.login),main:has(.workspace-shell) { max-width:none; padding:0; margin:
 .login-intro { font-size:14px; line-height:1.5; }
 .login-divider { margin-top:18px; }
 .login-google { margin-top:18px; }
-.login-btn,.login-campo { min-height:48px; padding:12px 18px; font-size:14px; line-height:1.5; }
+.login-btn,.login-campo { min-height:var(--ux-hit); padding:10px 16px; font-size:14px; line-height:1.5; }
 .login-separator { margin:18px 0; }
 .login-email { gap:10px; }
 .login-help { margin-top:16px; font-size:12px; line-height:1.5; }
@@ -383,7 +383,7 @@ body label:has(>input:is([type=checkbox],[type=radio])) { min-height:44px; }
 .access-symbol { display:grid; place-items:center; flex:0 0 30px; min-height:30px; border:1px solid var(--ui-border); border-radius:8px; color:var(--accent); }
 .access-selection .access-destination h2 { font:600 14px/1.5 var(--font-ui); letter-spacing:-.01em; margin:0; }
 .access-selection .access-destination p { font-size:12px; line-height:1.55; margin:4px 0 12px; color:var(--muted); }
-.access-selection :where(select,button) { min-height:40px; padding:9px 14px; font-size:13px; }
+.access-selection :where(select,button) { min-height:var(--ux-h-md); padding:6px 12px; font-size:var(--ux-fs); }
 .access-selection button { width:fit-content; margin:14px 0 0; }
 .access-selection button.access-organization-choice { display:flex; justify-content:space-between; align-items:center; gap:12px; width:100%; min-height:48px; padding:12px 16px; border:1px solid var(--ui-border); border-radius:8px; background:var(--ui-surface); color:var(--ink); text-align:left; }
 .access-selection button.access-organization-choice:hover { background:var(--ui-soft); border-color:var(--ui-input); }
@@ -399,8 +399,8 @@ body:has(.access-selection) main { padding:clamp(24px,7dvh,72px) 20px; }
 }
 .access-flow h1 { font:600 28px/1.12 var(--font-display); letter-spacing:-.015em; margin-bottom:16px; font-size:28px; }
 .access-flow h2 { font-size:18px; margin-top:24px; font:600 16px/1.4 var(--font-ui); }
-.access-flow :where(input:not([type=checkbox]):not([type=radio]),select) { min-height:40px; padding:9px 13px; font-size:13px; border-color:var(--ui-input); border-radius:12px; }
-.access-flow button { background:var(--ui-action); color:var(--ui-action-ink); cursor:pointer; margin:12px 0; width:fit-content; max-width:100%; justify-self:start; min-height:36px; padding:8px 16px; font-size:13px; }
+.access-flow :where(input:not([type=checkbox]):not([type=radio]),select) { min-height:var(--ux-h-md); padding:6px 12px; font-size:var(--ux-fs); border-color:var(--ui-input); border-radius:var(--ux-r-ctl); }
+.access-flow button { background:var(--ui-action); color:var(--ui-action-ink); cursor:pointer; margin:12px 0; width:fit-content; max-width:100%; justify-self:start; min-height:var(--ux-h-md); padding:6px 12px; font-size:var(--ux-fs); font-weight:var(--ux-fw); }
 .access-flow label:has(>input:is([type=checkbox],[type=radio])) { display:flex; align-items:center; gap:9px; min-height:36px; font-size:13px; }
 
 @media(max-width:767px) {

@@ -24,6 +24,7 @@ Rovaq actúa con dos papeles distintos. Es responsable de los datos de las perso
 - Conversaciones de soporte: mensajes, canal, fechas, autoría y los datos de contacto que el texto contenga, como nombre, correo o teléfono de un comprador.
 - Pedidos y reembolsos: identificadores, productos, importes, fechas y estados, cargados desde exportes de marketplaces con ayuda de nuestro equipo.
 - Datos de envíos de garantía y referencias de pedido y de ticket: número de seguimiento, transportista, fechas, motivo, SKU y referencias de pedido y de ticket. Son datos operativos, sin nombre ni domicilio del destinatario.
+- Datos operativos de devoluciones: motivo, estado, fechas y referencias de pedido y de artículo, sin nombre, contacto ni domicilio del cliente final.
 - Datos leídos de la herramienta de soporte que la empresa conecte, hoy HubSpot, con permisos de solo lectura: conversaciones, mensajes, notas y datos básicos de tickets. Rovaq no escribe en esa herramienta.
 - Archivos adjuntos y exportes que la empresa entregue para su carga.
 

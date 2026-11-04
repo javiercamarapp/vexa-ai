@@ -126,6 +126,16 @@ describe('contenido legal', () => {
     assert.match(fs.readFileSync(path.join(raiz, 'docs/legal/aviso-de-privacidad.en.md'), 'utf8'), /without the recipient name or address/);
   });
 
+  test('el aviso describe los datos operativos de devoluciones (motivo, estado, fechas y referencias) sin nombre, contacto ni domicilio del cliente final, en es y en, y los docs exportados coinciden', () => {
+    const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
+    const en = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.en).join('\n');
+    assert.match(es, /Datos operativos de devoluciones: motivo, estado, fechas y referencias de pedido y de artículo, sin nombre, contacto ni domicilio del cliente final/);
+    assert.match(en, /Operational returns data: reason, status, dates and order and item references, without the end customer name, contact details or address/);
+    const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
+    assert.match(fs.readFileSync(path.join(raiz, 'docs/legal/aviso-de-privacidad.es.md'), 'utf8'), /sin nombre, contacto ni domicilio del cliente final/);
+    assert.match(fs.readFileSync(path.join(raiz, 'docs/legal/aviso-de-privacidad.en.md'), 'utf8'), /without the end customer name, contact details or address/);
+  });
+
   test('el aviso dice lo que el código hace: la IA no calcula importes y la redacción no es anonimización', () => {
     const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
     assert.match(es, /No calcula importes/);

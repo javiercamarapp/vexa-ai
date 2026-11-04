@@ -39,3 +39,4 @@
 .actions{display:flex;flex-wrap:wrap;gap:var(--sp-2);align-items:center}
 .pager{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2)}
 .pager p{margin:0;font-size:var(--t-small);color:var(--muted)}
+.form textarea{line-height:1.5}

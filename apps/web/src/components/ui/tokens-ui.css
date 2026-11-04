@@ -31,3 +31,5 @@
 :root[data-theme=dark]{
  --ux-accent:#a9c1f2;--ux-accent-on:#0b1b3a;--ux-accent-soft:#1d2433;--ux-accent-line:color-mix(in srgb,var(--ux-accent) 40%,transparent);--ux-accent-hover:#26314a;
 }
+/* Puntero tactil: pestañas y menu de la Guia suben a 36 px sin cambiar escritorio */
+@media (pointer:coarse){:root .tab-link,:root .onb-menu button{min-height:var(--ux-h-lg)}}

@@ -16,7 +16,11 @@ const cifra=(v:number|null|undefined)=>v==null?'—':nf.format(v);
 
 /** «Pedidos, envíos y devoluciones»: unión por ID de pedido + retailer. Los envíos de Speedship son garantía, así que la unión nunca es un % de ventas; sin base de cálculo se dice n/d. */
 export function PedidosCobertura(){
- const tx=useT(),idioma=useIdioma(),r=useJson<CoberturaPedidosCruda>('/api/coverage/pedidos',accept);
+ return <PedidosVista r={useJson<CoberturaPedidosCruda>('/api/coverage/pedidos',accept)}/>;
+}
+/** Parte visual sin red: recibe el estado de la lectura (la prueba le pasa resultados sintéticos). */
+export function PedidosVista({r}:{r:{data:CoberturaPedidosCruda|null;busy:boolean;error:string|null|undefined;reload:()=>void}}){
+ const tx=useT(),idioma=useIdioma();
  const m=useMemo(()=>modeloPedidos(r.data),[r.data]);
  const cargando=r.busy&&!r.data,nombre=(g:GrupoPedidos)=>nombreRetailer(g.clave,tx);
  const periodo=(p:{desde:string;hasta:string}|null)=>p?textoPeriodo(p.desde,p.hasta,idioma)??tx('tr.datos.pedSinPeriodo'):tx('tr.datos.pedSinPeriodo');
@@ -35,7 +39,7 @@ export function PedidosCobertura(){
      {key:'e',header:tx('tr.datos.pedHEnvios'),align:'num',render:g=>cifra(g.envios?.total)},
      {key:'s',header:tx('tr.datos.pedHSinId'),align:'num',render:g=>cifra(g.envios?.sinId)},
      {key:'u',header:tx('tr.datos.pedHUnion'),align:'num',render:g=>g.envios?textoCobertura(g.envios.cobertura,idioma):'—'},
-     {key:'h',header:tx('tr.datos.pedHPeriodo'),render:g=>g.envios?periodo(g.envios.periodo):'—'}]}/>}
+     {key:'h',header:tx('tr.datos.pedHPeriodo'),render:g=>g.envios?(r.data?.periodoEnvios==null?'—':periodo(g.envios.periodo)):'—'}]}/>}
     {sinEnvios&&<p className="ac-nota" role="status" style={{padding:'8px 14px'}}>{tx('tr.datos.pedParcialEnv')}</p>}
     {conDevs.length>0&&<DataTable caption={tx('tr.datos.pedDevTit')} rowKey={g=>g.clave} rows={conDevs} maxHeight="none" columns={[
      {key:'r',header:tx('tr.datos.pedHRetailer'),render:g=>nombre(g)},

@@ -36,7 +36,8 @@ export function modeloPedidos(entrada) {
   const {enlaces, devoluciones, periodoEnvios} = entrada ?? {};
   if (!Array.isArray(enlaces) && !Array.isArray(devoluciones)) return {estado: 'no_disponible', grupos: []};
   const por = new Map(ORDEN.map((k) => [k, {clave: k, e: [], p: [], d: [], f: []}]));
-  for (const r of enlaces ?? []) { const g = por.get(grupoRetailer(r.retailer)); if (r.entidad === 'envios') g.e.push(r); else if (r.entidad === 'pedidos') g.p.push(r); }
+  for (const r of enlaces ?? []) { const g = por.get(grupoRetailer(r.retailer)); if (r.entidad === 'envios') { if (r.tipo === 'garantia') g.e.push(r); } // otros tipos de envío no se mezclan bajo la nota de garantía
+     else if (r.entidad === 'pedidos') g.p.push(r); }
   for (const r of devoluciones ?? []) por.get(grupoRetailer(r.retailer)).d.push(r);
   for (const r of periodoEnvios ?? []) por.get(grupoRetailer(r.retailer)).f.push(r);
   const grupos = [];

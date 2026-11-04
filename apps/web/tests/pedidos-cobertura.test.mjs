@@ -70,7 +70,7 @@ test('la fila de pedidos del libro lleva solo su conteo: nunca una cobertura de 
   assert.ok(!('cobertura' in m.grupos[0]));
 });
 
-import {createOrderCoverageRepository, ENLACES_SQL, DEVOLUCIONES_SQL} from '../../../packages/workspace-service/pedidos-cobertura.mjs';
+import {createOrderCoverageRepository, ENLACES_SQL, DEVOLUCIONES_SQL, PERIODO_ENVIOS_SQL} from '../../../packages/workspace-service/pedidos-cobertura.mjs';
 const sesion = (respuestas) => { const llamadas = [];
   const s = {tenantId: 'tenant-sintetico', async query(sql, args) { llamadas.push({sql, args});
     if (/SAVEPOINT|set_config/i.test(sql)) return {rows: []};
@@ -79,7 +79,7 @@ const sesion = (respuestas) => { const llamadas = [];
   return {llamadas, database: {transaction: (_m, fn) => fn(s)}}; };
 test('repositorio: cada lectura va acotada al tenant de la sesión, convierte numeric a número y nunca pide datos personales', async () => {
   const {database, llamadas} = sesion([['order_link_coverage', [{retailer: 'amazon', entidad: 'envios', tipo: 'garantia', total: '4', ligados: '2', sin_id: '1', sin_ligar: '1', denominador: '3', cobertura: '0.6667'}]],
-    ['order_returns_coverage', [{retailer: 'walmart', mes: new Date('2026-01-01T00:00:00Z'), devoluciones: '5', sin_id: '0', denominador: '5', con_pedido: '2', con_envio: '1', cobertura_pedido: '0.4', cobertura_envio: '0.2'}]],
+    ['order_returns_coverage', [{retailer: 'walmart', mes: '2026-01-01', devoluciones: '5', sin_id: '0', denominador: '5', con_pedido: '2', con_envio: '1', cobertura_pedido: '0.4', cobertura_envio: '0.2'}]],
     ['order_shipments', [{retailer: 'amazon', desde: '2026-01-02', hasta: '2026-02-03'}]]]);
   const d = await createOrderCoverageRepository({database}).coverage();
   assert.equal(d.enlaces[0].cobertura, 0.6667); assert.equal(d.enlaces[0].total, 4);
@@ -95,4 +95,37 @@ test('repositorio: una lectura que agota su tiempo queda null (no 0 ni vacío) y
   assert.equal(d.enlaces, null); assert.deepEqual(d.devoluciones, []);
   assert.equal(modeloPedidos(d).estado, 'no_disponible', 'una parte sin leer no se presenta como «no hay nada»');
   assert.equal(modeloPedidos({...d, devoluciones: null}).estado, 'no_disponible');
+});
+
+test('fechas: el texto de SQL pasa tal cual en cualquier zona; un Date no se acepta (correría el día)', async () => {
+  const previa = process.env.TZ;
+  try {
+    for (const tz of ['Asia/Tokyo', 'America/Mexico_City', 'UTC']) {
+      process.env.TZ = tz;
+      const {database} = sesion([['order_returns_coverage', [{retailer: 'amazon', mes: '2026-03-01', devoluciones: 1}]], ['order_shipments', [{retailer: 'amazon', desde: '2026-01-01', hasta: '2026-01-31'}]]]);
+      const d = await createOrderCoverageRepository({database}).coverage();
+      assert.equal(d.devoluciones[0].mes, '2026-03-01', tz); assert.equal(d.periodoEnvios[0].desde, '2026-01-01', tz); assert.equal(d.periodoEnvios[0].hasta, '2026-01-31', tz);
+    }
+    const {database} = sesion([['order_returns_coverage', [{retailer: 'amazon', mes: new Date('2026-03-01T00:00:00Z'), devoluciones: 1}]]]);
+    assert.equal((await createOrderCoverageRepository({database}).coverage()).devoluciones[0].mes, null);
+  } finally { if (previa === undefined) delete process.env.TZ; else process.env.TZ = previa; }
+});
+test('SQL: las fechas salen como texto desde la base (to_char y ::text)', () => {
+  assert.match(DEVOLUCIONES_SQL, /to_char\(mes,'YYYY-MM-DD'\)/); assert.match(PERIODO_ENVIOS_SQL, /min\(ship_date\)::text/); assert.match(PERIODO_ENVIOS_SQL, /max\(ship_date\)::text/);
+});
+test('valores no numéricos o vacíos no producen NaN: quedan null', async () => {
+  const {database} = sesion([['order_link_coverage', [{retailer: 'amazon', entidad: 'envios', tipo: 'garantia', total: 'abc', ligados: '', sin_id: undefined, sin_ligar: 'NaN', denominador: 'Infinity', cobertura: 'x'}]]]);
+  const f = (await createOrderCoverageRepository({database}).coverage()).enlaces[0];
+  for (const k of ['total', 'ligados', 'sinId', 'sinLigar', 'denominador', 'cobertura']) assert.equal(f[k], null, k);
+});
+test('envíos de un tipo distinto de garantía no se mezclan con los de garantía', () => {
+  const m = modeloPedidos({enlaces: [env('amazon', 4, 2, 0), env('amazon', 100, 100, 0, 'venta')]});
+  assert.equal(m.grupos[0].envios.total, 4); assert.equal(m.grupos[0].envios.cobertura, 0.5);
+  assert.equal(modeloPedidos({enlaces: [env('amazon', 100, 100, 0, 'venta')], devoluciones: []}).estado, 'vacio', 'solo otro tipo: no hay fila de garantía');
+});
+test('filas de tickets se ignoran: no crean grupo ni suman a envíos o pedidos', () => {
+  const tk = {retailer: 'amazon', entidad: 'tickets', tipo: 'ticket', total: 9, ligados: 9, sinId: 0, sinLigar: 0, denominador: 9, cobertura: 1};
+  assert.equal(modeloPedidos({enlaces: [tk], devoluciones: []}).estado, 'vacio');
+  const m = modeloPedidos({enlaces: [tk, env('amazon', 2, 1, 0)]});
+  assert.equal(m.grupos[0].envios.total, 2); assert.equal(m.grupos[0].pedidos, null);
 });

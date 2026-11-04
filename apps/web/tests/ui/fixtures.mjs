@@ -146,6 +146,7 @@ export async function respond(url,method,bodyText){
  if(p==='/api/agent/turn')return [200,await agentTurn(body)];
  if(p==='/api/agent/feedback')return [202,{data:{accepted:true,persisted:false}}];
  if(p==='/api/coverage')return ok(coverage());
+ if(p==='/api/coverage/pedidos')return ok({enlaces:[],devoluciones:[],periodoEnvios:[]});
  if(p==='/api/trends'){const v=q.get('variant');return ok(v==='parcial'?trendsOctubreParcial():v==='sinreembolsos'?trendsSinReembolsos():trends());}
  if(p==='/api/trends/categories')return ok(incidenceCategories(q.get('variant')??'ok'));
  if(p==='/api/trends/incidences'){const pid=q.get('problem');return ok(incidenceMonthly(pid===IDS.problemB?'empty':pid===IDS.problemC?'timeout':'ok',pid));}

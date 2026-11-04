@@ -21,7 +21,8 @@
     "test:sitio": "node --test \"tests/sitio/*.test.*\"",
     "presupuesto": "node ../../tools/sitio/presupuesto.mjs",
     "test:web-ui": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/cco.test.tsx tests/setup.test.tsx tests/agente/agente-ui.test.tsx tests/i18n.test.ts",
-    "test:ui-tokens": "node --test tests/ola6-tokens.test.mjs"
+    "test:ui-tokens": "node --test tests/ola6-tokens.test.mjs",
+    "test:pedidos": "node --require ./tests/server-only-stub.cjs --import tsx --test tests/pedidos-cobertura.test.mjs tests/pedidos-cobertura-ui.test.tsx"
   },
   "dependencies": {
     "next": "16.4.3",

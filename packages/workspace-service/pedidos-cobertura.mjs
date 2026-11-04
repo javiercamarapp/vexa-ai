@@ -2,11 +2,12 @@
 // Lee las vistas public.order_link_coverage y public.order_returns_coverage (agregados: sin IDs de pedido ni datos de clientes finales)
 // y el rango de fechas de los envíos. Si una consulta agota su tiempo devuelve null para esa parte: «desconocido» no se convierte en cero.
 import {guarded} from './trends.mjs';
-const n=(v)=>(v===null||v===undefined?null:Number(v));
-const dia=(v)=>{if(v===null||v===undefined)return null;const s=v instanceof Date?v.toISOString():String(v);return /^\d{4}-\d{2}-\d{2}/.test(s)?s.slice(0,10):null;};
+const n=(v)=>{if(v===null||v===undefined||v==='')return null;const x=Number(v);return Number.isFinite(x)?x:null;};
+// Las fechas llegan como texto AAAA-MM-DD desde SQL (to_char / ::text): un Date se correría un día en zonas al este de UTC.
+const dia=(v)=>(typeof v==='string'&&/^\d{4}-\d{2}-\d{2}/.test(v)?v.slice(0,10):null);
 export const ENLACES_SQL='SELECT retailer,entidad,tipo,total,ligados,sin_id,sin_ligar,denominador,cobertura FROM public.order_link_coverage WHERE tenant_id=$1';
-export const DEVOLUCIONES_SQL='SELECT retailer,mes,devoluciones,sin_id,denominador,con_pedido,con_envio,cobertura_pedido,cobertura_envio FROM public.order_returns_coverage WHERE tenant_id=$1';
-export const PERIODO_ENVIOS_SQL='SELECT retailer,min(ship_date) AS desde,max(ship_date) AS hasta FROM public.order_shipments WHERE tenant_id=$1 GROUP BY retailer';
+export const DEVOLUCIONES_SQL=`SELECT retailer,to_char(mes,'YYYY-MM-DD') AS mes,devoluciones,sin_id,denominador,con_pedido,con_envio,cobertura_pedido,cobertura_envio FROM public.order_returns_coverage WHERE tenant_id=$1`;
+export const PERIODO_ENVIOS_SQL=`SELECT retailer,min(ship_date)::text AS desde,max(ship_date)::text AS hasta FROM public.order_shipments WHERE tenant_id=$1 GROUP BY retailer`;
 export function createOrderCoverageRepository({database,timeoutMs=4000}){
  return {
   async coverage(){

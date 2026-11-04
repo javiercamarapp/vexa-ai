@@ -48,3 +48,12 @@ test('filtros, chips y pestañas usan los tokens de altura (28 y 32), sin 34, 36
   assert.match(leer('components/panel-comun/panel-comun.css'),/\.pc-tabs a\{[^}]*height:var\(--ux-h-md\)/);
   assert.doesNotMatch(leer('components/map/mapa.css'),/mp-seg button\{[^}]*min-height:34px/);
 });
+test('campos de texto y selects: 32 px (altura por token, interlineado 1.25 para que el relleno no los estire)', () => {
+  const g=leer('app/(app)/globals.css');
+  assert.match(g,/\.workspace-content :where\(input:not\(\[type=checkbox\]\):not\(\[type=radio\]\),select,textarea\) \{ line-height:1\.25; box-shadow:none; min-height:var\(--ux-h-md\); padding:6px 10px/);
+  assert.match(leer('components/ops-panels.module.css'),/\.form :is\(input[^{]*\{[^}]*border-radius:var\(--ux-r-ctl\)[^}]*\/1\.25/);
+});
+test('ningún control del espacio de trabajo declara peso 600 en la capa base de botones y chips', () => {
+  assert.doesNotMatch(leer('components/ui/ui.css'),/\.btn,button\.btn,a\.btn\)\{[^}]*font:600/);
+  assert.match(leer('components/agente/una-pagina.css'),/font:var\(--ux-fw\) var\(--ctl-fs\)/);
+});

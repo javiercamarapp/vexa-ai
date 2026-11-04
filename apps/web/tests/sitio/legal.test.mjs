@@ -129,8 +129,8 @@ describe('contenido legal', () => {
   test('el aviso describe los datos operativos de devoluciones (motivo, estado, fechas y referencias) sin nombre, contacto ni domicilio del cliente final, en es y en, y los docs exportados coinciden', () => {
     const es = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.es).join('\n');
     const en = hojas(AVISO_DE_PRIVACIDAD).map((h) => h.hoja.en).join('\n');
-    assert.match(es, /Datos operativos de devoluciones: motivo, estado, fechas y referencias de pedido y de artículo, sin nombre, contacto ni domicilio del cliente final/);
-    assert.match(en, /Operational returns data: reason, status, dates and order and item references, without the end customer name, contact details or address/);
+    assert.match(es, /Datos operativos de devoluciones: motivo, estado, fechas, cantidad, canal, un indicador de si hubo guía de retorno \(sin el número\) y referencias de devolución, de pedido y de artículo, sin nombre, contacto ni domicilio del cliente final/);
+    assert.match(en, /Operational returns data: reason, status, dates, quantity, channel, an indicator of whether a return label existed \(without the number\) and return, order and item references, without the end customer name, contact details or address/);
     const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
     assert.match(fs.readFileSync(path.join(raiz, 'docs/legal/aviso-de-privacidad.es.md'), 'utf8'), /sin nombre, contacto ni domicilio del cliente final/);
     assert.match(fs.readFileSync(path.join(raiz, 'docs/legal/aviso-de-privacidad.en.md'), 'utf8'), /without the end customer name, contact details or address/);

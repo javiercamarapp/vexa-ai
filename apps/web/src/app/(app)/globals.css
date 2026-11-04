@@ -46,7 +46,7 @@ main { max-width:76rem; margin:auto; padding:clamp(48px,8vw,112px) clamp(20px,5v
 .closing { margin:32px 0 0; }
 .workspace label { display:grid; gap:5px; }
 .workspace :where(input,select,textarea) { color:var(--ink); width:100%; min-width:0; padding:9px 11px; border:1px solid var(--ui-input); border-radius:8px; background:var(--ui-surface); }
-.workspace button { min-width:0; min-height:36px; padding:8px 16px; border:1px solid transparent; border-radius:8px; background:var(--ui-action); color:var(--ui-action-ink); }
+.workspace button { min-width:0; min-height:var(--ux-h-md); padding:6px var(--ux-px); border:1px solid transparent; border-radius:8px; background:var(--ui-action); color:var(--ui-action-ink); }
 .workspace button:disabled { opacity:.55; }
 .workspace-filters { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; padding:16px; border:1px solid var(--ui-border); border-radius:12px; margin:20px 0; align-items:end; background:var(--ui-surface); }
 .workspace-filters small { grid-column:1/-1; }

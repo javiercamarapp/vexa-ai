@@ -31,9 +31,10 @@
 .onb-cuenta-barra::-moz-progress-bar { background:var(--onb-resalte); }
 .onb-tarjeta .onb-fallo { border:1px solid var(--ui-line-strong); }
 .onb-acciones { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin:0; }
-.onb-btn, .onb-btn-sec { min-height:var(--ux-h-md); padding:0 var(--ux-px); border-radius:var(--ux-r-ctl); font:var(--ux-fw) var(--ux-fs)/1 var(--font-ui); cursor:pointer; }
-.onb-btn { border:1px solid var(--ux-accent-line); background:var(--ux-accent-soft); color:var(--ux-accent); }
-.onb-btn-sec { border:1px solid var(--ux-bd-ctl); background:transparent; color:var(--ink); }
+/* :root sube la especificidad para ganar a `.workspace button` (globals.css), que si no los pinta de negro y de 36 px */
+:root .onb-btn, :root .onb-btn-sec { min-height:var(--ux-h-md); padding:0 var(--ux-px); border-radius:var(--ux-r-ctl); font:var(--ux-fw) var(--ux-fs)/1 var(--font-ui); cursor:pointer; }
+:root .onb-btn { border:1px solid var(--ux-accent-line); background:var(--ux-accent-soft); color:var(--ux-accent); }
+:root .onb-btn-sec { border:1px solid var(--ux-bd-ctl); background:transparent; color:var(--ink); }
 .onb-btn:focus-visible, .onb-btn-sec:focus-visible, .onb-boton:focus-visible, .onb-menu button:focus-visible { outline:3px solid var(--onb-resalte); outline-offset:2px; }
 
 /* Ruta del recorrido: pantallas en una ventana corta, la actual marcada. */

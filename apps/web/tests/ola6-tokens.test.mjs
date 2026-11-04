@@ -39,8 +39,8 @@ test('iconos de trazo lineal: 1.5 en todos los juegos de la app', () => {
 });
 test('guía y recorrido: botones de 32 px y flotante con la sombra única (el botón «Guía» de 26 px lo fija onboarding-tour.test: propuesta de pasarlo a 28 px)', () => {
   const c=leer('components/onboarding/onboarding.css');
-  assert.match(c,/\.onb-btn, \.onb-btn-sec \{ min-height:var\(--ux-h-md\)/);
-  assert.match(c,/box-shadow:var\(--ux-shadow-float\)/);assert.doesNotMatch(c,/\.onb-btn \{[^}]*background:var\(--ink\)/);
+  assert.match(c,/:root \.onb-btn, :root \.onb-btn-sec \{ min-height:var\(--ux-h-md\)/);
+  assert.match(c,/box-shadow:var\(--ux-shadow-float\)/);assert.doesNotMatch(c,/\.onb-btn \{[^}]*background:var\(--ink\)/);assert.match(leer('app/(app)/globals.css'),/\.workspace button \{ min-width:0; min-height:var\(--ux-h-md\)/);
 });
 test('filtros, chips y pestañas usan los tokens de altura (28 y 32), sin 34, 36 ni 40 sueltos', () => {
   assert.match(leer('app/(app)/ui.css'),/\.tab-link \{[^}]*min-height:var\(--ux-h-md\)/);

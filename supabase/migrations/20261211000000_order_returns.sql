@@ -1,7 +1,17 @@
 begin;
+-- Dependencia: 20261210000000_order_links (order_id_normalize, order_retailer_normalize, order_ledger_keys, order_shipments). Falla claro si falta.
+do $g$ begin
+ if to_regprocedure('public.order_id_normalize(text)') is null or to_regprocedure('public.order_retailer_normalize(text)') is null
+  or to_regclass('public.order_ledger_keys') is null or to_regclass('public.order_shipments') is null then
+  raise exception 'DEPENDENCIA_FALTANTE: aplique primero 20261210000000_order_links (order_id_normalize, order_retailer_normalize, order_ledger_keys, order_shipments)';
+ end if;
+end $g$;
 -- Devoluciones de marketplace (Amazon, Walmart) con el MINIMO de datos personales. Aditiva: no redefine nada de 20261210000000_order_links.
--- Se guarda: retailer, llave de la devolucion (id/RMA + linea), pedido normalizado (paridad con order_id_normalize), motivo y estado categoricos,
--- fechas, id de articulo del marketplace, cantidad, si hubo tracking de retorno (booleano, NUNCA el numero) y canal categorico.
+-- Se guarda: retailer, llave de la devolucion (id/RMA + linea), pedido normalizado (paridad con order_id_normalize), motivo, estado y canal de juego de caracteres
+-- y longitud limitados, fechas, id de articulo del marketplace, cantidad y si hubo tracking de retorno (booleano, NUNCA el numero).
+-- Guarda contra texto libre/datos personales en motivo, estado y canal (criterio estadistico, no un catalogo): motivo sin corridas de 6+ digitos y <=6 palabras;
+-- estado y canal solo letras, espacio y _ . / ( ) - (sin digitos) y <=4 palabras. Un nombre corto sin digitos NO es detectable sin un catalogo cerrado; esas columnas
+-- vienen de listas desplegables de cada marketplace y el parser nunca lee las columnas de comentarios. Paridad exacta con devoluciones.mjs (REASON_OK/STATUS_OK/CHANNEL_OK).
 -- PROHIBIDO y sin columna: nombre, correo, telefono, direccion, comentarios libres del cliente, numero de seguimiento, nombre del producto, SKU.
 -- RLS por tenant de la sesion; escritura solo con la accion 'import'; borrado solo con 'retain' (owner).
 
@@ -11,13 +21,13 @@ create table if not exists public.order_returns (
  retailer text not null check(retailer<>'unknown' and public.order_retailer_normalize(retailer) is not distinct from retailer),
  return_key text not null check(length(return_key) between 1 and 80 and return_key ~ '^[A-Za-z0-9._|-]+$'),
  order_key text check(order_key is null or public.order_id_normalize(order_key) is not distinct from order_key),
- reason text check(reason is null or (length(reason) between 1 and 80 and reason ~ '^[A-Za-z0-9 _:./()'',&+-]+$')),
- status text check(status is null or (length(status) between 1 and 40 and status ~ '^[A-Za-z0-9 _:./()-]+$')),
+ reason text check(reason is null or (length(reason) between 1 and 80 and reason ~ '^[A-Za-z0-9 _:./()'',&+-]+$' and reason !~ '[0-9]{6,}' and reason !~ '^ | $|  ' and array_length(string_to_array(reason,' '),1)<=6)),
+ status text check(status is null or (length(status) between 1 and 40 and status ~ '^[A-Za-z _./()-]+$' and status !~ '^ | $|  ' and array_length(string_to_array(status,' '),1)<=4)),
  requested_at date not null, status_at date,
  item_ref text check(item_ref is null or (length(item_ref) between 1 and 40 and item_ref ~ '^[A-Za-z0-9._-]+$')),
  qty integer check(qty is null or qty between 1 and 100000),
  has_return_tracking boolean not null default false,
- channel text check(channel is null or (length(channel) between 1 and 40 and channel ~ '^[A-Za-z0-9 _:./()-]+$')),
+ channel text check(channel is null or (length(channel) between 1 and 40 and channel ~ '^[A-Za-z _./()-]+$' and channel !~ '^ | $|  ' and array_length(string_to_array(channel,' '),1)<=4)),
  row_hash text not null check(row_hash ~ '^[a-f0-9]{64}$'),
  unique(tenant_id,id), unique(tenant_id,retailer,return_key)
 );

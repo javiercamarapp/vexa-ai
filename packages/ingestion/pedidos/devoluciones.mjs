@@ -13,7 +13,17 @@ import {parseXLSX} from '../xlsx.mjs';
 
 export const RETURN_LIMITS = Object.freeze({returnKey: 80, reason: 80, status: 40, itemRef: 40, channel: 40, qtyMax: 100000, batch: 250});
 // = CHECK de order_returns (paridad SQL-JS)
-export const RETURN_KEY_RE = /^[A-Za-z0-9._|-]+$/, ITEM_REF_RE = /^[A-Za-z0-9._-]+$/, REASON_RE = /^[A-Za-z0-9 _:./()',&+-]+$/, STATUS_RE = /^[A-Za-z0-9 _:./()-]+$/, CHANNEL_RE = STATUS_RE;
+export const RETURN_KEY_RE = /^[A-Za-z0-9._|-]+$/, ITEM_REF_RE = /^[A-Za-z0-9._-]+$/, REASON_RE = /^[A-Za-z0-9 _:./()',&+-]+$/, STATUS_RE = /^[A-Za-z _./()-]+$/, CHANNEL_RE = STATUS_RE;
+// Guarda contra texto libre / datos personales en motivo, estado y canal (criterio estadístico documentado; mismo CHECK en la tabla):
+//  - motivo: juego de caracteres de REASON_RE, sin corridas de 6+ dígitos (teléfonos, folios) y a lo más 6 palabras (frases, domicilios).
+//  - estado y canal: solo letras, espacio y _ . / ( ) - (sin dígitos) y a lo más 4 palabras.
+//  - NO detectable sin un catálogo cerrado: un nombre corto sin dígitos («Ana Ruiz») o «Calle 5 No 12» (3 dígitos). Esas columnas vienen de listas desplegables del
+//    marketplace y el parser nunca lee las columnas de comentarios, nombre ni domicilio; la guarda cubre sobre todo errores de columna (p. ej. un teléfono o un
+//    comentario en el campo de motivo).
+const words = s => s.split(' ').length;
+export const REASON_OK = s => typeof s === 'string' && s.length >= 1 && s.length <= RETURN_LIMITS.reason && REASON_RE.test(s) && !/[0-9]{6,}/.test(s) && !/^ | $| {2}/.test(s) && words(s) <= 6;
+export const STATUS_OK = s => typeof s === 'string' && s.length >= 1 && s.length <= RETURN_LIMITS.status && STATUS_RE.test(s) && !/^ | $| {2}/.test(s) && words(s) <= 4;
+export const CHANNEL_OK = s => typeof s === 'string' && s.length >= 1 && s.length <= RETURN_LIMITS.channel && CHANNEL_RE.test(s) && !/^ | $| {2}/.test(s) && words(s) <= 4;
 export const RETURN_RETAILERS = Object.freeze(['amazon', 'walmart']);
 
 const SCHEMAS = {
@@ -83,7 +93,6 @@ export function detectSchema(headerRow) {
   return {retailer, idx};
 }
 
-const cat = (v, re, max) => { const s = txt(v); return s && s.length <= max && re.test(s) ? s : null; };
 const DB_KEYS = ['retailer', 'return_key', 'order_key', 'reason', 'status', 'requested_at', 'status_at', 'item_ref', 'qty', 'has_return_tracking', 'channel'];
 export const returnRowHash = row => createHash('sha256').update(JSON.stringify(DB_KEYS.map(k => row[k] ?? null))).digest('hex');
 /** Fila camelCase -> columnas de la tabla (lo que recibe order_returns_ingest). */
@@ -92,47 +101,58 @@ export const returnToSql = x => ({retailer: x.retailer, return_key: x.returnKey,
 /**
  * rows: filas ya leídas (la primera es el encabezado). Devuelve {retailer, returns, rejections, duplicates, blank, warnings, schemaError}.
  * Rechazos por fila: RETURN_KEY_MISSING, RETURN_KEY_INVALID, RETURN_KEY_TOO_LONG, DATE_INVALID. Del archivo: EMPTY_FILE, SCHEMA_UNRECOGNIZED, SCHEMA_AMBIGUOUS, SCHEMA_COLUMN_MISSING.
+ * Fechas m/d/aaaa: se asume formato de EE. UU. (mes/día, como lo exporta Seller Central) y se advierte DATE_FORMAT_ASSUMED_US una vez por archivo; las ISO, serie Excel y dd-Mon-aaaa no son ambiguas.
  * Un pedido ausente o no normalizable NO rechaza la devolución: queda con order_key null («sin ID», se cuenta aparte; unknown != zero).
  * `duplicates` cuenta repeticiones dentro del mismo archivo (retailer + llave); el cruce entre archivos lo resuelve dedupeReturns.
  */
 export function parseReturns(rows) {
-  const out = {retailer: null, returns: [], rejections: [], duplicates: 0, blank: 0, warnings: {}, schemaError: null};
+  const out = {retailer: null, returns: [], rejections: [], duplicates: 0, blank: 0, noLine: 0, warnings: {}, schemaError: null};
   const warn = k => { out.warnings[k] = (out.warnings[k] ?? 0) + 1; };
   if (!Array.isArray(rows) || rows.length < 2) return {...out, rejections: [{row: 0, code: 'EMPTY_FILE'}], schemaError: 'EMPTY_FILE'};
   const sch = detectSchema(rows[0]);
   if (sch.error) return {...out, rejections: [{row: 1, code: sch.error, ...(sch.column ? {column: sch.column} : {})}], schemaError: sch.error};
   const {retailer, idx} = sch; out.retailer = retailer;
+  if (idx.line < 0) out.warnings.LINE_COLUMN_MISSING = 1;
+  let usDates = false;
   const L = RETURN_LIMITS, seen = new Map();
   rows.slice(1).forEach((r, i) => {
     const get = k => (idx[k] >= 0 ? r[idx[k]] : null), line = i + 2;
     if (['order', 'rma', 'requested'].every(k => txt(get(k)) === '')) { out.blank++; return; }
     // Llave = RMA|línea. Sin RMA pero con línea (devoluciones de atención al cliente sin RMA): NORMA|línea. Sin ninguna de las dos no hay llave estable: se rechaza.
     const rma = cleanId(get('rma')), ln = cleanId(get('line'));
-    if (!rma && !ln) { out.rejections.push({row: line, code: 'RETURN_KEY_MISSING'}); return; }
-    const returnKey = `${rma || 'NORMA'}${ln ? `|${ln}` : ''}`;
+    if (!rma && (idx.line < 0 || !ln)) { out.rejections.push({row: line, code: 'RETURN_KEY_MISSING'}); return; }
+    // Sin columna de línea en el esquema (otra versión del archivo): la llave lleva la clase NOLINE, distinta de cualquier línea real, para no mezclarse ni duplicar
+    // contra archivos que sí la traen; se advierte una vez por archivo (LINE_COLUMN_MISSING) y se cuenta aparte en `noLine`.
+    const returnKey = idx.line < 0 ? `${rma || 'NORMA'}|NOLINE` : `${rma || 'NORMA'}${ln ? `|${ln}` : ''}`;
+    if (idx.line < 0) out.noLine++;
     if (returnKey.length > L.returnKey) { out.rejections.push({row: line, code: 'RETURN_KEY_TOO_LONG'}); return; }
     if (!RETURN_KEY_RE.test(returnKey)) { out.rejections.push({row: line, code: 'RETURN_KEY_INVALID'}); return; }
     const requestedAt = parseReturnDate(get('requested'));
+    if (requestedAt && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(txt(get('requested')))) usDates = true;
     if (!requestedAt) { out.rejections.push({row: line, code: 'DATE_INVALID'}); return; }
     const rawOrder = txt(get('order')), orderKey = rawOrder ? normalizeOrderId(rawOrder) : null;
     if (!rawOrder) warn('ORDER_ID_MISSING'); else if (!orderKey) warn('ORDER_ID_INVALID');
     const rawStatusAt = txt(get('statusAt')), statusAt = rawStatusAt ? parseReturnDate(rawStatusAt) : null;
     if (rawStatusAt && !statusAt && !/^(?:NA|N\/A|NONE|NULL|-)$/i.test(rawStatusAt)) warn('STATUS_DATE_INVALID');
-    const take = (k, re, max, w) => { const v = txt(get(k)); if (!v) return null; const c = cat(v, re, max); if (!c) warn(w); return c; };
-    const status = (() => { const v = txt(get('status')).replace(/\s*:\s*\d+.*$/, ''); if (!v) return null; const c = cat(v, STATUS_RE, L.status); if (!c) warn('STATUS_DROPPED'); return c; })();
+    const take = (k, ok, w) => { const v = txt(get(k)); if (!v) return null; if (!ok(v)) { warn(w); return null; } return v; };
+    const status = (() => { const v = txt(get('status')).replace(/\s*:\s*\d+.*$/, ''); if (!v) return null; if (!STATUS_OK(v)) { warn('STATUS_DROPPED'); return null; } return v; })();
     const itemRaw = cleanId(get('item')), itemRef = itemRaw ? (itemRaw.length <= L.itemRef && ITEM_REF_RE.test(itemRaw) ? itemRaw : (warn('ITEM_REF_DROPPED'), null)) : null;
     const q = txt(get('qty')), qn = q ? Number(q) : NaN, qty = Number.isInteger(qn) && qn >= 1 && qn <= L.qtyMax ? qn : null;
     if (q && qty === null) warn('QTY_DROPPED');
-    const x = {retailer, returnKey, orderKey, reason: take('reason', REASON_RE, L.reason, 'REASON_DROPPED'), status, requestedAt, statusAt, itemRef, qty,
-      hasReturnTracking: hasTracking(get('tracking')), channel: take('channel', CHANNEL_RE, L.channel, 'CHANNEL_DROPPED')};
+    const x = {retailer, returnKey, orderKey, reason: take('reason', REASON_OK, 'REASON_DROPPED'), status, requestedAt, statusAt, itemRef, qty,
+      hasReturnTracking: hasTracking(get('tracking')), channel: take('channel', CHANNEL_OK, 'CHANNEL_DROPPED')};
     x.rowHash = returnRowHash(returnToSql(x));
     if (seen.has(returnKey)) { out.duplicates++; const j = seen.get(returnKey); if (better(x, out.returns[j])) out.returns[j] = x; return; }
     seen.set(returnKey, out.returns.length); out.returns.push(x);
   });
+  if (usDates) out.warnings.DATE_FORMAT_ASSUMED_US = 1;
   return out;
 }
-// Cuál instantánea de la misma devolución se conserva: la de estado más reciente (status_at); a igualdad, la de row_hash mayor (determinista).
-const better = (a, b) => (a.statusAt ?? '') > (b.statusAt ?? '') || ((a.statusAt ?? '') === (b.statusAt ?? '') && a.rowHash > b.rowHash);
+// Cuál instantánea de la misma devolución se conserva: la de estado más reciente (status_at, que Amazon no trae); a igualdad la de solicitud más reciente (requested_at) y solo como último recurso la de row_hash mayor (determinista).
+const better = (a, b) => {
+  for (const k of ['statusAt', 'requestedAt']) { const x = a[k] ?? '', y = b[k] ?? ''; if (x !== y) return x > y; }
+  return a.rowHash > b.rowHash;
+};
 
 /** Une los resultados de varios archivos: dedup por retailer + llave de devolución (los archivos se solapan: p. ej. un acumulado ene-may). */
 export function dedupeReturns(list) {

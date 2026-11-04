@@ -10,7 +10,7 @@ import {fileURLToPath} from 'node:url';
 import {withPg, pgAvailable} from '../../metrics/tests/pg-harness.mjs';
 import {TENANT_A, TENANT_B, OWNER, sembrarUsuarios, libroSintetico, cargarLibro} from '../../ai-scale/economia-problemas/mundo.mjs';
 import {parseReturns, returnToSql, RETURN_LIMITS} from './index.mjs';
-import {RETURN_KEY_RE, ITEM_REF_RE, REASON_RE, STATUS_RE} from './devoluciones.mjs';
+import {RETURN_KEY_RE, ITEM_REF_RE, REASON_OK, STATUS_OK, CHANNEL_OK} from './devoluciones.mjs';
 
 const SKIP = !pgAvailable() && 'sin postgres local';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -48,6 +48,8 @@ test('order_returns: aditiva, ingesta, cobertura, aislamiento, negativas, retenc
     h.psql(`insert into public.organizations(id,name) values('${TENANT_A}','SYN'),('${TENANT_B}','SYNB')`);
     sembrarUsuarios(h);
     cargarLibro(h, libroSintetico(TENANT_A), TENANT_A, OWNER.A); cargarLibro(h, libroSintetico(TENANT_B), TENANT_B, OWNER.B);
+    const sinBase = h.file(MIG2); assert.notEqual(sinBase.status, 0, 'sin order_links la migración falla'); assert.match(String(sinBase.stderr), /DEPENDENCIA_FALTANTE/);
+    assert.equal(h.psql(`select to_regclass('public.order_returns') is null`).out, 't', 'la guarda no deja nada a medias');
     assert.equal(h.file(MIG1).status, 0, 'order_links (base de esta)');
     const m = h.file(MIG2); assert.equal(m.status, 0, String(m.stderr).slice(0, 800));
     assert.equal(h.file(MIG2).status, 0, 'idempotente');
@@ -91,13 +93,16 @@ test('order_returns: aditiva, ingesta, cobertura, aislamiento, negativas, retenc
       const casos = {
         return_key: [['A-1|2', true], ['RMA.1_x', true], ['a b', false], ['a|b|c', true], ['ñ1', false], ['x'.repeat(80), true], ['x'.repeat(81), false], ['', false], ['a+b', false]],
         item_ref: [['B0SYN00001', true], ['a b', false], ['x'.repeat(40), true], ['x'.repeat(41), false], ['1.2E+3', false], ['ñ', false]],
-        reason: [['CR-DEFECTIVE', true], ['Not As Described/Pictured', true], ["Doesn't fit, wrong size", true], ['a@b', false], ['Razón', false], ['x'.repeat(80), true], ['x'.repeat(81), false], ['a\tb', false], ['a;b', false]],
-        status: [['Refund Now', true], ['PENDING_RETURN_POST_INVOICE', true], ['Refunded:1', true], ['a,b', false], ['x'.repeat(40), true], ['x'.repeat(41), false]],
+        reason: [['CR-DEFECTIVE', true], ['Not As Described/Pictured', true], ["Doesn't fit, wrong size", true], ['a@b', false], ['Razón', false], ['x'.repeat(80), true], ['x'.repeat(81), false], ['a\tb', false], ['a;b', false],
+          ['5512345678', false], ['Llamar 5512345678', false], ['ref 123456', false], ['ref 12345', true], ['uno dos tres cuatro cinco seis', true], ['uno dos tres cuatro cinco seis siete', false], ['Calle 5 No 12', true], ['Maria Lopez', true], [' x', false], ['a  b', false], ['x ', false]],
+        status: [['Refund Now', true], ['PENDING_RETURN_POST_INVOICE', true], ['Refunded:1', false], ['Refunded1', false], ['a,b', false], ['x'.repeat(40), true], ['x'.repeat(41), false], ['uno dos tres cuatro', true], ['uno dos tres cuatro cinco', false], ['a  b', false], [' x', false]],
+        channel: [['My Account', true], ['Chatbot_Returns', true], ['Channel 2', false], ['5512345678', false], ['uno dos tres cuatro cinco', false], ['In Store', true], ['x'.repeat(41), false]],
       };
-      const RE = {return_key: [RETURN_KEY_RE, 80], item_ref: [ITEM_REF_RE, 40], reason: [REASON_RE, 80], status: [STATUS_RE, 40]};
+      const lenOk = (re, max) => v => v.length >= 1 && v.length <= max && re.test(v);
+      const RE = {return_key: lenOk(RETURN_KEY_RE, 80), item_ref: lenOk(ITEM_REF_RE, 40), reason: REASON_OK, status: STATUS_OK, channel: CHANNEL_OK};
       let n = 0;
       for (const [col, list] of Object.entries(casos)) for (const [v, esperado] of list) {
-        const [re, max] = RE[col], js = v.length >= 1 && v.length <= max && re.test(v); assert.equal(js, esperado, `JS ${col} ${JSON.stringify(v)}`);
+        const js = RE[col](v); assert.equal(js, esperado, `JS ${col} ${JSON.stringify(v)}`);
         const r = asBackend(h, OWNER.A, TENANT_A, `select public.order_returns_ingest(${json([ret({return_key: col === 'return_key' ? v : 'P' + n, [col]: v, row_hash: H64('b')})])});`);
         assert.equal(r.ok, esperado, `SQL ${col} ${JSON.stringify(v)} ${r.err.slice(0, 120)}`); n++;
         if (r.ok) asBackend(h, OWNER.A, TENANT_A, `delete from public.order_returns where return_key=${col === 'return_key' ? `$q$${v}$q$` : `'P${n - 1}'`};`, 'retain');

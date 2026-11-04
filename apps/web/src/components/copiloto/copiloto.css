@@ -20,8 +20,8 @@
 .cn-fuente{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;font-size:13px;color:var(--muted)}
 .cn-parcial{margin:0;font-size:13px;color:var(--ui-warning);padding-left:10px;border-left:2px solid var(--rovaq-rojo)}
 .cn-seg{display:inline-flex;border:1px solid var(--ui-border);border-radius:999px;padding:2px;background:var(--ui-soft)}
-.cn-seg button{min-height:28px;padding:2px 12px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 12px var(--font-ui);cursor:pointer}
-.cn-seg button[aria-pressed=true]{background:var(--ui-action);color:var(--ui-action-ink)}
+.cn-seg button{min-height:var(--ux-h-sm);padding:2px 12px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:500 12px var(--font-ui);cursor:pointer}
+.cn-seg button[aria-pressed=true]{background:var(--ux-accent-soft);color:var(--ux-accent);box-shadow:0 0 0 1px var(--ux-accent-line)}
 .cn-seg button:focus-visible,.cn-chip:focus-visible,.cn-link:focus-visible,.cn-menu summary:focus-visible{outline:2px solid var(--ui-focus);outline-offset:2px}
 .cn-menu{position:relative}
 .cn-menu>summary{list-style:none;cursor:pointer}.cn-menu>summary::-webkit-details-marker{display:none}
@@ -87,7 +87,7 @@
 .cn-preguntas{display:grid;gap:16px;width:100%}
 .cn-tema{display:grid;gap:8px}.cn-tema-t{margin:0;font:500 11px/15px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .cn-chips{display:flex;flex-wrap:wrap;gap:8px}
-.workspace-chat .cn-chip{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;min-height:32px;width:auto;max-width:100%;padding:6px 14px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-surface);color:var(--ink);font:400 13px/18px var(--font-ui);text-align:left;cursor:pointer;margin:0;letter-spacing:normal}
+.workspace-chat .cn-chip{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;min-height:32px;width:auto;max-width:100%;padding:6px 14px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-surface);color:var(--ink);font:var(--ux-fw) var(--ux-fs)/18px var(--font-ui);text-align:left;cursor:pointer;margin:0;letter-spacing:normal}
 .workspace-chat .cn-chip:hover{background:var(--ui-soft);border-color:var(--ui-line-strong)}
 .workspace-chat .cn-chip small{font-size:12px;line-height:14px;color:var(--muted)}
 .workspace-chat .cn-chip-ayuda{border-color:var(--ui-action);border-radius:12px}

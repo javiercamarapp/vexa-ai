@@ -9,7 +9,7 @@
 .notice{margin:0}
 .form{display:grid;gap:var(--sp-3);min-width:0}
 .form label{display:grid;gap:6px;font-size:var(--t-small);font-weight:500;color:var(--muted);min-width:0}
-.form :is(input:not([type=checkbox]):not([type=radio]),select,textarea){width:100%;min-width:0;min-height:var(--btn-h);padding:6px 12px;border:1px solid var(--ui-input);border-radius:var(--r-chip);background:var(--ui-surface);color:var(--ink);font:400 13px/1.5 var(--font-ui)}
+.form :is(input:not([type=checkbox]):not([type=radio]),select,textarea){width:100%;min-width:0;min-height:var(--btn-h);padding:6px 12px;border:1px solid var(--ui-input);border-radius:var(--ux-r-ctl);background:var(--ui-surface);color:var(--ink);font:400 13px/1.5 var(--font-ui)}
 .form textarea{min-height:84px;resize:vertical}
 .form fieldset{display:grid;gap:var(--sp-3);min-width:0;margin:0;padding:0;border:0}
 .form legend{padding:0;margin-bottom:6px;font-size:var(--t-small);font-weight:600;color:var(--ink)}

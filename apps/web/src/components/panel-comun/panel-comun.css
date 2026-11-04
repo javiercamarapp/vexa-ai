@@ -3,7 +3,7 @@
 /* Pestañas de página (subrayado) */
 .pc-tabs{display:flex;gap:4px;margin:0;padding:0;list-style:none;border-bottom:1px solid var(--ui-border);overflow-x:auto;scrollbar-width:none}
 .pc-tabs::-webkit-scrollbar{display:none}
-.pc-tabs a{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;flex:none}
+.pc-tabs a{display:inline-flex;align-items:center;gap:8px;height:var(--ux-h-md);padding:0 12px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;flex:none}
 .pc-tabs a:hover{color:var(--ink)}
 .pc-tabs a[aria-current=page]{color:var(--ink);font-weight:600;border-bottom-color:var(--cat,var(--ink))}
 .pc-tabs a:focus-visible{outline:2px solid var(--ui-focus);outline-offset:-2px;border-radius:999px}

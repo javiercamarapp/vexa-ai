@@ -10,11 +10,11 @@
 .mp-ayuda{margin:0;font-size:var(--t-small);color:var(--muted);text-align:right}
 @media(max-width:700px){.mp-ayuda{display:none}.mp-barra{justify-content:flex-start}}
 .mp-seg{display:inline-flex;border:1px solid var(--ui-border);border-radius:999px;padding:3px;background:var(--ui-soft)}
-.workspace-content .mp-seg button{box-sizing:border-box;min-height:34px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--ui-secondary);font:600 13px var(--font-ui);display:inline-flex;gap:8px;align-items:center;cursor:pointer;box-shadow:none}
+.workspace-content .mp-seg button{box-sizing:border-box;min-height:var(--ux-h-sm);padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--ui-secondary);font:var(--ux-fw) var(--ux-fs) var(--font-ui);display:inline-flex;gap:8px;align-items:center;cursor:pointer;box-shadow:none}
 .workspace-content .mp-seg button small{font:500 12px var(--font-ui);color:var(--muted);font-variant-numeric:tabular-nums}
-.workspace-content .mp-seg button[aria-pressed=true]{background:var(--ink);color:var(--ui-surface)}
+.workspace-content .mp-seg button[aria-pressed=true]{background:var(--ux-accent-soft);color:var(--ux-accent);box-shadow:0 0 0 1px var(--ux-accent-line)}
 .workspace-content .mp-seg button[aria-pressed=true] small{color:inherit;opacity:.75}
-.mp-seg button:focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}
+.mp-seg button:focus-visible{outline:var(--ux-focus-w) solid var(--ux-focus);outline-offset:var(--ux-focus-offset)}
 .mp-leyenda{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px var(--sp-4);font-size:var(--t-small);color:var(--ui-secondary)}
 .mp-leyenda li{display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
 .mp-leyenda i{display:inline-block;inline-size:16px;block-size:12px;border-radius:8px;border:1px solid var(--mp-borde)}

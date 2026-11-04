@@ -27,7 +27,7 @@ export function createOrderCoverageRepository({database,timeoutMs=4000}){
     const out={enlaces:null,devoluciones:null,periodoEnvios:null,refreshedAt:{enlaces:null,devoluciones:null},lectura:{enlaces:res.error??'sin_resumen',devoluciones:res.error??'sin_resumen'}};
     // Defensa en profundidad además de RLS y del WHERE: una fila de otro tenant jamás se mezcla.
     for(const r of res.rows??[]){
-     if(r.tenant_id!==s.tenantId||!MAP[r.kind]||!Array.isArray(r.rows))continue;
+     if(String(r.tenant_id).toLowerCase()!==String(s.tenantId).toLowerCase()||!MAP[r.kind]||!Array.isArray(r.rows))continue;
      out[r.kind]=r.rows.map(MAP[r.kind]);out.refreshedAt[r.kind]=instante(r.refreshed_at);out.lectura[r.kind]='ok';
     }
     if(per.rows)out.periodoEnvios=per.rows.map(r=>({retailer:String(r.retailer),desde:dia(r.desde),hasta:dia(r.hasta)}));

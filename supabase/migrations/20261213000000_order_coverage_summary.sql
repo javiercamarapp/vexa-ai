@@ -4,6 +4,7 @@
 -- Patrón de 20261022000000_precomputed_summaries: RLS forzada, política summary_read con vexa_member, SELECT solo a vexa_backend, función SECURITY DEFINER sin ningún GRANT
 -- (la ejecuta solo el propietario/operador), idempotente. La aplicación NO puede escribir. Ausente != cero: sin fila el panel dice «el resumen aún no se ha calculado».
 -- No se duplica la lógica de cobertura: la función lee de las vistas existentes (filtrando por tenant_id). Las filas son agregados por retailer/tipo/mes: sin IDs de pedido ni datos personales.
+-- NOTA: el tope de tiempo del cálculo (~25 s medidos) lo fija la sesión que llama (scripts/13-refrescar: set statement_timeout antes del select); una función no puede ampliar el tope de la sentencia en curso.
 -- ORDEN: aplicar migración -> desplegar el código -> refrescar (select public.refresh_order_coverage(<tenant>)). Sin migración el código dice «no disponible»; sin refresco, «aún no calculado».
 -- Dependencias: 20261210000000_order_links, 20261211000000_order_returns y 20261212000000_order_returns_po (las vistas). Falla claro si faltan.
 -- Idempotente: tabla «if not exists», política drop+create, función create or replace. Bloqueo: lock_timeout 3 s; una tabla nueva no bloquea nada existente.
@@ -48,7 +49,6 @@ begin
  if p_tenant is null then raise exception 'SUMMARY_INPUT_INVALID' using errcode='22023'; end if;
  if not exists(select 1 from public.organizations where id=p_tenant) then raise exception 'SUMMARY_TENANT_UNKNOWN' using errcode='22023'; end if;
  perform set_config('lock_timeout','5s',true);
- perform set_config('statement_timeout','600s',true);
  perform pg_advisory_xact_lock(hashtextextended(p_tenant::text||':summary:order_coverage',0));
  insert into public.order_coverage_summary(tenant_id,kind,rows,refreshed_at,source_rows)
  select p_tenant,'enlaces',coalesce(jsonb_agg(to_jsonb(v)-'tenant_id' order by v.retailer,v.entidad,v.tipo),'[]'::jsonb),ts,count(*) from public.order_link_coverage v where v.tenant_id=p_tenant

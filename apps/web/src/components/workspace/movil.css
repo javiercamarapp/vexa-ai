@@ -9,7 +9,7 @@
 .workspace-shell .theme-selector label{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;min-width:var(--toggle-cell);height:var(--toggle-cell);min-height:var(--toggle-cell);padding:0;border-radius:999px;color:var(--muted);font:500 13px/1 var(--font-ui);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .18s ease,color .18s ease,box-shadow .18s ease}
 .workspace-shell .theme-selector label:hover{color:var(--ink)}
 .workspace-shell .theme-selector svg{display:block;flex:none;width:var(--toggle-icon);height:var(--toggle-icon)}
-.workspace-shell .theme-selector label:has(input:checked){background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border),0 1px 2px #0e0e1014}
+.workspace-shell .theme-selector label:has(input:checked){background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border)}
 .workspace-shell .theme-selector label:has(input:focus-visible){outline:2px solid var(--ui-focus);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.workspace-shell .theme-selector label{transition:none}}
 

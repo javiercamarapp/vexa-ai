@@ -21,20 +21,20 @@
 /* ---- Buttons: hierarchy by type. Plain <button type=button> = secondary; submit / .btn-primary = primary; .btn-ghost = tertiary ---- */
 :is(.workspace-content,.access-flow) button:not([class]),:is(.workspace-content,.access-flow) button.btn,:is(.workspace-content,.access-flow) .btn{
  display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);width:auto;max-width:100%;min-height:var(--btn-h);padding:6px var(--btn-px);margin:0;
- font:600 13px/1.3 var(--font-ui);letter-spacing:.005em;text-align:center;text-decoration:none;white-space:normal;border-radius:8px;
- border:1px solid var(--ui-input);background:var(--ui-surface);color:var(--ink);box-shadow:none;cursor:pointer;
+ font:var(--ux-fw) var(--ux-fs)/1.3 var(--font-ui);letter-spacing:0;text-align:center;text-decoration:none;white-space:normal;border-radius:var(--btn-radius);
+ border:var(--ux-bd-w) solid var(--ux-bd-ctl);background:var(--ui-surface);color:var(--ink);box-shadow:none;cursor:pointer;
  transition:background-color var(--ui-fast) ease,border-color var(--ui-fast) ease,color var(--ui-fast) ease,transform var(--ui-fast) ease}
-:is(.workspace-content,.access-flow) button:not([class]):not(:disabled):hover,:is(.workspace-content,.access-flow) .btn:hover{background:var(--ui-soft);border-color:var(--ui-secondary);color:var(--ink)}
+:is(.workspace-content,.access-flow) button:not([class]):not(:disabled):hover,:is(.workspace-content,.access-flow) .btn:hover{background:var(--ui-soft);border-color:var(--ux-bd-field);color:var(--ink)}
 :is(.workspace-content,.access-flow) button[type=submit]:not(.btn-secondary):not(.btn-ghost),.workspace-content form button:not([type]):not(.btn-secondary):not(.btn-ghost),:is(.workspace-content,.access-flow) .btn.btn-primary{background:var(--ui-action);border-color:var(--ui-action);color:var(--ui-action-ink)}
 :is(.workspace-content,.access-flow) button[type=submit]:not(.btn-secondary):not(.btn-ghost):not(:disabled):hover,.workspace-content form button:not([type]):not(.btn-secondary):not(.btn-ghost):not(:disabled):hover,:is(.workspace-content,.access-flow) .btn.btn-primary:hover{background:var(--ui-action-hover);border-color:var(--ui-action-hover);color:var(--ui-action-ink)}
-:is(.workspace-content,.access-flow) .btn.btn-secondary{background:var(--ui-surface);border-color:var(--ui-input);color:var(--ink)}
+:is(.workspace-content,.access-flow) .btn.btn-secondary{background:var(--ui-surface);border-color:var(--ux-bd-ctl);color:var(--ink)}
 :is(.workspace-content,.access-flow) .btn-ghost,:is(.workspace-content,.access-flow) button.btn-ghost{background:transparent;border-color:transparent;color:var(--ui-action)}
 :is(.workspace-content,.access-flow) .btn-ghost:hover,:is(.workspace-content,.access-flow) button.btn-ghost:not(:disabled):hover{background:var(--ui-soft);border-color:transparent;color:var(--ui-action-hover)}
 :is(.workspace-content,.access-flow) .btn-sm,:is(.workspace-content,.access-flow) button.btn-sm{min-height:var(--btn-h-sm);padding:4px 12px;font-size:12px}
 :is(.workspace-content,.access-flow) .btn svg{flex:none}
 :is(.workspace-content,.access-flow) .btn-label{min-width:0;overflow-wrap:anywhere}
 :is(.workspace-content,.access-flow) :is(button,.btn):disabled,:is(.workspace-content,.access-flow) .btn[aria-disabled=true]{opacity:.55;cursor:not-allowed;pointer-events:none}
-:is(.workspace-content,.access-flow) :is(button,.btn):focus-visible{outline:3px solid var(--ui-focus);outline-offset:2px}
+:is(.workspace-content,.access-flow) :is(button,.btn):focus-visible{outline:var(--ux-focus-w) solid var(--ux-focus);outline-offset:var(--ux-focus-offset)}
 .btn-spinner{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:ui-spin 700ms linear infinite}
 .btn-group{display:flex;flex-wrap:wrap;gap:var(--sp-2);align-items:center}
 /* ---- Links: in prose only, always underlined; everything else is a .btn ---- */
@@ -224,7 +224,7 @@ table .num{text-align:right;font-variant-numeric:tabular-nums}
 .workspace-content details:not(.nav-group):not(.fold):not(.detail-admin):not(.card):not(.trend-table-x){border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;margin-left:0;margin-right:0}
 .workspace-content details:not(.nav-group):not(.fold):not(.detail-admin):not(.card)>:not(summary){margin-top:var(--sp-2)}
 /* Fallback: any standalone link (not inside running text) is an action and looks like one, so no page can ship a bare "palabra con link". */
-:is(.workspace-content,.access-flow,.platform-shell) a:not(.btn):not(.skip-link):not(.id-chip):not(.catalog-link):not(.login-btn):not(.row-link):not(.card-link):not(.row-link-inline):not(.barlist-link):not(.stat-card):not(.wordmark):not(.sidebar-logo):not(p a):not(li a):not(dd a):not(dt a):not(small a):not(figcaption a):not(blockquote a):not(td a):not(th a):not(label a):not(h1 a):not(h2 a):not(h3 a):not(h4 a):not(summary a):not(nav a){display:inline-flex;align-items:center;gap:var(--sp-2);width:fit-content;max-width:100%;min-height:var(--btn-h);padding:6px var(--btn-px);border:1px solid var(--ui-input);border-radius:999px;background:var(--ui-surface);color:var(--ink);font:600 13px/1.3 var(--font-ui);text-decoration:none;cursor:pointer;transition:background-color var(--ui-fast) ease}
+:is(.workspace-content,.access-flow,.platform-shell) a:not(.btn):not(.skip-link):not(.id-chip):not(.catalog-link):not(.login-btn):not(.row-link):not(.card-link):not(.row-link-inline):not(.barlist-link):not(.stat-card):not(.wordmark):not(.sidebar-logo):not(p a):not(li a):not(dd a):not(dt a):not(small a):not(figcaption a):not(blockquote a):not(td a):not(th a):not(label a):not(h1 a):not(h2 a):not(h3 a):not(h4 a):not(summary a):not(nav a){display:inline-flex;align-items:center;gap:var(--sp-2);width:fit-content;max-width:100%;min-height:var(--btn-h);padding:6px var(--btn-px);border:var(--ux-bd-w) solid var(--ux-bd-ctl);border-radius:var(--btn-radius);background:var(--ui-surface);color:var(--ink);font:var(--ux-fw) var(--ux-fs)/1.3 var(--font-ui);text-decoration:none;cursor:pointer;transition:background-color var(--ui-fast) ease}
 :is(.workspace-content,.access-flow,.platform-shell) a:not(.btn):not(.skip-link):not(.id-chip):not(.catalog-link):not(.login-btn):not(.row-link):not(.card-link):not(.row-link-inline):not(.barlist-link):not(.stat-card):not(.wordmark):not(.sidebar-logo):not(p a):not(li a):not(dd a):not(dt a):not(small a):not(figcaption a):not(blockquote a):not(td a):not(th a):not(label a):not(h1 a):not(h2 a):not(h3 a):not(h4 a):not(summary a):not(nav a):hover{background:var(--ui-soft)}
 
 .id-chip-label,.id-chip-copy{white-space:nowrap;flex:none}
@@ -252,7 +252,7 @@ table .num{text-align:right;font-variant-numeric:tabular-nums}
  /* --btn-h / --btn-h-sm / --btn-px / --btn-radius / --btn-gap: ahora viven SOLO en components/ui/ui.css (estándar único de botón) */
  /* escala única (títulos): página 24 · sección 16 · tarjeta 14 */
  --t-page:20px;--t-section:14px;--t-card:14px;--t-body:13px;--t-small:12px;--t-micro:11px;--t-kpi:26px;
- --sh-rest:0 1px 2px #17181c05;--sh-hover:0 1px 2px #17181c06,0 10px 28px -14px #17181c26;--sh-pop:0 12px 32px -8px #17181c2e,0 2px 6px #17181c0f;
+ --sh-rest:none;--sh-hover:0 1px 2px #17181c06,0 10px 28px -14px #17181c26;--sh-pop:0 12px 32px -8px #17181c2e,0 2px 6px #17181c0f;
  --surf-tip:#0e0e10;--surf-tip-ink:#f4f4f5;
  --tint-up:#ecf8f1;--ink-up:#16784a;--tint-down:#fdeef0;--ink-down:#ac2440;--tint-warn:#fff7e5;--ink-warn:#86580d;--tint-info:#e8f3f5;--ink-info:#145966;
  --ch-4:#3a3a40;--ch-5:#7a7a82;--ch-neutral:#8a8a90;--ch-track:#e4e4e6;--scrim:#0e0e1066;
@@ -420,7 +420,7 @@ body .workspace-content .eyebrow{margin:0 0 var(--sp-1)}
 .segmented{display:inline-flex;max-width:100%;padding:2px;gap:2px;background:var(--ui-soft);border:1px solid var(--ui-border);border-radius:999px}
 .segmented .seg-btn{display:inline-flex;align-items:center;gap:6px;min-height:24px;padding:1px 12px;border:0;border-radius:999px;background:transparent;color:var(--ui-secondary);font:600 12px/1.3 var(--font-ui);cursor:pointer;white-space:nowrap;transition:background-color var(--ui-fast) ease,color var(--ui-fast) ease}
 .segmented[data-size=sm] .seg-btn{min-height:24px;padding:1px 10px;font-size:12px}
-.segmented .seg-btn[aria-checked=true]{background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border),0 1px 2px #17181c14}
+.segmented .seg-btn[aria-checked=true]{background:var(--ui-surface);color:var(--ink);box-shadow:0 0 0 1px var(--ui-border)}
 .segmented .seg-btn:not([aria-checked=true]):hover{color:var(--ink)}
 .seg-count{font:500 12px var(--font-ui);color:var(--muted)}
 .filter-bar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2)}

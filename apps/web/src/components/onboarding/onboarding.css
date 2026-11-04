@@ -4,7 +4,7 @@
 
 /* Botón «Guía» del encabezado: compacto, transparente, sin bloque oscuro. Especificidad (0,2,0) para ganar a `.workspace-shell :where(button)` (fondo de acción). */
 .workspace-header .onb-boton, .onb-boton { position:relative; display:inline-flex; align-items:center; gap:5px; flex:none; box-sizing:border-box; min-height:0; height:26px; margin:0; padding:0 9px 0 7px; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-soft); color:var(--muted); font:500 12px/1 var(--font-ui); letter-spacing:0; cursor:pointer; box-shadow:none; }
-.workspace-header .onb-boton:hover, .workspace-header .onb-boton[aria-expanded="true"], .onb-boton:hover { background:var(--ui-surface); color:var(--ink); box-shadow:0 0 0 1px var(--ui-border), 0 1px 2px #0e0e1014; }
+.workspace-header .onb-boton:hover, .workspace-header .onb-boton[aria-expanded="true"], .onb-boton:hover { background:var(--ui-surface); color:var(--ink); box-shadow:0 0 0 1px var(--ui-border); }
 .onb-boton-signo { display:inline-grid; place-items:center; width:14px; height:14px; border:1px solid currentColor; border-radius:50%; font:600 12px/1 var(--font-ui); }
 .onb-boton-punto { position:absolute; top:-2px; right:-2px; width:6px; height:6px; border-radius:50%; background:var(--onb-resalte); box-shadow:0 0 0 2px var(--ui-surface); }
 /* Área táctil ≥ 44 px sin agrandar lo visible (la caja visible mide 30 por 26). */

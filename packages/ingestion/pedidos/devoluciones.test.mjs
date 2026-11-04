@@ -167,10 +167,10 @@ test('(c) RMA de 18 dígitos numéricos en xlsx no pierde precisión (el lector 
   const bad = parseReturnsFile(book('9.00000000000000E+17'), 'x.xlsx'); assert.deepEqual(bad.rejections.map(x => x.code), ['RETURN_KEY_INVALID'], 'la notación científica lossy no entra');
 });
 
-test('Ola 5: po_key (PO_NO de Walmart) solo con 15 dígitos 1090/1290; sin él el hash no cambia; con él cambia', async () => {
+test('Ola 5: po_key (PO_NO de Walmart) solo con 15 dígitos que empiezan con 1; sin él el hash no cambia; con él cambia', async () => {
   const {createHash} = await import('node:crypto');
   const ok = parseReturns([WMT, wmt()]).returns[0]; assert.equal(ok.poKey, '129000000000001'); assert.equal(returnToSql(ok).po_key, '129000000000001');
-  const casos = [['109000000000001', '109000000000001'], ['1290000000000010.0', null], ['129000000000001.0', '129000000000001'], ['200000000000001', null], ['12900000000001', null], ['1290000000000012', null], ['NA', null], ['', null], ['1.29000000000001E+14', '129000000000001']];
+  const casos = [['109000000000001', '109000000000001'], ['119100000000001', '119100000000001'], ['129100000000001', '129100000000001'], ['300000000000001', null], ['1290000000000010.0', null], ['129000000000001.0', '129000000000001'], ['200000000000001', null], ['12900000000001', null], ['1290000000000012', null], ['NA', null], ['', null], ['1.29000000000001E+14', '129000000000001']];
   for (const [raw, esperado] of casos) assert.equal(parseReturns([WMT, wmt({PO_NO: raw})]).returns[0].poKey, esperado, JSON.stringify(raw));
   const w = parseReturns([WMT, wmt({PO_NO: 'ABC'}), wmt({RMA_NO: '9601', PO_NO: ''})]); assert.deepEqual(w.warnings, {PO_NOT_RECOGNIZED: 1});
   const sinPo = parseReturns([WMT, wmt({PO_NO: ''})]).returns[0], sql = returnToSql(sinPo);

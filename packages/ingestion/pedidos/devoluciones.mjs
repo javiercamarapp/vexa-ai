@@ -96,8 +96,9 @@ export function detectSchema(headerRow) {
 const DB_KEYS = ['retailer', 'return_key', 'order_key', 'reason', 'status', 'requested_at', 'status_at', 'item_ref', 'qty', 'has_return_tracking', 'channel'];
 // po_key entra al hash SOLO cuando no es null: las filas sin PO conservan el hash de antes (no se reescriben) y re-ejecutar la carga actualiza exactamente las que ganan po_key.
 export const returnRowHash = row => createHash('sha256').update(JSON.stringify([...DB_KEYS.map(k => row[k] ?? null), ...(row.po_key ? [row.po_key] : [])])).digest('hex');
-/** Orden de compra (PO_NO) de Walmart: 15 dígitos con prefijo 1090/1290 (el patrón histórico de Walmart). Cualquier otra cosa es null; no se adivina. */
-export const PO_KEY_RE = /^(?:1090|1290)\d{11}$/;
+/** Orden de compra (PO_NO) de Walmart: 15 dígitos que empiezan con 1. Los archivos reales traen los prefijos 1090, 1190, 1191, 1290 y 1291 (no solo 1090/1290 del patrón
+ *  histórico de ORDER_FORMATS); la columna es PO_NO de un archivo de Walmart, así que basta esta forma de cordura. Otras longitudes o prefijos son null y se advierte; no se adivina. */
+export const PO_KEY_RE = /^1\d{14}$/;
 /** Fila camelCase -> columnas de la tabla (lo que recibe order_returns_ingest). */
 export const returnToSql = x => ({retailer: x.retailer, return_key: x.returnKey, order_key: x.orderKey, po_key: x.poKey ?? null, reason: x.reason, status: x.status, requested_at: x.requestedAt, status_at: x.statusAt, item_ref: x.itemRef, qty: x.qty, has_return_tracking: x.hasReturnTracking, channel: x.channel, row_hash: x.rowHash});
 

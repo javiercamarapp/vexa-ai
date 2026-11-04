@@ -1,6 +1,6 @@
 begin;
--- Aditiva sobre 20261211000000_order_returns. Walmart trae DOS numeros por devolucion: CUSTOMER_ORDER_NO (order_key, 2000+11 digitos) y PO_NO (1090/1290+11 digitos,
--- el patron historico de Walmart). El libro puede identificar el pedido por cualquiera de los dos: po_key guarda el segundo (solo una referencia de pedido, sin datos personales)
+-- Aditiva sobre 20261211000000_order_returns. Walmart trae DOS numeros por devolucion: CUSTOMER_ORDER_NO (order_key, 2000+11 digitos) y PO_NO (15 digitos que empiezan con 1:
+-- en los archivos reales prefijos 1090, 1190, 1191, 1290 y 1291). El libro puede identificar el pedido por cualquiera de los dos: po_key guarda el segundo (solo una referencia de pedido, sin datos personales)
 -- y la cobertura busca en el libro y en Speedship por order_key O po_key del mismo retailer.
 do $g$ begin
  if to_regclass('public.order_returns') is null or to_regprocedure('public.order_returns_ingest(jsonb)') is null or to_regclass('public.order_returns_coverage') is null

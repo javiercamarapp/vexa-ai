@@ -7,6 +7,7 @@ import {imagenSocial,siteDe,siteUrl} from "../../lib/site.mjs";
 import {traductor} from "../../lib/i18n";
 import {idiomaActual} from "../../lib/i18n/servidor";
 import "./fonts.css";
+import "../../components/ui/tokens-ui.css";
 import "./globals.css";
 import "./task-layout.css";
 import "./ui.css";

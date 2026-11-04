@@ -1,6 +1,6 @@
-/* Onboarding (recorrido, invitación, menú Guía y lista de primeros pasos). Solo clases: sin estilos en línea, compatible con CSP estricta. */
-:root { --onb-resalte:#0b57d0; --onb-etq-tinta:#fff; --onb-fondo:var(--ui-surface,#fff); }
-:root[data-theme=dark] { --onb-resalte:#8ab4f8; --onb-etq-tinta:#0b1b3a; }
+/* Onboarding (acento = --ux-accent de tokens-ui.css, repetido en hex porque las pruebas de contraste lo leen literal; recorrido, invitación, menú Guía y lista de primeros pasos). Solo clases: sin estilos en línea, compatible con CSP estricta. */
+:root { --onb-resalte:#1f4fb0; --onb-etq-tinta:#fff; --onb-fondo:var(--ui-surface,#fff); }
+:root[data-theme=dark] { --onb-resalte:#a9c1f2; --onb-etq-tinta:#0b1b3a; }
 
 /* Botón «Guía» del encabezado: compacto, transparente, sin bloque oscuro. Especificidad (0,2,0) para ganar a `.workspace-shell :where(button)` (fondo de acción). */
 .workspace-header .onb-boton, .onb-boton { position:relative; display:inline-flex; align-items:center; gap:5px; flex:none; box-sizing:border-box; min-height:0; height:26px; margin:0; padding:0 9px 0 7px; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-soft); color:var(--muted); font:500 12px/1 var(--font-ui); letter-spacing:0; cursor:pointer; box-shadow:none; }

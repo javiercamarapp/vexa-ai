@@ -4,7 +4,7 @@
 :root{--ui-shadow:none;--ui-rhythm:12px;--ui-ctl-h:32px;--ui-pad:14px}
 .ui-reset{all:revert-layer}
 /* ESTÁNDAR ÚNICO DE BOTÓN (24-oct). Único lugar de los tokens: alto 32 px escritorio / 36 px celular (zona táctil de 44 px por ::after), radio 8, 13 px / 600, borde 1 px, aire ≥ 8 px entre vecinos. */
-:root{--btn-h:32px;--btn-h-sm:32px;--btn-h-m:36px;--btn-radius:8px;--btn-gap:8px;--btn-px:12px}
+:root{--btn-h:var(--ux-h-md);--btn-h-sm:var(--ux-h-md);--btn-h-m:var(--ux-h-lg);--btn-radius:var(--ux-r-ctl);--btn-gap:var(--ux-gap);--btn-px:var(--ux-px)}
 @media(max-width:819px){:root{--btn-h:var(--btn-h-m);--btn-h-sm:var(--btn-h-m)}}
 /* Ritmo vertical */
 .ui-stack{display:flex;flex-direction:column;gap:var(--ui-rhythm);min-width:0}
@@ -172,8 +172,7 @@
 .donut-seg[data-tone="5"]{stroke:var(--chart-5)}.donut-sw[data-tone="5"]{background:var(--chart-5)}
 
 /* ---- Botón primario suave y compacto (sin bloque negro): tinte azul + borde fino; mismo alto en toda la app ---- */
-:root{--btn-soft-bg:var(--soft-1);--btn-soft-ink:#1f4fb0;--btn-soft-line:color-mix(in srgb,var(--chart-1) 30%,transparent);--btn-soft-hover:#d8e3f8}
-:root[data-theme=dark]{--btn-soft-bg:#1d2433;--btn-soft-ink:#a9c1f2;--btn-soft-line:color-mix(in srgb,var(--chart-1) 45%,transparent);--btn-soft-hover:#26314a}
+:root{--btn-soft-bg:var(--ux-accent-soft);--btn-soft-ink:var(--ux-accent);--btn-soft-line:var(--ux-accent-line);--btn-soft-hover:var(--ux-accent-hover)}
 :is(.workspace-content,.access-flow) :is(.btn.btn-primary,button[type=submit]:not(.btn-secondary):not(.btn-ghost)),.workspace-content form button:not([type]):not(.btn-secondary):not(.btn-ghost){background:var(--btn-soft-bg);border-color:var(--btn-soft-line);color:var(--btn-soft-ink)}
 :is(.workspace-content,.access-flow) :is(.btn.btn-primary,button[type=submit]:not(.btn-secondary):not(.btn-ghost)):not(:disabled):hover,.workspace-content form button:not([type]):not(.btn-secondary):not(.btn-ghost):not(:disabled):hover{background:var(--btn-soft-hover);border-color:var(--btn-soft-line);color:var(--btn-soft-ink)}
 :is(.workspace-content,.access-flow) :is(.btn,button.btn){min-height:30px;padding:3px 12px;font-weight:500;border-radius:8px}

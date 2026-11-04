@@ -1,0 +1,33 @@
+/* TOKENS DE DISEÑO DE LA APP (ola 6) — única fuente de tamaños, radios, bordes, tipografía, foco, sombras, iconos y acento.
+   Se importa PRIMERO en app/(app)/layout.tsx. Los componentes consumen estos tokens y no declaran números sueltos.
+   Colores neutros: globals.css (--ui-*, escala Negro Rovaq) y ui.css (--tint-*, --ink-*). Único acento interactivo: --ux-accent (aquí).
+   Espejos heredados que fijan pruebas existentes y deben valer lo mismo que estos tokens (los vigila tests/ola6-tokens.test.mjs):
+   --ui-ctl-h (components/ui/ui.css) = --ux-h-md; --ov-ctl (components/ui/overlay.css) = --ux-h-md.
+   Alias heredados que ya apuntan aquí: --btn-h, --btn-h-sm, --btn-h-m, --btn-radius, --btn-gap, --btn-px, --btn-soft-ink. */
+:root{
+ /* Alturas de control en escritorio. sm = filtros, chips de filtro, segmentados y botón secundario compacto. md = botón estándar y campo. lg = botón primario destacado y celular */
+ --ux-h-sm:28px;--ux-h-md:32px;--ux-h-lg:36px;
+ /* Zona táctil mínima: SOLO celular y por padding invisible (::after); no cambia la altura visual */
+ --ux-hit:44px;
+ /* Radios: conjunto cerrado {controles 8, tarjetas y paneles 12, píldoras 999} */
+ --ux-r-ctl:8px;--ux-r-card:12px;--ux-r-pill:999px;
+ /* Espaciado horizontal y separación entre controles vecinos */
+ --ux-px:12px;--ux-px-sm:10px;--ux-gap:8px;
+ /* Tipografía de control: 12 a 13 px y peso medio. El 600 queda para títulos y cifras */
+ --ux-fs:13px;--ux-fs-sm:12px;--ux-fw:500;--ux-fw-strong:600;--ux-lh:1.25;
+ /* Bordes de 1 px. Controles con rótulo: --ux-bd-ctl (suave). Campos de texto: --ux-bd-field (contraste 3:1, WCAG 1.4.11) */
+ --ux-bd-w:1px;--ux-bd-soft:var(--ui-border);--ux-bd-ctl:var(--ui-line-strong);--ux-bd-field:var(--ui-input);
+ /* Foco visible */
+ --ux-focus-w:2px;--ux-focus-offset:2px;--ux-focus:var(--ui-focus);
+ /* Sombras: ninguna en reposo; una sola para lo flotante (popover, modal, tooltip) */
+ --ux-shadow-rest:none;--ux-shadow-float:var(--sh-pop);
+ /* Iconos: un solo juego de trazo lineal fino */
+ --ux-icon-sm:14px;--ux-icon:16px;--ux-icon-stroke:1.5;
+ /* Movimiento */
+ --ux-fast:120ms;--ux-ease:cubic-bezier(.22,1,.36,1);
+ /* Único acento interactivo sobrio (selección, primario suave, guía). Sustituye al azul suelto del recorrido y al azul de primarios */
+ --ux-accent:#1f4fb0;--ux-accent-on:#ffffff;--ux-accent-soft:var(--soft-1,#e8eefb);--ux-accent-line:color-mix(in srgb,var(--ux-accent) 30%,transparent);--ux-accent-hover:#d8e3f8;
+}
+:root[data-theme=dark]{
+ --ux-accent:#a9c1f2;--ux-accent-on:#0b1b3a;--ux-accent-soft:#1d2433;--ux-accent-line:color-mix(in srgb,var(--ux-accent) 40%,transparent);--ux-accent-hover:#26314a;
+}

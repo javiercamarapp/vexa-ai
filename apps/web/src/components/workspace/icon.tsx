@@ -25,4 +25,4 @@ const paths:Record<string,string>={
  clientes:'M3 21V8l6-4v17 M9 21V11h12v10 M3 21h18 M13 15h2 M17 15h2',
  check:'M5 12.5l4.5 4.5L19 7.5',search:'M21 21l-4.3-4.3 M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z'
 };
-export function WorkspaceIcon({name,size=18}:{name:string;size?:number}){return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]??paths.briefs}/></svg>;}
+export function WorkspaceIcon({name,size=18}:{name:string;size?:number}){return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]??paths.briefs}/></svg>;}

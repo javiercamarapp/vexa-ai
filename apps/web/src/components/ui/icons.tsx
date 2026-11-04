@@ -45,7 +45,7 @@ const P:Record<string,string>={
  settings:'M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM19 12l2-1.5-2-3.5-2.4.8a7 7 0 0 0-1.6-.9L14.5 4h-5L9 6.9a7 7 0 0 0-1.6.9L5 7 3 10.5 5 12a7 7 0 0 0 0 1.5L3 15l2 3.5 2.4-.8a7 7 0 0 0 1.6.9l.5 2.4h5l.5-2.4a7 7 0 0 0 1.6-.9l2.4.8 2-3.5-2-1.5a7 7 0 0 0 0-1.5Z'
 };
 export type IconName=keyof typeof P|(string&{});
-/** Line icons (24 grid, 1.75 stroke) for the UI kit. Decorative: pair with visible text or an aria-label on the control. */
+/** Line icons (24 grid, 1.5 stroke) for the UI kit. Decorative: pair with visible text or an aria-label on the control. */
 export function Icon({name,size=16,className}:{name:IconName;size?:number;className?:string}){
- return <svg className={className} viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d={P[name]??P.info}/></svg>;
+ return <svg className={className} viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d={P[name]??P.info}/></svg>;
 }

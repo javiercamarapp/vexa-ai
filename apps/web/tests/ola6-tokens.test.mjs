@@ -34,3 +34,17 @@ test('un solo acento interactivo: el primario suave y el recorrido lo toman de -
   assert.match(onb,/--onb-resalte:\s*#1f4fb0/);assert.match(onb,/data-theme=dark\]\s*\{\s*--onb-resalte:\s*#a9c1f2/);
   assert.equal(tok(T,'ux-accent'),'#1f4fb0');
 });
+test('iconos de trazo lineal: 1.5 en todos los juegos de la app', () => {
+  for(const f of ['components/ui/icons.tsx','components/ui/button.tsx','components/platform/icons.tsx','components/workspace/icon.tsx','components/agente/icons.tsx'])assert.doesNotMatch(leer(f),/strokeWidth="1\.75"/,f);
+});
+test('guía y recorrido: botones de 32 px y flotante con la sombra única (el botón «Guía» de 26 px lo fija onboarding-tour.test: propuesta de pasarlo a 28 px)', () => {
+  const c=leer('components/onboarding/onboarding.css');
+  assert.match(c,/\.onb-btn, \.onb-btn-sec \{ min-height:var\(--ux-h-md\)/);
+  assert.match(c,/box-shadow:var\(--ux-shadow-float\)/);assert.doesNotMatch(c,/\.onb-btn \{[^}]*background:var\(--ink\)/);
+});
+test('filtros, chips y pestañas usan los tokens de altura (28 y 32), sin 34, 36 ni 40 sueltos', () => {
+  assert.match(leer('app/(app)/ui.css'),/\.tab-link \{[^}]*min-height:var\(--ux-h-md\)/);
+  assert.match(leer('app/(app)/ui.css'),/\.fchip\{[^}]*height:var\(--ux-h-sm\)/);
+  assert.match(leer('components/panel-comun/panel-comun.css'),/\.pc-tabs a\{[^}]*height:var\(--ux-h-md\)/);
+  assert.doesNotMatch(leer('components/map/mapa.css'),/mp-seg button\{[^}]*min-height:34px/);
+});

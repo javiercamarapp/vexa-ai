@@ -10,7 +10,7 @@
 /* Área táctil ≥ 44 px sin agrandar lo visible (la caja visible mide 30 por 26). */
 @media (pointer:coarse) { .onb-boton::after { content:""; position:absolute; inset:-9px -7px; z-index:1; } }
 
-.onb-tarjeta, .onb-invitacion, .onb-menu { position:fixed; z-index:40; box-sizing:border-box; border:1px solid var(--ui-line-strong); border-radius:12px; background:var(--onb-fondo); color:var(--ink); box-shadow:var(--ui-shadow, 0 8px 28px rgba(0,0,0,.18)); }
+.onb-tarjeta, .onb-invitacion, .onb-menu { position:fixed; z-index:40; box-sizing:border-box; border:1px solid var(--ui-line-strong); border-radius:12px; background:var(--onb-fondo); color:var(--ink); box-shadow:var(--ux-shadow-float); }
 .onb-tarjeta, .onb-invitacion { right:24px; bottom:24px; width:min(380px, calc(100vw - 32px)); padding:14px 18px 16px; }
 .onb-tarjeta[data-lado="izq"] { right:auto; left:24px; }
 .onb-tarjeta[data-centrada] { inset:auto; left:50%; top:50%; translate:-50% -50%; }
@@ -31,9 +31,9 @@
 .onb-cuenta-barra::-moz-progress-bar { background:var(--onb-resalte); }
 .onb-tarjeta .onb-fallo { border:1px solid var(--ui-line-strong); }
 .onb-acciones { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin:0; }
-.onb-btn, .onb-btn-sec { min-height:36px; padding:0 14px; border-radius:8px; font:500 13px/1 var(--font-ui); cursor:pointer; }
-.onb-btn { border:1px solid var(--ink); background:var(--ink); color:var(--background); }
-.onb-btn-sec { border:1px solid var(--ui-line-strong); background:transparent; color:var(--ink); }
+.onb-btn, .onb-btn-sec { min-height:var(--ux-h-md); padding:0 var(--ux-px); border-radius:var(--ux-r-ctl); font:var(--ux-fw) var(--ux-fs)/1 var(--font-ui); cursor:pointer; }
+.onb-btn { border:1px solid var(--ux-accent-line); background:var(--ux-accent-soft); color:var(--ux-accent); }
+.onb-btn-sec { border:1px solid var(--ux-bd-ctl); background:transparent; color:var(--ink); }
 .onb-btn:focus-visible, .onb-btn-sec:focus-visible, .onb-boton:focus-visible, .onb-menu button:focus-visible { outline:3px solid var(--onb-resalte); outline-offset:2px; }
 
 /* Ruta del recorrido: pantallas en una ventana corta, la actual marcada. */
@@ -45,7 +45,7 @@
 /* Ilustración de la pantalla: línea sobria con el acento del sistema. Estado final = el que se ve sin animación. */
 .onb-ilu-marco { display:grid; place-items:center; height:104px; margin:0 0 10px; border-radius:8px; background:var(--ui-soft); overflow:hidden; }
 .onb-tarjeta[data-tipo="cierre"] .onb-ilu-marco { height:120px; }
-.onb-ilu { width:auto; height:92px; fill:none; stroke:var(--muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; overflow:visible; }
+.onb-ilu { width:auto; height:92px; fill:none; stroke:var(--muted); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; overflow:visible; }
 .onb-ilu .ilu-l { stroke:var(--ui-line-strong); }
 .onb-ilu .ilu-a { stroke:var(--onb-resalte); }
 .onb-ilu .ilu-f { fill:var(--ui-surface); stroke:var(--ui-line-strong); }
@@ -75,7 +75,7 @@
 .onb-etiqueta[data-lado="der"] { --bx:-5px; --by:0px; }
 .onb-etiqueta[data-lado="izq"] { --bx:5px; --by:0px; }
 .onb-etq-in { display:inline-flex; align-items:center; gap:6px; max-width:min(300px, calc(100vw - 16px)); padding:6px 10px; border-radius:8px; background:var(--onb-resalte); color:var(--onb-etq-tinta); font:600 12px/1.3 var(--font-ui); box-shadow:0 4px 14px rgba(8,10,16,.3); }
-.onb-etq-flecha { flex:none; width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.onb-etq-flecha { flex:none; width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
 .onb-etiqueta[data-lado="arriba"] .onb-etq-flecha { transform:rotate(180deg); }
 .onb-etiqueta[data-lado="der"] .onb-etq-flecha { transform:rotate(-90deg); }
 .onb-etiqueta[data-lado="izq"] .onb-etq-flecha { transform:rotate(90deg); }
@@ -83,11 +83,11 @@
 
 .onb-menu { top:60px; right:16px; display:grid; gap:2px; min-width:220px; max-width:min(320px, calc(100vw - 32px)); max-height:calc(100vh - 80px); overflow:auto; padding:8px; }
 .onb-menu-ctx { margin:0; padding:6px 8px 8px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--ui-border); }
-.onb-menu button { min-height:40px; padding:0 8px; border:0; border-radius:8px; background:transparent; color:var(--ink); font:400 13px/1.3 var(--font-ui); text-align:left; cursor:pointer; }
+.onb-menu button { min-height:var(--ux-h-md); padding:0 8px; border:0; border-radius:var(--ux-r-ctl); background:transparent; color:var(--ink); font:var(--ux-fw) var(--ux-fs)/1.3 var(--font-ui); text-align:left; cursor:pointer; }
 .onb-menu button:hover { background:var(--ui-soft); }
 .onb-menu-pantallas { display:grid; gap:1px; margin:4px 0; padding:4px 0; border-top:1px solid var(--ui-border); border-bottom:1px solid var(--ui-border); max-height:min(40vh, 300px); overflow:auto; }
 .onb-menu-sub { margin:0; padding:4px 8px; font:500 11px/1.4 var(--font-mono); text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
-.onb-menu-pantallas button { min-height:32px; }
+.onb-menu-pantallas button { min-height:var(--ux-h-md); font-weight:400; }
 .onb-menu-pantallas button[aria-current="step"] { background:var(--ui-soft); font-weight:600; }
 
 /* Elemento resaltado por el recorrido (compatibilidad): contorno de contraste ≥ 3:1 sobre el fondo, también en alto contraste forzado. */

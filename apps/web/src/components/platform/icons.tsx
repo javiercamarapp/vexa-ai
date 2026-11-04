@@ -27,5 +27,5 @@ const P: Record<string, string> = {
 };
 /** Icono de trazo (mismo estilo que WorkspaceIcon). Decorativo: siempre aria-hidden. */
 export function PfIcon({name, size = 16}: {name: keyof typeof P | string; size?: number}) {
-  return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{(P[name] ?? P.info).split(' M').map((d, i) => <path key={i} d={(i ? 'M' : '') + d} />)}</svg>;
+  return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{(P[name] ?? P.info).split(' M').map((d, i) => <path key={i} d={(i ? 'M' : '') + d} />)}</svg>;
 }

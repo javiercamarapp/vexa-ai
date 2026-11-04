@@ -9,4 +9,4 @@ const P:Record<string,string>={
  clip:'M21 12.5 12.6 21a5.5 5.5 0 0 1-7.8-7.8l9-9a3.7 3.7 0 0 1 5.2 5.2l-9 9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2', menu:'M4 7h16 M4 12h16 M4 17h16', report:'M7 3h8l4 4v14H7z M14 3v5h5 M10 13h6 M10 17h6',
  edit:'M4 20h4L19 9l-4-4L4 16v4Z', trash:'M4 7h16 M9 7V4h6v3 M6 7l1 13h10l1-13', close:'m6 6 12 12 M6 18 18 6',
 };
-export function Icon({name,size=16}:{name:keyof typeof P|string;size?:number}){return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={P[name]??P.info}/></svg>;}
+export function Icon({name,size=16}:{name:keyof typeof P|string;size?:number}){return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={P[name]??P.info}/></svg>;}

@@ -28,7 +28,7 @@ export const RETURN_RETAILERS = Object.freeze(['amazon', 'walmart']);
 
 const SCHEMAS = {
   amazon: {order: ['order id'], requested: ['return request date'], rma: ['amazon rma id'], line: ['order item id'], status: ['return request status'], reason: ['return reason'], item: ['asin'], qty: ['return quantity'], tracking: ['tracking id'], channel: ['return type']},
-  walmart: {order: ['customer_order_no'], requested: ['request_date'], rma: ['rma_no'], line: ['return_order_line_no'], status: ['current_status'], statusAt: ['current_status_time'], reason: ['return_reason'], item: ['item_id'], qty: ['quantity'], tracking: ['tracking_number'], channel: ['channel']},
+  walmart: {order: ['customer_order_no'], po: ['po_no'], requested: ['request_date'], rma: ['rma_no'], line: ['return_order_line_no'], status: ['current_status'], statusAt: ['current_status_time'], reason: ['return_reason'], item: ['item_id'], qty: ['quantity'], tracking: ['tracking_number'], channel: ['channel']},
 };
 const REQUIRED = ['order', 'requested', 'rma'];
 const norm = h => String(h ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
@@ -94,9 +94,12 @@ export function detectSchema(headerRow) {
 }
 
 const DB_KEYS = ['retailer', 'return_key', 'order_key', 'reason', 'status', 'requested_at', 'status_at', 'item_ref', 'qty', 'has_return_tracking', 'channel'];
-export const returnRowHash = row => createHash('sha256').update(JSON.stringify(DB_KEYS.map(k => row[k] ?? null))).digest('hex');
+// po_key entra al hash SOLO cuando no es null: las filas sin PO conservan el hash de antes (no se reescriben) y re-ejecutar la carga actualiza exactamente las que ganan po_key.
+export const returnRowHash = row => createHash('sha256').update(JSON.stringify([...DB_KEYS.map(k => row[k] ?? null), ...(row.po_key ? [row.po_key] : [])])).digest('hex');
+/** Orden de compra (PO_NO) de Walmart: 15 dígitos con prefijo 1090/1290 (el patrón histórico de Walmart). Cualquier otra cosa es null; no se adivina. */
+export const PO_KEY_RE = /^(?:1090|1290)\d{11}$/;
 /** Fila camelCase -> columnas de la tabla (lo que recibe order_returns_ingest). */
-export const returnToSql = x => ({retailer: x.retailer, return_key: x.returnKey, order_key: x.orderKey, reason: x.reason, status: x.status, requested_at: x.requestedAt, status_at: x.statusAt, item_ref: x.itemRef, qty: x.qty, has_return_tracking: x.hasReturnTracking, channel: x.channel, row_hash: x.rowHash});
+export const returnToSql = x => ({retailer: x.retailer, return_key: x.returnKey, order_key: x.orderKey, po_key: x.poKey ?? null, reason: x.reason, status: x.status, requested_at: x.requestedAt, status_at: x.statusAt, item_ref: x.itemRef, qty: x.qty, has_return_tracking: x.hasReturnTracking, channel: x.channel, row_hash: x.rowHash});
 
 /**
  * rows: filas ya leídas (la primera es el encabezado). Devuelve {retailer, returns, rejections, duplicates, blank, warnings, schemaError}.
@@ -132,6 +135,9 @@ export function parseReturns(rows) {
     if (!requestedAt) { out.rejections.push({row: line, code: 'DATE_INVALID'}); return; }
     const rawOrder = txt(get('order')), orderKey = rawOrder ? normalizeOrderId(rawOrder) : null;
     if (!rawOrder) warn('ORDER_ID_MISSING'); else if (!orderKey) warn('ORDER_ID_INVALID');
+    // PO_NO (solo Walmart): referencia de pedido alterna. Se normaliza igual que el pedido y solo se conserva con el formato reconocido.
+    const rawPo = idx.po >= 0 ? txt(get('po')) : '', poNorm = rawPo ? normalizeOrderId(cleanId(rawPo)) : null, poKey = poNorm && PO_KEY_RE.test(poNorm) ? poNorm : null;
+    if (rawPo && !poKey) warn('PO_NOT_RECOGNIZED');
     const rawStatusAt = txt(get('statusAt')), statusAt = rawStatusAt ? parseReturnDate(rawStatusAt) : null;
     if (rawStatusAt && !statusAt && !/^(?:NA|N\/A|NONE|NULL|-)$/i.test(rawStatusAt)) warn('STATUS_DATE_INVALID');
     const take = (k, ok, w) => { const v = txt(get(k)); if (!v) return null; if (!ok(v)) { warn(w); return null; } return v; };
@@ -139,7 +145,7 @@ export function parseReturns(rows) {
     const itemRaw = cleanId(get('item')), itemRef = itemRaw ? (itemRaw.length <= L.itemRef && ITEM_REF_RE.test(itemRaw) ? itemRaw : (warn('ITEM_REF_DROPPED'), null)) : null;
     const q = txt(get('qty')), qn = q ? Number(q) : NaN, qty = Number.isInteger(qn) && qn >= 1 && qn <= L.qtyMax ? qn : null;
     if (q && qty === null) warn('QTY_DROPPED');
-    const x = {retailer, returnKey, orderKey, reason: take('reason', REASON_OK, 'REASON_DROPPED'), status, requestedAt, statusAt, itemRef, qty,
+    const x = {retailer, returnKey, orderKey, poKey, reason: take('reason', REASON_OK, 'REASON_DROPPED'), status, requestedAt, statusAt, itemRef, qty,
       hasReturnTracking: hasTracking(get('tracking')), channel: take('channel', CHANNEL_OK, 'CHANNEL_DROPPED')};
     x.rowHash = returnRowHash(returnToSql(x));
     if (seen.has(returnKey)) { out.duplicates++; const j = seen.get(returnKey); if (better(x, out.returns[j])) out.returns[j] = x; return; }

@@ -7,7 +7,7 @@ import {parseReturns, parseReturnsFile, readReturnRows, detectSchema, dedupeRetu
 const AMZ23 = ['Order ID', 'Order date', 'Return request date', 'Return request status', 'Amazon RMA ID', 'Label type', 'Label cost', 'Tracking ID', 'Label to be paid by', 'A-to-Z Claim', 'ASIN', 'Merchant SKU', 'Item Name', 'Return quantity', 'Return Reason', 'In policy', 'Return type', 'Resolution', 'Return delivery date', 'Order Amount', 'Order quantity', 'Refunded Amount', 'Order Item ID'];
 const amz = (o = {}) => { const base = {'Order ID': '111-2222222-3333333', 'Order date': '45600', 'Return request date': '46000.5', 'Return request status': 'Approved', 'Amazon RMA ID': 'DJXYZ0000001', 'Label type': 'AmazonPrePaidLabel', 'Tracking ID': 'SYNTRACK0001', 'Merchant SKU': 'SYN-SKU-1', 'Item Name': 'Producto sintetico', ASIN: 'B0SYN00001', 'Return quantity': '1.0', 'Return Reason': 'CR-DEFECTIVE', 'Return type': 'C-Returns', 'Order Item ID': '1.00000000000001E+14', 'Order Amount': '99.9'}; return AMZ23.map(h => ({...base, ...o})[h] ?? null); };
 const WMT = ['CUSTOMER_ORDER_NO', 'PO_NO', 'RMA_NO', 'RETURN_ORDER_LINE_NO', 'QUANTITY', 'REQUEST_DATE', 'RETURN_REASON', 'ITEM_ID', 'CURRENT_STATUS', 'CURRENT_STATUS_TIME', 'ITEM_NAME', 'TRACKING_NUMBER', 'CHANNEL', 'CUSTOMER_NAME', 'CUSTOMER_EMAIL', 'CUSTOMER_COMMENTS', 'SKU'];
-const wmt = (o = {}) => { const base = {CUSTOMER_ORDER_NO: '200000000000001', RMA_NO: '900000000000000001', RETURN_ORDER_LINE_NO: '1', QUANTITY: '2', REQUEST_DATE: '2026-03-05T14:00:00Z', RETURN_REASON: 'Defective', ITEM_ID: '1234567890', CURRENT_STATUS: 'Refunded:1', CURRENT_STATUS_TIME: '2026-03-09T01:02:03Z', TRACKING_NUMBER: 'NA', CHANNEL: 'My Account', CUSTOMER_NAME: 'SYN Persona', CUSTOMER_EMAIL: 'syn@example.invalid', CUSTOMER_COMMENTS: 'comentario libre sintetico', ITEM_NAME: 'Herramienta sintetica', SKU: 'SYN-SKU-9'}; return WMT.map(h => ({...base, ...o})[h] ?? null); };
+const wmt = (o = {}) => { const base = {CUSTOMER_ORDER_NO: '200000000000001', PO_NO: '129000000000001', RMA_NO: '900000000000000001', RETURN_ORDER_LINE_NO: '1', QUANTITY: '2', REQUEST_DATE: '2026-03-05T14:00:00Z', RETURN_REASON: 'Defective', ITEM_ID: '1234567890', CURRENT_STATUS: 'Refunded:1', CURRENT_STATUS_TIME: '2026-03-09T01:02:03Z', TRACKING_NUMBER: 'NA', CHANNEL: 'My Account', CUSTOMER_NAME: 'SYN Persona', CUSTOMER_EMAIL: 'syn@example.invalid', CUSTOMER_COMMENTS: 'comentario libre sintetico', ITEM_NAME: 'Herramienta sintetica', SKU: 'SYN-SKU-9'}; return WMT.map(h => ({...base, ...o})[h] ?? null); };
 
 test('normalizador: Walmart 2000+11 (15 dígitos) se reconoce; otras longitudes no se adivinan', () => {
   for (const k of ['200000000000001', '200012345678901', '109012345678901', '129012345678901']) { assert.equal(orderFormat(k), 'walmart', k); assert.equal(retailerFromFormat(k), 'walmart', k); }
@@ -20,7 +20,7 @@ test('Amazon: esquema por nombre (23 columnas), sin datos personales ni tracking
   const r = parseReturns([AMZ23, amz()]);
   assert.equal(r.retailer, 'amazon'); assert.equal(r.returns.length, 1); assert.deepEqual(r.rejections, []);
   const x = r.returns[0];
-  assert.deepEqual({...x, rowHash: undefined}, {retailer: 'amazon', returnKey: 'DJXYZ0000001|100000000000001', orderKey: '111-2222222-3333333', reason: 'CR-DEFECTIVE', status: 'Approved', requestedAt: '2025-12-09', statusAt: null, itemRef: 'B0SYN00001', qty: 1, hasReturnTracking: true, channel: 'C-Returns', rowHash: undefined});
+  assert.deepEqual({...x, rowHash: undefined}, {retailer: 'amazon', returnKey: 'DJXYZ0000001|100000000000001', orderKey: '111-2222222-3333333', poKey: null, reason: 'CR-DEFECTIVE', status: 'Approved', requestedAt: '2025-12-09', statusAt: null, itemRef: 'B0SYN00001', qty: 1, hasReturnTracking: true, channel: 'C-Returns', rowHash: undefined});
   const dump = JSON.stringify(r); for (const s of ['SYNTRACK0001', 'SYN-SKU-1', 'Producto sintetico', '99.9', 'AmazonPrePaidLabel']) assert.ok(!dump.includes(s), 'no debe salir ' + s);
   assert.match(x.rowHash, /^[a-f0-9]{64}$/);
 });
@@ -165,4 +165,18 @@ test('(c) RMA de 18 dígitos numéricos en xlsx no pierde precisión (el lector 
     ['xl/worksheets/data.xml', `<worksheet xmlns="${ns}"><sheetData><row r="1">${cellsOf(rma)}</row></sheetData></worksheet>`]]);
   const ok = parseReturnsFile(book('900000000000000123'), 'x.xlsx'); assert.deepEqual(ok.returns.map(x => x.returnKey), ['900000000000000123|NOLINE'], 'sin pérdida de precisión (>2^53)');
   const bad = parseReturnsFile(book('9.00000000000000E+17'), 'x.xlsx'); assert.deepEqual(bad.rejections.map(x => x.code), ['RETURN_KEY_INVALID'], 'la notación científica lossy no entra');
+});
+
+test('Ola 5: po_key (PO_NO de Walmart) solo con 15 dígitos 1090/1290; sin él el hash no cambia; con él cambia', async () => {
+  const {createHash} = await import('node:crypto');
+  const ok = parseReturns([WMT, wmt()]).returns[0]; assert.equal(ok.poKey, '129000000000001'); assert.equal(returnToSql(ok).po_key, '129000000000001');
+  const casos = [['109000000000001', '109000000000001'], ['1290000000000010.0', null], ['129000000000001.0', '129000000000001'], ['200000000000001', null], ['12900000000001', null], ['1290000000000012', null], ['NA', null], ['', null], ['1.29000000000001E+14', '129000000000001']];
+  for (const [raw, esperado] of casos) assert.equal(parseReturns([WMT, wmt({PO_NO: raw})]).returns[0].poKey, esperado, JSON.stringify(raw));
+  const w = parseReturns([WMT, wmt({PO_NO: 'ABC'}), wmt({RMA_NO: '9601', PO_NO: ''})]); assert.deepEqual(w.warnings, {PO_NOT_RECOGNIZED: 1});
+  const sinPo = parseReturns([WMT, wmt({PO_NO: ''})]).returns[0], sql = returnToSql(sinPo);
+  const viejo = createHash('sha256').update(JSON.stringify(['retailer', 'return_key', 'order_key', 'reason', 'status', 'requested_at', 'status_at', 'item_ref', 'qty', 'has_return_tracking', 'channel'].map(k => sql[k] ?? null))).digest('hex');
+  assert.equal(sinPo.rowHash, viejo, 'sin po_key el hash es el de antes (no se reescribe la fila)'); assert.notEqual(ok.rowHash, parseReturns([WMT, wmt({PO_NO: '129000000000002'})]).returns[0].rowHash);
+  assert.notEqual(ok.rowHash, sinPo.rowHash);
+  const a = parseReturns([AMZ23, amz()]).returns[0]; assert.equal(a.poKey, null);
+  assert.ok(!JSON.stringify(parseReturns([WMT, wmt({PO_NO: 'ABC'})])).includes('ABC'));
 });

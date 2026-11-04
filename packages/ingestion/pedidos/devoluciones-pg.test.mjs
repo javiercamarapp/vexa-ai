@@ -16,6 +16,8 @@ const SKIP = !pgAvailable() && 'sin postgres local';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const MIG1 = path.join(HERE, '../../../supabase/migrations/20261210000000_order_links.sql');
 const MIG2 = path.join(HERE, '../../../supabase/migrations/20261211000000_order_returns.sql');
+const MIG3 = path.join(HERE, '../../../supabase/migrations/20261212000000_order_returns_po.sql');
+const ROLLBACK3 = path.join(HERE, '../../../supabase/operations/20261212000000_order_returns_po.rollback.sql');
 const ROLLBACK2 = path.join(HERE, '../../../supabase/operations/20261211000000_order_returns.rollback.sql');
 const H64 = c => c.repeat(64);
 
@@ -34,7 +36,7 @@ function oracle(returns, ledgerKeys, shipKeys) {
   const L = new Set(ledgerKeys.map(k => k.join('\u0000'))), S = new Set(shipKeys.map(k => k.join('\u0000'))), m = new Map();
   for (const r of returns) {
     const k = `${r.retailer}|${mes(r.requested_at)}`, a = m.get(k) ?? {retailer: r.retailer, mes: mes(r.requested_at), devoluciones: 0, sin_id: 0, con_pedido: 0, con_envio: 0};
-    a.devoluciones++; if (!r.order_key) a.sin_id++; else { const key = `${r.retailer}\u0000${r.order_key}`; if (L.has(key)) a.con_pedido++; if (S.has(key)) a.con_envio++; }
+    a.devoluciones++; const keys = [r.order_key, r.po_key].filter(Boolean).map(k => `${r.retailer}\u0000${k}`); if (!keys.length) a.sin_id++; else { if (keys.some(k => L.has(k))) a.con_pedido++; if (keys.some(k => S.has(k))) a.con_envio++; }
     m.set(k, a);
   }
   return [...m.values()].map(a => { const den = a.devoluciones - a.sin_id; return {...a, denominador: den, cobertura_pedido: den === 0 ? null : a.con_pedido / den, cobertura_envio: den === 0 ? null : a.con_envio / den}; }).sort((a, b) => a.retailer.localeCompare(b.retailer) || a.mes.localeCompare(b.mes));
@@ -51,14 +53,20 @@ test('order_returns: aditiva, ingesta, cobertura, aislamiento, negativas, retenc
     const sinBase = h.file(MIG2); assert.notEqual(sinBase.status, 0, 'sin order_links la migración falla'); assert.match(String(sinBase.stderr), /DEPENDENCIA_FALTANTE/);
     assert.equal(h.psql(`select to_regclass('public.order_returns') is null`).out, 't', 'la guarda no deja nada a medias');
     assert.equal(h.file(MIG1).status, 0, 'order_links (base de esta)');
+    const sin2 = h.file(MIG3); assert.notEqual(sin2.status, 0, 'sin order_returns la de po_key falla'); assert.match(String(sin2.stderr), /DEPENDENCIA_FALTANTE/);
     const m = h.file(MIG2); assert.equal(m.status, 0, String(m.stderr).slice(0, 800));
     assert.equal(h.file(MIG2).status, 0, 'idempotente');
+    assert.equal(h.file(MIG3).status, 0, String(h.file(MIG3).stderr).slice(0, 600)); assert.equal(h.file(MIG3).status, 0, 'po_key idempotente');
 
-    await t.test('rollback: quita solo lo suyo y se puede volver a aplicar', () => {
-      const r = h.file(ROLLBACK2); assert.equal(r.status, 0, String(r.stderr).slice(0, 600));
+    await t.test('rollback: cada migración quita solo lo suyo y se puede volver a aplicar', () => {
+      let r = h.file(ROLLBACK3); assert.equal(r.status, 0, String(r.stderr).slice(0, 600));
+      assert.equal(h.psql(`select not exists(select 1 from information_schema.columns where table_name='order_returns' and column_name='po_key') and to_regclass('public.order_returns_coverage') is not null and to_regprocedure('public.order_returns_ingest(jsonb)') is not null`).out, 't', 'solo po_key se va');
+      assert.equal(h.psql(`select count(*) from public.order_returns_coverage`).ok, true, 'la vista vieja funciona');
+      assert.equal(h.file(ROLLBACK3).status, 0, 'rollback de po_key idempotente'); assert.equal(h.file(MIG3).status, 0, 'reaplicar po_key');
+      assert.equal(h.file(ROLLBACK3).status, 0); r = h.file(ROLLBACK2); assert.equal(r.status, 0, String(r.stderr).slice(0, 600));
       assert.equal(h.psql(`select to_regclass('public.order_returns') is null and to_regclass('public.order_returns_coverage') is null and not exists(select 1 from pg_proc where proname='order_returns_ingest')`).out, 't');
       assert.equal(h.psql(`select to_regclass('public.order_shipments') is not null and to_regclass('public.order_link_coverage') is not null and exists(select 1 from pg_proc where proname='order_id_normalize')`).out, 't', 'order_links intacta');
-      assert.equal(h.file(ROLLBACK2).status, 0, 'rollback idempotente'); assert.equal(h.file(MIG2).status, 0, 'reaplicar');
+      assert.equal(h.file(ROLLBACK2).status, 0, 'rollback idempotente'); assert.equal(h.file(MIG2).status, 0, 'reaplicar'); assert.equal(h.file(MIG3).status, 0, 'reaplicar po_key');
     });
 
     // Devoluciones sintéticas pasadas por el parser real (CSV Amazon y Walmart).
@@ -123,7 +131,7 @@ test('order_returns: aditiva, ingesta, cobertura, aislamiento, negativas, retenc
       const sql = JSON.parse(r.out);
       const rows = q => asBackend(h, OWNER.A, TENANT_A, q).out.split('\n').filter(Boolean).map(l => l.split('|'));
       const ledger = rows(`select retailer,order_key from public.order_ledger_keys where order_key is not null and retailer<>'unknown';`), ships = rows(`select retailer,order_key from public.order_shipments where order_key is not null and retailer<>'unknown';`);
-      const filas = rows(`select retailer,coalesce(order_key,''),requested_at from public.order_returns;`).map(([retailer, k, d]) => ({retailer, order_key: k || null, requested_at: d}));
+      const filas = rows(`select retailer,coalesce(order_key,''),requested_at,coalesce(po_key,'') from public.order_returns;`).map(([retailer, k, d, po]) => ({retailer, order_key: k || null, requested_at: d, po_key: po || null}));
       assert.equal(filas.length, 8);
       assert.deepEqual(normCov(sql), normCov(oracle(filas, ledger, ships)));
       // valores concretos (el libro sintético trae amazon SYN-111-0000001..4)
@@ -135,6 +143,32 @@ test('order_returns: aditiva, ingesta, cobertura, aislamiento, negativas, retenc
       assert.deepEqual([g('walmart', '2026-01-01').devoluciones, g('walmart', '2026-01-01').con_envio, g('walmart', '2026-01-01').con_pedido], [2, 1, 0], 'W1 liga con el envío walmart; W2 trae un pedido de formato Amazon bajo walmart: otro retailer NO liga');
       assert.equal(g('walmart', '2026-02-01').con_envio, 0);
       assert.ok(!('ventas' in sql[0]) && !Object.keys(sql[0]).some(k => /venta|sales/i.test(k)), 'nunca un % de ventas');
+    });
+
+    await t.test('po_key: forma como order_key, hash que actualiza sin duplicar, y cobertura por order_key O po_key sin contar dos veces', () => {
+      assert.equal(asBackend(h, OWNER.A, TENANT_A, `select public.order_returns_ingest(${json([ret({return_key: 'PO0', po_key: 'a b'})])});`).ok, false, 'po_key no normalizado se rechaza');
+      // Pedido del libro: amazon SYN-111-0000003 existe; usamos retailer amazon para probar el cruce por po_key (el libro sintético solo trae amazon).
+      const base = {retailer: 'amazon', requested_at: '2026-04-10', row_hash: H64('1')};
+      const filas = [ret({...base, return_key: 'PO1', order_key: 'SYN-111-0000003'}),                                   // por order_key
+        ret({...base, return_key: 'PO2', order_key: 'SYN-999-0000001', po_key: 'SYN-111-0000003', row_hash: H64('2')}),   // order_key no existe, po_key sí
+        ret({...base, return_key: 'PO3', order_key: 'SYN-111-0000003', po_key: 'SYN-111-0000004', row_hash: H64('3')}),   // las DOS existen: cuenta una vez
+        ret({...base, return_key: 'PO4', order_key: null, po_key: 'SYN-111-0000004', row_hash: H64('4')}),                // solo po_key
+        ret({...base, return_key: 'PO5', order_key: null, po_key: null, row_hash: H64('5')}),                            // sin ID
+        ret({...base, return_key: 'PO6', order_key: 'SYN-999-0000002', po_key: 'SYN-999-0000003', row_hash: H64('6')})]; // ninguna existe
+      let r = asBackend(h, OWNER.A, TENANT_A, `select public.order_returns_ingest(${json(filas)});`); assert.ok(r.ok, r.err);
+      r = asBackend(h, OWNER.A, TENANT_A, `select json_build_object('d',devoluciones,'s',sin_id,'den',denominador,'p',con_pedido,'e',con_envio) from public.order_returns_coverage where retailer='amazon' and mes='2026-04-01';`);
+      assert.deepEqual(JSON.parse(r.out), {d: 6, s: 1, den: 5, p: 4, e: 0}, 'PO1, PO2, PO3 y PO4 ligan; PO3 una sola vez; PO5 sin ID; PO6 sin liga');
+      // envío Speedship por po_key
+      r = asBackend(h, OWNER.A, TENANT_A, `select public.order_shipments_ingest(${json([ship({tracking: 'PT1', order_key: 'SYN-999-0000003', retailer: 'amazon', retailer_basis: 'format', row_hash: H64('d')}), ship({tracking: 'PT2', order_key: 'SYN-999-0000002', retailer: 'amazon', retailer_basis: 'format', row_hash: H64('e')})])});`); assert.ok(r.ok, r.err);
+      r = asBackend(h, OWNER.A, TENANT_A, `select con_envio from public.order_returns_coverage where retailer='amazon' and mes='2026-04-01';`); assert.equal(r.out, '1', 'PO6 liga con el envío por su po_key y por su order_key: una sola vez');
+      // Re-ejecución: mismo hash = sin cambios; hash nuevo (po_key ganado) = una actualización, sin duplicar
+      r = asBackend(h, OWNER.A, TENANT_A, `select public.order_returns_ingest(${json(filas)});`); assert.deepEqual(JSON.parse(r.out), {inserted: 0, updated: 0, unchanged: 6});
+      const gana = {...filas[4], po_key: 'SYN-111-0000001', row_hash: H64('8')};
+      r = asBackend(h, OWNER.A, TENANT_A, `select public.order_returns_ingest(${json([gana])});`); assert.deepEqual(JSON.parse(r.out), {inserted: 0, updated: 1, unchanged: 0});
+      assert.equal(asBackend(h, OWNER.A, TENANT_A, `select count(*) from public.order_returns where return_key like 'PO%';`).out, '6');
+      assert.equal(asBackend(h, OWNER.A, TENANT_A, `delete from public.order_returns where return_key like 'PO%';`, 'retain').ok, true);
+      assert.equal(asBackend(h, OWNER.A, TENANT_A, `delete from public.order_shipments where tracking like 'PT%';`, 'retain').ok, true);
+      assert.equal(asBackend(h, OWNER.A, TENANT_A, `update public.order_returns set po_key='SYN-111-0000001' where false;`).ok, true, 'po_key es actualizable por vexa_backend');
     });
 
     await t.test('aislamiento: B no ve lo de A, el mismo RMA de B no pisa el de A, y A no escribe en B', () => {
@@ -181,11 +215,13 @@ test('order_returns: aditiva, ingesta, cobertura, aislamiento, negativas, retenc
       // 1/4 sin ID; 1/2 con pedido real del libro; resto a un ID inexistente; 24 meses; dos retailers
       r = h.psql(`insert into public.order_returns(tenant_id,retailer,return_key,order_key,requested_at,row_hash) select '${B}',case when g%5=0 then 'amazon' else 'walmart' end,'VR'||g,
         case when g%4=0 then null when g%2=0 then '2000'||lpad(g::text,11,'0') else '3000'||lpad(g::text,11,'0') end, date '2025-01-15'+(g%700), '${H64('f')}' from generate_series(1,${N}) g;`); assert.ok(r.ok, r.err);
+      // 1/3 con po_key (la mitad apunta a un pedido del libro; en parte a la vez con order_key válido: no se cuenta dos veces)
+      r = h.psql(`update public.order_returns set po_key=case when g%2=0 then '2000'||lpad(g::text,11,'0') else '4000'||lpad(g::text,11,'0') end from (select id,row_number() over (order by return_key)::int g from public.order_returns where tenant_id='${B}') q where order_returns.id=q.id and g%3=0 and tenant_id='${B}'`); assert.ok(r.ok, r.err);
       const t0 = Date.now(); r = asBackend(h, OWNER.B, B, COVSQL); const ms = Date.now() - t0; assert.ok(r.ok, r.err);
       assert.ok(ms < 5000, `order_returns_coverage con ${N} devoluciones tardó ${ms} ms`);
       const rows = q => asBackend(h, OWNER.B, B, q).out.split('\n').filter(Boolean).map(l => l.split('|'));
       const ledger = rows(`select retailer,order_key from public.order_ledger_keys where order_key is not null and retailer<>'unknown';`), ships = rows(`select retailer,order_key from public.order_shipments where order_key is not null and retailer<>'unknown';`);
-      const filas = rows(`select retailer,coalesce(order_key,''),requested_at from public.order_returns;`).map(([retailer, k, d]) => ({retailer, order_key: k || null, requested_at: d}));
+      const filas = rows(`select retailer,coalesce(order_key,''),requested_at,coalesce(po_key,'') from public.order_returns;`).map(([retailer, k, d, po]) => ({retailer, order_key: k || null, requested_at: d, po_key: po || null}));
       assert.ok(ledger.length >= N && filas.length === N && ships.length >= N / 3 - 1, `filas leídas: ${ledger.length}/${filas.length}/${ships.length}`);
       assert.deepEqual(normCov(JSON.parse(r.out)), normCov(oracle(filas, ledger, ships)));
       console.log(`# volumen: ${N} devoluciones, order_returns_coverage en ${ms} ms`);

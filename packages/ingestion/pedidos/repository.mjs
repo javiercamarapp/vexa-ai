@@ -3,6 +3,7 @@
 import {shipmentBatches} from './speedship.mjs';
 import {ticketOrderRef} from './link.mjs';
 import {createHash} from 'node:crypto';
+import {returnBatches, returnToSql} from './devoluciones.mjs';
 
 const snake = x => ({carrier: x.carrier, tracking: x.tracking, shipment_kind: x.shipmentKind ?? 'garantia', ship_date: x.shipDate, created_date: x.createdDate, reason: x.reason, sku: x.sku, order_key: x.orderKey, order_format: x.orderFormat, order_source: x.orderSource, retailer: x.retailer, retailer_basis: x.retailerBasis, row_hash: x.rowHash});
 export const ticketRefRow = (payload) => {
@@ -26,5 +27,19 @@ export class OrderLinksRepository {
   /** Cobertura visible: ligados/total por retailer y entidad; cobertura NULL = sin denominador (nunca 0 %). */
   async coverage() {
     return (await this.s.query('SELECT retailer,entidad,tipo,total,ligados,sin_id,sin_ligar,denominador,cobertura,con_ticket,con_envio,candidatos FROM public.order_link_coverage WHERE tenant_id=$1 ORDER BY retailer,entidad', [this.s.tenantId])).rows;
+  }
+}
+
+/** Devoluciones (order_returns, migración 20261211000000). Mismo contrato: tenant de la sesión, lotes <=250 por order_returns_ingest, idempotente por row_hash. */
+export class OrderReturnsRepository {
+  constructor(s) { this.s = s; }
+  async ingestReturns(returns) {
+    const total = {inserted: 0, updated: 0, unchanged: 0};
+    for (const b of returnBatches(returns)) { const r = (await this.s.query('SELECT public.order_returns_ingest($1::jsonb) AS r', [JSON.stringify(b.map(returnToSql))])).rows[0].r; for (const k of Object.keys(total)) total[k] += r[k]; }
+    return total;
+  }
+  /** Cobertura por retailer y mes: nunca un % de ventas; NULL = sin denominador (no 0 %). */
+  async coverage() {
+    return (await this.s.query('SELECT retailer,mes,devoluciones,sin_id,denominador,con_pedido,con_envio,cobertura_pedido,cobertura_envio FROM public.order_returns_coverage WHERE tenant_id=$1 ORDER BY retailer,mes', [this.s.tenantId])).rows;
   }
 }

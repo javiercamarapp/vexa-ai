@@ -22,6 +22,10 @@ export const trMEs = {
   'tr.datos.pedVacio': 'Aún no hay envíos ni devoluciones cargados',
   'tr.datos.pedVacioCuerpo': 'Cuando se carguen los archivos de Speedship y de devoluciones, aquí aparece la cobertura por retailer.',
   'tr.datos.pedNoDisp': 'No se pudo leer la cobertura de pedidos, envíos y devoluciones.',
+  'tr.datos.pedResumenAl': 'Resumen al {fecha}',
+  'tr.datos.pedSinResumen': 'El resumen aún no se ha calculado. Cuando se calcule, aquí aparece la cobertura por retailer. No significa que no haya pedidos, envíos o devoluciones.',
+  'tr.datos.pedSinResumenEnv': 'El resumen de envíos aún no se ha calculado. No significa que no haya envíos.',
+  'tr.datos.pedSinResumenDev': 'El resumen de devoluciones aún no se ha calculado. No significa que no haya devoluciones.',
   'tr.datos.pedParcialEnv': 'Los envíos no se pudieron leer ahora. No significa que no existan.',
   'tr.datos.pedParcialDev': 'Las devoluciones no se pudieron leer ahora. No significa que no existan.',
 } as const;
@@ -48,6 +52,10 @@ export const trMEn = {
   'tr.datos.pedVacio': 'No shipments or returns loaded yet',
   'tr.datos.pedVacioCuerpo': 'Once the Speedship and returns files are loaded, coverage by retailer appears here.',
   'tr.datos.pedNoDisp': 'The coverage of orders, shipments and returns could not be read.',
+  'tr.datos.pedResumenAl': 'Summary as of {fecha}',
+  'tr.datos.pedSinResumen': 'The summary has not been calculated yet. Once it is, coverage by retailer appears here. It does not mean there are no orders, shipments or returns.',
+  'tr.datos.pedSinResumenEnv': 'The shipments summary has not been calculated yet. It does not mean there are no shipments.',
+  'tr.datos.pedSinResumenDev': 'The returns summary has not been calculated yet. It does not mean there are no returns.',
   'tr.datos.pedParcialEnv': 'Shipments could not be read right now. It does not mean there are none.',
   'tr.datos.pedParcialDev': 'Returns could not be read right now. It does not mean there are none.',
 } as const;

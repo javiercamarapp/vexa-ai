@@ -11,7 +11,7 @@ const PLACEHOLDERS = new Set(['NONE', 'NULL', 'NAN', 'TBD', 'UNKNOWN', 'NOORDER'
 export const ORDER_FORMATS = Object.freeze({
   amazon: /^\d{3}-\d{7}-\d{7}$/,
   bestbuy: /^\d{9,10}-[A-Z]$/,
-  walmart: /^(?:1090|1290)\d{11}$/,
+  walmart: /^(?:1090|1290|2000)\d{11}$/, // 2000+11 dígitos (15) es el formato de los pedidos Walmart de las devoluciones; otras longitudes NO se adivinan (unknown)
   prefijo2_digitos8: /^[A-Z]{2}\d{8}$/,
 });
 

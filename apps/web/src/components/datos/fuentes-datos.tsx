@@ -8,6 +8,7 @@ import {tarjetasFuentes,identidad} from '../../lib/legibilidad/fuentes.mjs';
 import {filasSincronizacion} from '../../lib/legibilidad/sincronizacion.mjs';
 import {agregadoImportaciones,desgloseImportaciones} from '../../lib/connections/estado.mjs';
 import {DatosCabecera} from './datos-cabecera';
+import {PedidosCobertura} from './pedidos-cobertura';
 import {DataTable} from '../ui/data-table';
 import {ConMarca} from '../ui/brand-mark';
 import {ErrorState} from '../ui/error-state';
@@ -57,6 +58,7 @@ export function FuentesDatos(){
     {(notas.length>0||id)&&<ul className="pc-notas ui-reset" role="list" aria-label={tx('tr.datos.fdNotasAria')}>{id&&<li style={{listStyle:'none'}}><b>{tx('tr.datos.fdIdentidad')}.</b> {tx('tr.datos.fdNotaIdentidad')}</li>}{notas.map(n=><li key={n.clave} style={{listStyle:'none'}}><b>{n.nombre}.</b> {n.texto}</li>)}</ul>}
     {tr.error&&<p className="ac-nota" role="status" style={{padding:'8px 14px'}}>{tx('tr.datos.fdFechasNoDisp',{err:tr.error})}</p>}
    </section>
+   <PedidosCobertura/>
    <div className="pc-grid" data-cols="4-4-4">
     <section className="pc-card" aria-labelledby="ci-t"><header className="pc-card-head"><div><h2 id="ci-t">{tx('tr.datos.fdCobIdTit')}</h2><p>{tx('tr.datos.fdCadaTicket')}</p></div><LinkButton href="/history" size="sm" variant="ghost" icon={<Arrow/>}>{tx('tr.datos.fdDetalle')}</LinkButton></header>
      {cargando?<Loading compact message={tx('tr.datos.fdCargandoId')}/>:!id?<p className="ac-vacio">{tx('tr.datos.fdNoEstima')}</p>:<div className="pc-fill" style={{display:'flex',flexDirection:'column',gap:10}}>

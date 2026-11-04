@@ -1,0 +1,14 @@
+import type {Tr} from './trad.mjs';
+import type {FilaEnlace, FilaDevolucion, FilaPeriodoEnvios} from '../../../../../packages/workspace-service/pedidos-cobertura.mjs';
+export const ORDEN: readonly ['amazon', 'walmart', 'otros', 'unknown'];
+export type GrupoClave = 'amazon' | 'walmart' | 'otros' | 'unknown';
+export type Periodo = {desde: string; hasta: string};
+export type EnviosGrupo = {total: number | null; sinId: number | null; ligados: number | null; denominador: number | null; cobertura: number | null; periodo: Periodo | null};
+export type DevolucionesGrupo = {total: number | null; sinId: number | null; denominador: number | null; conPedido: number | null; conEnvio: number | null; coberturaPedido: number | null; coberturaEnvio: number | null; periodo: Periodo | null};
+export type GrupoPedidos = {clave: GrupoClave; pedidos: number | null; envios: EnviosGrupo | null; devoluciones: DevolucionesGrupo | null};
+export type ModeloPedidos = {estado: 'ok' | 'vacio' | 'no_disponible'; grupos: GrupoPedidos[]};
+export function grupoRetailer(r: string): GrupoClave;
+export function nombreRetailer(clave: GrupoClave, t?: Tr | null): string;
+export function textoCobertura(ratio: number | null | undefined, idioma?: string): string;
+export function textoPeriodo(desde: string | null | undefined, hasta: string | null | undefined, idioma?: string): string | null;
+export function modeloPedidos(entrada: {enlaces?: FilaEnlace[] | null; devoluciones?: FilaDevolucion[] | null; periodoEnvios?: FilaPeriodoEnvios[] | null} | null | undefined): ModeloPedidos;

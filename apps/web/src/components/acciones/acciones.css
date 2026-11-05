@@ -64,6 +64,7 @@
 .workspace-content .ac-pie details:not(.nav-group):not(.fold):not(.detail-admin)>summary{border:0;padding:0 4px 0 0;min-height:28px;background:none;font-size:12px;font-weight:500;color:var(--muted)}
 .workspace-content .ac-pie details:not(.nav-group):not(.fold):not(.detail-admin)>summary:hover{background:none;color:var(--ink)}
 .pc-card[data-flush]>.ac-vacio{flex:1 1 auto;display:flex;align-items:center;justify-content:center;margin:0 14px 14px!important}
+.pc-card[data-flush]>.empty{margin:0 14px 14px}
 /* F3-B: «Por decidir» sin columna de texto estrecha: texto ancho | cifras y dinero apilados | botones */
 @media(min-width:1000px){
  .ac-fila[data-vista=por-decidir]:not([data-descartada]){grid-template-columns:minmax(0,1fr) minmax(0,340px) 210px;grid-template-areas:"main cifras botones" "main dinero botones"}

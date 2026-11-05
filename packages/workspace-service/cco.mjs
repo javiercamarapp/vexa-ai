@@ -202,47 +202,84 @@ const faltanBase = (id) => ({faltan: faltanDe(id), faltanTextos: faltanTexto(id)
 // ---- lectura acotada ----
 const num = (x) => (x === null || x === undefined ? null : Number(x));
 const dia = (x) => (x === null || x === undefined ? null : x instanceof Date ? x.toISOString().slice(0, 10) : String(x).slice(0, 10));
-/** Una consulta en SAVEPOINT con tope de tiempo. {rows} | {error:'not_installed'|'unavailable'}; jamás un cero por un fallo. */
+/** Una consulta en SAVEPOINT. El tope de tiempo se fija UNA vez por transacción (leerAgregadosCco). {rows} | {error:'not_installed'|'unavailable'}; jamás un cero por un fallo. */
 async function leer(s, deadline, name, sql, params = []) {
-  const left = deadline - Date.now();
-  if (left < 50) return {error: 'unavailable'};
-  const previous = (await s.query("SELECT current_setting('statement_timeout') AS v")).rows[0]?.v ?? '0';
+  if (deadline - Date.now() < 50) return {error: 'unavailable'};
   await s.query('SAVEPOINT ' + name);
-  await s.query("SELECT set_config('statement_timeout',$1,true)", [Math.ceil(left) + 'ms']);
   try {
     const r = await s.query(sql, params);
-    await s.query("SELECT set_config('statement_timeout',$1,true)", [previous]);
     await s.query('RELEASE SAVEPOINT ' + name);
     return {rows: r.rows};
   } catch (e) {
     await s.query('ROLLBACK TO SAVEPOINT ' + name);
-    await s.query("SELECT set_config('statement_timeout',$1,true)", [previous]);
     await s.query('RELEASE SAVEPOINT ' + name);
     return {error: e?.code === '42883' ? 'not_installed' : 'unavailable'};
   }
 }
 const celda = (r) => ({d1: r.d1, d2: r.d2, n: Number(r.n), otros: Boolean(r.es_otros)});
 
-/** Lectura cruda de los agregados. Cada parte es {rows}|{error}. */
+/**
+ * TODO el Tracker en UNA pasada: insight_cco_tracker_filas() se evalúa una sola vez (CTE materializada) y de ella salen los siete agregados que antes eran siete consultas
+ * (tracker_casos x3, bodega x2, cobertura, modalidad_casos). Mismas reglas y mismo k mínimo 5 (insight_cco_k); las celdas por grupo son las de esas funciones.
+ * Devuelve filas (part, dim, d1, d2, n, es_otros, ts): part = defecto|hoja|subcanal|lat|mot|cob|cobcut|m_<dim>.
+ */
+export const SQL_TRACKER_UNA_PASADA = `
+WITH f AS MATERIALIZED (SELECT * FROM public.insight_cco_tracker_filas()),
+fm AS (SELECT * FROM f WHERE retailer_class LIKE 'amazon%' OR retailer_class LIKE 'walmart%'),
+cel AS (SELECT
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT sku_base AS d1, defect_class AS d2, count(*) AS n FROM f WHERE sku_base IS NOT NULL AND defect_class IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS defecto,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT sku_base AS d1, sheet_type AS d2, count(*) AS n FROM f WHERE sku_base IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS hoja,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT retailer_class AS d1, NULL::text AS d2, count(*) AS n FROM f GROUP BY 1,2) g),'[]'::jsonb) AS subcanal,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT warehouse AS d1, latency_class AS d2, count(*) AS n FROM f WHERE warehouse IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS lat,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT warehouse AS d1, coalesce(defect_class,reason_class) AS d2, count(*) AS n FROM f WHERE warehouse IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS mot,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT retailer_class AS d1, sheet_type AS d2, count(*) AS n FROM fm GROUP BY 1,2) g),'[]'::jsonb) AS m1,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT retailer_class AS d1, defect_class AS d2, count(*) AS n FROM fm WHERE defect_class IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS m2,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT retailer_class AS d1, latency_class AS d2, count(*) AS n FROM fm WHERE warehouse IS NOT NULL AND latency_class IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS m3,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT retailer_class AS d1, warehouse AS d2, count(*) AS n FROM fm WHERE warehouse IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS m4,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT sku_base AS d1, retailer_class AS d2, count(*) AS n FROM fm WHERE sku_base IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS m5,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT sku_base AS d1, retailer_class||'|'||sheet_type AS d2, count(*) AS n FROM fm WHERE sku_base IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS m6,
+ coalesce((SELECT jsonb_agg(jsonb_build_object('d1',g.d1,'d2',g.d2,'n',g.n)) FROM (SELECT sku_base AS d1, retailer_class||'|'||defect_class AS d2, count(*) AS n FROM fm WHERE sku_base IS NOT NULL AND defect_class IS NOT NULL GROUP BY 1,2) g),'[]'::jsonb) AS m7)
+SELECT 'defecto' AS part, NULL::text AS dim, k.d1, k.d2, k.n, k.es_otros, NULL::timestamptz AS ts FROM cel, public.insight_cco_k(cel.defecto,5) k
+UNION ALL SELECT 'hoja', NULL, k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.hoja,5) k
+UNION ALL SELECT 'subcanal', NULL, k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.subcanal,5) k
+UNION ALL SELECT 'lat', NULL, k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.lat,5) k
+UNION ALL SELECT 'mot', NULL, k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.mot,5) k
+UNION ALL SELECT 'm', 'subcanal_tipo', k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.m1,5) k
+UNION ALL SELECT 'm', 'subcanal_defecto', k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.m2,5) k
+UNION ALL SELECT 'm', 'subcanal_despacho', k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.m3,5) k
+UNION ALL SELECT 'm', 'subcanal_bodega', k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.m4,5) k
+UNION ALL SELECT 'm', 'sku_subcanal', k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.m5,5) k
+UNION ALL SELECT 'm', 'sku_subcanal_tipo', k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.m6,5) k
+UNION ALL SELECT 'm', 'sku_subcanal_defecto', k.d1, k.d2, k.n, k.es_otros, NULL FROM cel, public.insight_cco_k(cel.m7,5) k
+UNION ALL SELECT 'cob', k.key, NULL, NULL, k.v, NULL, NULL FROM (SELECT * FROM (SELECT
+   count(*) AS rows_total, count(*) FILTER (WHERE retailer_class NOT IN ('sin_retailer','pendiente')) AS with_retailer, count(*) FILTER (WHERE sku_base IS NOT NULL) AS with_sku,
+   count(*) FILTER (WHERE warehouse IS NOT NULL) AS with_warehouse, count(*) FILTER (WHERE latency_class IS NOT NULL AND latency_class<>'sin_dato') AS with_latency,
+   count(*) FILTER (WHERE has_address) AS with_address, count(DISTINCT sheet) AS sheets FROM f) c) c2 CROSS JOIN LATERAL (VALUES ('rows_total',c2.rows_total),('with_retailer',c2.with_retailer),('with_sku',c2.with_sku),
+   ('with_warehouse',c2.with_warehouse),('with_latency',c2.with_latency),('with_address',c2.with_address),('sheets',c2.sheets)) k(key,v)
+UNION ALL SELECT 'cobcut', NULL, NULL, NULL, NULL, NULL, (SELECT max(coalesce(v.received_at,v.created_at)) FROM public.tracker_versions v WHERE v.tenant_id=nullif(current_setting('vexa.tenant_id',true),'')::uuid)`;
+
+/** Parte (part) del resultado de SQL_TRACKER_UNA_PASADA -> forma cruda de siempre ({rows}|{error}) de cada agregado. */
+export function partesTracker(res) {
+  if (res.error) { const e = {error: res.error}; return {defecto: e, hoja: e, subcanal: e, bodLat: e, bodMot: e, cob: e, modalidad: e}; }
+  const R = res.rows, de = (part) => ({rows: R.filter((r) => r.part === part).map(({d1, d2, n, es_otros}) => ({d1, d2, n, es_otros}))});
+  const cob = Object.fromEntries(R.filter((r) => r.part === 'cob').map((r) => [r.dim, r.n]));
+  return {defecto: de('defecto'), hoja: de('hoja'), subcanal: de('subcanal'), bodLat: de('lat'), bodMot: de('mot'),
+    cob: {rows: [{...cob, cutoff: R.find((r) => r.part === 'cobcut')?.ts ?? null}]},
+    modalidad: {rows: R.filter((r) => r.part === 'm').map(({dim, d1, d2, n, es_otros}) => ({dim, d1, d2, n, es_otros}))}};
+}
+
+/** Lectura cruda de los agregados. Cada parte es {rows}|{error}. Ledger (3 consultas) + Tracker (1 pasada). */
 export async function leerAgregadosCco(s, {deadline}) {
-  // El prefijo del cliente piloto llega a las funciones SQL por la configuración de sesión (local a la transacción); vacío = nada es propio.
-  await s.query("SELECT set_config('vexa.tienda_propia_prefijo',$1,true)", [prefijoPropio()]);
-  // Ídem el catálogo de bodegas (VEXA_CCO_CATALOGO, ya validado): sin él, toda bodega con valor sale «otra».
-  await s.query("SELECT set_config('vexa.cco_catalogo_bodegas',$1,true)", [catalogoBodegasJson()]);
+  // Un solo viaje fija: el prefijo del cliente piloto (vacío = nada es propio), el catálogo de bodegas validado (sin él toda bodega con valor sale «otra») y el tope de tiempo de las sentencias
+  // (el presupuesto restante, una sola vez; local a la transacción).
+  await s.query("SELECT set_config('vexa.tienda_propia_prefijo',$1,true), set_config('vexa.cco_catalogo_bodegas',$2,true), set_config('statement_timeout',$3,true)",
+    [prefijoPropio(), catalogoBodegasJson(), Math.max(50, Math.ceil(deadline - Date.now())) + 'ms']);
   const q = (name, sql, params) => leer(s, deadline, name, sql, params);
-  const [ventanas, skuCanal, sinVenta, defecto, hoja, subcanal, bodLat, bodMot, cob, modalidad] = [
-    await q('cco_v', 'SELECT * FROM public.insight_cco_ventanas()'),
-    await q('cco_s', 'SELECT * FROM public.insight_cco_sku_canal(NULL)'),
-    await q('cco_n', 'SELECT * FROM public.insight_cco_sin_venta()'),
-    await q('cco_t1', "SELECT * FROM public.insight_cco_tracker_casos('sku_defecto',5)"),
-    await q('cco_t2', "SELECT * FROM public.insight_cco_tracker_casos('sku_hoja',5)"),
-    await q('cco_t3', "SELECT * FROM public.insight_cco_tracker_casos('subcanal',5)"),
-    await q('cco_b1', "SELECT * FROM public.insight_cco_bodega('latencia',5)"),
-    await q('cco_b2', "SELECT * FROM public.insight_cco_bodega('motivo',5)"),
-    await q('cco_c', 'SELECT * FROM public.insight_cco_cobertura()'),
-    await q('cco_m', 'SELECT * FROM public.insight_cco_modalidad_casos(5)'),
-  ];
-  return {ventanas, skuCanal, sinVenta, defecto, hoja, subcanal, bodLat, bodMot, cob, modalidad};
+  const ventanas = await q('cco_v', 'SELECT * FROM public.insight_cco_ventanas()');
+  const skuCanal = await q('cco_s', 'SELECT * FROM public.insight_cco_sku_canal(NULL)');
+  const sinVenta = await q('cco_n', 'SELECT * FROM public.insight_cco_sin_venta()');
+  const t = partesTracker(await q('cco_t', SQL_TRACKER_UNA_PASADA));
+  return {ventanas, skuCanal, sinVenta, ...t};
 }
 
 const estadoDe = (ok, sal) => (!ok ? 'falta' : sal ? 'salvedad' : 'listo');

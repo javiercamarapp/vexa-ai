@@ -12,7 +12,7 @@ import {sourcesSql} from '../../economics/emit-sql.mjs';
 import {HERE} from '../../metrics/tests/world.mjs';
 import {subcanalDe, bodegaDe, latenciaDe, defectoDe, skuBaseDe, hojaDeTracker} from '../cco.mjs';
 import {retailerDe} from '../fuga-reembolsos.mjs';
-import {baseDeSubcanal, armarCco, createCcoRepository, modalidadDeSubcanal} from '../cco.mjs';
+import {SQL_TRACKER_UNA_PASADA, baseDeSubcanal, armarCco, createCcoRepository, modalidadDeSubcanal, leerAgregadosCco, prefijoPropio} from '../cco.mjs';
 import {crearBaseDatos} from '../../ai-scale/economia-problemas/snapshot.mjs';
 import {createRequire} from 'node:module';
 import {usarCatalogoSintetico} from './cco-catalogo-sintetico.mjs';
@@ -116,6 +116,26 @@ function sembrarTracker(h, tenant, conn, hojas, {v1Override = null, tag}) {
    insert into public.tracker_row_observations(tenant_id,version_id,sheet_name,row_number,revision_id) values ${obs.join(',')};`);
   if (r.status !== 0) throw Error('tracker: ' + String(r.stderr).slice(0, 600));
 }
+
+
+// ---- CAMINO VIEJO (congelado): las diez consultas separadas que corría leerAgregadosCco antes de la pasada única. Solo para la prueba dorada. ----
+async function leerAgregadosLegacy(s) {
+  await s.query("SELECT set_config('vexa.tienda_propia_prefijo',$1,true)", [prefijoPropio()]);
+  await s.query("SELECT set_config('vexa.cco_catalogo_bodegas',$1,true)", [catalogoBodegasJson()]);
+  const q = async (name, sql) => {
+    await s.query('SAVEPOINT ' + name);
+    try { const r = await s.query(sql); await s.query('RELEASE SAVEPOINT ' + name); return {rows: r.rows}; }
+    catch (e) { await s.query('ROLLBACK TO SAVEPOINT ' + name); await s.query('RELEASE SAVEPOINT ' + name); return {error: e?.code === '42883' ? 'not_installed' : 'unavailable'}; }
+  };
+  return {
+    ventanas: await q('l_v', 'SELECT * FROM public.insight_cco_ventanas()'), skuCanal: await q('l_s', 'SELECT * FROM public.insight_cco_sku_canal(NULL)'), sinVenta: await q('l_n', 'SELECT * FROM public.insight_cco_sin_venta()'),
+    defecto: await q('l_1', "SELECT * FROM public.insight_cco_tracker_casos('sku_defecto',5)"), hoja: await q('l_2', "SELECT * FROM public.insight_cco_tracker_casos('sku_hoja',5)"),
+    subcanal: await q('l_3', "SELECT * FROM public.insight_cco_tracker_casos('subcanal',5)"), bodLat: await q('l_4', "SELECT * FROM public.insight_cco_bodega('latencia',5)"),
+    bodMot: await q('l_5', "SELECT * FROM public.insight_cco_bodega('motivo',5)"), cob: await q('l_6', 'SELECT * FROM public.insight_cco_cobertura()'), modalidad: await q('l_7', 'SELECT * FROM public.insight_cco_modalidad_casos(5)'),
+  };
+}
+// Orden de filas no garantizado por insight_cco_k: se compara como conjunto ordenado por contenido (los consumidores reordenan).
+const canon = (p) => (p.error ? {error: p.error} : {rows: p.rows.map((r) => JSON.stringify(Object.keys(r).sort().map((k) => [k, r[k] instanceof Date ? r[k].toISOString() : r[k]]))).sort()});
 
 // ---- cliente SQL bajo el rol y la sesión reales de la aplicación ----
 function asBackend(h, user, tenant, sql, action = 'read', prefijo = PREFIJO, catalogo = catalogoBodegasJson()) {
@@ -348,6 +368,45 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       assert.doesNotMatch(JSON.stringify(v), /Main St|Calle 5|Guadalajara|Austin|dirección ilegible/, 'ninguna dirección sale del proceso');
       const b = await createCcoRepository({database: crearBaseDatos({pool, tenantId: TENANT_B, userId: OWNER.B, statementTimeoutMs: 20000})}).get();
       assert.ok(!JSON.stringify(b).includes('"S1"') && !JSON.stringify(b).includes('PS-3'), 'la otra organización no ve datos de A');
+    });
+    await t.test('PRUEBA DORADA: la pasada única del Tracker da EXACTAMENTE lo mismo que las siete consultas separadas, celda por celda', async () => {
+      const pg = createRequire(import.meta.url)('pg'); const pool = new pg.Pool({host: h.sock, user: 'postgres', database: 't', max: 3}); t.after(() => pool.end());
+      const TE = 'cccccccc-0000-4000-8000-000000000004', UE = U(9101); // organización SIN Tracker ni libro: ambos caminos deben coincidir también en vacío
+      h.psql(`insert into public.organizations(id,name) values('${TE}','SYNE')`); h.psql(`insert into auth.users(id) values('${UE}')`);
+      h.psql(`insert into public.memberships(tenant_id,user_id,role,status,permissions_version) values('${TE}','${UE}','owner','active',1)`);
+      const cats = {con: process.env.VEXA_CCO_CATALOGO, sin: ''}, pref = {con: PREFIJO, sin: ''};
+      const casos = [['A', TENANT_A, OWNER.A], ['B', TENANT_B, OWNER.B], ['paridad', UC_PARIDAD.t, UC_PARIDAD.u], ['vacía', TE, UE]];
+      let celdasComparadas = 0;
+      try {
+        for (const cfg of ['con', 'sin']) {
+          process.env.VEXA_CCO_CATALOGO = cats[cfg]; process.env.VEXA_TIENDA_PROPIA_PREFIJO = pref[cfg];
+          for (const [nombre, tn, un] of casos) {
+            const db = crearBaseDatos({pool, tenantId: tn, userId: un, statementTimeoutMs: 20000});
+            const viejo = await db.transaction('read', (s) => leerAgregadosLegacy(s));
+            const nuevo = await db.transaction('read', (s) => leerAgregadosCco(s, {deadline: Date.now() + 14000}));
+            assert.deepEqual(Object.keys(nuevo).sort(), Object.keys(viejo).sort(), 'mismas partes');
+            for (const parte of Object.keys(viejo)) {
+              assert.ok(!viejo[parte].error && !nuevo[parte].error, `${nombre}/${cfg}/${parte}: sin error ${viejo[parte].error} ${nuevo[parte].error}`);
+              assert.deepEqual(canon(nuevo[parte]), canon(viejo[parte]), `${nombre}/${cfg}/${parte}`);
+              celdasComparadas += viejo[parte].rows.length;
+            }
+            // Y la salida final de las seis tarjetas (lo que ve la pantalla) es idéntica, salvo la marca de tiempo.
+            const ahora = new Date('2026-10-28T12:00:00Z');
+            assert.deepEqual(JSON.parse(JSON.stringify(armarCco(nuevo, null, {now: ahora}))), JSON.parse(JSON.stringify(armarCco(viejo, null, {now: ahora}))), `${nombre}/${cfg}: tarjetas`);
+          }
+        }
+      } finally { process.env.VEXA_CCO_CATALOGO = cats.con; process.env.VEXA_TIENDA_PROPIA_PREFIJO = PREFIJO; }
+      assert.ok(celdasComparadas > 100, 'la comparación cubre muchas celdas: ' + celdasComparadas);
+    });
+    await t.test('la pasada única evalúa insight_cco_tracker_filas() UNA vez y fija el tope una sola vez (contador de sentencias)', async () => {
+      const pg = createRequire(import.meta.url)('pg'); const pool = new pg.Pool({host: h.sock, user: 'postgres', database: 't', max: 3}); t.after(() => pool.end());
+      const contar = async (fn) => { let n = 0, filas = 0; const db = crearBaseDatos({pool, tenantId: TENANT_A, userId: OWNER.A, statementTimeoutMs: 20000});
+        await db.transaction('read', async (s) => fn({query: (q, v) => { n++; if (/insight_cco_tracker_filas|insight_cco_tracker_casos|insight_cco_bodega|insight_cco_cobertura|insight_cco_modalidad_casos/.test(String(q))) filas++; return s.query(q, v); }})); return {n, filas}; };
+      const nuevo = await contar((s) => leerAgregadosCco(s, {deadline: Date.now() + 14000})), viejo = await contar((s) => leerAgregadosLegacy(s));
+      const plan = await crearBaseDatos({pool, tenantId: TENANT_A, userId: OWNER.A, statementTimeoutMs: 20000}).transaction('read', async (s) => (await s.query('EXPLAIN ' + SQL_TRACKER_UNA_PASADA)).rows.map((r) => r['QUERY PLAN']).join('\n'));
+      assert.equal((plan.match(/Function Scan on insight_cco_tracker_filas/g) ?? []).length, 1, 'el plan evalúa la función UNA sola vez (CTE materializada)');
+      assert.equal(nuevo.filas, 1, 'una sola consulta toca el Tracker'); assert.equal(viejo.filas, 7, 'antes eran siete (cada una recalculaba tracker_filas)');
+      assert.ok(nuevo.n <= 16, 'viajes de red del camino nuevo: ' + nuevo.n); assert.ok(viejo.n > nuevo.n, `${viejo.n} -> ${nuevo.n}`);
     });
     await t.test('aislamiento entre organizaciones: cada una ve solo lo suyo; un usuario ajeno no ve nada; las funciones no aceptan tenant', () => {
       const a = rows(h, OWNER.A, TENANT_A, 'public.insight_cco_sku_canal(NULL)'), b = rows(h, OWNER.B, TENANT_B, 'public.insight_cco_sku_canal(NULL)');

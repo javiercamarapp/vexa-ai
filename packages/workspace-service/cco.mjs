@@ -202,10 +202,12 @@ const faltanBase = (id) => ({faltan: faltanDe(id), faltanTextos: faltanTexto(id)
 // ---- lectura acotada ----
 const num = (x) => (x === null || x === undefined ? null : Number(x));
 const dia = (x) => (x === null || x === undefined ? null : x instanceof Date ? x.toISOString().slice(0, 10) : String(x).slice(0, 10));
-/** Una consulta en SAVEPOINT. El tope de tiempo se fija UNA vez por transacción (leerAgregadosCco). {rows} | {error:'not_installed'|'unavailable'}; jamás un cero por un fallo. */
+/** Una consulta en SAVEPOINT con tope de tiempo PROPIO: justo antes de cada sentencia se fija statement_timeout = presupuesto restante (en el mismo viaje que el SAVEPOINT; local a la
+ *  transacción, sin restaurar), de modo que ninguna sentencia puede pasar del total aunque las anteriores hayan tardado. {rows} | {error:'not_installed'|'unavailable'}; jamás un cero por un fallo. */
 async function leer(s, deadline, name, sql, params = []) {
-  if (deadline - Date.now() < 50) return {error: 'unavailable'};
-  await s.query('SAVEPOINT ' + name);
+  const left = deadline - Date.now();
+  if (left < 50) return {error: 'unavailable'};
+  await s.query('SAVEPOINT ' + name + "; SELECT set_config('statement_timeout','" + Math.ceil(left) + "ms',true)");
   try {
     const r = await s.query(sql, params);
     await s.query('RELEASE SAVEPOINT ' + name);
@@ -270,10 +272,8 @@ export function partesTracker(res) {
 
 /** Lectura cruda de los agregados. Cada parte es {rows}|{error}. Ledger (3 consultas) + Tracker (1 pasada). */
 export async function leerAgregadosCco(s, {deadline}) {
-  // Un solo viaje fija: el prefijo del cliente piloto (vacío = nada es propio), el catálogo de bodegas validado (sin él toda bodega con valor sale «otra») y el tope de tiempo de las sentencias
-  // (el presupuesto restante, una sola vez; local a la transacción).
-  await s.query("SELECT set_config('vexa.tienda_propia_prefijo',$1,true), set_config('vexa.cco_catalogo_bodegas',$2,true), set_config('statement_timeout',$3,true)",
-    [prefijoPropio(), catalogoBodegasJson(), Math.max(50, Math.ceil(deadline - Date.now())) + 'ms']);
+  // Un solo viaje fija el prefijo del cliente piloto (vacío = nada es propio) y el catálogo de bodegas validado (sin él toda bodega con valor sale «otra»). El tope de tiempo lo fija leer() antes de cada sentencia.
+  await s.query("SELECT set_config('vexa.tienda_propia_prefijo',$1,true), set_config('vexa.cco_catalogo_bodegas',$2,true)", [prefijoPropio(), catalogoBodegasJson()]);
   const q = (name, sql, params) => leer(s, deadline, name, sql, params);
   const ventanas = await q('cco_v', 'SELECT * FROM public.insight_cco_ventanas()');
   const skuCanal = await q('cco_s', 'SELECT * FROM public.insight_cco_sku_canal(NULL)');
@@ -415,7 +415,7 @@ export function tarjetaModalidad(raw, id, {tabla = tablaModalidades()} = {}) {
     .sort((a, b) => b.casos - a.casos || a.sku.localeCompare(b.sku)).slice(0, TOP_SKU).map(({casos, ...r}) => r);
   const total = subcanales.reduce((a, x) => a + x.casos, 0), conocido = subcanales.filter((x) => x[eje] !== SIN_DATO).reduce((a, x) => a + x.casos, 0);
   const cobertura = [id === 'E' ? {clave: 'ejeVende', conocido, elegible: total, pct: pct(conocido, total)} : {clave: 'ejeBodega', conocido, elegible: total, pct: pct(conocido, total)}];
-  return {...base, estado: 'salvedad', subcanales, ejes, skus, corte, cobertura, detalleIndisponible: det === null, ocultos: totales.filter((x) => x.otros).reduce((a, x) => a + x.n, 0), totalCasos: total};
+  return {...base, estado: 'salvedad', subcanales, ejes, skus, corte, cobertura, detalleIndisponible: det === null, /* contrato conservado: con la pasada única del Tracker solo es true si TODO el Tracker falló (entonces subcanal también falla y la tarjeta sale «falta» antes de llegar aquí); se mantiene por compatibilidad con la pantalla y el agente */ ocultos: totales.filter((x) => x.otros).reduce((a, x) => a + x.n, 0), totalCasos: total};
 }
 /** Tarjeta E: vender a través del marketplace o venderle al marketplace (quién vende). Con casos reales «Con salvedad»; sin celdas visibles «Falta dato». */
 export const tarjetaE = (raw, opciones) => tarjetaModalidad(raw, 'E', opciones);

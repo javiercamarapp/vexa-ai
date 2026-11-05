@@ -406,7 +406,40 @@ test('insight_cco_*: aislamiento, k>=5, NULL no cero, sumas y ventana común', {
       const plan = await crearBaseDatos({pool, tenantId: TENANT_A, userId: OWNER.A, statementTimeoutMs: 20000}).transaction('read', async (s) => (await s.query('EXPLAIN ' + SQL_TRACKER_UNA_PASADA)).rows.map((r) => r['QUERY PLAN']).join('\n'));
       assert.equal((plan.match(/Function Scan on insight_cco_tracker_filas/g) ?? []).length, 1, 'el plan evalúa la función UNA sola vez (CTE materializada)');
       assert.equal(nuevo.filas, 1, 'una sola consulta toca el Tracker'); assert.equal(viejo.filas, 7, 'antes eran siete (cada una recalculaba tracker_filas)');
-      assert.ok(nuevo.n <= 16, 'viajes de red del camino nuevo: ' + nuevo.n); assert.ok(viejo.n > nuevo.n, `${viejo.n} -> ${nuevo.n}`);
+      assert.ok(nuevo.n <= 13, 'viajes de red del camino nuevo: ' + nuevo.n); assert.ok(viejo.n > nuevo.n, `${viejo.n} -> ${nuevo.n}`);
+    });
+    await t.test('tope de tiempo: cada sentencia recibe el presupuesto RESTANTE, el total no se rebasa y los fallos se contienen (nunca cero)', async () => {
+      const pg = createRequire(import.meta.url)('pg'); const pool = new pg.Pool({host: h.sock, user: 'postgres', database: 't', max: 3}); t.after(() => pool.end());
+      const db = crearBaseDatos({pool, tenantId: TENANT_A, userId: OWNER.A, statementTimeoutMs: 20000});
+      const ms = (v) => (/ms$/.test(v) ? Number(v.slice(0, -2)) : /s$/.test(v) ? Number(v.slice(0, -1)) * 1000 : Number(v)), esTracker = (q) => /insight_cco_tracker_filas/.test(String(q));
+      // (a) sentencias lentas simuladas: 350 ms antes de cada una con presupuesto de 1000 ms.
+      const vistos = [];
+      let t0 = Date.now();
+      const a = await db.transaction('read', (s) => leerAgregadosCco({query: async (q, v) => {
+        if (/^SAVEPOINT/.test(String(q))) await new Promise((r) => setTimeout(r, 350));
+        const r = await s.query(q, v); if (/^SAVEPOINT/.test(String(q))) vistos.push(ms((await s.query('show statement_timeout')).rows[0].statement_timeout)); return r;
+      }}, {deadline: Date.now() + 1000}));
+      const gastado = Date.now() - t0;
+      assert.ok(vistos.length >= 2 && vistos.every((x, i) => i === 0 || x < vistos[i - 1]), 'el tope baja con el tiempo gastado: ' + vistos);
+      assert.ok(vistos[0] <= 1000 && vistos[1] <= 700, 'la segunda sentencia ya descuenta lo gastado: ' + vistos);
+      assert.ok(gastado < 1000 + 600, 'la lectura no excede el total más un margen: ' + gastado);
+      for (const k of ['defecto', 'hoja', 'subcanal', 'bodLat', 'bodMot', 'cob', 'modalidad']) if (a[k].error) assert.equal(a[k].error, 'unavailable', 'sin presupuesto: indisponible, nunca vacío ni cero');
+      assert.ok(Object.values(a).some((x) => x.error === 'unavailable') || vistos.length === 4, 'o se agotó el presupuesto o alcanzó para las cuatro sentencias');
+      // (b) una sentencia del Tracker agota el tiempo de verdad (pg_sleep): se contiene con ROLLBACK TO SAVEPOINT y la transacción sigue sirviendo.
+      t0 = Date.now(); let despues = null;
+      const b = await db.transaction('read', async (s) => {
+        const r = await leerAgregadosCco({query: (q, v) => s.query(esTracker(q) ? 'SELECT pg_sleep(5)' : q, v)}, {deadline: Date.now() + 700});
+        despues = (await s.query('select 1 as ok')).rows[0].ok; return r;
+      });
+      assert.ok(Date.now() - t0 < 700 + 1500, 'el pg_sleep se corta por el tope restante, no a los 5 s: ' + (Date.now() - t0));
+      assert.equal(despues, 1, 'la transacción sigue usable tras el error contenido');
+      for (const k of ['defecto', 'hoja', 'subcanal', 'bodLat', 'bodMot', 'cob', 'modalidad']) assert.deepEqual(b[k], {error: 'unavailable'}, k);
+      for (const k of ['ventanas', 'skuCanal', 'sinVenta']) assert.ok(Array.isArray(b[k].rows) && b[k].rows.length > 0, 'el libro no se pierde: ' + k);
+      const v = armarCco(b, null); assert.equal(v.cards.C.estado, 'falta'); assert.equal(v.cards.C.indisponible, 'unavailable'); assert.notEqual(v.cards.E.estado, 'listo');
+      // (c) función ausente (42883): las siete partes del Tracker salen not_installed juntas.
+      const c = await db.transaction('read', (s) => leerAgregadosCco({query: (q, v) => s.query(esTracker(q) ? 'SELECT * FROM public.insight_cco_no_existe()' : q, v)}, {deadline: Date.now() + 14000}));
+      for (const k of ['defecto', 'hoja', 'subcanal', 'bodLat', 'bodMot', 'cob', 'modalidad']) assert.deepEqual(c[k], {error: 'not_installed'}, k);
+      assert.ok(c.ventanas.rows.length > 0);
     });
     await t.test('aislamiento entre organizaciones: cada una ve solo lo suyo; un usuario ajeno no ve nada; las funciones no aceptan tenant', () => {
       const a = rows(h, OWNER.A, TENANT_A, 'public.insight_cco_sku_canal(NULL)'), b = rows(h, OWNER.B, TENANT_B, 'public.insight_cco_sku_canal(NULL)');

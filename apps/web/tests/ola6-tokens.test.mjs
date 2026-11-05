@@ -37,7 +37,7 @@ test('un solo acento interactivo: el primario suave y el recorrido lo toman de -
 test('iconos de trazo lineal: 1.5 en todos los juegos de la app', () => {
   for(const f of ['components/ui/icons.tsx','components/ui/button.tsx','components/platform/icons.tsx','components/workspace/icon.tsx','components/agente/icons.tsx'])assert.doesNotMatch(leer(f),/strokeWidth="1\.75"/,f);
 });
-test('guía y recorrido: botones de 32 px y flotante con la sombra única (el botón «Guía» de 26 px lo fija onboarding-tour.test: propuesta de pasarlo a 28 px)', () => {
+test('guía y recorrido: botones de 32 px y flotante con la sombra única (el botón «Guía» de 28 px lo fija onboarding-tour.test)', () => {
   const c=leer('components/onboarding/onboarding.css');
   assert.match(c,/:root \.onb-btn, :root \.onb-btn-sec \{ min-height:var\(--ux-h-md\)/);
   assert.match(c,/box-shadow:var\(--ux-shadow-float\)/);assert.doesNotMatch(c,/\.onb-btn \{[^}]*background:var\(--ink\)/);assert.match(leer('app/(app)/globals.css'),/\.workspace button \{ min-width:0; min-height:var\(--ux-h-md\)/);
